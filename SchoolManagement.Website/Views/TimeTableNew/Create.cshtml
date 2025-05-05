@@ -1,0 +1,222 @@
+﻿@model SchoolManagement.Data.Models.MasterTimeTableViewModel
+@using SchoolManagement.Data.Models
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var salutations = new[] { "Mr. ", "Mrs. ", "Ms. ", "Dr. ", "Sr. ", "Mr.", "Mrs.", "Ms.", "Dr.", "Sr.", "Mr ", "Mrs ", "Ms ", "Dr ", "Sr " };
+}
+
+<link href="~/Content/DropDownSelect2/dist/css/select2.min.css" rel="stylesheet" />
+@*<style>
+        thead th,
+        tbody td {
+            white-space: nowrap; /* Prevent content wrapping */
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        thead th,
+        tbody td {
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+
+            thead th:first-child,
+            tbody td:first-child {
+                position: sticky;
+                left: 0;
+                background-color: white;
+                z-index: 2;
+            }
+
+    </style>*@
+<style>
+    thead th,
+    tbody td {
+        white-space: nowrap; /* Prevent content wrapping */
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    thead th,
+    tbody td {
+        padding: 8px;
+        border: 1px solid #ddd;
+    }
+
+        /* Sticky first column */
+        thead th:first-child,
+        tbody td:first-child {
+            position: sticky;
+            left: 0;
+            background-color: #fff;
+            z-index: 2;
+        }
+
+    /* Sticky header row (staff names) */
+    thead th {
+        position: sticky;
+        top: 0;
+        background-color: #fff;
+        z-index: 3;
+    }
+
+        /* Top-left corner cell: higher z-index */
+        thead th:first-child {
+            z-index: 4;
+        }
+
+    /* Optional: fix table height and enable scroll */
+    .fixTableHead {
+        overflow: auto;
+        max-height: 600px; /* adjust as needed */
+    }
+</style>
+
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <h2>Teacher Allocation</h2>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+
+            <div class="row">
+                @*<h4 class="std_head well-sm"> Staff Information Form</h4>*@
+                <div class="tab-content tab_sis">
+                    <div class="tab-pane fade in active" id="add">
+                        <div class="row">
+                            <div class="table-responsive fixTableHead">
+                                @using (Html.BeginForm("Create", "TimeTableNew", FormMethod.Post))
+                                {
+                                    <div class="row">
+                                        <div class="col-md-3 col-sm-3 col-xs-4">
+                                            @Html.DropDownList("ClassId", new SelectList(ViewBag.ClassList, "DataListItemId", "DataListItemName"), "Select Class", new { @class = "form-control select2", @Id = "Classss" })
+
+                                        </div>
+                                        <div class="col-md-3 col-sm-3 col-xs-4">
+                                            @Html.DropDownListFor(x => x.SectionId, new SelectList(ViewBag.Section, "DataListItemId", "DataListItemName"), "Select Section", new { @class = "form-control select2" })
+
+                                        </div>
+                                        <div class="col-md-3 col-sm-3 col-xs-4">
+                                            @Html.DropDownListFor(x => x.BatchId, new SelectList(ViewBag.Batch, "Batch_Id", "Batch_Name"), "Select Batch", new { @class = "form-control select2" })
+
+                                        </div>
+                                        <div class="col-md-2 col-sm-2 col-xs-2">
+                                            <input type="submit" value="Filter" class="btn btn-info" />
+
+                                        </div>
+                                    </div>
+                                }
+                                @using (Html.BeginForm("SaveTimeTable", "TimeTableNew", FormMethod.Post))
+                                {
+                                    @Html.HiddenFor(x => x.BatchId)
+                                    @Html.HiddenFor(x => x.SectionId)
+                                    @functions {
+                                        public string RemoveSalutation(string name)
+                                        {
+                                            if (string.IsNullOrWhiteSpace(name)) return name;
+
+                                            var salutations = new[] { "Mr. ", "Mrs. ", "Ms. ", "Dr. ", "Sr. " };
+                                            foreach (var salutation in salutations)
+                                            {
+                                                if (name.StartsWith(salutation, StringComparison.OrdinalIgnoreCase))
+                                                {
+                                                    return name.Substring(salutation.Length);
+                                                }
+                                            }
+                                            return name;
+                                        }
+                                    }
+
+                                    // @{
+
+                                    var sortedStaff = Model.Staff
+                                        .OrderBy(s => RemoveSalutation(s.StaffName))
+                                        .ToList();
+                                    //}
+
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr id="HeaderRow">
+                                                <th style="width:250px;">Class</th>
+                                                @foreach (var staff in sortedStaff)
+                                                {
+                                                    <th style="width:200px;">@staff.StaffName</th>
+                                                }
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (int i = 0; i < Model.ClassTimeTables.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @Html.HiddenFor(m => m.ClassTimeTables[i].ClassName)
+                                                        @Html.HiddenFor(m => m.ClassTimeTables[i].ClassId)
+                                                        @Model.ClassTimeTables[i].ClassName
+                                                    </td>
+
+                                                    @for (int j = 0; j < sortedStaff.Count; j++)
+                                                    {
+                                                        var staffId = sortedStaff[j].StaffId;
+                                                        // Find the matching SubjectsPerDay entry for this staff
+                                                        var subjectDayEntry = Model.ClassTimeTables[i].SubjectsPerDays
+                                .FirstOrDefault(spd => spd.StaffId == staffId)
+                                ?? new SubjectEntryPerDay(); // ✅ Will work now
+
+                                                        <td>
+                                                            @Html.Hidden($"ClassTimeTables[{i}].SubjectsPerDays[{j}].StaffId", staffId)
+
+                                                            <select name="ClassTimeTables[@i].SubjectsPerDays[@j].SubjectIds" multiple="multiple" class="form-control select2">
+                                                                @foreach (var subject in Model.AllSubjects)
+                                                                {
+                                                                    var selectedSubjects = subjectDayEntry.SubjectIds ?? new List<string>();
+                                                                    <option value="@subject.SubjectId" @(selectedSubjects.Contains(subject.SubjectId) ? "selected" : "")>
+                                                                        @subject.SubjectName
+                                                                    </option>
+                                                                }
+                                                            </select>
+
+                                                            <br />
+
+                                                            @Html.CheckBox($"ClassTimeTables[{i}].SubjectsPerDays[{j}].IsClassTeacher", subjectDayEntry.IsClassTeacher)
+                                                        </td>
+                                                    }
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                    <input type="submit" value="Save Timetable" class="btn btn-success" />
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Content/DropDownSelect2/dist/js/select2.min.js"></script>
+
+<script>
+    $('.select2').select2({
+    });
+    function setFilterAction() {
+        debugger
+        const ClassId = $('#Classss').val();
+        const sectionId = $('#SectionId').val();
+        const batchId = $('#BatchId').val();
+        console.log(ClassId)
+        window.location.href = '/TimeTableNew/Create?ClassId=' + ClassId + '&sectionId=' + sectionId + '&batchId=' + batchId;
+        return false;
+    }
+</script>
+

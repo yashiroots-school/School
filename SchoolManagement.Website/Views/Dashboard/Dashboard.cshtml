@@ -1,0 +1,363 @@
+﻿@using SchoolManagement.Data.Models;
+@{
+    ViewBag.Title = "Dashboard";
+    <title>Scholl Dashboard</title>
+
+    @*<link rel="stylesheet" href="~/assets/css/bootstrap.css">
+        <link rel="stylesheet" href="~/assets/css/animate.css">*@
+    <link rel="stylesheet" href="~/assets/css/style.css">
+
+    @*<link rel="stylesheet" href="~/assets/css/fontawesome.css">
+        <link rel="stylesheet" href="~/assets/css/font.css">*@
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Icons">
+}
+
+<!-- page content -->
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="content_main">
+            <div class="row row_grid">
+                <div class="col-md-12">
+                    <div class="row row_grid">
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <div class="featute_card">
+                                <div class="card_bg card_bg1">
+                                    <div class="featu_icon">
+                                        <img width="60" src="~/assets/images/students_icon.svg" alt="icon">
+                                    </div>
+                                    <div class="feature_content">
+                                        <h6>Students</h6>
+                                        <h5>@ViewBag.StudentCount</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <div class="featute_card">
+                                <div class="card_bg card_bg2">
+                                    <div class="featu_icon">
+                                        <img width="60" src="~/assets/images/students_icon1.svg" alt="icon">
+                                    </div>
+                                    <div class="feature_content">
+                                        <h6>Teachers</h6>
+                                        <h5>@ViewBag.TeacherCount</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <div class="featute_card">
+                                <div class="card_bg card_bg3">
+                                    <div class="featu_icon">
+                                        <img width="60" src="~/assets/images/students_icon2.svg" alt="icon">
+                                    </div>
+                                    <div class="feature_content">
+                                        <h6>TC</h6>
+                                        <h5>@ViewBag.TcCount</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <div class="featute_card">
+                                <div class="card_bg card_bg4">
+                                    <div class="featu_icon">
+                                        <img width="60" src="~/assets/images/students_icon3.svg" alt="icon">
+                                    </div>
+                                    <div class="feature_content">
+                                        <h6>New Admition</h6>
+                                        <h5>@ViewBag.NewAdmissionCount</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-12">
+                            <div class="row row_grid">
+                                <div class="col-md-6 col-lg-6 col-xl-6 d-flex">
+                                    <div class="featute_card featute_box">
+                                        <div class="chart_wrapp">
+                                            <div class="cart_heading">
+                                                <h3>School Performance</h3>
+                                            </div>
+                                            <canvas id="performanceChart" class="chart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12 col-lg-6 col-xl-6 d-flex">
+                                    <div class="featute_card featute_box">
+                                        <div class="chart_wrapp">
+                                            <div class="cart_heading">
+                                                <h3>School Overview</h3>
+
+                                                <div class="tabs">
+                                                    <div class="tab active" onclick="updateOverviewChart('week')">Week</div>
+                                                    <div class="tab" onclick="updateOverviewChart('month')">Month</div>
+                                                    <div class="tab" onclick="updateOverviewChart('year')">Year</div>
+                                                    <div class="tab" onclick="updateOverviewChart('all')">All</div>
+                                                </div>
+                                            </div>
+                                            <canvas id="overviewChart" class="chart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="row row_grid">
+                                <div class="col-md-3 col-lg-4 col-xl-5 d-flex">
+                                    <div class="featute_card featute_box">
+                                        <div class="cart_heading">
+                                            <h3>School Calendar</h3>
+                                        </div>
+                                        <div class="calendar_card">
+                                            <div class="calendar_header">
+                                                <button id="prevMonth">&lt;</button>
+                                                <h3 id="currentMonth"></h3>
+                                                <button id="nextMonth">&gt;</button>
+                                            </div>
+                                            <div class="calendar_grid" id="calendarGrid"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-9 col-lg-8 col-xl-7 d-flex">
+                                    <div class="featute_card featute_box">
+                                        <div class="cart_heading">
+                                            <h3>Teacher Deatails</h3>
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table class="table_main" id="TeacherTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Qulification</th>
+                                                        <th>Contact</th>
+                                                        <th>Attendance</th>
+                                                        <th>Performance</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="teacherTableBody">
+                                                    @{
+                                                        foreach (var item in ViewBag.TeacherDetails as IEnumerable<SchoolManagement.Data.Models.StafsDetails>)
+                                                        {
+                                                            <tr>
+                                                                <td>
+                                                                    @item.Name
+                                                                </td>
+                                                                <td>
+                                                                    @item.Qualification
+                                                                </td>
+                                                                <td>
+                                                                    @item.Contact
+                                                                </td>
+                                                                <td>
+                                                                    99%
+                                                                </td>
+                                                                <td>
+                                                                    99%
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" style="display: none;">
+                            <div class="row row_grid">
+                                <div class="col-md-4 d-flex">
+                                    <div class="featute_card featute_box">
+                                        <div class="cart_heading">
+                                            <h3>Attendance Related</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 d-flex">
+                                    <div class="featute_card featute_box">
+                                        <div class="cart_heading">
+                                            <h3>Marks Students</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 d-flex">
+                                    <div class="featute_card featute_box">
+                                        <div class="cart_heading">
+                                            <h3>Bus Tracking</h3>
+                                        </div>
+
+                                        <div class="tracking_content">
+                                            <h6>Unique Visitors</h6>
+                                            <h2>2,590</h2>
+                                        </div>
+
+                                        <ul class="tracking_list">
+                                            <li>
+                                                <span class="tracking_text"><span class="direct"></span> Direct</span>
+                                                <span class="tracking_text">12,890</span>
+                                                <span class="tracking_text">50%</span>
+                                            </li>
+                                            <li>
+                                                <span class="tracking_text"><span class="search"></span> Search</span>
+                                                <span class="tracking_text">7,245</span>
+                                                <span class="tracking_text">27%</span>
+                                            </li>
+                                            <li>
+                                                <span class="tracking_text"><span class="referrals"></span> Referrals</span>
+                                                <span class="tracking_text">4,256</span>
+                                                <span class="tracking_text">8%</span>
+                                            </li>
+                                            <li>
+                                                <span class="tracking_text"><span class="social"></span> Social</span>
+                                                <span class="tracking_text">500</span>
+                                                <span class="tracking_text">7%</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="featute_card featute_box">
+                                <div class="cart_heading">
+                                    <h3>Unpaid Student Intuition</h3>
+                                    <div class="from_table">
+
+                                        <div class="form_group">
+                                            <select  id="Class" name="ClassName">
+                                                <option value="0">---Select---</option>
+                                                @foreach (var item in ViewBag.Classes as IEnumerable<Tbl_DataListItem>)
+                                                {
+                                                    <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="form_group">
+                                            <select id="Section" name="SectionName">
+                                                <option value="0">---Select---</option>
+                                                @foreach (var item in ViewBag.Section as IEnumerable<Tbl_DataListItem>)
+                                                {
+                                                    <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive" id="students">
+                                    <table class="table_main" id="StudentTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>ID</th>
+                                                <th>Class</th>
+                                                <th>Section</th>
+                                                @*<th>Rank</th>*@
+                                                <th>Attendance</th>
+                                                <th>Profile</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="studentbody">
+                                        </tbody>
+
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+ 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript" src="~/assets/js/custom.js"></script>
+    <script src="~/Content/DropDownSelect2/dist/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            //$('.select2').select2();
+
+            // Initialize Teacher DataTable with no default sorting
+            var table = $("#TeacherTable").DataTable({
+                "order": [], // Disable default sorting
+                "columnDefs": [
+                    { "searchable": true, "orderable": false } // Disable sorting for the first column (scholar number)
+                ]
+            });
+            GetStudentDetails();
+            $("#Class").on('change', function () {
+                GetStudentDetails();
+            })
+            $("#Section").on('change', function () {
+                GetStudentDetails();
+            })
+        });
+        function GetStudentDetails() {
+
+            var Class = $("#Class").val();
+            var Section = $("#Section").val();
+            //dataTable = $('#StudentTable').DataTable({
+            var html = "";
+            //});
+            $.ajax({
+                url: '/Dashboard/GetStudentDetails?Class=' + Class + '&Section=' + Section,
+                dataType: "json",
+                type: "GET",
+                success: function (data) {
+                    if (data != "Fail" && data != null) {
+                        var stdnttbl = document.getElementById('students');
+                        html = '';
+                        var cnt = 1;
+                        html = '<table class="table_main"  id="StudentTable">';
+                        html = html + '<thead><tr><th>S.No</th><th>Name</th><th>Id</th><th>Class</th><th>Section</th><th>Attendance</th><th>Profile</th></tr></thead>';
+                        html = html + '<tbody id="studentbody">';
+                        for (var i = 0; i < data.length; i++) {
+                            var Name = data[i].Name + data[i].Last_Name;
+                            html += '<td>' + cnt + '</td>';
+                            html += '<td>' + Name + '</td>';
+                            html += '<td>' + data[i].StudentId + '</td>';
+                            html += '<td>' + data[i].Class + '</td>';
+                            html += '<td>' + data[i].Section + '</td>';
+                            html += '<td>' + 0 + '</td>';
+                            //html += '<td><a href="/student/studenProfile.cshtml?id=' + studentId + '">View Profile</a></td>';
+                            html += '<td><a href="/Student/StudentProfile">View Profile</a></td>';
+
+                            html += '</tr>';
+
+                            cnt++;
+                        }
+
+                        html += '</tbody></html>'
+
+                        stdnttbl.innerHTML = html;
+                        $('#StudentTable').DataTable();
+                    }
+
+
+                },
+                error: function (xhr) {
+                    window.location.reload();
+                }
+            });
+
+        }
+
+    </script>
+}
+
+

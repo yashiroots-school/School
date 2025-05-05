@@ -1,0 +1,588 @@
+﻿@model SchoolManagement.Data.Models.Student
+
+
+<div class="table-responsive">
+    <table id="example" class="display table table-sm table-hover table-striped" style="width:100%">
+        <thead id="tablehead">
+            <tr>
+                <th style="background-color:#425C75; color:white"><input type="checkbox" id="checkedAll" class="custom-control-input" /></th>
+                <th class="hide-1 AllShow" style="background-color:#425C75; color:white;display:none"><span>S.No</span></th>
+                <th class="hide-2 AllShow" style="background-color:#425C75; color:white;display:none"><span> StudentId</span></th>
+                <th class="hide-3 AllShow" style="background-color:#425C75; color:white;display:none"><span>ApplicationNumber</span></th>
+                <th class="hide-4 AllShow" style="background-color:#425C75; color:white;display:none"><span>UIN</span></th>
+                <th class="hide-5 AllShow" style="background-color:#425C75; color:white;display:none"><span>Date</span></th>
+                <th class="hide-6 AllShow" style="background-color:#425C75; color:white;display:none"><span>Name</span></th>
+                <th class="hide-7 AllShow" style="background-color:#425C75; color:white;display:none"><span>Class</span></th>
+                <th class="hide-8 AllShow" style="background-color:#425C75; color:white;display:none"><span>Section</span></th>
+                <th class="hide-9 AllShow" style="background-color:#425C75; color:white;display:none"><span>Gender</span></th>
+                <th class="hide-10 AllShow" style="background-color:#425C75; color:white;display:none"><span>LastName</span></th>
+                <th class="hide-11 AllShow" style="background-color:#425C75; color:white;display:none"><span>Medium</span></th>
+                <th class="hide-12 AllShow" style="background-color:#425C75; color:white;display:none"><span>Caste</span></th>
+                @*<th class="hide-13 AllShow" style="background-color:#425C75; color:white;display:none"><span>Age</span></th>*@
+                <th class="hide-14 AllShow" style="background-color:#425C75; color:white;display:none"><span>DOB</span></th>
+                <th class="hide-15 AllShow" style="background-color:#425C75; color:white;display:none"><span>POB</span></th>
+                <th class="hide-16 AllShow" style="background-color:#425C75; color:white;display:none"><span>Nationality</span></th>
+                <th class="hide-17 AllShow" style="background-color:#425C75; color:white;display:none"><span>Religion</span></th>
+                <th class="hide-18 AllShow" style="background-color:#425C75; color:white;display:none"><span>MotherTongue</span></th>
+                <th class="hide-19 AllShow" style="background-color:#425C75; color:white;display:none"><span>Category</span></th>
+                <th class="hide-20 AllShow" style="background-color:#425C75; color:white;display:none"><span>BloodGroup</span></th>
+                @*<th class="hide-21 AllShow" style="background-color:#425C75; color:white;display:none"><span>MedicalHistory</span></th>*@
+                <th class="hide-22 AllShow" style="background-color:#425C75; color:white;display:none"><span>Hobbies</span></th>
+                <th class="hide-23 AllShow" style="background-color:#425C75; color:white;display:none"><span>Sports</span></th>
+                @*<th class="hide-24 AllShow" style="background-color:#425C75; color:white;display:none"><span>OtherDetails</span></th>
+                <th class="hide-25 AllShow" style="background-color:#425C75; color:white;display:none"><span>ProfileAvatar</span></th>
+                <th class="hide-26 AllShow" style="background-color:#425C75; color:white;display:none"><span>MarkForIdentity</span></th>*@
+                <th class="hide-27 AllShow" style="background-color:#425C75; color:white;display:none"><span>AdharNo</span></th>
+                @*<th class="hide-28 AllShow" style="background-color:#425C75; color:white;display:none"><span>AdharFile</span></th>*@
+                <th class="hide-29 AllShow" style="background-color:#425C75; color:white;display:none"><span>OtherLanguages</span></th>
+                @*<th class="hide-30 AllShow" style="background-color:#425C75; color:white;display:none"><span>IsApplyforTC</span></th>
+                <th class="hide-31 AllShow" style="background-color:#425C75; color:white;display:none"><span>IsApplyforAdmission</span></th>*@
+                <th class="hide-32 AllShow" style="background-color:#425C75; color:white;display:none"><span>IsApprove</span></th>
+                @*<th class="hide-33 AllShow" style="background-color:#425C75; color:white;display:none"><span>IsActive</span></th>
+                <th class="hide-34 AllShow" style="background-color:#425C75; color:white;display:none"><span>IsAdmissionPaid</span></th>
+                <th class="hide-35 AllShow" style="background-color:#425C75; color:white;display:none"><span>IsInsertFromAd</span></th>
+                <th class="hide-36 AllShow" style="background-color:#425C75; color:white;display:none"><span>RegNumber</span></th>*@
+                <th class="hide-37 AllShow" style="background-color:#425C75; color:white;display:none"><span>FatherName</span></th>
+                <th class="hide-38 AllShow" style="background-color:#425C75; color:white;display:none"><span>MotherName</span></th>
+                <th class="hide-39 AllShow" style="background-color:#425C75; color:white;display:none"><span>FatherMobile</span></th>
+                <th class="hide-40 AllShow" style="background-color:#425C75; color:white;display:none"><span>MotherMobile</span></th>
+                <th class="hide-41 AllShow" style="background-color:#425C75; color:white;display:none"><span>Parent's Email</span></th>
+                <th class="hide-42 AllShow" style="background-color:#425C75; color:white;display:none"><span>Address</span></th>
+
+                <th style="background-color:#425C75; color:white"><span>Action</span></th>
+                <th style="width:2%;background-color:#425C75;color:white;cursor:pointer" id="opendivdots" class="notdivhide" onclick="openNav()">...</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int i = ViewBag.StartValue;
+                foreach (var item in ViewBag.Allstudentdetails as IEnumerable<SchoolManagement.Website.ViewModels.AllStudentDetailsViewModel>)
+                {
+            <tr>
+                <td><input type="checkbox" id="checkbox-76" class="checkSingle" /></td>
+                <td class="hide-1 AllShow" style="display:none">@i</td>
+                <td class="hide-2 AllShow" style="display:none">@item.StudentId</td>
+                <td class="hide-3 AllShow" style="display:none">@item.ApplicationNumber</td>
+                <td class="hide-4 AllShow" style="display:none">@item.UIN</td>
+                <td class="hide-5 AllShow" style="display:none">@item.Date</td>
+                <td class="hide-6 AllShow" style="display:none">@item.Name</td>
+                <td class="hide-7 AllShow" style="display:none">@item.Class</td>
+                <td class="hide-8 AllShow" style="display:none">@item.Section</td>
+                <td class="hide-9 AllShow" style="display:none">@item.Gender</td>
+                <td class="hide-10 AllShow" style="display:none">@item.Last_Name</td>
+                <td class="hide-11 AllShow" style="display:none">@item.Medium</td>
+                <td class="hide-12 AllShow" style="display:none">@item.Caste</td>
+               @* <td class="hide-13 AllShow" style="display:none">@item.AgeInWords</td>*@
+                <td class="hide-14 AllShow" style="display:none">@item.DOB</td>
+                <td class="hide-15 AllShow" style="display:none">@item.POB</td>
+                <td class="hide-16 AllShow" style="display:none">@item.Nationality</td>
+                <td class="hide-17 AllShow" style="display:none">@item.Religion</td>
+                <td class="hide-18 AllShow" style="display:none">@item.MotherTongue</td>
+                <td class="hide-19 AllShow" style="display:none">@item.Category</td>
+                <td class="hide-20 AllShow" style="display:none">@item.BloodGroup</td>
+               @* <td class="hide-21 AllShow" style="display:none">@item.MedicalHistory</td>*@
+                <td class="hide-22 AllShow" style="display:none">@item.Hobbies</td>
+                <td class="hide-23 AllShow" style="display:none">@item.Sports</td>
+               @* <td class="hide-24 AllShow" style="display:none">@item.OtherDetails</td>*@
+               @* <td class="hide-25 AllShow" style="display:none">@item.ProfileAvatar</td>*@
+                @*<td class="hide-26 AllShow" style="display:none">@item.MarkForIdentity</td>*@
+                <td class="hide-27 AllShow" style="display:none">@item.AdharNo</td>
+                @*<td class="hide-28 AllShow" style="display:none">@item.AdharFile</td>*@
+                <td class="hide-29 AllShow" style="display:none">@item.OtherLanguages</td>
+                @*<td class="hide-30 AllShow" style="display:none">@item.IsApplyforTC</td>*@
+                @*<td class="hide-31 AllShow" style="display:none">@item.IsApplyforAdmission</td>*@
+                <td class="hide-32 AllShow" style="display:none">@item.Iapprovestudent</td>
+                @*<td class="hide-33 AllShow" style="display:none">@item.IsActive</td>*@
+                @*<td class="hide-34 AllShow" style="display:none">@item.IsAdmissionPaid</td>*@
+                @*<td class="hide-35 AllShow" style="display:none">@item.IsInsertFromAd</td>*@
+                @*<td class="hide-36 AllShow" style="display:none">@item.RegNumber</td>*@
+                <td class="hide-37 AllShow" style="display:none">@item.FatherName</td>
+                <td class="hide-38 AllShow" style="display:none">@item.MotherName</td>
+                <td class="hide-39 AllShow" style="display:none">@item.FMobile</td>
+                <td class="hide-40 AllShow" style="display:none">@item.MMobile</td>
+                <td class="hide-41 AllShow" style="display:none">@item.ParentEmail</td>
+                <td class="hide-42 AllShow" style="display:none">@item.FResidentialAddress</td>
+                <td><a href="/Student/FullStudentView?id=@item.StudentId">View</a>&nbsp&nbsp;<a href="/Student/UdateStudentAdmissionDetails?Id=@item.StudentId&routingid=2">Edit</a>&nbsp&nbsp;<a href="#" onclick="DeleteAdmissionStudent(@item.StudentId)">Delete</a></td>
+
+            </tr>
+                    i++;
+                }
+            }
+        </tbody>
+    </table>
+    <div id="mySidenav_Dynamic" class="sidenav" style="display:none">
+        <div style="border-style:solid">
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-1" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        S.No
+                    </div>
+                </div>
+            </div>
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-2" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        StudentId
+                    </div>
+                </div>
+            </div>
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-3" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        ApplicationNumber
+                    </div>
+                </div>
+            </div>
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-4" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        UIN
+                    </div>
+                </div>
+            </div>
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-5" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        Date
+                    </div>
+                </div>
+            </div>
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-6" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        Name
+                    </div>
+                </div>
+            </div>
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-7" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        Class
+                    </div>
+                </div>
+            </div>
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-8" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        Section
+                    </div>
+                </div>
+            </div>
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-9" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        Gender
+                    </div>
+                </div>
+            </div>
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-10" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        LastName
+                    </div>
+                </div>
+            </div>
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-11" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        Medium
+                    </div>
+                </div>
+            </div>
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-12" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        Caste
+                    </div>
+                </div>
+            </div>
+            @*<div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-13" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        AgeInWords
+                    </div>
+                </div>
+            </div>*@
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-14" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        DOB
+                    </div>
+                </div>
+            </div>
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-15" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        POB
+                    </div>
+                </div>
+            </div>
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-16" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        Nationality
+                    </div>
+                </div>
+            </div>
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-17" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        Religion
+                    </div>
+                </div>
+            </div>
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-18" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        MotherTongue
+                    </div>
+                </div>
+            </div>
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-19" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        Category
+                    </div>
+                </div>
+            </div>
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-20" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        BloodGroup
+                    </div>
+                </div>
+            </div>
+            @*<div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-21" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        MedicalHistory
+                    </div>
+                </div>
+            </div>*@
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-22" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        Hobbies
+                    </div>
+                </div>
+            </div>
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-23" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        Hobbies
+                    </div>
+                </div>
+            </div>
+            @*<div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-24" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        OtherDetails
+                    </div>
+                </div>
+            </div>*@
+            @*<div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-25" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        ProfileAvatar
+                    </div>
+                </div>
+            </div>*@
+            @*<div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-26" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        MarkForIdentity
+                    </div>
+                </div>
+            </div>*@
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-27" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        AdharNo
+                    </div>
+                </div>
+            </div>
+            @*<div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-28" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        AdharFile
+                    </div>
+                </div>
+            </div>*@
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-29" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        OtherLanguages
+                    </div>
+                </div>
+            </div>
+            @*<div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-30" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        IsApplyforTC
+                    </div>
+                </div>
+            </div>*@
+            @*<div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-31" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        IsApplyforAdmission
+                    </div>
+                </div>
+            </div>*@
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-32" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        IsApprove
+                    </div>
+                </div>
+            </div>
+            @*<div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-33" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        IsActive
+                    </div>
+                </div>
+            </div>*@
+            @*<div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-34" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        IsAdmissionPaid
+                    </div>
+                </div>
+            </div>*@
+            @*<div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-35" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        IsInsertFromAd
+                    </div>
+                </div>
+            </div>*@
+            @*<div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-36" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        RegNumber
+                    </div>
+                </div>
+            </div>*@
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-37" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        Father Name
+                    </div>
+                </div>
+            </div>
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-38" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        Mother Name
+                    </div>
+                </div>
+            </div>
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-39" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        Father Mobile
+                    </div>
+                </div>
+            </div>
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-40" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        Mother Mobile
+                    </div>
+                </div>
+            </div>
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-41" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        Parent's Email'
+                    </div>
+                </div>
+            </div>
+            <div class="row notdivhide">
+                <div class="col-md-12">
+                    <div class="col-md-1">
+                        <input type="checkbox" id="checkbox-grid-42" class="notdivhide" />
+                    </div>
+                    <div class="col-md-9">
+                        Address
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+     $('#Dynamic_Checkbox').val('1');
+    $("#mySidenav").empty();
+    $("#mySidenav").html($('#mySidenav_Dynamic').html());
+    $('#mySidenav_Dynamic').empty();
+    var totalcount = '@ViewBag.Allstudentcount';
+    //alert(totalcount);
+    $("#totalcount").text(totalcount);
+
+    var dynamiColData = '@ViewBag.ColumnShow';
+    //alert(dynamiColData);
+    if (dynamiColData != '') {
+        var CommaSepData = dynamiColData.split(',');
+        $.each(CommaSepData, function (index, value) {
+            $("#checkbox-grid-" + CommaSepData[index]).attr('checked', '');
+            $(".hide-" + CommaSepData[index]).show();
+        });
+    }
+    else {
+        $('input[class=notdivhide]').each(function () {
+            $(this).attr('checked', 'true');
+        });
+        $('.AllShow').show();
+    }
+
+    $('input[class=notdivhide]').on('click', function () {
+        //
+        var id = $(this).attr("id").replace('checkbox-grid-', '');
+        //alert(id);
+        if ($(this).is(':checked')) {
+
+            $(".hide-" + id).show();
+        }
+        else {
+            $(".hide-" + id).hide();
+        }
+    });
+
+
+
+    function DeleteAdmissionStudent(id) {
+        var cnf = confirm("Are You sure, You want to delete?");
+        if (cnf == true) {
+            window.location.href = '/Student/DeleteAdmissionStudent?Id=' + id;
+        }
+
+    }
+
+</script>

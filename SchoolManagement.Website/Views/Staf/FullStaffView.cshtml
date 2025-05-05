@@ -1,0 +1,328 @@
+﻿@model SchoolManagement.Data.Models.StafsDetails
+@{
+    ViewBag.Title = "FullStaffView";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .myAlert-bottom {
+        position: fixed;
+        bottom: 5px;
+        left: 2%;
+        width: 96%;
+    }
+
+    div.fullscreen {
+        position: absolute;
+        width: 100%;
+        height: 960px;
+        top: 0;
+        left: 0;
+        background-color: lightblue;
+    }
+
+    .alert {
+        display: none;
+    }
+</style>
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6">
+                            <h4> Full View of Staff  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6">
+                            <button class="btn btn-info pull-right"><a href="/Staf/ViewStaff" class="button_a">View All Staff </a></button>
+                            <button class="btn btn-danger pull-right"><a href="/Staf/ManageStaff" class="button_a">Manage Staff</a> </button>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <h4 class="std_head well-sm"> Employee Information</h4>
+            <div class="col-sm-12" style="border-bottom: 1px solid #E6E9ED;">
+                <!-- col-sm-12 started -->
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">Employee ID :</label>
+                        <div class="col-sm-7">
+                            <p>@Model.EmpId</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-5">Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</label>
+                        <div class="col-sm-7">
+                            <p>@Model.Date</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3"></div>
+                <div class="col-sm-3"></div>
+                <div class="col-sm-2">
+                    <img src="@ViewBag.ImageName" alt="Affix recent passport size <br/> photograph of student." style="width:100%;margin-bottom:10px;" class="img-thumbnail" />
+                </div>
+            </div><!-- col-sm-12 closed -->
+            <div class="col-sm-12 table-responsive" style="border-bottom: 1px solid #E6E9ED;">
+                <!-- col-sm-12 started -->
+                <h4 class="std_head well-sm"> Employee Details</h4>
+                <div class="col-sm-6 table-responsive" style="border-right: 1px solid #eee;">
+                    <!-- col-sm-6 started -->
+
+                    <table class="table table-bordered">
+                        <tr>
+                            <td class="full_h">Name </td>
+                            <td class="full_d">@Model.Name</td>
+                        </tr>
+                        <tr>
+                            <td class="full_h">Gender </td>
+                            <td class="full_d">@Model.Gender</td>
+                        </tr>
+
+                        <tr>
+                            <td class="full_h"> Date of Birth </td>
+                            <td class="full_d">@Model.DOB</td>
+                        </tr>
+                        <tr>
+                            <td class="full_h">Highest Educational Qualification</td>
+                            <td class="full_d">@Model.Qualification</td>
+                        </tr>
+                        <tr>
+                            <td class="full_h">Work Experience</td>
+                            <td class="full_d">@Model.WorkExperience</td>
+                        </tr>
+                        <tr>
+                            <td class="full_h">Address</td>
+                            <td class="full_d">@Model.Address</td>
+                        </tr>
+                        <tr>
+                            <td class="full_h">Designation</td>
+                            <td class="full_d">@Model.Designation</td>
+                        </tr>
+                        <tr>
+                            <td class="full_h">Religion</td>
+                            <td class="full_d">@Model.Religion</td>
+                        </tr>
+                        <tr>
+                            <td class="full_h">Community</td>
+                            <td class="full_d">@Model.Category</td>
+                        </tr>
+                        <tr>
+                            <td class="full_h">Caste</td>
+                            <td class="full_d">@Model.Caste</td>
+                        </tr>
+                    </table>
+
+
+                </div><!-- col-sm-6 closed -->
+                <div class="col-sm-6 table-responsive">
+                    <!-- col-sm-6 started -->
+                    <table class="table table-bordered">
+                        <tr>
+                            <td class="full_h">Contact No</td>
+                            <td class="full_d">@Model.Contact</td>
+                        </tr>
+                        <tr>
+                            <td class="full_h">Date of Email</td>
+                            <td class="full_d">@Model.Email</td>
+                        </tr>
+                        <tr>
+                            <td class="full_h">Date of Employment</td>
+                            <td class="full_d">@Model.EmpDate</td>
+                        </tr>
+                        <tr>
+                            <td class="full_h" style="color:#D9534F;">Salary :</td>
+                            <td class="full_d"></td>
+                        </tr>
+                        <tr>
+                            <td class="full_h">Basic</td>
+                            <td class="full_d">@Model.BesicSallery</td>
+                        </tr>
+                        <tr>
+                            <td class="full_h">Perks</td>
+                            <td class="full_d">@Model.PerksSallery</td>
+                        </tr>
+                        <tr>
+                            <td class="full_h">Gross</td>
+                            <td class="full_d">@Model.GrossSallery</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="full_h">Bank A/C No.</td>
+                            <td class="full_d">@Model.BankACNo</td>
+                        </tr>
+                        <tr>
+                            <td class="full_h">Adhar No</td>
+                            <td class="full_d">@Model.AdharNo</td>
+                        </tr>
+                        <tr>
+                            <td class="full_h">Adhar Document</td>
+                            <td class="full_d">
+                                @{
+                                    if (!string.IsNullOrWhiteSpace(Model.AdharFile))
+                                    {
+                                        <a target="_blank" href="~/WebsiteImages/StaffAdhar/@Model.AdharFile">View</a>
+
+                                    }
+                                    else
+                                    {
+                                        <a target="_blank" href="~/WebsiteImages/images/user.png">View</a>
+
+                                    }
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="full_h">Pan No</td>
+                            <td class="full_d">@Model.PanNo</td>
+                        </tr>
+                        <tr>
+                            <td class="full_h">Pan Document</td>
+                            <td class="full_d">
+                                @{
+                                    if (!string.IsNullOrWhiteSpace(Model.PanFile))
+                                    {
+                                        <a target="_blank" href="~/WebsiteImages/StaffPanDoc/@Model.PanFile">View</a>
+
+                                    }
+                                    else
+                                    {
+                                        <a target="_blank" href="~/WebsiteImages/images/user.png">View</a>
+
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                </div><!-- col-sm-6 closed -->
+            </div><!-- col-sm-12 closed -->
+
+            <div class="col-sm-12 table-responsive" style="border-bottom: 1px solid #E6E9ED;">
+                <!-- col-sm-12 started -->
+                <h4 class="std_head well-sm"> Past Employment Details</h4>
+                <div class="col-sm-6 table-responsive">
+                    <!-- col-sm-6 started -->
+                    <table class="table table-bordered">
+                        <br />
+                        <tr>
+                            <td class="full_h">Last Organization of Employment / Service</td>
+                            <td class="full_d">@Model.LastOrganizationofEmployment</td>
+                        </tr>
+                        <tr>
+                            <td class="full_h">No of Years at the Last Assignment  </td>
+                            <td class="full_d">@Model.NoofYearsattheLastAssignment</td>
+                        </tr>
+                        <tr>
+                            <td class="full_h">Exit Formalities Completed ?</td>
+                            <td class="full_d">@Model.FormalitiesCheck</td>
+                        </tr>
+                    </table>
+                </div><!-- col-sm-6 closed -->
+                <div class="col-sm-6 table-responsive" style="border-left: 1px solid #eee;">
+                    <!-- col-sm-6 started -->
+                    <table class="table table-bordered">
+                        <h5 style="color: #1ABB9C;">Does to be attached :</h5>
+                        <tr>
+                            <td class="full_h">Relieving Letter </td>
+                            <td class="full_d">
+                                @{
+                                    if (!string.IsNullOrWhiteSpace(Model.RelievingLetter))
+                                    {
+                                        <a target="_blank" href="~/WebsiteImages/RelevingLetter/@Model.RelievingLetter">View</a>
+
+                                    }
+                                    else
+                                    {
+                                        <a target="_blank" href="~/WebsiteImages/images/user.png">Attached</a>
+
+                                    }
+                                }
+                                @*<a href="~/WebsiteImages/RelevingLetter/" target="_blank">Attached</a>*@
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="full_h">Performance Letter / Certificate</td>
+                            <td class="full_d">
+                                @{
+                                    if (!string.IsNullOrWhiteSpace(Model.PerformanceLetter))
+                                    {
+                                        <a target="_blank" href="~/WebsiteImages/PerforLetter/@Model.PerformanceLetter">View</a>
+
+                                    }
+                                    else
+                                    {
+                                        <a target="_blank" href="~/WebsiteImages/images/user.png">Attached</a>
+
+                                    }
+                                }
+                                @*<a href="~/WebsiteImages/PerforLetter/" target="_blank">Attached</a>*@
+                            </td>
+                        </tr>
+                    </table>
+                </div><!-- col-sm-6 closed -->
+                <div class="col-sm-12 table-responsive" style="border-bottom: 1px solid #E6E9ED;">
+                    <!-- col-sm-12 started -->
+                    <h4 class="std_head well-sm">Primary Details</h4>
+                    <div class="col-sm-6">
+                        <!-- col-sm-6 started -->
+
+                        <table class="table table-bordered">
+
+                            <tr>
+                                <td class="full_h">Father's/Husband's Name </td>
+                                <td class="full_d">@Model.FatherOrHusbandName</td>
+                            </tr>
+                            <tr>
+                                <td class="full_h">Married Status</td>
+                                <td class="full_d">@Model.MariedStatus</td>
+                            </tr>
+
+                            <tr>
+                                <td class="full_h">Children (if there are children)</td>
+                                <td class="full_d">@Model.Children</td>
+                            </tr>
+
+                        </table>
+                    </div><!-- col-sm-6 closed -->
+                </div>
+
+                <div class="col-sm-12 table-responsive" style="border-bottom: 1px solid #E6E9ED;">
+                    <!-- col-sm-12 started -->
+                    <h4 class="std_head well-sm">Current Status</h4>
+                    <div class="col-sm-6">
+                        <!-- col-sm-6 started -->
+
+                        <table class="table table-bordered">
+
+                            <tr>
+                                <td class="full_h">Date of Relieving :</td>
+                                <td class="full_d">@Model.DateofReliving</td>
+                            </tr>
+                            <tr>
+                                <td class="full_h">Basic </td>
+                                <td class="full_d">@Model.BesicSallery1</td>
+                            </tr>
+                            
+                            <tr>
+                                <td class="full_h">Perks</td>
+                                <td class="full_d">@Model.PerksSallery1</td>
+                            </tr>
+                            <tr>
+                                <td class="full_h">Gross</td>
+                                <td class="full_d">@Model.GrossSallery1</td>
+                            </tr>
+
+                        </table>
+                    </div><!-- col-sm-6 closed -->
+                </div>
+            </div><!-- col-sm-12 closed -->
+        </div><!-- col-msx-12  closed -->
+    </div><!-- 1st row closed -->
+</div>  <!-- /page content -->

@@ -1,0 +1,620 @@
+﻿@{
+    Layout = null;
+}
+
+<!--<!DOCTYPE html>
+<!-- Created by pdf2htmlEX (https://github.com/pdf2htmlEX/pdf2htmlEX) -->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="generator" content="pdf2htmlEX" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style type="text/css">
+        /*!
+                * Base CSS for pdf2htmlEX
+                * Copyright 2012,2013 Lu Wang <coolwanglu@@gmail.com>
+                * https://github.com/pdf2htmlEX/pdf2htmlEX/blob/master/share/LICENSE
+                */
+
+        :root {
+            --border: #000;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            padding: 0;
+            margin: 0;
+            background: #f5f5f5;
+            font-family: "Times New Roman", Georgia, serif;
+            color: #000;
+        }
+
+        .viewport {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        /* ---- PRINT BUTTON (SCREEN ONLY) ---- */
+        .print-btn {
+            position: fixed;
+            top: 12px;
+            right: 12px;
+            padding: 10px 14px;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 10px;
+            border: 1px solid #222;
+            background: #fff;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,.12);
+            z-index: 9999;
+        }
+
+            .print-btn:active {
+                transform: translateY(1px);
+            }
+
+        .no-print {
+            display: inline-block;
+        }
+
+
+        /* ---------- SHEET ---------- */
+        .page {
+
+            border: 1.2px solid var(--border);
+            padding:10px;
+        }
+
+
+
+        /* ---------- HEADER ---------- */
+        .school {
+            text-align: center;
+            margin-top: -2mm;
+        }
+
+            .school h1 {
+                margin: 0 0 2mm;
+                font-size: 22px;
+                letter-spacing: .5px;
+                font-weight: 700;
+            }
+
+            .school .addr {
+                font-size: 12.5px;
+                line-height: 1.25;
+                margin-top: 1mm;
+            }
+
+        .row-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 6mm 0 4mm;
+            font-size: 12.5px;
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #000;
+            color: #fff;
+            border-radius: 12px;
+            font-weight: 700;
+            letter-spacing: .5px;
+            font-size: 13.5px;
+        }
+
+        /* ---------- PEN + DATE ---------- */
+        .pen-date {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 6mm;
+            margin: 4mm 0 2mm;
+            font-size: 12.5px;
+        }
+
+        .pen-wrap {
+            display: flex;
+            align-items: center;
+            gap: 4mm;
+        }
+
+        .pen-label {
+            white-space: nowrap;
+        }
+
+        .pen-boxes {
+            display: grid;
+            grid-template-columns: repeat(12, 12px);
+            gap: 3px;
+        }
+
+            .pen-boxes span {
+                display: block;
+                width: 12px;
+                height: 12px;
+                border: 1px solid #000;
+            }
+
+        .date-dots {
+            white-space: nowrap;
+        }
+
+        .dots {
+            display: inline-block;
+            min-width: 38mm;
+            border-bottom: 1px dotted #000;
+        }
+
+        /* ---------- BODY GRID ---------- */
+        .body-grid {
+            display: grid;
+            grid-template-columns: 1fr 64mm; /* left content + right reasons column */
+            gap: 10mm;
+            margin-top: 4mm;
+        }
+
+        .para {
+            font-size: 13px;
+            line-height: 1.55;
+        }
+        .blank {
+            display: inline-block;
+            border-bottom: 1px dotted #000;
+            min-width: 25mm;
+            height: 1.2em;
+            line-height: 1.2em;
+            vertical-align: baseline; /* same level pe rahe */
+            font-weight: bold; /* jo bhi data aayega bold */
+        }
+
+
+            .blank.wide {
+                min-width: 45mm;
+            }
+
+            .blank.mid {
+                min-width: 30mm;
+            }
+
+            .blank.narrow {
+                min-width: 12mm;
+            }
+
+        .leaders {
+            border-bottom: 1px dotted #000;
+        }
+
+        /* ---------- LEFT SUB-SECTIONS ---------- */
+        .left-section .line {
+            margin: 2.5mm 0;
+            font-style: italic;
+            font-size:18px;
+        }
+
+        /* fines & character */
+        .fc {
+            display: grid;
+            grid-template-columns: 28mm 1fr;
+            gap: 4mm;
+            margin-top: 6mm;
+            font-size: 13px;
+        }
+
+            .fc .label {
+                white-space: nowrap;
+            }
+
+        /* ---------- REASONS BOX ---------- */
+        .reasons {
+            border: 1px solid #000;
+            padding: 3.5mm;
+            border-radius: 3px;
+            align-self: start;
+            font-size: 13px;
+        }
+
+            .reasons .hdr {
+                font-weight: 700;
+                text-decoration: underline;
+                text-underline-offset: 2px;
+                margin-bottom: 2mm;
+                text-align: left;
+            }
+
+            .reasons ol {
+                margin: 0;
+                padding-left: 5mm;
+            }
+
+            .reasons li {
+                margin: 1.8mm 0;
+            }
+
+        /* ---------- FOOTER ---------- */
+        .footer {
+            display: grid;
+            grid-template-columns: 1fr 64mm;
+            gap: 10mm;
+            margin-top: 10mm;
+            align-items: end;
+            font-size: 13px;
+        }
+
+        .foot-left .line {
+            margin: 2.5mm 0;
+        }
+
+        .sign {
+            text-align: right;
+        }
+
+            .sign .role {
+                font-weight: 700;
+            }
+
+            .sign .org {
+                margin-top: 1mm;
+            }
+
+        /* ---------- BOTTOM NOTES ---------- */
+        .notes {
+            margin-top: 6mm;
+            border-top: 1px solid #000;
+            padding-top: 2.5mm;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        /* ---------- CORNER TAGS ---------- */
+        .corner-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12.5px;
+        }
+
+        .sheet {
+            width: 210mm; /* A4 width */
+            min-height: 297mm; /* A4 height */
+            background: #fff;
+            margin: 0 auto;
+            box-sizing: border-box;
+            padding: 12mm;
+            position: relative;
+            box-shadow: 0 0 0.8mm rgba(0,0,0,.15);
+        }
+
+
+        @@media screen {
+            #page-container {
+                bottom: 0;
+                right: 0;
+                overflow: auto
+            }
+
+            .loading-indicator {
+                display: none
+            }
+
+                .loading-indicator.active {
+                    display: block;
+                    position: absolute;
+                    width: 64px;
+                    height: 64px;
+                    top: 50%;
+                    left: 50%;
+                    margin-top: -32px
+                    /* margin-left: -32px*/
+                }
+
+                .loading-indicator img {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    bottom: 0;
+                    right: 0
+                }
+        }
+    </style>
+    <style type="text/css">
+
+        /* ======================= PRINT ONLY ======================= */
+        @@media print {
+
+            /* A4 sizing + margins */
+            @@page {
+                size: A4 portrait;
+                margin: 14mm;
+            }
+
+            html, body {
+                height: auto !important;
+                margin: 0 !important;
+                background: #fff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+                /* Sirf TC ka page hi print ho */
+                body * {
+                    visibility: hidden !important;
+                }
+
+            #page-container, #page-container * {
+                visibility: visible !important;
+            }
+
+            /* Page ko align karo top-left pe */
+            #page-container {
+                position: absolute !important;
+                inset: 0 auto auto 0 !important;
+                width: 210mm !important; /* A4 width */
+            }
+
+            /* Shadow remove, fixed sizing */
+            .sheet {
+                padding: 5px !important;
+            }
+            .sys {
+                font-size: 22px !important;
+                line-height: 2.55 !important;
+                margin-top: 2mm !important;
+            }
+
+            /* Dotted/border fixes */
+            .blank, .leaders {
+                border-bottom: 1px dotted #000 !important;
+                line-height: 1.3em !important;
+                font-weight: bold !important;
+            }
+
+            .pill {
+                background: #000 !important;
+                color: #fff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .reasons {
+                border: 1px solid #000 !important;
+            }
+
+            /* Page-break avoid */
+            .sheet, .page, .school, .footer, .body-grid, .left-section {
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+            }
+
+            /* Print pe button hide */
+            .no-print {
+                display: none !important;
+            }
+        }
+        /* ===================== END PRINT ONLY ===================== */
+
+    </style>
+
+</head>
+<body>
+    <button class="print-btn no-print" onclick="window.print()">🖨️ Print TC</button>
+
+
+    <div class="sheet" 0 id="page-container">
+        <div id="pf1" class="pf w0 h0" data-page-no="1" style="border:none">
+            <div class="page">
+                <div class="sys">
+                    <div class="school">
+                        <h1 class="SchoolName"></h1>
+                        <div class="addr">ARAIMILE, NEW TURA</div>
+                        <div class="addr">WEST GARO HILLS, MEGHALAYA – 794101</div>
+                    </div>
+                    <div class="row-top">
+                        <div>T.C. No.</div><span class="TCSNo"></span>
+                        <br />
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                    <div class="row-top">
+                        <div> </div>
+                        <div class="pill ">TRANSFER&nbsp;&nbsp;CERTIFICATE</div>
+                        <div></div>
+                    </div>
+                    <!-- PEN + DATE -->
+                    <div class="pen-date">
+                        <div class="pen-wrap">
+                            <div class="pen-label">Student's PEN</div>
+                            <span class="PermanentEducationNumber"></span>
+                        </div>
+                        <div class="date-dots">Date&nbsp;:&nbsp;&nbsp;<span class="TCDate" style="min-width:14mm;"></span></div>
+                    </div>
+                    <!-- Body grid -->
+                    <div class="">
+                        <!-- LEFT CONTENT -->
+                        <div class="left-section para">
+                            <div class="line">
+                                Certified that Master/Miss &nbsp;&nbsp;<span class="blank wide StudentName"></span>
+                            </div>
+                            <div class="line">
+                                Son/Daughter of Shri/Smt.&nbsp;&nbsp; <span class="blank wide  FatherName"></span>
+                            </div>
+                            <div class="line">
+                                an inhabitant of Vill &nbsp;&nbsp;<span class="blank mid Rvill"></span> &nbsp;&nbsp; P.O. &nbsp;&nbsp;<span class="blank mid Rpost"></span>
+                            </div>
+                            <div class="line">
+                                Dist.&nbsp;&nbsp; <span class="blank mid Rdist"></span> &nbsp;&nbsp; State &nbsp;&nbsp; <span class="blank mid Rstate"></span> &nbsp;&nbsp; left this
+                                institution on &nbsp;&nbsp;<span class="blank mid SchoolLeftDate"></span>
+                            </div>
+                            <div class="line">
+                                His / Her date of birth according to Admission Register is &nbsp;&nbsp;<span class="blank wide DOB"></span>.
+                            </div>
+                            <div class="line">
+                                He / She was reading in Class&nbsp;&nbsp; <span class="blank mid LastClassWord"></span>
+                            </div>
+                            <div class="line">
+                                and <i> He / She had / had not&nbsp;&nbsp;</i> passed the Examination to Class &nbsp;&nbsp;<span class="blank mid LastClass"></span>.
+                            </div>
+                            <div class="line">
+                                All sums due from him / her have been paid, viz. fees upto &nbsp;&nbsp;<span class="blank mid FeePaidUpto"></span>
+
+                            </div>
+                            <div class="line">
+                                His / Her conduct during his / her stay at school was <span class="blank wide OtherRemark"></span>.
+                            </div>
+                            <div class="line">
+                                Reason for leaving the School : <span class="blank wide ReasonName "></span>.
+                            </div>
+                            <!-- Fines & Character -->
+                        </div>
+                        <!-- RIGHT COLUMN: Reasons -->
+                    </div>
+                    <!-- Body grid -->
+                    <div class="body-grid">
+                        <!-- LEFT CONTENT -->
+                        <div class="left-section para">
+                            <div class="fc">
+                                <div class="label">Fines</div><div class="leaders"></div>
+                                <div class="label">Character</div><div class="leaders Remark"></div>
+                            </div>
+
+                        </div>
+                        @*<aside class="reasons">
+                                <div class="hdr">Reason for leaving the School :</div>
+                                <ol type="i">
+                                    <li>Unavoidable change of residence</li>
+                                    <li>Ill health.</li>
+                                    <li>Completion of the school course.</li>
+                                    <li>Minor reasons.</li>
+                                </ol>
+                            </aside>*@
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="footer">
+                        <div class="foot-left">
+                            <div class="line">Dated, Araimile, New Tura</div>
+                            <div class="line">The <span class="blank mid"></span> day of <span class="blank mid"></span></div>
+                        </div>
+                        <div class="sign">
+                            <div class="role">Principal / Headmistress</div>
+                            <div class="org "> <span class="SchoolName"></span><br />Araimile, New Tura</div>
+                        </div>
+                    </div>
+                    <!-- Bottom notes -->
+                    <div class="notes">
+                        * Enter here “had” or “had not” as the case may be.<br />
+                        # The Officer granting the certificate will delete from the note opposite the reason which do not apply.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        function formatDate(dateStr) {
+            if (!dateStr) return "";
+            // Agar ISO format aa raha ho (2020-08-06 ya 2020-08-06T00:00:00)
+            if (dateStr.includes("-") && dateStr.length >= 10) {
+                const parts = dateStr.split("T")[0].split("-");
+                return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+            // Agar old format (06-Aug-2020)
+            const months = {
+                Jan: "01", Feb: "02", Mar: "03", Apr: "04", May: "05", Jun: "06",
+                Jul: "07", Aug: "08", Sep: "09", Oct: "10", Nov: "11", Dec: "12"
+            };
+            const parts2 = dateStr.split("-");
+            if (parts2.length === 3) {
+                return `${parts2[0]}/${months[parts2[1]]}/${parts2[2]}`;
+            }
+            return dateStr; // fallback
+        }
+
+
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                url: "/Fee/GetStudentTCDetails?StudentId=" + localStorage.getItem("StudentId"),
+                dataType: "json",
+                success: function (data) {
+                    console.log(data)
+                    $(".TCSNo").text("  " + data.TCSNo);
+                    $(".StudentName").text("  " + data.StudentName);
+                    $(".FamilySSSMID").text("  " + data.FamilySSSMID);
+                    $(".SSSMIdNumber").text("  " + data.SSSMIdNumber);
+                    $(".AdmissionNo").text("  " + data.ScholarNo);
+                    $(".FatherName").text(" " + data.FatherName);
+                    $(".MotherName").text(" " + data.MotherName);
+                    $(".Rvill").text(" " + data.Rvill);
+                    $(".Rpost").text(" " + data.Rpost);
+                    $(".Rdist").text(" " + data.Rdist);
+                    $(".Rstate").text(" " + data.Rstate);
+                    $(".Nationality").text(" " + data.Nationality);
+                    $(".PermanentEducationNumber").text(" " + data.PerEduNumber);
+                    $(".ApparId").text(" " + data.ApaarId);
+
+                    $(".CastCategory").text(" " + data.CastCategory);
+                    $(".AdmissionDate").text("" + data.AdmissionDate);
+                    const formattedDate = formatDate(data.DOB);
+                    $(".DOB").text("" + formattedDate);
+                    $(".DOBWord").text("" + data.DOBWord);
+                    $(".LastClass").text(data.LastClass.replace("Class-", " "));
+
+                    /* $(".LastClass").text("" + data.LastClass);*/
+                    /* $(".LastClassWord").text("" + data.LastClassWord);*/
+                    $(".LastClassWord").text(data.LastClassWord.replace("Standard", ""));
+                    $(".QualifiedForProm").text("" + data.QualifiedForPromotion);
+                    $(".PromoteClassName").text("" + data.PromoteClassName);
+                    $(".PromoteClassNameWord").text("" + data.PromoteClassNameWord);
+                    if (data.FeePaidUpto != null) {
+                        $(".FeePaidUpto").text("" + data.FeePaidUpto);
+                    }
+                    $(".Remark").text("" + data.Remark);
+                    $(".TotAttendance").text("" + data.TotAttendance);
+                    $(".TotWorkingDays").text("" + data.TotWorkingDays);
+                    $(".GeneralConduct").text("" + data.Remark);
+                    $(".TCApplyDate").text("" + data.TCApplyDate);
+                    $(".TCDate").text("" + data.TCDate);
+                    $(".ReasonName").text("" + data.Reason);
+                    if (data.OtherRemarks != null) {
+                        $(".OtherRemark").text("" + data.OtherRemarks);
+                    }
+
+                    if (data.SchoolLeftDate != null) {
+                        $(".SchoolLeftDate").html("   " + data.SchoolLeftDate);
+                    }
+                    else {
+                        $(".SchoolLeftDate").text("   -  -  -  -");
+                    }
+                    $(".SchoolName").text(data.SchoolName);
+                    $(".SchoolWebsite").text(data.SchoolWebsite);
+                    $(".SchoolContact").text("Phone No : 6009749674, email : " + data.SchoolEmail);
+                    $(".SchoolLogo").attr("src", "/WebsiteImages/SchoolImage/" + data.SchoolLogo);
+                    $(".TCDate").html(data.TCDate);
+                    $(".ApplicationNo").text("   " + data.ApplicationNo);
+                    $(".SNo").text("   " + data.SNo);
+                },
+                error: function (result) {
+                    alert("Error");
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
+

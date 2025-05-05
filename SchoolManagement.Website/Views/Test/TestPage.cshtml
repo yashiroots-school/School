@@ -1,0 +1,119 @@
+﻿@using System.Data
+@{
+    /**/
+
+    ViewBag.Title = "Tuition Fee";
+
+}
+
+
+@model  SchoolManagement.Data.Test.ReportInput
+
+
+
+
+<div class="right_col" role="main">
+
+    <div class="row">
+
+        <div class="col-md-12 col-sm-12 col-xs-12">
+
+            <div class="dashboard_graph">
+
+                <div class="row x_title">
+
+                    @using (Html.BeginForm("TestPage", "Test", FormMethod.Post))
+                    {
+
+                        <div class="col-sm-12">
+
+                            <div class="col-sm-12">
+                                <h4>Transport Fee  &nbsp;<i class="fa fa-forward"></i></h4>
+                            </div>
+
+                            <div class="col-sm-12" style="margin-top: 15px;">
+
+                                <div class="col-sm-2">
+                                    <div class="form-group stright_line">
+                                        <label>School Type :</label>
+                                        @Html.DropDownListFor(dd => dd.SchollType, new SelectList(ViewBag.SchoolType, "Value", "Text"), new { @class = "form-control" })
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2">
+                                    <div class="form-group stright_line">
+                                        <label>Batch :</label>
+
+                                        @Html.DropDownListFor(dd => dd.BatchId, new SelectList(ViewBag.Batches, "Value", "Text"), new { @class = "form-control" })
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2">
+                                    <div class="form-group stright_line">
+                                        <label>Date From:</label>
+
+                                        @Html.TextBoxFor(tb => tb.FromDate, htmlAttributes: new { @class = "form-control datepicker" })
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group stright_line">
+                                        <label>Date To:</label>
+
+                                        @Html.TextBoxFor(tb => tb.ToDate, htmlAttributes: new { @class = "form-control datepicker" })
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2">
+                                    <div class="form-group stright_line">
+                                        <label>Search :</label><br />
+                                        <button type="submit" class="btn btn-success"> Filter Records </button>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                    }
+                </div>
+
+                <div class="col-md-12 col-sm-12 col-xs-12 table-responsive" @(ViewBag.Columns.Count == 0 ? "hidden" : " ")>
+
+                    <div id="FeeRecepitAll">
+                        <table class="table table-bordered" id="AllFeeReceiptTbl">
+                            <thead>
+                                <tr>
+
+                                    @foreach (DataColumn col in ViewBag.Columns)
+                                    {
+                                        <th>@col.ColumnName </th>
+                                    }
+
+                                </tr>
+                            </thead>
+                            <tbody class="tbody">
+
+
+                                @foreach (DataRow row in ViewBag.Rows)
+                                {
+                                    <tr>
+                                        @foreach (var xx in row.ItemArray)
+                                        {
+                                            <td>@xx </td>
+                                        }
+                                    </tr>
+                                }
+
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</div>

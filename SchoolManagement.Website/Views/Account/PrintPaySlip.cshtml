@@ -1,0 +1,178 @@
+﻿@using SchoolManagement.Website.Controllers;
+
+@{
+    ViewBag.Title = "PrintPaySlip";
+}
+@{
+    var data1 = ViewBag.Employeecode;
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label>From Date:</label>
+                    <input type="text" id="FromDate" class="form-control datepicker" readonly />
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label>To Date:</label>
+                    <input type="text" id="Todate" class="form-control datepicker" readonly />
+                </div>
+            </div>
+            <div class="col-sm-4" style="margin-top:20px;">
+                <div class="form-group">
+                    <button type="button" id="BtnFileter1" class="btn btn-success" data-id="@data1">Filter</button>
+                </div>
+            </div>
+        </div>
+        <div id="PrintTable">
+            <div id="Employeedetails">
+
+            </div>
+        </div>
+
+        <div style="text-align:right;margin-top:10px">
+            <button type="button" id="BtnPrint" class="btn btn-success">Print</button>
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/printThis.js"></script>
+
+<script>
+    $("#BtnPrint").on('click', function () {
+
+        $("#PrintTable").printThis({
+            footer: null
+        });
+    });
+</script>
+<script>
+    $("#BtnFileter1").on("click", function () {
+        var id = $(this).attr("data-id");
+        var fromdate = $("#FromDate").val();
+        var todate = $("#Todate").val();
+        if (id == 0) {
+            return false;
+        }
+        var html = "";
+        $.ajax({
+            url: "/Account/GetPayslipById",
+            data: { id: id, fromdate: fromdate, todate: todate },
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json;charset=utf-8",
+            success: function (result) {
+                //$("#Employeedetails").html('');
+                if (result != null) {
+                    html += "<div class='row'>";
+                    html += "<div class='col-md-12 col-sm-12 col-xs-12'>";
+                    //<img src="~/WebsiteImages/img/AlphonsaLogo.png" />
+                    html += "<div class='col-md-2 col-sm-2 col-xs-2' style='margin-left:10px;'>";
+                    //html += "<img src='/WebsiteImages/img/AlphonsaLogo.png' alt='logo'width='90px;' style='display:inline-block;'>";
+                    html += "</div>";
+                    html += "<div class='col-md-8 col-sm-8 col-xs-8' style='text-align:center;margin-top:15px;'>";
+                    html += "<h3 class='title-of-labprintHead'>St.CarmelTeresa School</h3>";
+                    html += "</div>";
+                    html += "<div class='col-xs-2'>";
+                    html += "</div>";
+                    html += "</div>";
+                    html += "</div>";
+                    html += "</div>";
+                    result.forEach(function (data) {
+                        var totaldeductions = data.Gross - data.Net_Pay;
+                        html += "<div><h2 style='text-align:center'>PaySlip For the Month of " + data.MonthName + "-" + data.year + "</h2></div>";
+                        html += "<div class='col-md-12 col-sm-12 col-xs-12' style='margin-top:5px;'>";
+                        html += "<div class='col-md-6 col-sm-6 col-sm-6'>";
+                        html += "<div>";
+                        html += "<label>Employee Name :<span>" + data.Staff_Name + "</span></label>";
+                        html += "</div>";
+                        html += "<div>";
+                        html += "<label>Designation :<span>" + data.Designation + "</span></label>";
+                        html += "</div>";
+                        html += "<div>";
+                        html += "<label>Bank Name :<span>" + data.Bankname + "</span></label>";
+                        html += "</div>";
+                        html += "<div>";
+                        html += "<label>UAN No :<span>" + data.UANNo + "</span></label>";
+                        html += "</div>";
+                        html += "<div>";
+                        html += "<label>ESIC No :<span></span></label>";
+                        html += "</div>";
+                        html += "<div>";
+                        html += "<label>PAN No :<span></span></label>";
+                        html += "</div>";
+                        html += "<div>";
+                        html += "<label>PF No :<span></span></label>";
+                        html += "</div>";
+                        html += "</div>";
+                        html += "<div class='col-md-6 col-sm-6 col-sm-6'>";
+                        html += "<div>";
+                        html += "<label>Employee Code :<span>" + data.Staff_Id + "</span></label>";
+                        html += "</div>";
+                        html += "<div>";
+                        html += "<label>Bank Account No :<span>" + data.AccountNo + "</span></label>";
+                        html += "</div>";
+                        html += "<div>";
+                        html += "<label>Join Date :<span></span></label>";
+                        html += "</div>";
+                        html += "<div>";
+                        html += "<label>Location :<span>Banglore</span></label>";
+                        html += "</div>";
+                        html += "<div>";
+                        html += "<label>Address :<span>Whitefield, Bengaluru, Karnataka</span></label>";
+                        html += "</div>";
+                        html += "<div>";
+                        html += "<label>Leave Taken :<span>" + data.LOP + "</span></label>";
+                        html += "</div>";
+                        html += "</div>";
+                        html += "<div class='row'>";
+                        html += "<table class='table table-bordered'>";
+                        html += "<tr style='background-color: #1ABB9C;color: #fff;'>";
+                        html += "<td>EARNINGS</td>";
+                        html += "<td>DEDUCTIONS</td>";
+                        html += "</tr>";
+                        html += "<tr>";
+                        html += "<td><p>Basic Salary:<span style='margin-left:70px;'>Rs" + data.Basic_Salary + " /-</span></p></td>";
+                        html += "<td><p>EPF: <span style='margin-left:75px;'>RS" + data.PF + " /-</span></p></td>";
+                        html += "</tr>";
+                        html += "<td><p>DA:<span style='margin-left:120px;'>Rs" + data.DA + " /-</span></p></td>";
+                        html += "<td><p>ESI: <span style='margin-left:75px;'>RS" + data.ESI + " /-</span></p></td>";
+                        html += "</tr>";
+                        html += "<td><p>HRA:<span style='margin-left:105px;'>Rs" + data.HRA + " /-</span></p></td>";
+                        html += "<td><p>Professional Tax: <span style='margin-left:10px;'>Rs" + data.Professional_Tax + "/-</span></p></td>";
+                        html += "</tr>";
+                        html += "<td><p>CCA:<span style='margin-left:110px;'>Rs" + data.CCA + " /-</span></p></td>";
+                        html += "<td><p>Others:</span></p></td>";
+                        html += "</tr>";
+                        html += "<td><p>Other Allowances:<span style='margin-left:35px;'>Rs" + data.OtherALlowance + " /-</span></p></td>";
+                        html += "<td></td>";
+                        html += "</tr>";
+                        html += "<td><p>Total Salary:<span style='margin-left:65px;'>Rs" + data.Gross + " /-</span></p></td>";
+                        html += "<td><p>Total Deductions: <span style='margin-left:20px;'>RS" + totaldeductions + " /-</span></p></td>";
+                        html += "</table>";
+                        html += "<p>Net Pay:<span>Rs" + data.Net_Pay + "/-</span></p>";
+                        html += "<p>Amount In Rupees:<span>" + data.Numberinwords + "</span></p>";
+                        //html += "</tr style='border:none;'>";
+                        //html += "<td><p>Net Pay:<span>Rs" + data.Net_Pay + " /-</span></p></td>";
+                        //html += "</tr>";
+                        //html += "</tr>";
+                        //html += "<td><p>Amount In Rupees:<span></span></p></td>";
+                        //html += "</tr>";
+                        html += "<p style='margin-top:20px;'>Note: Since this is a computer-generated statement, it does not need any signature.</p>";
+                        html += "</div>";
+                        html += "<p style='page-break-after:always;'></p>";
+                    });
+                    $("#Employeedetails").html(html);
+                }
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    });
+</script>
+

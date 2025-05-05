@@ -1,0 +1,941 @@
+﻿
+
+<div id="Studentform">
+    <!-- PAGE TITLE -->
+    <div class="page-title" style="background-color: #f5f5f5;">
+        <h2><span class="fa fa-arrow-circle-o-right"></span>Add New Student Details</h2>
+    </div>
+    <!-- END PAGE TITLE -->
+    <!-- PAGE CONTENT WRAPPER -->
+    <div class="page-content-wrap">
+        <div ID="Panel1" class="panel panel-default">
+            <div class="panel-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="col-sm-6 pull-right">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!-- row started -->
+                        <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                            <!-- col-msx-12 started -->
+                            <ul class="nav nav-tabs">
+                                <li id="listddetails" class="active"><a class="sis_tab_a">Student Personal Details</a></li>
+                                <li id="listacddetails"><a class="sis_tab_a click">Academic Details</a></li>
+                                <li id="listacdworkexp"><a class="sis_tab_a click_1">Work Experience</a></li>
+                                <li id="listsummerintrn"><a id="summerinterntab" class="sis_tab_a click_2">Summer Internship Details</a></li>
+                                <li id="listskillst"><a class="sis_tab_a click_3">Skillsets</a></li>
+                                <li id="listfmlydetails"><a class="sis_tab_a click_4">FamilyDetails</a></li>
+                                <li id="listdeclrtn"><a class="sis_tab_a click_5">Declaration</a></li>
+                            </ul>
+                            <div class="tab-content tab_sis">
+                                <div id="add" class="tab-pane fade in active">
+                                    <div class="row">
+                                        <!-- col-sm-12 started -->
+                                        <div class="col-sm-12">
+                                            <!-- col-sm-12 started -->
+                                            <h4 class="std_head well-sm jss_form">Student Details</h4>
+                                            <div class="row">
+                                                <div class="col-sm-12">Note : Scholar Number is auto generated now based on the selection of Course,Batch & Roll Number.</div>
+                                            </div>
+                                            <br />
+                                            <div class="col-sm-6" style="border-right: 1px solid #eee;">
+                                                <!-- col-sm-6 started -->
+
+                                                <div class="form-group">
+                                                    <label>Student Name :</label>
+                                                    <input type="text" class="form-control" id="StudentName" />
+                                                    @*<asp:TextBox class="form-control" ID="StudentName" ClientIDMode="Static" ></asp:TextBox>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Course :</label>
+                                                    @Html.DropDownList("Courseddl", new SelectList(ViewBag.AllCourses, "DataListItemName", "DataListItemName"), "select", new { @id = "Courseddl", @class = "form-control" })
+                                                    @*<asp:DropDownList ID="Courseddl" runat="server" ClientIDMode="Static" class="form-control" onchange="setScholarNo()"></asp:DropDownList>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Year :</label>
+                                                    @Html.DropDownList("Yearddl", new SelectList(ViewBag.AllYears, "DataListItemName", "DataListItemName"), "select", new { @id = "Yearddl", @class = "form-control" })
+
+                                                    @*<asp:DropDownList ID="Yearddl" runat="server" ClientIDMode="Static" class="form-control"></asp:DropDownList>*@
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Batch :</label>
+                                                    @Html.DropDownList("Batchddl", new SelectList(ViewBag.AllBatchs, "DataListItemName", "DataListItemName"), "select", new { @id = "Batchddl", @class = "form-control" })
+
+                                                    @*<asp:DropDownList ID="Batchddl" runat="server" class="form-control" ClientIDMode="Static" onchange="setScholarNo()"></asp:DropDownList>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Roll Number :</label>
+                                                    <input type="text" class="form-control" id="rollno" MaxLength="5" onkeypress='validate(event)' onkeyup="setScholarNo()" onchange="setScholarNo()" />
+                                                    @*<asp:TextBox class="form-control" ID="rollno" MaxLength="5" onkeypress='validate(event)' ClientIDMode="Static" runat="server" onkeyup="setScholarNo()" onchange="setScholarNo()"></asp:TextBox>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Scholar Number : </label>
+                                                    <span style="background-color: none"><b>( Example :</b></span><span style="background-color: blueviolet; color: white">SFMMS1619</span><span style="background-color: aqua">-<b>0001 )</b></span>
+                                                    <input type="text" class="form-control" id="ScholarNo" />
+                                                    @*<asp:TextBox ReadOnly="true" class="form-control" ID="ScholarNo" runat="server" ClientIDMode="Static"></asp:TextBox>*@
+                                                </div>
+
+
+                                                <div class="form-group">
+                                                    <label>Specialization :</label>
+                                                    @Html.DropDownList("Specializationddl", new SelectList(ViewBag.AllSpecializations, "DataListItemName", "DataListItemName"), "select", new { @id = "Specializationddl", @class = "form-control" })
+
+                                                    @*<asp:DropDownList ID="Specializationddl" runat="server" class="form-control" ClientIDMode="Static"></asp:DropDownList>*@
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Category :</label>
+                                                    @Html.DropDownList("Categoryddl", new SelectList(ViewBag.AllCategorys, "DataListItemName", "DataListItemName"), "select", new { @id = "Categoryddl", @class = "form-control" })
+
+                                                    @*<asp:DropDownList ID="Categoryddl" runat="server" ClientIDMode="Static" class="form-control"></asp:DropDownList>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Faculty Mentor :</label>
+                                                    @Html.DropDownList("FacultyMentorddl", new SelectList(ViewBag.AllFacultyMentors, "DataListItemName", "DataListItemName"), "select", new { @id = "FacultyMentorddl", @class = "form-control" })
+                                                    @*<asp:DropDownList ID="FacultyMentorddl" runat="server" ClientIDMode="Static" class="form-control"></asp:DropDownList>*@
+                                                </div>
+
+
+
+                                            </div>
+                                            <!-- col-sm-6 closed -->
+                                            <div class="col-sm-6">
+                                                <!-- col-sm-6 started -->
+                                                <div class="form-group">
+                                                    <label>DOB :</label>
+                                                    <input type="text" class="form-control" id="DOB" onchange=" return CalculateAge()" />
+                                                    @*<asp:TextBox class="form-control" ID="DOB" runat="server" ClientIDMode="Static" onchange=" return CalculateAge()"></asp:TextBox>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Age :</label>
+                                                    <input type="text" class="form-control" id="Age" onkeypress='validate(event)' />
+                                                    @*<asp:TextBox class="form-control" ID="Age" onkeypress='validate(event)' ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Gender:</label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="radio" id="Malechkbox" value="Male" name="gender" checked class="checkbox-inline" />&nbsp;Male
+                                                        @*<asp:RadioButton ID="Malechkbox" runat="server" ClientIDMode="Static" GroupName="gender" class="checkbox-inline" />
+                                                            &nbsp;Male*@
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="radio" id="FeMalechkbox" value="FeMale" name="gender" class="checkbox-inline" />&nbsp;Female
+                                                        @*<asp:RadioButton ID="FeMalechkbox" runat="server" ClientIDMode="Static" GroupName="gender" class="checkbox-inline" />&nbsp;Female*@
+                                                    </label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Correspondence Address : </label>
+                                                    <textarea class="form-control" id="CorrespondenceAddress" rows="6"></textarea>
+                                                    @*<asp:TextBox class="form-control" ID="CorrespondenceAddress" ClientIDMode="Static" runat="server" TextMode="MultiLine"></asp:TextBox>*@
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Residence Location in Mumbai : </label>
+                                                    <input type="text" class="form-control" id="ResidenceLocation" />
+                                                    @*<asp:TextBox class="form-control" ID="ResidenceLocation" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Country Code: </label>
+                                                    <input type="text" class="form-control" id="Countrycode" onkeypress='validatecountrycode(event)' maxlength="4" />
+                                                    @*<asp:TextBox class="form-control" ID="Countrycode" onkeypress='validatecountrycode(event)' MaxLength="4" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Mobile No : </label>
+                                                    <input type="text" class="form-control" id="Mobile" onkeypress='validate(event)' maxlength="10" />
+                                                    @*<asp:TextBox class="form-control" ID="Mobile" onkeypress='validate(event)' MaxLength="10" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Professional Email Id  : </label>
+                                                    <input type="text" class="form-control" id="Email" onblur='validateEmail(this)' maxlength="100" />
+
+                                                    @*<asp:TextBox class="form-control" ID="Email" onblur="validateEmail(this);" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+
+
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Out Station Student  : </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="radio" ID="OutStationYesChkbox" checked Name="OutStation" /> Yes
+                                                        @*<asp:RadioButton ID="OutStationYesChkbox" runat="server" ClientIDMode="Static" onChange="disablefield();" GroupName="OutStation" />&nbsp;Yes*@
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="radio" ID="OutStationNoChkbox" Name="OutStation" /> No
+
+                                                        @*<asp:RadioButton ID="OutStationNoChkbox" runat="server" ClientIDMode="Static" onChange="disablefield();" GroupName="OutStation" />&nbsp;No*@
+                                                    </label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Permanent Address : </label>
+                                                    <textarea class="form-control" rows="10" id="Native"></textarea>
+                                                    @*<asp:TextBox class="form-control" ID="Native" runat="server" ClientIDMode="Static" TextMode="MultiLine"></asp:TextBox>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Hostalite  : </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="radio" id="HostaliteYesChkbox" name="Hostalite" />&nbsp;Yes
+                                                        @*<asp:RadioButton ID="HostaliteYesChkbox" runat="server" ClientIDMode="Static" GroupName="Hostalite" />&nbsp;Yes*@
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="radio" id="HostaliteNoChkbox" name="Hostalite" />&nbsp;No
+                                                        @*<asp:RadioButton ID="HostaliteNoChkbox" runat="server" ClientIDMode="Static" GroupName="Hostalite" />&nbsp;No*@
+                                                    </label>
+                                                </div>
+                                                <textarea rows="2" id="StudentId" style="visibility:hidden"></textarea>
+                                                @*<asp:TextBox class="form-control" ID="StudentId" runat="server" ClientIDMode="Static" TextMode="MultiLine"></asp:TextBox>*@
+
+                                                <button type="button" class="btn btn-success pull-right">
+                                                    <span data-toggle="tab" class="button_a outsidelink">Next</span>
+                                                </button>
+                                            </div>
+                                            <!-- col-sm-6 closed -->
+                                        </div>
+                                        <!-- col-sm-12 closed -->
+                                    </div>
+                                    <!-- row closed -->
+                                </div>
+                                <!-- tab-pane fade in active closed -->
+                                <div id="add1" class="tab-pane fade">
+
+                                    <div class="row">
+
+                                        <div class="col-sm-12">
+
+
+                                            <div class="col-sm-12 table-responsive">
+
+
+                                                <input type="text" id="AcademicDetailId" style="visibility: hidden" />
+
+                                                <table class="table table-bordered">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="full_d" style="text-align: center;">Year</td>
+                                                            <td class="full_h" style="text-align: center;">Qualification</td>
+                                                            <td class="full_d" style="text-align: center;">School / College</td>
+                                                            <td class="full_h" style="text-align: center;">University</td>
+                                                            <td class="full_d" style="text-align: center;">Percentage</td>
+                                                            <td class="full_d" style="text-align: center;">Action</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="full_d" style="text-align: center;">
+                                                                <input type="number" class="form-control" id="Aca_Year" />
+                                                                @*<asp:TextBox class="form-control" ID="Aca_Year" ClientIDMode="static" runat="server"></asp:TextBox>*@
+                                                            </td>
+
+                                                            <td class="full_h" style="text-align: center;">
+                                                                @Html.DropDownList("ddlAca_Qualification", new SelectList(ViewBag.AllQualifications, "DataListItemName", "DataListItemName"), "select", new { @id = "ddlAca_Qualification", @class = "form-control" })
+
+                                                                @*<asp:DropDownList ID="ddlAca_Qualification" runat="server" ClientIDMode="Static" class="form-control"></asp:DropDownList><br />*@
+                                                                <input type="text" class="form-control" id="Stream" placeholder="Stream" />
+                                                                @* <asp:TextBox ID="txtacadamicQualification" runat="server" class="form-control" placeholder="Stream" ClientIDMode="Static"></asp:TextBox>*@
+
+                                                            </td>
+                                                            <td class="full_d" style="text-align: center;">
+                                                                <input type="text" class="form-control" id="Aca_College" />
+                                                                @*<asp:TextBox class="form-control" ID="Aca_College" ClientIDMode="static" runat="server"></asp:TextBox>*@
+                                                            </td>
+
+
+                                                            <td class="full_h" style="text-align: center;">
+                                                                <input type="text" class="form-control" id="Aca_University" />
+                                                                @*<asp:TextBox class="form-control" ID="Aca_University" ClientIDMode="static" runat="server"></asp:TextBox>*@
+                                                            </td>
+                                                            <td class="full_d" style="text-align: center;">
+                                                                <input type="text" class="form-control" id="Aca_Percentage" MaxLength="5" onkeypress="return isNumberKey(this, event);" />
+                                                                @*<asp:TextBox class="form-control" ID="Aca_Percentage" MaxLength="5" onkeypress="return isNumberKey(this, event);" ClientIDMode="static" runat="server"></asp:TextBox>*@
+                                                            </td>
+                                                            <td class="full_d" style="text-align: center;">
+                                                                <input type="button" id="AcademicAdd" value="Add" class="btn btn-primary" />
+                                                                <input type="button" id="AcademicUpdate" value="Update" class="btn btn-primary" />
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+
+                                                <table class="table table-bordered" id="Academictbl">
+                                                    <thead>
+                                                        <tr>
+                                                            <th hidden="hidden">AcademicDetailId</th>
+                                                            <th>Year</th>
+                                                            <th>Qualification</th>
+                                                            <th>Stream</th>
+                                                            <th>School / College</th>
+                                                            <th>Universtiy</th>
+                                                            <th>Percentage</th>
+                                                            <th>Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+
+
+                                            </div>
+
+                                            <div class="col-sm-12 table-responsive">
+                                                <!-- col-sm-12 started -->
+                                                <div style="height: 5px; background-color: blueviolet"></div>
+                                                <input id="SemesterId" class="form-control" style="visibility:hidden" />
+                                                @*<asp:TextBox class="form-control" ID="SemesterId" ClientIDMode="static" runat="server"></asp:TextBox>*@
+
+                                                <table class="table table-bordered">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="full_d" style="text-align: center;">Year</td>
+                                                            <td class="full_h" style="text-align: center;">Semester/Trimester</td>
+                                                            <td class="full_d" style="text-align: center;">Percentage</td>
+                                                            <td class="full_d" style="text-align: center;">Action</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="full_d" style="text-align: center;">
+                                                                <input type="number" class="form-control" ID="Year_Sem" />
+                                                                @*<asp:TextBox class="form-control" ID="Year_Sem" ClientIDMode="static" runat="server"></asp:TextBox>*@
+                                                            </td>
+
+
+
+                                                            <td class="full_h" style="text-align: center;">
+                                                                @Html.DropDownList("ddlSemester", new SelectList(ViewBag.AllSemesters, "DataListItemName", "DataListItemName"), "select", new { @id = "ddlSemester", @class = "form-control" })
+
+                                                                @*<asp:DropDownList ID="ddlSemester" runat="server" ClientIDMode="Static" class="form-control"></asp:DropDownList>*@
+
+
+                                                            <td class="full_d" style="text-align: center;">
+                                                                <input type="text" class="form-control" ID="Percentage_Sem" MaxLength="5" onkeypress="return isNumberKey(this, event);" />
+                                                                @*<asp:TextBox class="form-control" ID="Percentage_Sem" MaxLength="5" onkeypress="return isNumberKey(this, event);" ClientIDMode="static" runat="server"></asp:TextBox>*@
+                                                            </td>
+                                                            <td class="full_d" style="text-align: center;">
+                                                                <input type="button" id="AcademicAdd1" value="Add" class="btn btn-primary" />
+                                                                <input type="button" id="AcademicUpdate1" value="Update" class="btn btn-primary" />
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+
+                                                <table class="table table-bordered" id="Academictbl1">
+                                                    <thead>
+                                                        <tr>
+                                                            <th hidden="hidden">AcademicDetailId</th>
+                                                            <th>Year</th>
+                                                            <th>Semester/Trimester</th>
+                                                            <th>Percentage</th>
+                                                            <th>Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <!-- col-sm-12 closed -->
+                                        <div class="clearfix"></div>
+                                        <div class="col-sm-12" style="margin-top: 10px;">
+                                            <button type="button" class="btn btn-success pull-right">
+                                                <span data-toggle="tab" class="button_a outsidelink_1">Next</span>
+                                            </button>
+
+                                            <button type="button" class="btn btn-success pull-left">
+                                                <span data-toggle="tab" class="button_a outsidelink_1back">Back</span>
+                                            </button>
+
+                                        </div>
+                                    </div>
+                                    <!-- row closed -->
+                                </div>
+
+                                <div id="add2" class="tab-pane fade">
+                                    <!-- tab-pane fade started -->
+                                    <div class="row">
+                                        <!-- col-sm-12 started -->
+                                        <div class="col-sm-12">
+                                            <!-- col-sm-12 started -->
+                                            <h4 class="std_head well-sm jss_form">Details of Work Experience</h4>
+
+                                            <div class="col-sm-4  pull-right">
+                                                <h5>
+                                                    Total Experience (In Months):
+                                                    <label ID="lbltotaWorkExperince"></label>
+                                                    @*<asp:Label ID="lbltotaWorkExperince" runat="server" Text="" ClientIDMode="Static"></asp:Label>*@
+                                                </h5>
+                                            </div>
+                                            <div class="col-sm-12 table-responsive">
+                                                <!-- col-sm-12 started -->
+
+                                                <input type="text" id="WorkExperienceId" style="visibility: hidden" />
+
+                                                <table class="table table-bordered">
+                                                    <tbody>
+                                                        <tr>
+
+                                                            <td class="full_h" style="text-align: center;">Company Name</td>
+                                                            <td class="full_d" style="text-align: center;">Company Designation</td>
+                                                            <td class="full_h" style="text-align: center;">Company Duration (In Months)</td>
+                                                            <td class="full_d" style="text-align: center;">Company Profile</td>
+                                                            <td class="full_d" style="text-align: center;">Action</td>
+                                                        </tr>
+                                                        <tr>
+
+                                                            <td class="full_h" style="text-align: center;">
+                                                                <input type="text" class="form-control" ID="Wrk_CompanyName" />
+                                                                @*<asp:TextBox class="form-control" ID="Wrk_CompanyName" ClientIDMode="static" runat="server"></asp:TextBox>*@
+                                                            </td>
+                                                            <td class="full_d" style="text-align: center;">
+                                                                <input type="text" class="form-control" ID="Wrk_CompanyDesignation" />
+                                                                @*<asp:TextBox class="form-control" ID="Wrk_CompanyDesignation" ClientIDMode="static" runat="server"></asp:TextBox>*@
+                                                            </td>
+                                                            <td class="full_h" style="text-align: center;">
+                                                                <input type="text" class="form-control" ID="Wrk_CompanyDuration" />
+                                                                @*<asp:TextBox class="form-control" ID="Wrk_CompanyDuration" onkeypress='validate(event)' MaxLength="2" ClientIDMode="static" runat="server"></asp:TextBox>*@
+                                                            </td>
+                                                            <td class="full_d" style="text-align: center;">
+                                                                <input type="text" class="form-control" ID="Wrk_CompanyProfile" />
+                                                                @*<asp:TextBox class="form-control" ID="Wrk_CompanyProfile" ClientIDMode="static" runat="server"></asp:TextBox>*@
+                                                            </td>
+                                                            <td class="full_d" style="text-align: center;">
+                                                                <input type="button" id="WorkExpAdd" value="Add" class="btn btn-primary" />
+                                                                <input type="button" id="WorkExUpdate" value="Update" class="btn btn-primary" />
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+
+                                                <table class="table table-bordered" id="WorkExptbl">
+                                                    <thead>
+                                                        <tr>
+                                                            <th hidden="hidden">WorkExperienceId</th>
+                                                            <th>Company Name</th>
+                                                            <th>Designation</th>
+                                                            <th>Duration</th>
+                                                            <th>Company Profile</th>
+                                                            <th>Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <!-- col-sm-12 closed -->
+                                        <div class="clearfix"></div>
+                                        <div class="col-sm-12" style="margin-top: 10px;">
+                                            <button type="button" class="btn btn-success pull-right"><span id="btnworkexp" data-toggle="tab" class="button_a outsidelink_2">Next</span></button>
+
+                                            <button type="button" class="btn btn-success pull-left">
+                                                <span data-toggle="tab" class="button_a outsidelink_2back">Back</span>
+                                            </button>
+
+                                        </div>
+                                    </div>
+                                    <!-- row closed -->
+                                </div>
+
+                                <div id="add3" class="tab-pane fade">
+                                    <!-- tab-pane fade started -->
+                                    <div class="row">
+                                        <!-- row started -->
+                                        <div class="col-sm-12 table-responsive">
+                                            <!-- col-sm-12 started -->
+                                            <h4 class="std_head well-sm jss_form">Summer Internship Details</h4>
+                                            <div class="col-sm-6" style="border-right: 1px solid #eee;">
+                                                <!-- col-sm-6 started -->
+                                                <div class="form-group">
+                                                    <label>Summer Company Name : </label>
+                                                    <input type="text" class="form-control" ID="Intern_CompanyName" />
+                                                    @*<asp:TextBox class="form-control" ID="Intern_CompanyName" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+
+
+
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Start Date  : </label>
+                                                    <input type="text" class="form-control" ID="Intern_StartDate" />
+                                                    @*<asp:TextBox class="form-control" ID="Intern_StartDate" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Mobile No : </label>
+                                                    <input type="text" class="form-control" ID="Intern_Mobile" onkeypress='validate(event)' MaxLength="10" />
+                                                    @*<asp:TextBox class="form-control" onkeypress='validate(event)' ID="Intern_Mobile" ClientIDMode="Static" runat="server" MaxLength="10"></asp:TextBox>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>End Date : </label>
+                                                    <input type="text" class="form-control" ID="Intern_EndDate" />
+
+                                                    @*<asp:TextBox class="form-control" ID="Intern_EndDate" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Project Title : </label>
+                                                    <input type="text" class="form-control" ID="Intern_ProjectTitle" />
+                                                    @*<asp:TextBox class="form-control" ID="Intern_ProjectTitle" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Faculty Project Guide  : </label>
+                                                    @Html.DropDownList("Intern_FacultyProjectGuide", new SelectList(ViewBag.AllFacultyMentors, "DataListItemName", "DataListItemName"), "select", new { @id = "Intern_FacultyProjectGuide", @class = "form-control" })
+
+                                                    @*<asp:DropDownList ID="Intern_FacultyProjectGuide" runat="server" class="form-control" ClientIDMode="Static"></asp:DropDownList>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Faculty Guide Mobile No : </label>
+                                                    <input type="text" class="form-control" onkeypress='validate(event)' MaxLength="10" ID="Intern_FacultyGuideMobile" />
+
+                                                    @*<asp:TextBox class="form-control" onkeypress='validate(event)' MaxLength="10" ID="Intern_FacultyGuideMobile" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Industry Guide Name  : </label>
+                                                    <input type="text" class="form-control" ID="Intern_IndustryGuideName" />
+
+                                                    @*<asp:TextBox class="form-control" ID="Intern_IndustryGuideName" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Industry Guide Designation : </label>
+                                                    <input type="text" class="form-control" ID="Intern_IndustryGuideDesignation" />
+                                                    @*<asp:TextBox class="form-control" ID="Intern_IndustryGuideDesignation" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                            </div>
+                                            <!-- col-sm-6 closed -->
+                                            <div class="col-sm-6 table-responsive">
+                                                <!-- col-sm-6 started -->
+                                                <div class="form-group">
+                                                    <label>Industry Guide Tel No : </label>
+                                                    <input type="text" class="form-control" ID="Intern_IndustryGuideTelNo" />
+
+                                                    @*<asp:TextBox class="form-control" ID="Intern_IndustryGuideTelNo" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Industry Guide Mobile No : </label>
+                                                    <input type="text" class="form-control" ID="Intern_IndustryGuideMobile" onkeypress='validate(event)' MaxLength="10" />
+
+                                                    @*<asp:TextBox class="form-control" ID="Intern_IndustryGuideMobile" onkeypress='validate(event)' MaxLength="10" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Industry Guide Email : </label>
+                                                    <input type="text" class="form-control" ID="Intern_IndustryGuideEmail" onblur="validateEmail(this);" />
+                                                    @*<asp:TextBox class="form-control" ID="Intern_IndustryGuideEmail" onblur="validateEmail(this);" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Stipend in Thousands  : </label>
+                                                    <input type="text" class="form-control" ID="Intern_Stipend" onkeypress='validate(event)' />
+                                                    @* <asp:TextBox class="form-control" ID="Intern_Stipend" onkeypress='validate(event)' ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Project Description : </label>
+                                                    <input type="text" class="form-control" ID="Intern_ProjectDescription" />
+
+                                                    @*<asp:TextBox class="form-control" ID="Intern_ProjectDescription" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Project Submission : </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="radio" ID="Intern_ProjectSubmissionYesChkbox" name="submission" onChange="disablefieldProject();" />&nbsp;Yes
+                                                        @*<asp:RadioButton ID="Intern_ProjectSubmissionYesChkbox" runat="server" ClientIDMode="Static" GroupName="submission" onChange="disablefieldProject();" />&nbsp;Yes*@
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="radio" ID="Intern_ProjectSubmissionNoChkbox" name="submission" onChange="disablefieldProject();" />&nbsp;No
+                                                        @*<asp:RadioButton ID="Intern_ProjectSubmissionNoChkbox" runat="server" ClientIDMode="Static" GroupName="submission" onChange="disablefieldProject();" />&nbsp;No*@
+                                                    </label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Reason for Non Submission : </label>
+                                                    @*<input type="text" class="form-control" ID="Intern_ReasonforNoSubmission" />*@
+                                                    <textarea rows="10" class="form-control" ID="Intern_ReasonforNoSubmission"></textarea>
+                                                    @*<asp:TextBox class="form-control" ID="Intern_ReasonforNoSubmission" runat="server" ClientIDMode="Static" TextMode="MultiLine"></asp:TextBox>*@
+
+
+
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Pre_Placement Offer Received : </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="radio" id="Intern_Pre_PlacementOfferReceivedYesChkbox" name="PlacementOffer" />&nbsp;Yes
+                                                        @*<asp:RadioButton ID="Intern_Pre_PlacementOfferReceivedYesChkbox" ClientIDMode="Static" runat="server" GroupName="PlacementOffer" />&nbsp;Yes*@
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="radio" id="Intern_Pre_PlacementOfferReceivedNoChkbox" name="PlacementOffer" />&nbsp;No
+                                                        @*<asp:RadioButton ID="Intern_Pre_PlacementOfferReceivedNoChkbox" ClientIDMode="Static" runat="server" GroupName="PlacementOffer" />&nbsp;No*@
+                                                    </label>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Feedback On Learning during Summer Internship : </label>
+                                                    <textarea ID="Intern_Feedback" class="form-control" rows="10"></textarea>
+                                                    @*<asp:TextBox class="form-control" ID="Intern_Feedback" runat="server" ClientIDMode="Static" TextMode="MultiLine"></asp:TextBox>*@
+                                                </div>
+                                            </div>
+                                            <input type="radio" ID="SummerInternshipId" name="PlacementOffer" style="visibility:hidden" />
+                                            @*<asp:RadioButton ID="SummerInternshipId" ClientIDMode="Static" runat="server" GroupName="PlacementOffer" />*@
+                                            <!-- col-sm-6 closed -->
+                                        </div>
+                                        <!-- col-sm-12 closed -->
+                                        <div class="clearfix"></div>
+
+                                        <div class="col-sm-12" style="margin-top: 10px;">
+
+                                            <button type="button" class="btn btn-success pull-right">
+                                                <span data-toggle="tab" class="button_a outsidelink_3">Next</span>
+                                            </button>
+
+                                            <button type="button" class="btn btn-success pull-left">
+                                                <span data-toggle="tab" class="button_a outsidelink_3back">Back</span>
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                    <!-- row closed -->
+                                </div>
+
+                                <div id="add4" class="tab-pane fade">
+                                    <!-- tab-pane fade started -->
+                                    <div class="row">
+                                        <!-- row started -->
+                                        <div class="col-sm-12 table-responsive">
+                                            <!-- col-sm-12 started -->
+                                            <h4 class="std_head well-sm jss_form">Skillsets</h4>
+                                            <div class="col-sm-12">
+                                                <!-- col-sm-6 started -->
+                                                <div class="form-group">
+                                                    <label>Management Skills :</label><br>
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" ID="Problemsolving" />Problem solving and analytical skills
+                                                        @*<asp:CheckBox ID="Problemsolving" runat="server" ClientIDMode="Static" />Problem solving and analytical skills*@
+                                                    </label><br />
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" id="Initiative" />Initiative
+                                                        @*<asp:CheckBox ID="Initiative" runat="server" ClientIDMode="Static" />Initiative*@
+                                                    </label><br />
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" id="Adaptability" />Adaptability to change
+                                                        @*<asp:CheckBox ID="Adaptability" runat="server" ClientIDMode="Static" />Adaptability to change*@
+                                                    </label><br />
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" id="Interpersonalskills" />Interpersonal skills
+
+                                                        @*<asp:CheckBox ID="Interpersonalskills" runat="server" ClientIDMode="Static" />Interpersonal skills*@
+                                                    </label><br />
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" id="Strategicthinking" />Strategic thinking and planning abilities
+
+                                                        @*<asp:CheckBox ID="Strategicthinking" runat="server" ClientIDMode="Static" />Strategic thinking and planning abilities*@
+                                                    </label><br />
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" id="Timemanagement" />Time management
+                                                        @*<asp:CheckBox ID="Timemanagement" runat="server" ClientIDMode="Static" />Time management*@
+                                                    </label><br />
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" id="Communicationskills" />Communication skills
+                                                        @*<asp:CheckBox ID="Communicationskills" runat="server" ClientIDMode="Static" />Communication skills*@
+                                                    </label><br />
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" id="Leadership" />Leadership
+                                                        @*<asp:CheckBox ID="Leadership" runat="server" ClientIDMode="Static" />Leadership*@
+                                                    </label><br />
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" id="Teamwork" />Teamwork
+
+                                                        @*<asp:CheckBox ID="Teamwork" runat="server" ClientIDMode="Static" />Teamwork*@
+                                                    </label><br />
+                                                </div>
+                                            </div>
+                                            <!-- col-sm-6 closed -->
+                                            <div class="col-sm-12 table-responsive" style="margin-top: 10px;">
+                                                <!-- col-sm-6 started -->
+                                                <div class="form-group">
+                                                    <label>Additional Skills :</label><br>
+
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" id="Dancing" />Dancing
+                                                        @*<asp:CheckBox ID="Dancing" runat="server" ClientIDMode="Static" />Dancing*@
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" id="Singing" />Singing
+                                                        @*<asp:CheckBox ID="Singing" runat="server" ClientIDMode="Static" />Singing*@
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" id="Compering" />Compering
+                                                        @*<asp:CheckBox ID="Compering" runat="server" ClientIDMode="Static" />Compering*@
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" id="CreativeContentwriting" />Creative Content writing
+                                                        @*<asp:CheckBox ID="CreativeContentwriting" runat="server" ClientIDMode="Static" />Creative Content writing*@
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" id="CoralDraw" />CoralDraw
+                                                        @*<asp:CheckBox ID="CoralDraw" runat="server" ClientIDMode="Static" />CoralDraw*@
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" id="Photoshop" /> Photoshop
+                                                        @*<asp:CheckBox ID="Photoshop" runat="server" ClientIDMode="Static" />Photoshop*@
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" id="Drawing" /> Drawing
+                                                        @*<asp:CheckBox ID="Drawing" runat="server" ClientIDMode="Static" />Drawing*@
+                                                    </label>
+                                                </div>
+                                                <input type="text" class="form-control" id="SkillsetId" style="visibility:hidden" />
+                                                @*<asp:TextBox class="form-control" ID="SkillsetId" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                            </div>
+                                            <!-- col-sm-6 closed -->
+                                        </div>
+                                        <!-- col-sm-12 closed -->
+
+                                        <div class="clearfix"></div>
+                                        <div class="col-sm-12" style="margin-top: 10px;">
+                                            <button type="button" class="btn btn-success pull-right"><span data-toggle="tab" class="button_a outsidelink_4">Next</span></button>
+
+                                            <button type="button" class="btn btn-success pull-left">
+                                                <span data-toggle="tab" class="button_a outsidelink_4back">Back</span>
+                                            </button>
+
+                                        </div>
+                                    </div>
+                                    <!-- tab-pane fade closed -->
+                                </div>
+
+                                <div id="add5" class="tab-pane fade">
+                                    <!-- tab-pane fade started -->
+                                    <div class="row">
+                                        <!-- row started -->
+                                        <div class="col-sm-12 table-responsive">
+                                            <!-- col-sm-12 started -->
+                                            <div class="col-sm-4">
+                                                <h4 class="std_head well-sm jss_form">Father Details</h4>
+                                                <div class="form-group">
+                                                    <label>Father Name  : </label>
+                                                    <input type="text" class="form-control" id="FatherName" />
+                                                    @*<asp:TextBox class="form-control" ID="FatherName" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Father Profession  : </label>
+                                                    <select id="ddlFathenProfession" class="form-control">
+                                                        <option>Service</option>
+                                                        <option>Business</option>
+                                                        <option>NA</option>
+                                                    </select>
+                                                    @*<asp:DropDownList ID="ddlFathenProfession" runat="server" ClientIDMode="Static" class="form-control">
+                                                            <asp:ListItem>Service</asp:ListItem>
+                                                            <asp:ListItem>Business</asp:ListItem>
+                                                            <asp:ListItem>NA</asp:ListItem>
+                                                        </asp:DropDownList>*@
+
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Country Code: </label>
+                                                    <input type="text" class="form-control" id="FatherCountrycode" onkeypress='validatecountrycode(event)' MaxLength="4" />
+                                                    @*<asp:TextBox class="form-control" ID="FatherCountrycode" onkeypress='validatecountrycode(event)' MaxLength="4" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Father Mobile No : </label>
+                                                    <input type="text" class="form-control" id="FatherMobile" onkeypress='validate(event)' MaxLength="10" />
+                                                    @*<asp:TextBox class="form-control" ID="FatherMobile" onkeypress='validate(event)' MaxLength="10" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Father Email Id  : </label>
+                                                    <input type="text" class="form-control" id="FatherEmail" onkeypress='validateEmail(this);' />
+
+                                                    @*<asp:TextBox class="form-control" ID="FatherEmail" onblur="validateEmail(this);" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Father Company Name  : </label>
+                                                    <input type="text" class="form-control" id="FatherCompany" />
+                                                    @*<asp:TextBox class="form-control" ID="FatherCompany" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-4">
+                                                <h4 class="std_head well-sm jss_form">Mother Details</h4>
+                                                <div class="form-group">
+                                                    <label>Mother Name  : </label>
+                                                    <input type="text" class="form-control" id="MotherName" />
+
+                                                    @*<asp:TextBox class="form-control" ID="MotherName" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Mother Profession  : </label>
+                                                    <select id="ddlMotherProfession" class="form-control">
+                                                        <option>Service</option>
+                                                        <option>Business</option>
+                                                        <option>HouseWife</option>
+                                                        <option>NA</option>
+                                                    </select>
+                                                    @*<asp:DropDownList ID="ddlMotherProfession" runat="server" ClientIDMode="Static" class="form-control">
+                                                            <asp:ListItem>Service</asp:ListItem>
+                                                            <asp:ListItem>Business</asp:ListItem>
+                                                            <asp:ListItem>HouseWife</asp:ListItem>
+                                                            <asp:ListItem>NA</asp:ListItem>
+                                                        </asp:DropDownList>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Country Code: </label>
+                                                    <input type="text" class="form-control" id="MotherCountrycode" onkeypress='validatecountrycode(event)' MaxLength="4" />
+                                                    @*<asp:TextBox class="form-control" ID="MotherCountrycode" onkeypress='validatecountrycode(event)' MaxLength="4" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Mother Mobile No : </label>
+                                                    <input type="text" class="form-control" id="MotherMobile" onkeypress='validate(event)' MaxLength="10" />
+                                                    @*<asp:TextBox class="form-control" ID="MotherMobile" onkeypress='validate(event)' MaxLength="10" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Mother Email Id  : </label>
+                                                    <input type="text" class="form-control" id="MotherEmail" onblur="validateEmail(this);" />
+                                                    @*<asp:TextBox class="form-control" ID="MotherEmail" onblur="validateEmail(this);" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Mother Company Name  : </label>
+                                                    <input type="text" class="form-control" id="MotherCompany" />
+                                                    @*<asp:TextBox class="form-control" ID="MotherCompany" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-4">
+                                                <h4 class="std_head well-sm jss_form">Siblings Working With</h4>
+                                                <div class="form-group">
+                                                    <label>Sibling1  : </label>
+                                                    <input type="text" class="form-control" id="Sibiling1" />
+
+                                                    @*<asp:TextBox class="form-control" ID="Sibiling1" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                                <div id="divSibling_1" class="form-group" style="display: none;">
+                                                    <label>Sibling2  : </label>
+                                                    <input type="text" class="form-control" id="Sibiling2" />
+
+                                                    @*<asp:TextBox class="form-control" ID="Sibiling2" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                                <div id="divSibling_2" class="form-group" style="display: none;">
+                                                    <label>Sibling3  : </label>
+                                                    <input type="text" class="form-control" id="Sibiling3" />
+
+                                                    @*<asp:TextBox class="form-control" ID="Sibiling3" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                                <div id="divSibling_3" class="form-group" style="display: none;">
+                                                    <label>Sibling4  : </label>
+                                                    <input type="text" class="form-control" id="Sibiling4" />
+                                                    @* <asp:TextBox class="form-control" ID="Sibiling4" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                                <div id="divSibling_4" class="form-group" style="display: none;">
+                                                    <label>Sibling5  : </label>
+                                                    <input type="text" class="form-control" id="Sibiling5" />
+                                                    @*<asp:TextBox class="form-control" ID="Sibiling5" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+                                                </div>
+                                                <br />
+                                                <input type="hidden" id="siblingsVisible" value="0" />
+                                                <input type="button" value="Add" onclick="ShowSiblings();" />
+
+                                                <input style="display: none;" id="btnHideSibling" type="button" value="Remove" onclick="HideSiblings();" />
+                                            </div>
+                                        </div>
+                                        <!-- col-sm-12 closed -->
+
+                                        <div class="clearfix"></div>
+                                        <div class="col-sm-12" style="margin-top: 10px;">
+                                            <button type="button" class="btn btn-success pull-right"><span data-toggle="tab" class="button_a outsidelink_5">Next</span></button>
+                                            <button type="button" class="btn btn-success pull-left">
+                                                <span data-toggle="tab" class="button_a outsidelink_5back">Back</span>
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                    <!-- tab-pane fade closed -->
+                                    <!-- col-sm-12 closed -->
+
+                                </div>
+
+                                <div id="add6" class="tab-pane fade">
+                                    <!-- tab-pane fade started -->
+                                    <div class="row">
+                                        <!-- row started -->
+                                        <div class="col-sm-12">
+                                            <!-- col-sm-12 started -->
+                                            <h4 class="std_head well-sm jss_form">Declaration</h4>
+                                            <div class="col-sm-12">
+                                                <!-- col-sm-6 started -->
+
+                                                <div class="form-group">
+                                                    <label>Are you interested in College Assistance for Final Placement? : </label>
+                                                    <br />
+                                                    <label class="checkbox-inline">
+                                                        <input type="radio" id="Dec_interestedinFinalPlacementYesChkbox" title="yes" onChange="disableConfirm();" name="finalplacement" />&nbsp;Yes
+                                                        @*<asp:RadioButton ID="Dec_interestedinFinalPlacementYesChkbox" title="yes" runat="server" ClientIDMode="Static" onChange="disableConfirm();" GroupName="finalplacement" />&nbsp;Yes*@
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                        <input type="radio" id="Dec_interestedinFinalPlacementNoChkbox" title="No" onChange="disableConfirm();" name="finalplacement" />&nbsp;No
+                                                        @*<asp:RadioButton ID="Dec_interestedinFinalPlacementNoChkbox" title="no" runat="server" ClientIDMode="Static" onChange="disableConfirm();" GroupName="finalplacement" />&nbsp;No*@
+                                                    </label>
+
+                                                </div>
+                                                <div class="form-group" id="divnoreason" style="display: none">
+                                                    <label>If No, Please Give Reason : </label>
+                                                    <textarea class="form-control" id="Dec_ReasonforNo" rows="5"></textarea>
+                                                    @*<asp:TextBox class="form-control" ID="Dec_ReasonforNo" runat="server" ClientIDMode="Static" TextMode="MultiLine"></asp:TextBox>*@
+                                                </div>
+                                                <div class="form-group" style="display: none" id="divagree">
+                                                    <label>Agreement : </label>
+                                                    <br />
+                                                    <label>* Please read the Placement Terms & Condition before accepting the agreement.</label>&nbsp;<b>Refer CMC Notice Board</b>
+                                                    <label>
+                                                        I hereby agree that I have read the Institute's Terms & Conditions to seek Placement Assistance from St. Francis Institute of Management and Research.&nbsp;
+                                                        I shall keep transparency with the placement staff, in terms of my placement through sources other than the placement cell of the college.&nbsp;&nbsp;&nbsp;<br />
+                                                        I shall be honest and keep the college placement staff informed if I am appearing for any interview not arranged by the college during the college placement procedure.
+                                                        <br />
+                                                        I shall submit my offer letter to the college irrespective of my placement through college or by self-effort. In case of any default,
+                                                        <br />
+                                                        I shall abide by the decision taken by the management in the matter.
+                                                    </label>
+                                                    <br />
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" id="Dec_AgreeChkbox" /> &nbsp; Agree
+                                                        @*<asp:CheckBox ID="Dec_AgreeChkbox" ClientIDMode="Static" runat="server" />&nbsp; Agree*@
+                                                    </label>
+                                                    <label class="checkbox-inline">
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <!-- col-sm-6 closed -->
+
+                                            <div class="col-sm-6">
+
+                                                <button type="button" class="btn btn-success pull-left">
+                                                    <span data-toggle="tab" class="button_a outsidelink_6back">Back</span>
+                                                </button>
+                                                <input type="text" id="DeclarationId" style="visibility:hidden" />
+                                                @*<asp:TextBox class="" ID="DeclarationId" ClientIDMode="Static" runat="server"></asp:TextBox>*@
+
+                                                <!-- col-sm-6 started -->
+
+                                                <input id="btnsave" type="button" class="btn btn-success pull-right" value="Save" />
+
+                                                @*<asp:Button UseSubmitBehavior="false" ID="Studentdetails_btn" Text="Save" class="btn btn-success pull-right" Style="display: none;" OnClick="Studentdetails_btn_Click" />*@
+                                            </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        <br />
+                                        <br />
+                                        <br />
+
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <!-- col-sm-12 closed -->
+                                </div>
+                                <!-- row closed -->
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+

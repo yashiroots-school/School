@@ -1,0 +1,197 @@
+﻿@model SchoolManagement.Data.Models.StafsDetails
+@{
+    ViewBag.Title = "EditStaf";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .myAlert-bottom {
+        position: fixed;
+        bottom: 5px;
+        left: 2%;
+        width: 96%;
+    }
+
+    div.fullscreen {
+        position: absolute;
+        width: 100%;
+        height: 960px;
+        top: 0;
+        left: 0;
+        background-color: lightblue;
+    }
+
+    .alert {
+        display: none;
+    }
+</style>
+<!-- page content -->
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6">
+                            <h4> Add New Staff  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6">
+                            <button class="btn btn-info pull-right"><a href="/Staf/ViewStaff" class="button_a">View All Staff </a></button>
+                            <button class="btn btn-danger pull-right"><a href="/Staf/ManageStaff" class="button_a">Manage Staff</a> </button>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- dashboard_graph closed-->
+
+
+            <form method="post" action="/Staf/UpdateStaf" enctype="multipart/form-data">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <!-- col-msx-12 started -->
+                    <h4 class="std_head well-sm"> Staff Information Form</h4>
+                    <div class="col-sm-12" style="border-bottom: 1px solid #E6E9ED;">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label col-sm-5">Employee ID :</label>
+                                <div class="col-sm-7">
+                                    <input type="text" name="EmpId" readonly class="form-control" style="margin-bottom:13px;">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-5">Date:</label>
+                                <div class="col-sm-7">
+                                    <input type="text" name="Date" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6"></div>
+
+                        <div class="col-sm-2">
+                            <img src="~/WebsiteImages/images/user.png" alt="Affix recent passport size <br/> photograph of student." style="width:100%;margin-bottom:10px;" class="img-thumbnail" />
+                            <input type="file" name="File" style="margin-bottom:20px;" />
+                        </div>
+                    </div><!-- col-sm-12 closed -->
+                    <div class="col-sm-12" style="border-bottom: 1px solid #E6E9ED;">
+                        <!-- col-sm-12 started -->
+                        <h4 class="std_head well-sm">Add New Staff Details</h4>
+                        <div class="col-sm-6" style="border-right: 1px solid #eee;">
+                            <!-- col-sm-6 started -->
+
+                            <div class="form-group">
+                                <label>Name :</label>
+                                <input type="text" name="Name" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Gender :</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="StafsDetails.Gender" value="Male">Male</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="StafsDetails.Gender" value="Female">Female</label>
+                            </div>
+                            <div class="form-group">
+                                <label>Date of Birth :</label>
+                                <input type="text" name="DOB" placeholder="dd/mm/yyyy" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Highest Educational Qualification :</label>
+                                @*@Html.DropDownList("Qualification", ViewBag.AllQualifications as SelectList, "Select", new { @class = "form-control" })*@
+                            </div>
+
+                            <div class="form-group">
+                                <label>Work Experience :</label>
+                                <input type="text" name="WorkExperience" class="form-control" placeholder="years" />
+                            </div>
+                            <div class="form-group">
+                                <label>Designation  : </label>
+                                <input type="text" name="Designation" class="form-control" placeholder="Designation">
+                            </div>
+
+                        </div><!-- col-sm-6 closed -->
+                        <div class="col-sm-6">
+                            <!-- col-sm-6 started -->
+                            <div class="form-group">
+                                <label>Address  : </label>
+                                <textarea name="Address" class="form-control"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Contact No  : </label>
+                                <input type="text" name="Contact" class="form-control">
+
+                            </div>
+                            <div class="form-group">
+                                <label>Email  : </label>
+                                <input type="text" name="Email" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Date of Employment : </label>
+                                <input type="text" name="EmpDate" class="form-control">
+                            </div>
+                            <h5 style="color: #1ABB9C;">Salary </h5>
+                            <div class="col-sm-4">
+                                <!-- col-sm-4 started -->
+                                <div class="form-group">
+                                    <label for="email">Basic:</label>
+                                    <input type="email" name="BesicSallery" class="form-control" id="email">
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <!-- col-sm-4 started -->
+                                <div class="form-group">
+                                    <label for="pwd">Perks:</label>
+                                    <input type="password" name="PerksSallery" class="form-control" id="pwd">
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <!-- col-sm-4 started -->
+                                <div class="form-group">
+                                    <label for="pwd">Gross:</label>
+                                    <input type="password" name="GrossSallery" class="form-control" id="pwd">
+                                </div>
+                            </div>
+                        </div><!-- col-sm-6 closed -->
+
+                    </div><!-- col-sm-12 closed -->
+                    <div class="col-sm-12" style="border-bottom: 1px solid #E6E9ED;">
+                        <!-- col-sm-12 started -->
+                        <h4 class="std_head well-sm">Past Employment Details</h4>
+                        <div class="col-sm-6" style="border-right: 1px solid #eee;">
+                            <!-- col-sm-6 started -->
+                            <div class="form-group">
+                                <label>Last Organization of Employment / Service :</label>
+                                <input type="text" name="LastOrganizationofEmployment" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>No of Years at the Last Assignment :</label>
+                                <input type="text" name="NoofYearsattheLastAssignment" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Exit Formalities Completed ? : </label>
+                                <br />
+                                <label class="checkbox-inline"><input type="checkbox" name="FormalitiesCheck" value="Yes">Yes</label>
+                                <label class="checkbox-inline"><input type="checkbox" name="FormalitiesCheck" value="No">No</label>
+                            </div>
+
+
+                        </div><!-- col-sm-6 closed -->
+                        <div class="col-sm-6">
+                            <!-- col-sm-6 started -->
+                            <h5 style="color: #1ABB9C;">Does to be attached </h5>
+                            <div class="form-group">
+                                <label>Relieving Letter ( Add a scanned copy ) : </label>
+                                <input type="file" name="RelievingLetter" />
+                            </div>
+                            <div class="form-group">
+                                <label>Performance Letter / Certificate ( Add a scanned copy ) :</label>
+                                <input type="file" name="PerformanceLetter" />
+                            </div>
+                        </div><!-- col-sm-6 closed -->
+                        <div class="col-sm-7">
+                            <button type="submit" class="btn btn-success pull-right" value="Submit Form">Update</button>
+
+                        </div>
+                    </div><!-- col-sm-12 closed -->
+                </div><!-- col-msx-12  closed -->
+            </form>
+        </div><!-- col-msx-12  closed -->
+    </div><!-- 1st row closed -->
+</div>

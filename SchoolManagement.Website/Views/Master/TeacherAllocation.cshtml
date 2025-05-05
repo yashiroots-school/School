@@ -1,0 +1,748 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <span class="pull-right"><a style="font-size: 25px; color:black;" class="fa fa-chevron-circle-left" href="~/Dashboard/Dashboard" id="circleimage"></a></span>
+
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4>  Teachers Allocation  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <!--<div class="col-sm-6">
+                        <button class="btn btn-info pull-right"><a href="sis_add_new_teacher.html" class="button_a">Add New</a></button>
+                         <button class="btn btn-danger pull-right"><a href="sis_manage_teacher.html" class="button_a">Manage</a></button>
+                          </div>-->
+                    </div><!-- col-sm-12 closed -->
+                </div><!--row x_title closed -->
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+        <div class="col-sm-12" style="margin-top: 15px;">
+            <h4 class="std_head well-sm">Teachers Allocation</h4>
+            <form action="/Master/AddTeacher" method="post" enctype="multipart/form-data" id="TeacherForm">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#home" class="sis_tab_a">Subject</a></li>
+                    <li><a data-toggle="tab" href="#menu1" class="sis_tab_a">Test</a></li>
+                    <li><a data-toggle="tab" href="#menu2" class="sis_tab_a">Marks Allocation</a></li>
+
+                </ul>
+                @*<div class="col-sm-3"></div>*@
+                <div class="col-sm-7">
+                    @*<div class="form-group">
+                            <input type="hidden" id="Teacher_Id" name="Allocate_Id" />
+                        </div>*@
+                    @*<div class="form-group">
+                            <label class="control-label col-sm-4">Add Teacher &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  :</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="StaffId" name="StaffId">
+                                    <option value="0">---select Teacher---</option>
+                                    @foreach (var item in ViewBag.TeacherList as IEnumerable<SchoolManagement.Data.Models.StafsDetails>)
+                                    {
+                                        <option value="@item.StafId">@item.Name</option>
+                                    }
+                                </select>
+                                <input type="text" id="Teacher_Name" name="Teacher_Name" style="display:none" />
+                            </div>
+                        </div>*@
+                    @*<div class="form-group" style="margin-top:40px;">
+                            <label class="control-label col-sm-4">Allocate Class &nbsp;&nbsp; :</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="Class_Id" name="Class_Id">
+                                    <option value="0">---Select Class---</option>
+                                    @foreach (var item in ViewBag.Classlist as IEnumerable<SchoolManagement.Website.Models.Tbl_Class>)
+                                    {
+                                        <option value="@item.Class_Id">@item.Class_Name</option>
+                                    }
+                                </select>
+
+                                <input type="text" id="Class_Name" name="Class_Name" style="display:none" />
+
+                            </div>
+                        </div>*@
+                    @*<div class="form-group" style="margin-top:60px;">
+                            <label class="control-label col-sm-4">Allocate Subject : </label>
+                            <br />
+                            <div class="col-sm-8">
+                                <select class="form-control" id="Subject_ID" name="Subject_ID">
+                                    <option value="0">---Select Subject---</option>
+                                    @foreach (var item in ViewBag.Subjectlist as IEnumerable<SchoolManagement.Website.Models.Tbl_SubjectsSetup>)
+                                    {
+                                        <option value="@item.Subject_ID">@item.Subject_Name</option>
+                                    }
+                                </select>
+                                <input type="text" id="Subject_Name" name="Subject_Name" style="display:none" />
+
+                            </div>
+                        </div>*@
+                    @*<div class="col-sm-8" style="margin-top:20px;">
+                            <button type="button" class="btn btn-success pull-right" onclick="ClearData()">Clear</button>
+                            <button type="submit" class="btn btn-success pull-right" id="BtnTeachersave">Save</button>
+                        </div>*@
+                </div>
+            </form>
+            @*<div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+
+                    <table class="table table-bordered" style="margin-top:10px" id="TblTeacher">
+                        <thead>
+                            <tr>
+                                <th>Teacher</th>
+                                <th>Class</th>
+                                <th>Subject</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                    </table>
+
+                </div>*@
+
+        </div>
+
+
+    </div><!-- 1st row closed -->
+    @*<div class="right_col" role="main">*@
+
+    <!--tab-content is opened-->
+    <div class="tab-content tab-sis">
+        <!-- tab-pane in active -->
+        <div id="home" class="tab-pane fade in active">
+            <div class="row">
+                <!-- row started -->
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <!-- col-msx-12 started -->
+                    <div class="dashboard_graph">
+                        <div class="row x_title">
+                            <!--row x_title started -->
+                            <div class="col-sm-12">
+                                <!-- col-sm-12 started -->
+                                <div class="col-sm-6">
+                                    <h4>  Add Subject  &nbsp;<i class="fa fa-forward"></i></h4>
+                                </div>
+                                <div class="col-sm-6">
+                                    @*<button class="btn btn-info pull-right"><a href="#" class="button_a">Add New</a></button>
+                                    <button class="btn btn-danger pull-right"><a href="#" class="button_a">Manage</a></button>*@
+                                </div>
+
+
+                            </div><!-- col-sm-12 closed -->
+                        </div><!--row x_title closed -->
+                    </div><!-- dashboard_graph closed-->
+                </div><!--col-msx-12 closed-->
+                <div class="col-sm-12" style="margin-top: 15px;">
+                    <form action="/Master/AddSubjectName"  id="SubjectSetupForm" method="post" enctype="multipart/form-data">
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <input type="hidden" id="Subject_ID" name="Subject_ID" />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-4">Add New Subject :</label>
+                                <div class="col-sm-3">
+                                    <input type="text" class="form-control" id="Subject_Name" name="Subject_Name" maxlength="100">
+                                </div>
+                            </div>
+                            <div class="form-group" id="IsElectiveView" >
+                                <label>Is Elective Subject:</label>
+                                <input id="IsElective" type="checkbox" value="true" name="IsElective" />
+                                <input type="hidden" value="false" name="IsElective" />
+                                @*<input type="checkbox" id="IsElective" name="IsElective" value="True" class="form-check-input" />*@
+                            </div>
+                            <div class="col-sm-3" style="margin-top:20px;">
+                                <button type="submit" class="btn btn-success pull-right" id="Subjectsave">Save</button>
+                                <button type="button" class="btn btn-success pull-right" id="BtnClear" onclick="ClearData()">Clear</button>
+                            </div>
+                        </div>
+
+                    </form>
+                        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+
+
+                            <table class="table table-bordered " id="SubjectTable" style="margin-top:10px">
+                                <thead>
+                                    <tr>
+                                        <th>S.No</th>
+                                        <th>Subject Name</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int i = 1;
+                                        foreach (var item in ViewBag.SubjectName as IEnumerable<SchoolManagement.Website.Models.Tbl_SubjectsSetup>)
+                                        {
+                                            <tr>
+                                                <td>@i</td>
+                                                <td>@item.Subject_Name</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-info DepartmentEdit" data-val="@item.Subject_ID">Edit</button>
+                                                    <button type="button" class="btn btn-info DepartmentDelete" data-val="@item.Subject_ID">Delete</button>
+                                                </td>
+
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+
+
+                        </div>
+                    
+                </div>
+                
+            </div><!-- 1st row closed -->
+        </div>
+
+        <div id="menu1" class="tab-pane fade">
+
+            @*<div class="right_col" role="main">*@
+            <div class="row">
+                <!-- row started -->
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <!-- col-msx-12 started -->
+                    <div class="dashboard_graph">
+                        <div class="row x_title">
+                            <div class="col-sm-12">
+                                <div class="col-sm-6">
+                                    <h4> Set Exam Types  &nbsp;<i class="fa fa-forward"></i></h4>
+                                </div>
+                                <div class="col-sm-6">
+                                    <!--  <button class="btn btn-info pull-right"><a href="sis_view_all_rooms.html" class="button_a">View Rooms </a></button>-->
+
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- dashboard_graph closed-->
+                </div><!--col-msx-12 closed-->
+
+
+                <div class="col-sm-12" style="border-bottom: 1px solid #E6E9ED;">
+                    <!-- col-sm-12 started -->
+                    <h4 class="std_head well-sm">Set Exam Types</h4>
+
+                    <form action="/Master/AddExamTypes" id="ExamTypeForm" method="post" enctype="multipart/form-data">
+
+
+                        <div class="col-sm-3">
+                            <!-- col-sm-3 started -->
+                        </div><!-- col-sm-3 closed -->
+                        <div class="col-sm-6">
+                            <!-- col-sm-6 started -->
+
+                            <div class="form-group">
+                                <input type="hidden" id="Examid" name="Exam_Id" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Add Exam Type : </label>
+                                <input type="text" class="form-control" placeholder="Preparatory" id="ExamType" name="Exam_Type" />
+                            </div>
+
+
+                        </div><!-- col-sm-6 closed -->
+                        <div class="col-sm-7" style="margin-top:20px;">
+                            <!-- col-sm-6 started -->
+
+                            <button type="submit" class="btn btn-success pull-right" id="BtnExamSave">Save</button>
+                            <button type="button" class="btn btn-success pull-right" onclick="ClearData()">Clear</button>
+
+                        </div> <!-- col-sm-6 closed -->
+                    </form>
+
+                    <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+
+                        <table class="table table-bordered" style="margin-top:10px" id="ExamTypeTable">
+                            <thead>
+                                <tr>
+                                    <th>S.No</th>
+                                    <th>Exam Type</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int k = 1;
+                                    foreach (var item in ViewBag.Examdetails as IEnumerable<SchoolManagement.Website.Models.Tbl_ExamTypes>)
+                                    {
+                                        <tr>
+                                            <td>@k</td>
+                                            <td>@item.Exam_Type</td>
+                                            <td>
+                                                <button type="button" class="btn btn-info EditExamType" data-val="@item.Exam_Id">Edit</button>
+                                                <button type="button" class="btn btn-info DeleteExamType" data-val="@item.Exam_Id">Delete</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                </div><!-- col-sm-12 closed -->
+
+
+            </div><!-- col-msx-12  closed -->
+            @*</div>*@
+
+        </div>
+
+        <!-- tab-content closed-->
+
+        <div id="menu2" class="tab-pane fade">
+
+            @*<div class="right_col" role="main">*@
+            <div class="row">
+                <!-- row started -->
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <!-- col-msx-12 started -->
+                    <div class="dashboard_graph">
+                        <div class="row x_title">
+                            <div class="col-sm-12">
+                                <div class="col-sm-6">
+                                    <h4> Marks Allocation  &nbsp;<i class="fa fa-forward"></i></h4>
+                                </div>
+                                <div class="col-sm-6">
+                                    <!--  <button class="btn btn-info pull-right"><a href="sis_view_all_rooms.html" class="button_a">View Rooms </a></button>-->
+
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- dashboard_graph closed-->
+                </div><!--col-msx-12 closed-->
+
+
+                <div class="col-sm-12" style="border-bottom: 1px solid #E6E9ED;">
+                    <!-- col-sm-12 started -->
+                    <h4 class="std_head well-sm">Marks</h4>
+
+                    <form action="/Master/AddExamTypes" id="ExamTypeForm" method="post" enctype="multipart/form-data">
+                        <div class="col-sm-3">
+                            <!-- col-sm-3 started -->
+                        </div><!-- col-sm-3 closed -->
+                        <div class="col-sm-12">
+                            <!-- col-sm-6 started -->
+                                                           
+                            <div class="col-sm-12">
+                                
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-md-6">
+                                            <div class="form-group" style="margin-top:60px;">
+                                                <label class="control-label col-sm-4"> Subject </label>
+                                               
+                                                <select class="form-control" id="StaffId" name="StaffId">
+                                                    <option>---Subject---</option>
+                                                    @foreach (var item1 in ViewBag.SubjectName as IEnumerable<SchoolManagement.Website.Models.Tbl_SubjectsSetup>)
+                                                    {
+                                                        <option value="@item1.Subject_ID">@item1.Subject_Name</option>
+                                                    }
+                                                </select>
+                                                <input type="text" id="Teacher" name="Teacher" style="display:none" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+
+                                            <div class="form-group" style="margin-top:60px;">
+
+                                                <label class="control-label col-sm-4">Test Name  </label>
+                                                <select class="form-control" id="Class_Id" name="Class_Id">
+                                                    <option>---Test Name---</option>
+                                                    
+                                                    @foreach (var item in ViewBag.Examdetails as IEnumerable<SchoolManagement.Website.Models.Tbl_ExamTypes>)
+                                                    {
+                                                        <option value="@item.Exam_Id">@item.Exam_Type</option>
+                                                    }
+
+                                                </select>
+                                                <input id="Class" name="Class" class="form-control" style="display:none" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-md-6">
+                                           <div class="form-group" style="margin-top:60px;">
+                                                <label  class="control-label col-sm-4">Max Marks </label>
+                                                <input type="text" name="" id="Nationality" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group" style="margin-top:60px;">
+                                                <label class="control-label col-sm-4"> Class <span style="color:red">*</span> </label>
+                                                <br />
+                                                <select class="form-control" id="Section_ID" name="Section_ID">
+                                                    <option value="0">---class---</option>
+                                                    @foreach (var item in ViewBag.Class as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                                    {
+                                                        <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                                    }
+
+
+                                                </select>
+                                                <input type="text" id="Section" name="Section" style="display:none" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- col-sm-6 closed -->
+                        <div class="col-sm-7" style="margin-top:20px;">
+                            <!-- col-sm-6 started -->
+
+                            <button type="button" class="btn btn-success pull-right" id="BtnEdit">Edit</button>
+                            <button type="button" class="btn btn-success pull-right" id="BtnUpdate">Update</button>
+                            <button type="button" class="btn btn-success pull-right" id="Btndelete">Delete</button>
+
+                        </div> <!-- col-sm-6 closed -->
+                    </form>
+
+                    <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+
+                        <table class="table table-bordered" style="margin-top:10px" id="ExamTypeTable">
+                            <thead>
+                                <tr>
+                                    <th>S.No</th>
+                                    <th>Subject</th>
+                                    <th>Test Name</th>
+                                    <th>Marks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @*@{
+                                    int i = 1;
+                                    foreach (var item in ViewBag.Examdetails as IEnumerable<SchoolManagement.Website.Models.Tbl_ExamTypes>)
+                                    {
+                                        <tr>
+                                            <td>@i</td>
+                                            <td>@item.Exam_Type</td>
+                                            <td>
+                                                <button type="button" class="btn btn-info EditExamType" data-val="@item.Exam_Id">Edit</button>
+                                                <button type="button" class="btn btn-info DeleteExamType" data-val="@item.Exam_Id">Delete</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }*@
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                </div><!-- col-sm-12 closed -->
+
+
+            </div><!-- col-msx-12  closed -->
+            @*</div>*@
+
+        </div>
+
+
+
+
+    </div>
+</div>
+
+@section scripts{
+    <script src="https://cdn.datatables.net/1.11.0/js/jquery.dataTables.min.js" defer></script>
+    <script>
+
+        $("#SubjectTable").DataTable();
+
+        //$(".DepartmentEdit").on('click', function () { 
+            $(document).on('click', '.DepartmentEdit', function () {
+            var id = $(this).attr("data-val"); 
+            GetSubjectNameById(id);
+        });
+
+      
+
+        function GetSubjectNameById(id) {
+            
+            $.ajax({
+                url: "/Master/GetSubjectNameById?id=" + id,
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json;charset=UTF-8",
+                success: function (result) {
+                    
+                    $("#SubjectSetupForm").attr('action', '/Master/UpdateSubject');
+                    $("#Subjectsave").text("Update");
+
+                    if (result != null) {
+                        $("#Subject_ID").val(result.Subject_ID);
+                        $("#Subject_Name").val(result.Subject_Name);
+                        if (result.IsElective) {
+                            $("#IsElective").prop("checked", true); // Check the checkbox
+                        } 
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+
+            });
+        }
+
+
+        $(".DepartmentDelete").on('click', function () {
+            var id = $(this).attr("data-val");
+            if (confirm("Do You Want to Delete?")) {
+                window.location.href = "/Master/DeleteSubjectName?id=" + id;
+            }
+        });
+
+
+        function ClearData() {
+            var cnf = confirm("Are You Sure, You Want to Clear all the data?");
+            if (cnf == true) {
+                $("#Subject_ID").val('');
+                $("#Subject_Name").val('');
+
+
+                $("#SubjectSetupForm").attr('action', '/Master/AddSubjectName');
+                $("#Subjectsave").text("Save");
+
+            }
+        }
+        //$("#SubjectTable").DataTable();
+
+        //$(".DepartmentEdit").on('click', function () {
+        //    $("#SubjectSetupForm").attr('action', '/Master/UpdateSubject');
+        //    var id = $(this).attr("data-val");
+
+        //    $("#BtnExamSave").text("Update");
+        //    GetSubjectNameById(id);
+        //});
+      
+
+        $("#ExamTypeTable").DataTable();
+
+        $(".EditExamType").on('click', function () {
+            $("#ExamTypeForm").attr('action', '/Master/UpdateExamType');
+            var id = $(this).attr("data-val");
+
+
+            $("#Subjectsave").text("Update");
+            GetExamById(id);
+        });
+
+        function GetExamById(id) {
+            $.ajax({
+                url: "/Master/GetExamTypeById?id=" + id,
+                type: "GET",
+                dataType: "json",
+                success: function (result) {
+                    if (result != null) {
+                        $("#Examid").val(result.Exam_Id);
+                        $("#ExamType").val(result.Exam_Type);
+
+
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+
+        $(".DeleteExamType").on('click', function () {
+            var id = $(this).attr("data-val");
+            if (confirm("Do You Want to Delete?")) {
+                window.location.href = "/Master/DeleteExamType?id=" + id;
+            }
+        });
+
+        function ClearData() {
+            var cnf = confirm("Are You Sure, You want to delete?");
+            if (cnf != null) {
+                $("#Examid").val('');
+                $("#ExamType").val('');
+
+                $("#ExamTypeForm").attr('action', '/Master/AddExamTypes');
+                $("#BtnExamSave").text("Save");
+
+            }
+
+        }
+
+        function GetSubjectById(id) {
+            $ajax({
+                url: "/ConfigureMaxMarks/GetSubjectById?=" + id,
+                type: "GET",
+                datatype: "json",
+                contentType: "application/json;charset=UTF-8",
+                success: function (result) {
+                    if (result != null) {
+
+                    }
+                }
+
+            })
+        }
+
+    </script>
+    <script>
+
+        $(document).ready(function () {
+
+
+        })
+
+        function InitDatatable() {
+            $("#ExamTypeTable").DataTable().destroy();
+            
+
+            datatable = $("#ExamTypeTable")
+                .DataTable({
+                    "sAjaxSource": "/Master/GetAllTeacherDetails",
+                    "retrieve": true,
+                    "bServerSide": true,
+                    "bProcessing": true,
+                    "bSearchable": false,
+                    "order": [[1, 'asc']],
+                    "autoWidth": false,
+
+    </script>
+
+
+    @*<script>
+            //$(document).ready(function () {
+            //    
+            //    alert("Working");
+            //    InitDatatable();
+            //});
+            InitDatatable();
+
+            $(".TeacherEdit").on("click", function () {
+                
+                $("#TeacherForm").attr('action', "/Master/UpdateTeacher");
+                var id = $(this).attr("data-val");
+
+                $("#BtnTeachersave").text("Update");
+                GetTeacherById(id);
+
+            });
+
+            function GetTeacherById(id) {
+                $.ajax({
+                    url: "/Master/GetTeacherById?id=" + id,
+                    type: "GET",
+                    datatype: "json",
+                    contentType: "application/json;charset=UTF-8",
+                    success: function (result) {
+                        
+                        if (result != null) {
+                            $("#Teacher_Id").val(result.Allocate_Id);
+                            $("#Teacher_Name").val(result.Teacher_Name);
+                            $("#Subject_Name").val(result.Subject_Name);
+                            $("#StaffId").val(result.StaffId);
+                            $("#Class_Id").val(result.Class_Id);
+                            $("#Class_Name").val(result.Class_Name);
+                            $("#Subject_ID").val(result.Subject_ID);
+                        }
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+                });
+            }
+
+
+            $(".TeacherDelete").on("click", function () {
+                var id = $(this).attr("data-val");
+                if (confirm("Do You Want to Delete?")) {
+                    window.location.href = "DeleteTeacher?id=" + id;
+                }
+            });
+
+
+
+
+            function InitDatatable() {
+                $("#TblTeacher").DataTable().destroy();
+                
+
+                datatable = $("#TblTeacher")
+                    .DataTable({
+                        "sAjaxSource": "/Master/GetAllTeacherDetails",
+                        "retrieve": true,
+                        "bServerSide": true,
+                        "bProcessing": true,
+                        "bSearchable": false,
+                        "order": [[1, 'asc']],
+                        "autoWidth": false,
+                        "columns":
+                            [
+                                {
+                                    "data": "Teacher_Name",
+                                    "autoWidth": false,
+                                    "width": "200px",
+                                    "searchable": true
+                                },
+                                {
+                                    "data": "Class_Name",
+                                    "autoWidth": false,
+                                    "width": "200px",
+                                    "searchable": true
+                                },
+                                {
+                                    "data": "Subject_Name",
+                                    "autoWidth": false,
+                                    "width": "200px",
+                                    "searchable": true
+                                },
+                                {
+                                    "data": "Allocate_Id",
+                                    "searchable": true,
+                                    "render": function (data, type, row) {
+                                        if (data != null && data != '') {
+                                            return '<button type="button"><i style = "font-size:12px; color:#39b2e1; cursor:pointer;"data-val="' + data + '" class="fa fa-edit TeacherEdit"onclick=updateteacher(' + data + ')></i></button><button><i style="font-size:12px; color:#29b2e1; cursor:pointer;"data-val="' + data + '"class = "fa fa-trash-o TeacherDelete" onclick = Deleteteacher(' + data + ')></i></button>';
+                                        }
+                                    }
+                                }
+                            ]
+                    });
+
+            }
+
+            function updateteacher(id) {
+                $("#TeacherForm").attr('action', "/Master/UpdateTeacher");
+
+
+                $("#BtnTeachersave").text("Update");
+                GetTeacherById(id);
+
+            }
+            function Deleteteacher(id) {
+                if (confirm("Do You Want to delete?")) {
+                    window.location.href = "/Master/DeleteTeacher?id=" + id;
+                }
+            }
+
+
+            function ClearData() {
+                var cnf = confirm('Are you sure, you want to clear all the data?');
+
+                if (cnf == true) {
+                    $("#Teacher_Id").val('');
+                    $("#Teacher").val('');
+                    $("#Class_Name").val('');
+                    $("#Subject_Name").val('');
+
+                    $("#TeacherForm").attr('action', "/Master/AddTeacher");
+                    $("#BtnTeachersave").text("save");
+                }
+
+            }
+
+        </script>*@
+
+}

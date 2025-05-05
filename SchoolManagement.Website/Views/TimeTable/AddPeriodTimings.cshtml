@@ -1,0 +1,429 @@
+﻿@model IEnumerable<SchoolManagement.Data.Models.ClassAndSection>
+@{
+    ViewBag.Title = "AddPeriodTimings";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <form method="post" action="/TimeTable/AddPeriod" id="AddPeriod" enctype="multipart/form-data">
+
+            <!-- row started -->
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="dashboard_graph">
+                    <div class="row x_title">
+                        <div class="col-sm-7" style="margin-top: 15px;">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label col-sm-6">Select Class :</label>
+                                    <div class="col-sm-6">
+
+                                        @Html.DropDownList("Class", new SelectList(ViewBag.Class, "DataListItemName", "DataListItemName"), "select", new { @id = "Class", @class = "form-control" })
+
+                                    </div>
+                                </div>
+                            </div><!--col-md-6 closed -->
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label col-sm-7">Select Section :</label>
+                                    <div class="col-sm-5">
+                                        @Html.DropDownList("Section", new SelectList(ViewBag.Section, "DataListItemName", "DataListItemName"), "select", new { @id = "Section", @class = "form-control" })
+
+                                    </div>
+                                </div>
+                            </div><!--col-md-6 closed -->
+
+                        </div><!--col-md-7 closed -->
+                        <div class="col-sm-12" style="margin-top: 15px;">
+                            <button class="btn btn-info pull-right"><a href="/TimeTable/ViewPeriodTimings/" class="button_a">View Time Table </a></button>
+                            <button class="btn btn-danger pull-right"><a href="/TimeTable/ManagePeriodTimings" class="button_a">Manage Time Table</a></button>
+                        </div>
+                    </div><!-- row x_title closed-->
+                </div><!-- dashboard_graph closed-->
+            </div><!--col-md-12 closed -->
+
+            <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="head_color">Day</th>
+
+                            @{
+                                foreach (var item in ViewBag.GetTime as IEnumerable<SchoolManagement.Data.Models.TimeSettings>)
+                                {
+                                    <th data-toggle="modal" href="#Time">@item.Time1-@item.Time11</th>
+                                    
+                                    <th data-toggle="modal" href="">@item.Time2-@item.Time22</th>
+                                    <th data-toggle="modal" href="">@item.Time3-@item.Time33</th>
+                                    <th data-toggle="modal" href="">@item.Time4-@item.Time44</th>
+                                    <th data-toggle="modal" href="">@item.Time5-@item.Time55</th>
+                                    <th data-toggle="modal" href="">@item.Time6-@item.Time66</th>
+                                    <th data-toggle="modal" href="">@item.Time7-@item.Time77</th>
+                                    <th data-toggle="modal" href="">@item.Time8-@item.Time88</th>
+                                    <th data-toggle="modal" href="">@item.Time9-@item.Time99</th>
+                                }
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td class="week_color">Monday</td>
+                            <td data-toggle="modal" href="#Period"></td>
+                            <div class="modal fade" id="Period" aria-hidden="true" style="  z-index: 99999;">
+                                <div class="modal-dialog">
+
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            <h2 class="modal-title" style="color:#0068ad;font-weight:bold;text-align: center;">Set a New Period</h2>
+                                        </div>
+                                        <div class="modal-body" style="padding:0px;">
+                                            <div class="col-sm-12">
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label>Day :</label>
+                                                        <input type="hidden" id="Id" name="Id" class="form-control" />
+                                                        <select class="form-control" id="Day" name="Day">
+                                                            <option value="Monday">Monday</option>
+                                                            <option value="Tuesday">Tuesday</option>
+                                                            <option value="Wednesday">Wednesday</option>
+                                                            <option value="Thursday">Thursday</option>
+                                                            <option value="Friday">Friday</option>
+                                                            <option value="Saturday">Saturday</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>Room No. :</label>
+                                                        @Html.DropDownList("RoomNo", new SelectList(ViewBag.RoomNo, "DataListItemName", "DataListItemName"), "select", new { @id = "RoomNo", @class = "form-control" })
+
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>1st Period :</label>
+                                                        @Html.DropDownList("Period1", new SelectList(ViewBag.Subject, "DataListItemName", "DataListItemName"), "select", new { @id = "Period1", @class = "form-control" })
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Teacher Name:</label>
+                                                        <select class="form-control" name="Teacher1" id="Teacher1">
+                                                            @foreach (var item in @ViewBag.allStaf)
+                                                            {
+                                                                <option value="">Select</option>
+                                                                <option value="@item.Name">@item.Name</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="sel1">2nd Period :</label>
+                                                        @Html.DropDownList("Period2", new SelectList(ViewBag.Subject, "DataListItemName", "DataListItemName"), "select", new { @id = "Period2", @class = "form-control" })
+
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Teacher Name:</label>
+                                                        <select class="form-control" name="Teacher2" id="Teacher2">
+                                                            @foreach (var item in @ViewBag.allStaf)
+                                                            {
+                                                                <option value="">Select</option>
+                                                                <option value="@item.Name">@item.Name</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="sel1">3rd Period :</label>
+                                                        @Html.DropDownList("Period3", new SelectList(ViewBag.Subject, "DataListItemName", "DataListItemName"), "select", new { @id = "Period3", @class = "form-control" })
+
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Teacher Name:</label>
+                                                        <select class="form-control" name="Teacher3" id="Teacher3">
+                                                            @foreach (var item in @ViewBag.allStaf)
+                                                            {
+                                                                <option value="">Select</option>
+                                                                <option value="@item.Name">@item.Name</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="sel1">4th Period :</label>
+                                                        @Html.DropDownList("Period4", new SelectList(ViewBag.Subject, "DataListItemName", "DataListItemName"), "select", new { @id = "Period4", @class = "form-control" })
+
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Teacher Name:</label>
+                                                        <select class="form-control" name="Teacher4" id="Teacher4">
+                                                            @foreach (var item in @ViewBag.allStaf)
+                                                            {
+                                                                <option value="">Select</option>
+                                                                <option value="@item.Name">@item.Name</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label for="sel1">5th Period :</label>
+                                                        @Html.DropDownList("Period5", new SelectList(ViewBag.Subject, "DataListItemName", "DataListItemName"), "select", new { @id = "Period5", @class = "form-control" })
+
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Teacher Name:</label>
+                                                        <select class="form-control" name="Teacher5" id="Teacher5">
+                                                            @foreach (var item in @ViewBag.allStaf)
+                                                            {
+                                                                <option value="">Select</option>
+                                                                <option value="@item.Name">@item.Name</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="sel1">6th Period :</label>
+                                                        @Html.DropDownList("Period6", new SelectList(ViewBag.Subject, "DataListItemName", "DataListItemName"), "select", new { @id = "Period6", @class = "form-control" })
+
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Teacher Name:</label>
+                                                        <select class="form-control" name="Teacher6" id="Teacher6">
+                                                            @foreach (var item in @ViewBag.allStaf)
+                                                            {
+                                                                <option value="">Select</option>
+                                                                <option value="@item.Name">@item.Name</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="sel1">7th Period :</label>
+                                                        @Html.DropDownList("Period7", new SelectList(ViewBag.Subject, "DataListItemName", "DataListItemName"), "select", new { @id = "Period7", @class = "form-control" })
+
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Teacher Name:</label>
+                                                        <select class="form-control" name="Teacher7" id="Teacher7">
+                                                            @foreach (var item in @ViewBag.allStaf)
+                                                            {
+                                                                <option value="">Select</option>
+                                                                <option value="@item.Name">@item.Name</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="sel1">8th Period :</label>
+                                                        @Html.DropDownList("Period8", new SelectList(ViewBag.Subject, "DataListItemName", "DataListItemName"), "select", new { @id = "Period8", @class = "form-control" })
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Teacher Name:</label>
+                                                        <select class="form-control" name="Teacher8" id="Teacher8">
+                                                            @foreach (var item in @ViewBag.allStaf)
+                                                            {
+                                                                <option value="">Select</option>
+                                                                <option value="@item.Name">@item.Name</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="sel1">9th Period :</label>
+                                                        @Html.DropDownList("Period9", new SelectList(ViewBag.Subject, "DataListItemName", "DataListItemName"), "select", new { @id = "Period9", @class = "form-control" })
+
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Teacher Name:</label>
+                                                        <select class="form-control" name="Teacher9" id="Teacher9">
+                                                            @foreach (var item in @ViewBag.allStaf)
+                                                            {
+                                                                <option value="">Select</option>
+                                                                <option value="@item.Name">@item.Name</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="sel1">10th Period :</label>
+                                                        @Html.DropDownList("Period10", new SelectList(ViewBag.Subject, "DataListItemName", "DataListItemName"), "select", new { @id = "Period10", @class = "form-control" })
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Teacher Name:</label>
+                                                        <select class="form-control" name="Teacher10" id="Teacher10">
+                                                            @foreach (var item in @ViewBag.allStaf)
+                                                            {
+                                                                <option value="">Select</option>
+                                                                <option value="@item.Name">@item.Name</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary pull-right" value="Submit Form" id="btnsave1" style="margin-top:20px">Save</button>
+                                        </div>
+                                    </div><!-- /.modal-content -->
+
+                                </div><!-- /.modal-dialog -->
+                            </div>
+                            <td data-toggle="modal" href="#Period"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+
+                        </tr>
+                        <tr>
+
+                            <td class="week_color">Tuesday</td>
+                            <td data-toggle="modal" href="#Period"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+
+                            <td class="week_color">Wednesday</td>
+                            <td data-toggle="modal" href="#Period"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+
+
+                        </tr>
+                        <tr>
+
+                            <td class="week_color">Thursday</td>
+                            <td data-toggle="modal" href="#Period"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+
+
+                        </tr>
+                        <tr>
+                            <td class="week_color">Friday</td>
+                            <td data-toggle="modal" href="#Period"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+
+                        </tr>
+                        <tr>
+                            <td class="week_color">Saturday</td>
+                            <td data-toggle="modal" href="#Period"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div><!-- col-sm-12 closed -->
+            </form>
+    </div><!-- 1st row closed -->
+</div>
+
+<div class="modal fade" id="Time" aria-hidden="true" style="  z-index: 99999;">
+    <div class="modal-dialog">
+        <form method="post" action="/TimeTable/AddPeriodTiming" id="AddPeriodTiming" enctype="multipart/form-data">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h2 class="modal-title" style="color:#0068ad;font-weight:bold;text-align: center;">Set The Timing</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="sel1">Period 1st :</label>
+                        <input type="hidden" id="Id" name="Id" class="form-control" />
+                        <input type="text" class="time start timepicker" name="Time1" id="FromTime1" /> to
+                        <input type="text" class="time end timepicker" name="Time11" id="ToTime1" />
+                    </div>
+                    <div class="form-group">
+                        <label for="sel1">Period 2nd :</label>
+                        <input type="text" class="time start timepicker" name="Time2" id="FromTime2" /> to
+                        <input type="text" class="time end timepicker" name="Time22" id="ToTime2" />
+                    </div>
+                    <div class="form-group">
+                        <label for="sel1">Period 3rd :</label>
+                        <input type="text" class="time start timepicker" name="Time3" id="FromTime3" /> to
+                        <input type="text" class="time end timepicker" name="Time33" id="ToTime3" />
+                    </div>
+                    <div class="form-group">
+                        <label for="sel1">Period 4th :</label>
+                        <input type="text" class="time start timepicker" name="Time4" id="FromTime4" /> to
+                        <input type="text" class="time end timepicker" name="Time44" id="ToTime4" />
+                    </div>
+                    <div class="form-group">
+                        <label for="sel1">Period 5th :</label>
+                        <input type="text" class="time start timepicker" name="Time5" id="FromTime5" /> to
+                        <input type="text" class="time end timepicker" name="Time55" id="ToTime5" />
+                    </div>
+                    <div class="form-group">
+                        <label for="sel1">Period 6th :</label>
+                        <input type="text" class="time start timepicker" name="Time6" id="FromTime6" /> to
+                        <input type="text" class="time end timepicker" name="Time66" id="ToTime6" />
+                    </div>
+                    <div class="form-group">
+                        <label for="sel1">Period 7th :</label>
+                        <input type="text" class="time start timepicker" name="Time7" id="FromTime7" /> to
+                        <input type="text" class="time end timepicker" name="Time77" id="ToTime7" />
+                    </div>
+                    <div class="form-group">
+                        <label for="sel1">Period 8th :</label>
+                        <input type="text" class="time start timepicker" name="Time8" id="FromTime8" /> to
+                        <input type="text" class="time end timepicker" name="Time88" id="ToTime8" />
+                    </div>
+                    <div class="form-group">
+                        <label for="sel1">Period 9th :</label>
+                        <input type="text" class="time start timepicker" name="Time9" id="FromTime9" /> to
+                        <input type="text" class="time end timepicker" name="Time99" id="ToTime9" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary pull-right" value="Submit Form" id="btnsave" style="margin-top:20px">Save</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </form><!-- /.modal-content -->
+
+    </div><!-- /.modal-dialog -->
+</div>
+
+@section scripts{
+    <script>
+        // initialize input widgets first
+        $('#FromTime .time').timepicker({
+            'showDuration': true,
+            'timeFormat': 'g:ia'
+        });
+
+
+        $('#ToTime .time').timepicker({
+            'showDuration': true,
+            'timeFormat': 'g:ia'
+        });
+
+    </script>
+}
+

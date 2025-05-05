@@ -1,0 +1,119 @@
+﻿
+@{
+    ViewBag.Title = "ExamTerm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <h2>Manage Terms</h2>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="row">
+                @*<h4 class="std_head well-sm"> Staff Information Form</h4>*@
+                <div class="tab-content tab_sis">
+                    <div class="tab-pane fade in active" id="add">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <form method="post" id="TermForm" action="/Exam/TermCreate">
+                                    <h4 class="std_head well-sm">Term Details</h4>
+                                    <input type="hidden" id="TermID" name="TermID" />
+                                    <div class="col-sm-4 date">
+                                        <div class="form-group">
+                                            <label>Term Name:</label>
+                                            <input type="text" name="TermName" id="TermName" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 date">
+                                        <div class="form-group">
+                                            <label>Start Date:</label>
+                                            <div class="input-group input-append date">
+                                                <input type="text" class="form-control datepicker" name="StartDate" id="StartDate" />
+                                                <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4 date">
+                                        <div class="form-group">
+                                            <label>To Date:</label>
+                                            <div class="input-group input-append date">
+                                                <input type="text" class="form-control datepicker" name="EndDate" id="EndDate" />
+                                                <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" style="text-align:right">
+                                        <button type="submit" id="BtnSubmitTerm" class="btn btn-success">Submit</button>
+                                    </div>
+                                </form>
+
+
+
+                            </div>
+                            <hr />
+                            <div class="col-sm-12" style="margin-top:20px;">
+                                <div>
+                                    <table class="table table-bordered display" id="TermTable" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>S.No</th>
+                                                <th>Term Name</th>
+                                                <th>Start Date</th>
+                                                <th>End Date</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="TableBody">
+                                            @{
+                                                var i = 1;
+                                                foreach (var item in ViewBag.TermList as IEnumerable<SchoolManagement.Website.Models.TermsM>)
+                                                {
+                                            <tr>
+                                                <td>@i</td>
+                                                <td>@item.TermName</td>
+                                                <td>@item.StartDate</td>
+                                                <td>@item.EndDate</td>
+                                                <td>
+                                                    @*<button type="button" class="btn btn-info BtnTermEdit" data-val="@item.TermID">Edit</button>*@
+                                                    <button type="button" class="btn btn-danger BtnTermDelete" data-val="@item.TermID">Delete</button>
+                                                </td>
+                                            </tr>
+                                                    i++;
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        $("#BtnSubmitTerm").on('click', function (event) {
+            var termName = $("#TermName").val().trim();
+
+            if (termName === '') {
+                alert("Term Name cannot be empty.");
+                event.preventDefault(); // Prevent the form from submitting
+            }
+        });
+    });
+
+</script>
+
+@section scripts{
+    <script src="~/Scripts/DevelopmentJS/Exam.js"></script>
+}
+

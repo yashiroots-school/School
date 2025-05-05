@@ -1,0 +1,346 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Neuton:wght@300;400;700&display=swap"
+          rel="stylesheet" />
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Content/WebsiteCss/css/style.css" />
+</head>
+<body>
+    <div class="d-flex justify-content-center align-items-center h-100">
+        <div class="border border-dark mt-1" id="printT">
+            <!-- Header section  -->
+            <section class="d-flex justify-content-between align-items-center px-3">
+                <div class="schoollogo1 px-2">
+                    <img src="~/Content/Images/fevicon1.jpg"
+                         alt="notfound"
+                         width="150"
+                         height="140" />
+                </div>
+                <div class="headerContent text-center px-5">
+                    <div class="ft11 mb-0"><b>Nirmala Convent School</b></div>
+                    <p class="ft12 mb-0">
+                        Prem Nagar, Dewas Road, Ujjain - 456664, M.P, India
+                    </p>
+                    <div class="ft13"><b>Academic Session : 2023-24</b></div>
+                    <div class="ft13"><b>Report Card</b></div>
+                </div>
+                <div class="schoollogo1 px-2">
+                    <img src="~/Content/Images/logo2.png"
+                         alt="notfound"
+                         width="150"
+                         height="140" />
+                </div>
+            </section>
+            <hr class="m-0" />
+
+            <!-- students details  -->
+            <section class="ft15 ps-1 my-1">
+                <div class="row">
+                    <div class="col-4" style="width: 40%">
+                        <span style="margin-right: 5px"><b> Student's Name</b></span>
+                        <span class="text-uppercase">
+                            : <span style="border-bottom: 1px dashed" id="StudentName"></span>
+                        </span>
+                    </div>
+                    <div class="col-4" style="width: 30%">
+                        <span><b>Scholar No.</b></span>
+                        <span class="text-uppercase">: <span style="border-bottom: 1px dashed">3244</span></span>
+                    </div>
+                    <div class="col-4" style="width: 30%">
+                        <span><b>Class & Section</b></span>
+                        <span class="text-uppercase">: <span style="border-bottom: 1px dashed" id="ClassSection"></span></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4" style="width: 40%">
+                        <span style="margin-right: 11px"><b>Father's Name</b> </span>
+                        <span class="text-uppercase"> : <span style="border-bottom: 1px dashed" id="FatherName"></span> </span>
+                    </div>
+                    <div class="col-4" style="width: 30%">
+                        <span style="margin-right: 22px"><b>Roll No.</b></span>
+                        <span class="text-uppercase">: <span style="border-bottom: 1px dashed" id="RollNo"></span></span>
+                    </div>
+                    <div class="col-4" style="width: 30%">
+                        <span style="margin-right: 16px"><b>Date of Birth</b></span>
+                        <span class="text-uppercase">: <span style="border-bottom: 1px dashed" id="DateOfBirth"></span> </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8" style="width: 70%">
+                        <span style="margin-right: 6px"><b>Mother's Name</b></span>
+                        <span class="text-uppercase">: <span style="border-bottom: 1px dashed" id="MotherName"></span></span>
+                    </div>
+                    <div class="col-4" style="width: 30%">
+                        <span style="margin-right: 27px"><b>Attendance</b></span>
+                        <span class="text-uppercase">: <span style="border-bottom: 1px dashed" id="Attendance"></span></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- marks section  -->
+            <table class="text-center my-2 ft15" id="MarksTable">
+                <tr>
+                    <th style="width: 180px;">Scholastic Areas:</th>
+                    <th colspan="3" scope="colgroup">Unit Test</th>
+                    <th colspan="4" scope="colgroup">TERM-I</th>
+                    <th colspan="4" scope="colgroup">TERM-II</th>
+                    <th colspan="2" scope="colgroup">Total</th>
+                </tr>
+                <tr>
+                    <th scope="col">Subjects</th>
+
+                    <th scope="col">UT I (20)</th>
+                    <th scope="col">UT II (20)</th>
+                    <th scope="col">Marks Obt. (40)</th>
+
+                    <th scope="col">Theory (80)</th>
+                    <th scope="col">Practical (20)</th>
+                    <th scope="col">Marks Obt. (100)</th>
+                    <th scope="col">Grade</th>
+
+                    <th scope="col">Theory (80)</th>
+                    <th scope="col">Practical (20)</th>
+                    <th scope="col">Marks Obt. (100)</th>
+                    <th scope="col">Grade</th>
+
+                    <th scope="col">Marks</th>
+                    <th scope="col">Grade</th>
+                </tr>
+                @*<tr>
+                        <th scope="row" class="text-uppercase text-start ps-1">Percentage</th>
+                        <th>20</th>
+                        <th>20</th>
+                        <th>40</th>
+                        <th>68.5</th>
+                        <th>18</th>
+                        <th>86.5</th>
+                        <th>A</th>
+                        <th>77</th>
+                        <th>19</th>
+                        <th>96</th>
+                        <th>A+</th>
+                        <th>222.5</th>
+                        <th>A+</td>
+                    </tr>*@
+
+            </table>
+
+            <!-- Grading scale  -->
+            <table class="text-center ft15">
+                <tr>
+                    <th colspan="6" scope="colgroup">
+                        Co-Scholastic Areas [on a 4-point (A-NA) grading scale]
+                    </th>
+                </tr>
+
+                <tr>
+                    <th>Co-Scholastic Areas</th>
+                    <th>TERM-I</th>
+                    <th>TERM-II</th>
+
+                    <th>Co-Scholastic Areas</th>
+                    <th>TERM-I</th>
+                    <th>TERM-II</th>
+                </tr>
+
+                <tr>
+                    <td scope="row" class="text-start ps-1">English Dictation</td>
+                    <td>A</td>
+                    <td>A</td>
+                    <td class="text-start ps-1">Habits & Attitude - Study Habits</td>
+                    <td>A</td>
+                    <td>A</td>
+                </tr>
+
+                <tr>
+                    <td scope="row" class="text-start ps-1">English Dictation</td>
+                    <td>A</td>
+                    <td>A</td>
+                    <td class="text-start ps-1">Habits & Attitude - Study Habits</td>
+                    <td>A</td>
+                    <td>A</td>
+                </tr>
+
+                <tr>
+                    <td scope="row" class="text-start ps-1">English Reading</td>
+                    <td>A</td>
+                    <td>A</td>
+                    <td class="text-start ps-1">Habits & Attitude - Health Habits</td>
+                    <td>A</td>
+                    <td></td>
+                </tr>
+
+                <tr>
+                    <td class="text-start ps-1" scope="row">English Recitation</td>
+                    <td>A</td>
+                    <td>A</td>
+                    <td class="text-start ps-1">Values - Punctuality</td>
+                    <td>A</td>
+                    <td>A</td>
+                </tr>
+                <tr>
+                    <td class="text-start ps-1" scope="row">English Writing</td>
+                    <td>A</td>
+                    <td>A</td>
+                    <td class="text-start ps-1">Values - Cleanliness</td>
+                    <td>A</td>
+                    <td>A</td>
+                </tr>
+                <tr>
+                    <td class="text-start ps-1" scope="row">Hindi Dictation</td>
+                    <td>A</td>
+                    <td>A</td>
+                    <td class="text-start ps-1">Values - Discipline</td>
+                    <td>A</td>
+                    <td>A</td>
+                </tr>
+                <tr>
+                    <td class="text-start ps-1" scope="row">Hindi Reading</td>
+                    <td>A</td>
+                    <td>A</td>
+                    <td class="text-start ps-1">
+                        Co-Curricular Activities - Games / Sports
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="text-start ps-1" scope="row">Hindi Recitation</td>
+                    <td>A</td>
+                    <td>A</td>
+                    <td class="text-start ps-1">
+                        Co-Curricular Activities - Rule of Language
+                    </td>
+                    <td>A</td>
+                    <td>A</td>
+                </tr>
+
+                <tr>
+                    <td class="text-start ps-1" scope="row">Hindi Writing</td>
+                    <td>A</td>
+                    <td>A</td>
+                    <td class="text-start ps-1">Other Activities - Book Keeping</td>
+                    <td>A</td>
+                    <td>A</td>
+                </tr>
+
+                <tr>
+                    <td class="text-start ps-1" scope="row">Interests</td>
+                    <td>A</td>
+                    <td>A</td>
+                    <td class="text-start ps-1">Other Activities - Home work, etc</td>
+                    <td>A</td>
+                    <td>A</td>
+                </tr>
+            </table>
+
+            <!-- Result section  -->
+            <div class="d-flex justify-content-between align-items-center px-1">
+                <div class="ft15">
+                    <span><b>Result :</b></span>
+                    <span>Pass</span>
+                </div>
+                <div class="ft15">
+                    <span><b>Overall Grade :</b></span>
+                    <span>A+</span>
+                </div>
+            </div>
+            <div class="ft15 px-1">
+                <span><b>Class Teacher's Remarks : </b></span>
+                <span>Out standing performance . Promoted to class II</span>
+            </div>
+
+            <!-- signature section  -->
+            <div class="d-flex justify-content-between align-items-baseline px-3">
+                <div class="signature">
+                    <img src="" alt="" />
+                    <span class="ft15"><b>Parent / Guardian</b></span>
+                </div>
+                <div class="signature">
+                    <img src="~/Content/Images/teacher.png" alt="" />
+                    <span class="ft15"><b>Class Teacher</b></span>
+                </div>
+                <div class="signature">
+                    <img src="~/Content/Images/principle.png" alt="" />
+                    <span class="ft15"><b>Principal</b></span>
+                </div>
+            </div>
+
+            <div class="ft15 px-1 mt-2">
+                <span><b>Grading scale for Scholastic Areas : </b></span>
+                <span>Grades are awarded on a 6-point grading scale as follows -</span>
+            </div>
+
+            <!-- marks range section  -->
+            <table class="text-center ft15">
+                <tr>
+                    <th>Range (%)</th>
+                    <td>34 & Below</td>
+                    <td>35 - 49</td>
+                    <td>50 - 64</td>
+                    <td>65 - 74</td>
+                    <td>75 - 89</td>
+                    <td>90 - 100</td>
+                </tr>
+                <tr>
+                    <th>Grade</th>
+                    <td>D (Failed)</td>
+                    <td>C</td>
+                    <td>B</td>
+                    <td>B+</td>
+                    <td>A</td>
+                    <td>A+</td>
+                </tr>
+                <tr>
+                    <td colspan="7" scope="colgroup" class="text-start ps-1 ps-1">
+                        <div class="ft15">
+                            N.B. There will be no second attempt for English Language and
+                            Literature. Second attempt is allowed for one subject provided
+                            the score is below 35.
+                        </div>
+                        <div class="ft15">Minimum mark for passing is 35.</div>
+                        <div class="ft15">** It Indicates Improvement Exam.</div>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- End  -->
+        </div>
+    </div>
+
+    <button id="printButton">Print</button>
+    <script src="https://code.jquery.com/jquery-3.7.0.slim.js" integrity="sha256-7GO+jepT9gJe9LB4XFf8snVOjX3iYNb0FHYr5LI1N5c=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/Scripts/DevelopmentJS/PrintReport.js"</script>
+</body>
+
+<!-- Add the 'Print' button -->
+
+
+<script>
+    // Function to handle the printing
+    function printDiv() {
+        const printContent = document.getElementById("printT");
+        const originalContent = document.body.innerHTML;
+
+        document.body.innerHTML = printContent.outerHTML;
+        window.print();
+
+        document.body.innerHTML = originalContent;
+    }
+
+    // Attach click event to the 'Print' button
+    const printButton = document.getElementById("printButton");
+    printButton.addEventListener("click", printDiv);
+</script>
+</html>

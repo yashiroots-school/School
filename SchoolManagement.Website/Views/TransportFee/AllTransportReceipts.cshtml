@@ -1,0 +1,242 @@
+﻿@*@model SchoolManagement.Website.ViewModels.Tbl_Feereceiptsviewmodel*@
+@{
+    ViewBag.Title = "AllTransportReceipts";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#AllReceiptTbl').DataTable();
+    });
+</script>
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4>Students Transport Receipts  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        @*<div class="col-sm-6">
+                                <button class="btn btn-info pull-right"><a href="sis_manage_student.html" class="button_a">Manage</a></button>
+                                <button class="btn btn-danger pull-right"><a href="sis_add_new_student.html" class="button_a">Add New</a></button>
+                            </div>*@
+                        <div class="col-sm-12" style="margin-top: 15px;">
+                            @*<form action="/Fee/AllReceipts" method="get">*@
+                            <div class="col-sm-12">
+                                @*<div class="col-sm-3">
+            <div class="form-group stright_line">
+                <label>Filter by Course :</label>
+                @Html.DropDownList("course", new SelectList(ViewBag.AllCourses, "DataListItemName", "DataListItemName"), "select", new { @id = "courseDll", @class = "form-control" })
+
+            </div>
+        </div>*@
+                                @if (string.IsNullOrEmpty(Convert.ToString(Session["StudentId"])))
+                                {
+                                    <div class="col-sm-2">
+                                        <div class="form-group stright_line">
+                                            <label>Filter by Class :</label>
+                                            @Html.DropDownList("semester", new SelectList(ViewBag.Classes, "DataListItemName", "DataListItemName"), "select", new { @id = "classDll", @class = "form-control" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group stright_line">
+                                            <label>Date :</label>
+                                            <input type="text" name="Date" id="DateActual" class="form-control datepicker" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group stright_line">
+                                            <label>Date From:</label>
+                                            <input type="text" name="DateFrom" id="DateFrom" class="form-control datepicker" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group stright_line">
+                                            <label>Date To:</label>
+                                            <input type="text" name="DateTo" id="DateTo" class="form-control datepicker" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <div class="form-group stright_line">
+                                            <label>Search :</label><br />
+                                            <button type="button" onclick="GetAllRecepits()" class="btn btn-success"> Filter Records </button>
+                                        </div>
+                                    </div>
+                                    @*<div class="col-sm-2">
+                <div class="form-group stright_line">
+                    <label>Filter By Batch :</label>
+                    @Html.DropDownList("Batch", new SelectList(ViewBag.BatcheNames, "DataListItemName", "DataListItemName"), "select", new { @id = "BatcheNames", @class = "form-control" })
+                </div>
+            </div>*@
+                                }
+
+
+                            </div>
+                            @*</form>*@
+                        </div>
+
+                    </div><!-- col-sm-12 closed -->
+                </div><!--row x_title closed -->
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+
+        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+            <!-- col-msx-12 started -->
+            <div id="loadFee">
+                <table class="table table-bordered" id="AllReceiptTbl">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Student</th>
+                            <th>Class</th>
+                            @*<th>Category</th>*@
+                            @*<th>Batch</th>*@
+                            <th>Fee Headings</th>
+                            <th>PaidMonths</th>
+                            <th>Fee Paid</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ int count = 1;}
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@count</td>
+                                <td><b>@item.StudentName</b></td>
+                                <td>@item.ClassName</td>
+                                @*<td>@item.CategoryName</td>*@
+                                @*<td>@item.BatchName</td>*@
+                                <td>@item.PayHeadings</td>
+                                <td>@item.PaidMonths</td>
+                                <td>@item.ReceiptAmt</td>
+                                <td>@item.AddedDate</td>
+                                <td>
+                                    <a href="/AdmissionFee/PrintReceiptusingrotativa?id=@item.FeeReceiptId&ReceiptId=1" class="btn btn-sm btn-success" target="_blank">Preview</a>
+                                    @*<a href="/Fee/DownloadReceiptPreview?id=@item.FeeReceiptId" target="_blank" class="btn btn-sm btn-success">Download</a>*@
+
+                                    @{
+                                        if (item.DeletePermission == "true")
+                                        {
+
+                                            <button class="btn btn-sm btn-success deleteFeeReceipt" onclick="deletefeeReceipt('@item.FeeReceiptsOneTimeCreator')"> Delete</button>
+                                        }
+                                    }
+
+                                    @*@if (string.IsNullOrEmpty(Convert.ToString(Session["ScolarNo"])))
+                                    {
+                                        <button class="btn btn-sm btn-success deleteFeeReceipt" onclick="deletefeeReceipt('@item.FeeReceiptsOneTimeCreator')"> Delete</button>
+                                    }*@
+                                </td>
+                            </tr>
+                            count = count + 1;
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div><!-- col-msx-12  closed -->
+    </div><!-- 1st row closed -->
+</div>  <!-- /page content -->
+
+
+<script>
+        var ii = 0;
+        function GetAllRecepits() {
+            ii++;
+            var fromDt = $('#DateFrom').val();
+            var toDt = $('#DateTo').val();
+
+            var html = "";
+            $.ajax({
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                url: "/TransportFee/GetAllReceipts",
+                data: { DDClass: $('#classDll').val(), ActualDate: $('#DateActual').val(), DateFrom : fromDt, DateTo: toDt },
+                dataType: "json",
+                success: function (data) {
+                    //$("#stdnttblbody").empty();
+                    //$("#Studenttbl > stdnttblbody").html("");
+                    //$("#Studenttbl").html("");
+
+                    var stdnttbl = document.getElementById('loadFee');
+                    html = '';
+                    var cnt = 1;
+                    html = '<table class="table table-responsive table-striped" style="width:100% " id="AllReceiptTbl">';
+                    html = html + '<thead id="stdnttblhead"><tr><th>S.No</th><th>Student</th><th>Class</th><th>Fee Headings</th><th>Fee Paid</th><th>Date</th><th>Action</th></tr></thead>';
+                    html = html + '<tbody id="stdnttblbody">';
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i].Spare1 == 'admin' || data[i].Spare1 == 'admin user') {
+                            html += '<tr style="color:orange;">';
+                        }
+                        else {
+                            html += '<tr>';
+                        }
+                        html += '<td>' + cnt + '</td>';
+                        html += '<td>' + data[i].StudentName + '</td>';
+                        html += '<td>' + data[i].ClassName + '</td>';
+                        //html += '<td>' + data[i].CategoryName + '</td>';
+                        //html += '<td>' + data[i].BatchName + '</td>';
+                        html += '<td>' + data[i].PayHeadings + '</td>';
+                        //html += '<td>' + data[i].PaidMonths + '</td>';
+                        html += '<td>' + data[i].ReceiptAmt + '</td>';
+                        html += '<td>' + data[i].AddedDate + '</td>';
+                        html += '<td>';
+                        html += '<a href="/TransportFee/TransportReceiptPreview?id=' + data[i].FeeReceiptId + '" class="btn btn-sm btn-success">Preview</a>';
+                        @if (string.IsNullOrEmpty(Convert.ToString(Session["ScolarNo"])))
+                        {
+                                        <text>html += " <button class=\"btn btn-sm btn-success deleteFeeReceipt\" onclick=\"deletefeeReceipt('" + data[i].FeeReceiptsOneTimeCreator + "')\" > Delete</button>";</text>
+                        }
+                        html += '</td>';
+                        html += '</tr>';
+
+                        cnt++;
+                    }
+
+                    html += '</tbody></html>'
+
+                    stdnttbl.innerHTML = html;
+                    $('#AllReceiptTbl').DataTable();
+
+                    $('#DateFrom').val('');
+                    $('#DateTo').val('');
+                    $('#classDll').val('');
+                    $('#DateActual').val('');
+                },
+                error: function (result) {
+                    alert("Error");
+                }
+            });
+        }
+
+    function deletefeeReceipt(oneTimeCreationId) {
+
+            var r = confirm("Do you want to delete item?");
+            if (r == false) {
+                return false;
+            }
+
+            $.ajax({
+                url: "/TransportFee/DeleteFeeReceiptbyId?id=" + oneTimeCreationId,
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    alert(result);
+                    window.location.reload();
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+</script>
+

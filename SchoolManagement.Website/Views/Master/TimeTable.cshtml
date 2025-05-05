@@ -1,0 +1,95 @@
+﻿<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <h5 class="sis_heading">Previous <i class="glyphicon glyphicon-triangle-left"></i> Date : <span> 15 june 2015 </span> <i class="glyphicon glyphicon-triangle-right"></i> Next Day </h5>
+                    </div>
+
+                    <div class="col-md-4 col-sm-4 col-xs-12" style="margin:7px 0px;">
+                        <!-- <h4><button type="button" class="form_datetime btn btn-info pull-right" id="datetimepicker" data-date="12-02-2012" data-date-format="dd-mm-yyyy"> Select Day </button></h4>-->
+                        Select Day : <input type="text" value=" 27-06-2015" style="width:90px;">
+
+                    </div>
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <button class="btn btn-info pull-right"><a href="sis_view_schedule_time_table.html" class="button_a">View Time Table </a></button>
+                        <button class="btn btn-danger pull-right"><a href="sis_manage_time_table.html" class="button_a">Manage Time Table</a></button>
+                    </div>
+                    <div class="col-sm-7" style="margin-top: 15px;">
+                        <div class="col-sm-6">
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-6">Select Class :</label>
+                                <div class="col-sm-6">
+                                    <select class="form-control" id="Class_Id" name="Class_Id">
+                                        <option value="0">---Select Class---</option>
+                                        @{
+                                            foreach (var item1 in ViewBag.Classes as IEnumerable<SchoolManagement.Website.Models.Tbl_Class>)
+                                            {
+                                                <option value="@item1.Class_Id">@item1.Class_Name</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div><!--col-md-6 closed -->
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-sm-7">Select Section :</label>
+                                <div class="col-sm-5">
+                                    <select class="form-control" id="Subject_ID" name="Subject_ID">
+                                        <option value="0">---Select Subject---</option>
+                                        @{
+                                            foreach (var item2 in ViewBag.SubjectList as IEnumerable<SchoolManagement.Website.Models.Tbl_SubjectsSetup>)
+                                            {
+                                                <option value="@item2.Subject_ID">@item2.Subject_Name</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div><!--col-md-6 closed -->
+                    </div><!--col-md-7 closed -->
+                </div><!-- row x_title closed-->
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-md-12 closed -->
+
+        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+            <!-- col-msx-12 started -->
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="head_color">Day</th>
+                        @{
+                            foreach (var item in ViewBag.Timeperiod as IEnumerable<SchoolManagement.Website.Models.Tbl_SetTime>)
+                            {
+                                <th class="head_color">@item.Time</th>
+                            }
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (var items in ViewBag.WeekDays as IEnumerable<SchoolManagement.Website.Models.Tbl_WeekDays>)
+                        {
+                            <tr>
+
+                                <td class="week_color">@items.Week_day</td>
+                                @{
+                                    foreach (var item in ViewBag.Timeperiod as IEnumerable<SchoolManagement.Website.Models.Tbl_SetTime>)
+                                    {
+                                        <td ></td>
+                                    }
+                                }
+
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div><!-- col-sm-12 closed -->
+    </div><!-- 1st row closed -->
+</div>

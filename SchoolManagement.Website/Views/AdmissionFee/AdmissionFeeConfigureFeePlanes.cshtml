@@ -1,0 +1,415 @@
+﻿@model IEnumerable<SchoolManagement.Data.Models.FeePlans>
+
+@{
+    ViewBag.Title = "AdmissionFeeConfigureFeePlanes";
+}
+
+
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4>Configure Fee Plans  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6">
+                            @*<button class="btn btn-info pull-right"><a href="sis_manage_student.html" class="button_a">Manage</a></button>*@
+                            @*<button class="btn btn-danger pull-right"><a href="sis_add_new_student.html" class="button_a">Add New</a></button>*@
+                        </div>
+                    </div><!--row x_title closed -->
+
+                </div><!-- dashboard_graph closed-->
+            </div><!--col-msx-12 closed-->
+        </div>
+        <div class="col-sm-12">
+            <!-- col-sm-12 started -->
+            <h4 class="std_head well-sm">  Add New Configure Fee Plan</h4>
+            <div class="col-sm-6" style="border-right: 1px solid #eee;">
+                <!-- col-sm-6 started -->
+
+                <div class="form-group">
+                    <label>Select Fee Heading :</label>
+                    @Html.DropDownList("FeeHeading", @ViewBag.FeeHeadings as SelectList, "Select", new { @class = "form-control" })
+                </div>
+
+                @*<div class="form-group">
+                        <label>Select Course :</label>
+                        @Html.DropDownList("Courseddl", new SelectList(ViewBag.AllCourses, "DataListItemName", "DataListItemName"), "select", new { @id = "Courseddl", @class = "form-control" })
+                    </div>*@
+
+                <div class="form-group">
+                    <label>Choose Class :</label>
+                    <div class="checkbox">
+                        <label><input type="checkbox" id="allClassesCheck">Select All Classes</label>
+                    </div>
+                    <div class="form-control" style="border:1px solid #b4b4b4; height: 110px;
+                                                    overflow-x: hidden;
+                                                    overflow-x: auto;
+                                                    text-align:justify;">
+                        @foreach (var item in @ViewBag.Classes)
+                        {
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="class" value="@item.DataListItemId">@item.DataListItemName</label>
+                            </div>
+                        }
+                    </div>
+
+
+                    @*@Html.DropDownList("FeeHeadingGroup", @ViewBag.FeeHeadingGroups as SelectList, "Select", new { @class = "form-control" })*@
+                </div>
+
+
+
+
+            </div><!-- col-sm-6 closed -->
+            <div class="col-sm-6">
+
+
+                <div class="form-group">
+                    <label>Fee Value :</label>
+                    <input type="number" id="FeeValue" class="form-control">
+                    @*@Html.DropDownList("Account", @ViewBag.Batches as SelectList, "Select", new { @class = "form-control" })*@
+
+                </div>
+            
+                <div class="form-group">
+                    <label>Medium:</label>
+                    @Html.DropDownList("Medium", new SelectList(ViewBag.Medium, "DataListItemName", "DataListItemName"), "select", new { @id = "MediumDropdown", @class = "form-control" })
+
+                </div>
+
+                <div class="form-group">
+                    <label>Select Year :</label>
+                    @*<input type="text" id="FeeValue" class="form-control">*@
+                    @*@Html.DropDownList("Batches", new SelectList(ViewBag.BatcheNames, "Batch_Name"), "select", new { @id = "Batches", @class = "form-control" })*@
+
+                    @Html.DropDownList("Batches", ViewBag.BatcheNames as SelectList, "Select", new { @id = "Batches", @class = "form-control" })
+
+                    @*@Html.DropDownList("Batches", ViewBag.BatcheNames as SelectList, "---Select Year---", new { @id = "Batches", @class = "form-control" })*@
+                </div>
+
+
+                <div class="form-group" style="display:none">
+                    <label>Choose Category :</label>
+                    <div class="checkbox">
+                        <label><input id="allCategory" type="checkbox">Select All Category: </label>
+                    </div>
+                    <div class="form-control" style="border:1px solid #b4b4b4; height: 110px;
+                                                    overflow-x: hidden;
+                                                    overflow-x: auto;
+                                                    text-align:justify;">
+
+                        @foreach (var item in @ViewBag.Categories)
+                        {
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="category" value="@item.DataListItemId">@item.DataListItemName</label>
+                            </div>
+                        }
+
+                    </div>
+                    <label id="FrequencyMsg" class="red"></label>
+                </div>
+                <div class="form-group">
+                    <span id="FrequencyMessage" style="color:red"></span>
+                </div>
+            </div><!-- col-sm-6 closed -->
+
+
+        </div>
+        <div class="col-sm-12" style="display:none">
+            @*<div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h5><u style="color:red;">Select Months in which this fees becomes due towards student </u></h5>
+                        </div>
+                    </div>
+                </div>*@
+
+
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="Jan" name="Jan" value="Jan"> Jan
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="May" name="May" value="May"> May
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="Sep" name="Sep" value="Sep"> Sep
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="Feb" name="Feb" value="Feb"> Feb
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="Jun" name="Jun" value="Jun"> Jun
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="Oct" name="Oct" value="Oct"> Oct
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="Mar" name="Mar" value="Mar"> Mar
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="Jul" name="Jul" value="Jul"> Jul
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="Nov" name="Nov" value="Nov"> Nov
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="Apr" name="Apr" value="Apr"> Apr
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="Aug" name="Aug" value="Aug"> Aug
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="Dec" name="Dec" value="Dec"> Dec
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12" style="border-bottom: 2px solid #b4b4b4;">
+
+            @{
+                var data = ViewBag.Permission;
+                if (data == "true")
+                {
+                    <button id="btnSubmit" class="btn btn-success pull-right">Save</button>
+                }
+            }
+
+        </div>
+
+        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+            <!-- col-msx-12 started -->
+            <table class="table table-bordered" id="TblFeePlanes" style="margin-top:5px;">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        @*<th>Batch</th>*@
+
+                        <th>Class</th>
+                        <th>Category</th>
+                        <th>Fee Heading</th>
+                        <th>Value</th>
+                        @*<th>Action</th>*@
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int i = 1;}
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@i</td>
+                            @*<td>@item.BatchName</td>*@
+
+                            <td>@item.ClassName</td>
+                            <td>@item.CategoryName</td>
+                            <td>@item.FeeName</td>
+                            <td>@item.FeeValue</td>
+                            @*<td><a href="#" class="btn btn-success btn-sm" role="button">Edit</a> <button id="@item.FeeId" class="btn btn-danger btn-sm" role="button">Delete</button></td>*@
+                        </tr>
+                        i++;
+                    }
+                </tbody>
+            </table>
+        </div><!-- col-msx-12  closed -->
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+
+        $('#allCategory').change(function () {
+
+            if ($(this).prop('checked')) {
+                $("input[name='category']").prop('checked', true);
+            }
+            else {
+                $("input[name='category']").prop('checked', false);
+            }
+        });
+
+        $('#allClassesCheck').change(function () {
+            if ($(this).prop('checked')) {
+                $("input[name='class']").prop('checked', true);
+            }
+            else {
+                $("input[name='class']").prop('checked', false);
+            }
+        });
+
+        $("#btnSubmit").on("click", function () {
+            validation();
+            
+            var feePlan = {};
+            feePlan.feeHeadingId = $("#FeeHeading option:selected").val();
+            feePlan.feeHeadingName = $("#FeeHeading option:selected").text();
+            feePlan.feeValue = $("#FeeValue").val();
+            feePlan.Batch_Id = $("#Batches").val();
+            feePlan.Medium = $("#MediumDropdown").val();
+            //feePlan.Course = $("#Courseddl option:selected").val();
+            //feePlan.BatchName = $("#Batches option:selected").val();
+            //if (feePlan.Course == '') {
+            //    alert("Please Select Any Course");
+            //    return false;
+            //}
+            //if (feePlan.BatchName == '') {
+            //    alert("Please Select Any Batch Name");
+            //    return false;
+            //}
+            var classesId = [];
+            var categoryId = [];
+
+            $.each($("input[name='class']:checked"), function () {
+                classesId.push($(this).val());
+            });
+
+            $.each($("input[name='category']:checked"), function () {
+                categoryId.push($(this).val());
+            });
+
+            feePlan.classesId = classesId;
+            feePlan.categoryId = categoryId;
+            feePlan.Jan = $('#Jan').prop("checked") == true ? true : false;
+            feePlan.Feb = $('#Feb').prop("checked") == true ? true : false;
+            feePlan.Mar = $('#Mar').prop("checked") == true ? true : false;
+            feePlan.Apr = $('#Apr').prop("checked") == true ? true : false;
+            feePlan.May = $('#May').prop("checked") == true ? true : false;
+            feePlan.Jun = $('#Jun').prop("checked") == true ? true : false;
+            feePlan.Jul = $('#Jul').prop("checked") == true ? true : false;
+            feePlan.Aug = $('#Aug').prop("checked") == true ? true : false;
+            feePlan.Sep = $('#Sep').prop("checked") == true ? true : false;
+            feePlan.Oct = $('#Oct').prop("checked") == true ? true : false;
+            feePlan.Nov = $('#Nov').prop("checked") == true ? true : false;
+            feePlan.Dec = $('#Dec').prop("checked") == true ? true : false;
+
+            $.ajax({
+                url: '/Fee/AdmissionFeePlanes?Fee_Id=1',
+                dataType: "json",
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(feePlan),
+                async: true,
+                processData: false,
+                cache: false,
+                success: function (data) {
+                    window.location.reload();
+                },
+                error: function (xhr) {
+                }
+            });
+        });
+        function validation() {
+            if ($("#FeeHeading").val() == "" || $("#FeeHeading").text() == "Select") {
+                $("#FeeHeading").css("border", "1px solid red");
+                return;
+            } else {
+                $("#FeeHeading").css("border", "1px solid #b4b4b4");
+            }
+
+            if ($("#FeeValue").val() == "") {
+                $("#FeeValue").css("border", "1px solid red");
+                return;
+            } else {
+                $("#FeeValue").css("border", "1px solid #b4b4b4");
+            }
+
+            if ($("#Batches").val() == "" || $("#Batches").text() == "") {
+                $("#Batches").css("border", "1px solid red");
+                return;
+            } else {
+                $("#Batches").css("border", "1px solid #b4b4b4");
+            }
+            var classCheck = false;
+            var categoryCheck = false;
+            $.each($("input[name='class']:checked"), function () {
+                if ($(this).prop('checked')) {
+                    classCheck = true;
+                }
+            });
+            $.each($("input[name='category']:checked"), function () {
+                if ($(this).prop('checked')) {
+                    categoryCheck = true;
+                }
+            });
+            if (classCheck == false) {
+                alert("Please select atleast 1 Class");
+                return false;
+            }
+            //if (categoryCheck == false) {
+            //    alert("Please select atleast 1 category");
+            //    return false;
+            //}
+
+        }
+    </script>
+    <script>
+
+        $('#TblFeePlanes').DataTable();
+
+    </script>
+}

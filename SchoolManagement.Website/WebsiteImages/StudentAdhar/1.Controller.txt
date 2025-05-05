@@ -1,0 +1,22 @@
+using System.Web;
+using System.Web.Mvc;
+using mvc.project.Models;
+namespace mvc.project.Controllers
+{
+    public class ProductsController : Controller
+    {
+        // GET: Products
+        public ActionResult Details()
+        {
+            Products product = new Products()
+            {
+                ProductID = 1,
+                ProductName = "chairs",
+                SupplierID = 1,
+                CountryID = 2,
+                Price = 2
+            };
+            return View();
+        }
+    }
+}

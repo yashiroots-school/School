@@ -1,0 +1,85 @@
+﻿@using SchoolManagement.Website.Models
+@model LoginViewModel
+@{
+    ViewBag.Title = "Log in";
+}
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en" class="body-full-height">
+<head>
+    <!-- META SECTION -->
+    <title>St. Francis Institute of Management & Research (SFIMAR)</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="icon" href="~/WebsiteImages/img/fevicon.png" type="image/x-icon" />
+    <!-- END META SECTION -->
+    <!-- CSS INCLUDE -->
+    <link rel="stylesheet" type="text/css" id="theme" href="~/Content/WebsiteCss/css/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" id="theme" href="~/Content/WebsiteCss/css/theme-default.css" />
+    <!-- EOF CSS INCLUDE -->
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="login-box animated fadeInDown">
+            <div class="login-logo">
+                <img src="~/WebsiteImages/img/logo_admin1.png" alt="logo" style="margin: 0 auto;display: block;" />
+                <h1 style="text-align:center;font-weight:bold;color:#982f8d;margin-top:5px;">SFIMAR</h1>
+            </div>
+            <div class="login-body">
+                <div class="login-title"><strong>Welcome</strong>, Please login</div>
+
+                @using (Html.BeginForm("Login", "StudentLogin", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                {
+                    <div class="form-horizontal">
+                        @Html.AntiForgeryToken()
+                        @*<h4>Use a local account to log in.</h4>
+                            <hr />*@
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <div class="form-group">
+                            @*@Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })*@
+                            <div class="col-md-12">
+                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "UserName" })
+                                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @*@Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })*@
+                            <div class="col-md-12">
+                                @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger", @placeholder = "Password" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-6">
+                                <a href="#" class="btn btn-link btn-block">Forgot your password?</a>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-default btn-block"> Log In</button>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+
+            </div>
+            <div class="login-footer">
+                <div class="" style="text-align:center;">
+                    Copyright &copy; St. Francis Institute of Management & Research
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
+
+
+

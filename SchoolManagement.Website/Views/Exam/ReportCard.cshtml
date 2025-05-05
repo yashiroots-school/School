@@ -1,0 +1,1067 @@
+﻿
+@{
+    ViewBag.Title = "ReportCard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+
+    .select2-container .select2-selection--single {
+        height: 34px !important;
+    }
+
+    .select2-container--default .select2-selection--single {
+        border: 1px solid #ccc !important;
+        border-radius: 0px !important;
+    }
+
+
+
+    #loader-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .loader {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #3498db;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 2s linear infinite;
+    }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    #freezeButton:disabled {
+        /* Your disabled styles here */
+        cursor: not-allowed !important;
+    }
+
+    /*PopUp for Hold & unhold of Student Report*/
+    #customAlert {
+        display: none; /* Hidden by default */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+    }
+
+    #alertBox {
+        background-color: white;
+        width: 300px;
+        margin: 20% auto;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+        #alertBox label {
+            font-weight: bold;
+        }
+
+        #alertBox input {
+            width: 100%;
+            padding: 8px;
+            margin-left: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        #alertBox button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            #alertBox button:disabled {
+                background-color: #ddd;
+                cursor: not-allowed;
+            }
+</style>
+<!-- Add Bootstrap CSS link -->
+<!-- Add Bootstrap Table CSS link -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.18.3/dist/bootstrap-table.min.css" rel="stylesheet" />
+
+<!-- Add Bootstrap JS and jQuery -->
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Add Bootstrap Table JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<div id="loader-overlay">
+    <div class="loader"></div>
+</div>
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <h2>Report Cards</h2>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="row">
+                @*<h4 class="std_head well-sm"> Staff Information Form</h4>*@
+                <div class="tab-content tab_sis">
+                    <div class="tab-pane fade in active" id="add">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="col-sm-2">
+
+                                    <div class="form-group">
+                                        <label>Class :</label>
+                                        <select class="form-control select2 " id="ClassID" name="ClassID">
+                                            <option value="0">---Select Class---</option>
+                                            @foreach (var item in ViewBag.ClassList as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                            {
+                                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                            }
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label>Section :</label>
+                                        <select class="form-control select2 " id="SectionId" name="SectionId">
+                                            <option value="0">---Select Section---</option>
+                                            @foreach (var item in ViewBag.SectionList as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                            {
+                                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                            }
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label>Select Term :</label>
+
+                                        <select class="form-control select2 " id="TermID" name="TermID">
+                                            <option value="0">---Select Term---</option>
+                                            <option value="All10">All</option>
+                                            @foreach (var item in ViewBag.Terms as IEnumerable<SchoolManagement.Website.Models.Tbl_Term>)
+                                            {
+                                                string optionValue = "";
+                                                string termName = item.TermName?.Trim().ToUpper();
+                                                long termId = item.TermID;
+
+                                                switch (termId)
+                                                {
+                                                    case 1:
+                                                        // Case 1: Always UT1 for TermID 1
+                                                        optionValue = "UT1";
+                                                        break;
+
+                                                    case 2:
+                                                        // Case 2: Half Yearly -> Term1
+                                                        if (termName == "HALF YEARLY")
+                                                        {
+                                                            optionValue = "Term" + termId;
+                                                        }
+                                                        // Case 2: Unit - II -> UT2
+                                                        else if (termName == "UNIT - II" || termName == "UT II")
+                                                        {
+                                                            optionValue = "UT" + termId;
+                                                        }
+                                                        break;
+
+                                                    case 3:
+                                                        // Case 3: TERM - I -> Term1
+                                                        if (termName == "TERM - I")
+                                                        {
+                                                            optionValue = "Term" + termId;
+                                                        }
+                                                        // Case 3: Unit - II -> UT2
+                                                        else if (termName == "UNIT - II")
+                                                        {
+                                                            optionValue = "UT" + termId;
+                                                        }
+                                                        break;
+
+                                                    case 4:
+                                                        // TERM - II -> Term2
+                                                        if (termName == "TERM - II")
+                                                        {
+                                                            optionValue = "Term" + termId;
+                                                        }
+                                                        break;
+
+                                                    case 5:
+                                                        // Selection exam
+                                                        optionValue = "Selection" + termId;
+                                                        break;
+
+                                                    case 6:
+                                                        // Promotion exam
+                                                        optionValue = "Promotion" + termId;
+                                                        break;
+
+                                                    case 7:
+                                                    case 8:
+                                                        // PreBoards
+                                                        optionValue = "PreBoard" + termId;
+                                                        break;
+
+                                                    default:
+                                                        optionValue = ""; // fallback if none matched
+                                                        break;
+                                                }
+
+                                                <option value="@optionValue">@item.TermName</option>
+                                            }
+                                            @*@foreach (var item in ViewBag.Terms as IEnumerable<SchoolManagement.Website.Models.Tbl_Term>)
+        {
+            string optionValue = "";
+
+            switch (item.TermID)
+            {
+                case 1:
+                case 3:
+                    optionValue = (item.TermName == "Half Yearly" || item.TermName == "Annual") ? "UT" + item.TermID : "UT" + item.TermID;
+                    break;
+
+                case 2:
+                case 4:
+                    optionValue = (item.TermName == "Half Yearly" || item.TermName == "Annual") ? "Term" + item.TermID : "Term" + item.TermID;
+                    break;
+
+                case 5:
+                    optionValue = "Selection" + item.TermID;
+                    break;
+
+                case 6:
+                    optionValue = "Promotion" + item.TermID;
+                    break;
+
+                case 7:
+                case 8:
+                    optionValue = "PreBoard" + item.TermID;
+                    break;
+
+                default:
+                    optionValue = "Term" + item.TermID; // Or empty if you prefer
+                    break;
+            }
+
+            <option value="@optionValue">@item.TermName</option>
+        }*@
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="form-group">
+                                        <label>Select Batch :</label>
+
+                                        <select class="form-control select2 " id="BatchID" name="BatchID">
+                                            <option value="0">---Select Batch---</option>
+                                            @foreach (var item in ViewBag.Batch as IEnumerable<SchoolManagement.Website.Models.Tbl_Batches>)
+                                            {
+                                                <option value="@item.Batch_Id">@item.Batch_Name</option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-sm-4 d-flex justify-content-between align-items-center" style="top: 21px;">
+                                    <button type="button" class="btn btn-success" id="BtnShowReportStudent">Show</button>
+                                    <button type="button" class="btn btn-primary BtnPrintAll1" id="BtnPrintAll">Print All</button>
+                                    @*<button type="button" class="btn btn-info BtnPrintAll1" id="BtnDownloadAll">DownLoad</button>*@
+                                    <button type="button" class="btn btn-primary" id="BtnDownloadAll">Download</button>
+
+                                    <button type="button" class="btn btn-primary" id="freezeButton" disabled>
+                                        Freezing <i class="fa fa-lock" aria-hidden="true">
+                                        </i>
+                                    </button>
+                                    @if (Session["rolename"] != null &&
+                                       Session["rolename"].ToString() == "Administrator")
+                                    {
+                                        <button type="button" class="btn btn-primary" id="BtnPublish" disabled>
+                                            Publish <i class="fa fa-lock" aria-hidden="true">
+                                            </i>
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <hr />
+                        @* <div class="col-sm-12" style="margin-top:20px;">*@
+
+                        <table class="table table-bordered" id="TableStudent">
+                            <thead>
+                                <tr>
+                                    <th>SNo</th>
+                                    <th>Student Name</th>
+                                    <th>Class</th>
+                                    <th>Section</th>
+                                    <th>Batch</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="TableBody"></tbody>
+
+                        </table>
+
+
+                        @*</div>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="IFrameClass" style="display:none">
+
+
+    <div class="d-flex justify-content-center align-items-center h-100" id="JsonPrint">
+
+
+        <div class="d-flex flex-column" id="printColumns">
+            <div class="border border-dark mt-3" id="printT">
+                <!-- Header section  -->
+                <section class="d-flex justify-content-between align-items-center ">
+                    <div class="schoollogo1" style="width: 21%">
+                        <img src="data:image/jpeg;base64,@ViewBag.School_logo"
+                             alt="notfound"
+                             style="width: 120px; height: 80px; margin-bottom: 11px;" />
+                    </div>
+                    <div class="headerContent text-center " style="width:58%">
+                        <div class="ft11 mb-0" style="font-size: 1.5rem; font-weight: bold;"><b>@ViewBag.SchoolNewName</b></div>
+
+                        <p class="ft13 mb-0">
+                            @ViewBag.newAddress
+                        </p>
+
+
+                        <div class="ft13"><b>Academic Session : @ViewBag.current_Year</b></div>
+                        <div class="ft13"><b>Report Card</b></div>
+                    </div>
+                    <div class="schoollogo1 " style="width:21%">
+                        <img src="~/Content/Images/logo3.png"
+                             alt="notfound"
+                             style="width: 120px; height: 103px;margin-left: 13px;" />
+                        <span class="ft14">CISCE Affiliation No. : MP034</span>
+                    </div>
+                </section>
+                <hr class="m-0" />
+
+                <!-- students details  -->
+                <section class="ft15 ps-1 my-1">
+                    <div class="row">
+                        <div class="col-4" style="width: 60%">
+                            <span style="margin-right: 5px"><b> Student's Name</b></span>
+                            <span class="text-uppercase">
+                                : <span style="border-bottom: 1px dashed" id="StudentName"></span>
+                            </span>
+                        </div>
+
+                        <div class="col-4" style="width: 40%">
+                            <span><b>Class & Section</b></span>
+                            <span class="text-uppercase">: <span style="border-bottom: 1px dashed" id="ClassSection"></span></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4" style="width: 60%">
+                            <span style="margin-right: 11px"><b>Father's Name</b> </span>
+                            <span class="text-uppercase"> : <span style="border-bottom: 1px dashed" id="FatherName"></span> </span>
+                        </div>
+
+                        <div class="col-4" style="width: 40%">
+                            <span style="margin-right: 16px"><b>Date of Birth</b></span>
+                            <span class="text-uppercase">: <span style="border-bottom: 1px dashed" id="DateOfBirth"></span> </span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-8" style="width: 60%">
+                            <span style="margin-right: 6px"><b>Mother's Name</b></span>
+                            <span class="text-uppercase">: <span style="border-bottom: 1px dashed" id="MotherName"></span></span>
+                        </div>
+                        <div class="col-4" style="width: 40%">
+                            <span style="margin-right: 27px"><b>Attendance</b></span>
+                            <span class="text-uppercase">: <span style="border-bottom: 1px dashed" id="Attendance"></span></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4" style="width: 60%">
+                            <span style="margin-right: 44px"><b>Roll No.</b></span>
+                            <span class="text-uppercase">: <span style="border-bottom: 1px dashed" id="RollNo"></span></span>
+                        </div>
+                        <div class="col-4" style="width: 40% ">
+                            <span style="margin-right: 26px"><b>Scholar No.</b></span>
+                            <span class="text-uppercase">: <span style="border-bottom: 1px dashed" id="ScholarNo"></span></span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- marks section  -->
+                <table class="text-center my-2 ft15" id="MarksTable">
+                    <tr>
+                        <th style="width: 180px;">Scholastic Areas:</th>
+                        <th colspan="3" scope="colgroup">Unit Test</th>
+                        <th colspan="4" scope="colgroup">TERM-I</th>
+                        <th colspan="4" scope="colgroup">TERM-II</th>
+                        <th colspan="4" class="preBoardResult" scope="colgroup">PreBoard-I</th>
+                        <th colspan="4" class="preBoardResult" scope="colgroup">PreBoard-II</th>
+                        <th colspan="4" class="preBoardResult" scope="colgroup">Selection</th>
+                        <th colspan="4" class="preBoardResult" scope="colgroup">Promotion</th>
+
+                        <th colspan="2" scope="colgroup">Total</th>
+                    </tr>
+                    <tr>
+                        <th scope="col">Subjects</th>
+
+                        <th scope="col">UT I <span id="UT1MaxMarkTotal"></span></th>
+                        <th scope="col">UT II <span id="UT2MaxMarkTotal"></span></th>
+                        <th scope="col">Marks Obt.  <span id="UTTotalMaxMarkTotal"></span></th>
+
+                        <th scope="col">Theory <span class="Term1TheoryMaxMarkTotal"></span></th>
+                        <th scope="col">Practical <span id="Term1PracticalMaxMarkTotal"></span></th>
+                        <th scope="col">Marks Obt. <span id="Term1TotalMaxMarkTotal"></span></th>
+                        <th scope="col">Grade</th>
+
+                        <th scope="col">Theory<span id="Term2TheoryMaxMarkTotal"></span></th>
+                        <th scope="col">Practical <span id="Term2PracticalMaxMarkTotal"></span></th>
+                        <th scope="col">Marks Obt. <span id="Term2TotalMaxMarkTotal"></span></th>
+                        <th scope="col">Grade</th>
+
+                        @*<th class="preBoardResult" scope="col">Theory<span id="PreBoard1TheoryMaxMarkTotal"></span></th>
+                            <th class="preBoardResult" scope="col">Practical <span id="PreBoard1PracticalMaxMarkTotal"></span></th>
+                            <th class="preBoardResult" scope="col">Marks Obt. <span id="PreBoard1TotalMaxMarkTotal"></span></th>
+                            <th class="preBoardResult" scope="col">Grade</th>
+
+                            <th class="preBoardResult" scope="col">Theory<span id="PreBoard2TheoryMaxMarkTotal"></span></th>
+                            <th class="preBoardResult" scope="col">Practical <span id="PreBoard2PracticalMaxMarkTotal"></span></th>
+                            <th class="preBoardResult" scope="col">Marks Obt. <span id="PreBoard2TotalMaxMarkTotal"></span></th>
+                            <th class="preBoardResult" scope="col">Grade</th>
+
+
+                            <th class="preBoardResult" scope="col">Theory<span id="SelectionTheoryMaxMarkTotal"></span></th>
+                            <th class="preBoardResult" scope="col">Practical <span id="SelectionPracticalMaxMarkTotal"></span></th>
+                            <th class="preBoardResult" scope="col">Marks Obt. <span id="SelectionTotalMaxMarkTotal"></span></th>
+                            <th class="preBoardResult" scope="col">Grade</th>
+                            <th class="preBoardResult" scope="col">Theory<span id="PromotionTheoryMaxMarkTotal"></span></th>
+                            <th class="preBoardResult" scope="col">Practical <span id="PromotionPracticalMaxMarkTotal"></span></th>
+                            <th class="preBoardResult" scope="col">Marks Obt. <span id="PromotionTotalMaxMarkTotal"></span></th>
+                            <th class="preBoardResult" scope="col">Grade</th>*@
+
+
+                        <th scope="col">Marks</th>
+                        <th scope="col">Grade</th>
+                    </tr>
+                </table>
+
+                <!-- UT marks section  -->
+                <table class="text-center my-2 ft15" id="UnitRecord">
+                    <tr>
+                        <th style="width: 180px;">Scholastic Areas:</th>
+                        <th colspan="2" scope="colgroup">Unit Test</th>
+                    </tr>
+                    <tr>
+                        <th scope="col">Subjects</th>
+                        <th scope="col">UT <span id="UnitName"></span> <span id="UTMaxMarkTotal"></span> </th>
+                        <th scope="col">Grade</th>
+                    </tr>
+                </table>
+                <!-- Terms marks section  -->
+                <table class="text-center my-2 ft15" id="TermRecord">
+                    <tr>
+                        <th style="width: 180px;">Scholastic Areas:</th>
+                        <th colspan="4" scope="colgroup">TERM-<span id="TermName"></span></th>
+                    </tr>
+                    <tr>
+                        <th scope="col">Subjects</th>
+                        <th scope="col">Theory <span class="Term1TheoryMaxMarkTotal"></span></th>
+                        <th scope="col">Practical <span id="Term1TPracticalMaxMarkTotal"></span></th>
+                        <th scope="col">Marks Obt. <span id="Term1TAllTotalMaxMarkTotal"></span></th>
+                        <th scope="col">Grade</th>
+
+
+                    </tr>
+                </table>
+                <!-- Pre Board marks section  -->
+                <table class="text-center my-2 ft15" id="PreBoardRecord">
+                    <tr>
+                        <th style="width: 180px;">Scholastic Areas:</th>
+                        <th colspan="4" scope="colgroup">Pre Board-<span id="PreBoardTermName"></span></th>
+                    </tr>
+                    <tr>
+                        <th scope="col">Subjects</th>
+                        <th scope="col">Theory <span class="PreBoardTheoryMaxMarkTotal"></span></th>
+                        <th scope="col">Practical <span id="PreBoardTPracticalMaxMarkTotal"></span></th>
+                        <th scope="col">Marks Obt. <span id="PreBoardTAllTotalMaxMarkTotal"></span></th>
+                        <th scope="col">Grade</th>
+
+
+                    </tr>
+                </table>
+                <table class="text-center my-2 ft15" id="SelectionRecords">
+
+                    <tr>
+                        <th style="width: 180px;">Scholastic Areas:</th>
+                        <th colspan="2" scope="colgroup">Selection Test</th>
+                    </tr>
+                    <tr>
+                        <th scope="col">Subjects</th>
+                        <th scope="col">Theory <span class="SelectionNameTheoryMaxMarkTotal"></span></th>
+                        <th scope="col">Practical <span id="SelectionNameTPracticalMaxMarkTotal"></span></th>
+                        <th scope="col">Marks Obt. <span id="SelectionTAllTotalMaxMarkTotal"></span></th>
+                        <th scope="col">Grade</th>
+                    </tr>
+                    @*<tr>
+                            <th style="width: 180px;">Scholastic Areas:</th>
+                            <th colspan="4" scope="colgroup">Selection<span id="SelectionName"></span></th>
+                        </tr>
+                        <tr>
+                            <th scope="col">Subjects</th>
+                            <th scope="col">Theory <span class="SelectionTheoryMaxMarkTotal"></span></th>
+                            <th scope="col">Practical <span id="SelectionTPracticalMaxMarkTotal"></span></th>
+                            <th scope="col">Marks Obt. <span id="SelectionTAllTotalMaxMarkTotal"></span></th>
+                            <th scope="col">Grade</th>
+
+
+                        </tr>*@
+                </table>
+                <table class="text-center my-2 ft15" id="PromotionRecords">
+                    <tr>
+                        <th style="width: 180px;">Scholastic Areas:</th>
+                        <th colspan="4" scope="colgroup">Promotion<span id="PromotionName"></span></th>
+                    </tr>
+                    <tr>
+                        <th scope="col">Subjects</th>
+                        <th scope="col">Theory <span class="PromotionNameTheoryMaxMarkTotal"></span></th>
+                        <th scope="col">Practical <span id="PromotionNameTPracticalMaxMarkTotal"></span></th>
+                        <th scope="col">Marks Obt. <span id="PromotionTAllTotalMaxMarkTotal"></span></th>
+                        <th scope="col">Grade</th>
+
+
+                    </tr>
+                </table>
+
+
+
+                <!-- Grading scale  -->
+                <table class="text-center ft15" id="coScholasticTable">
+                    <tr>
+                        <th colspan="6" scope="colgroup">
+                            Co-Scholastic Areas [on a 4-point (A-NA) grading scale]
+                        </th>
+                    </tr>
+
+                    <tr>
+                        <th style="width: 300px;">Co-Scholastic Areas</th>
+                        <th class="headerTermColumn headerUT1Column" style="width: 65px;">UT-I</th>
+                        <th class="headerTermColumn headerUT2Column" style="width:65px;">UT-II</th>
+                        <th class="headerTermColumn headerTerm1Column" style="width: 65px;">TERM-I</th>
+                        <th class="headerTermColumn headerTerm2Column" style="width:65px;">TERM-II</th>
+                        <th class="headerTermColumn headerPreBoard1Column preBoardResult" style="width:65px;">Pre Board-I</th>
+                        <th class="headerTermColumn headerPreBoard2Column preBoardResult" style="width:65px;">Pre Board-II</th>
+
+
+                        <th style="width: 300px;">Co-Scholastic Areas</th>
+                        <th class="headerTermColumn headerUT1Column" style="width: 65px;">UT-I</th>
+                        <th class="headerTermColumn headerUT2Column" style="width:65px;">UT-II</th>
+                        <th class="headerTermColumn headerTerm1Column" style="width:65px;">TERM-I</th>
+                        <th class="headerTermColumn headerTerm2Column" style="width:65px;">TERM-II</th>
+                        <th class="headerTermColumn headerPreBoard1Column preBoardResult" style="width:65px;">Pre Board-I</th>
+                        <th class="headerTermColumn headerPreBoard2Column preBoardResult" style="width:65px;">Pre Board-II</th>
+
+                    </tr>
+
+
+                </table>
+
+
+
+
+                <!-- Result section  -->
+                <div class="d-flex justify-content-between align-items-center px-1">
+                    <div class="ft15">
+                        <span><b>Result :</b></span>
+                        <span id="result"></span>
+                        <span id="RankInClass" style="font-weight:bold"></span>
+                    </div>
+                    <div class="ft15">
+                        <span><b>Overall Grade :</b></span>
+                        <span id="overallGrade"></span>
+                    </div>
+                </div>
+                <div class="ft15 px-1" id="teacherRemark">
+                    <span><b>Class Teacher's Remarks : </b></span>
+                    <span><span id="teacherRemarkText"></span>  <span id="promotedClass"></span> </span>
+                </div>
+                <div class="ft15 px-1" id="UnitTestRemark">
+                    <span><b>Class Teacher's Remarks : </b></span>
+                    <span id="UnitTestRemarkText">. </span>
+                </div>
+                <!-- signature section  -->
+                <div class="d-flex justify-content-between align-items-baseline px-3">
+                    <div class="signature">
+                        <img src="" alt="" />
+                        <span class="ft15"><b>Parent / Guardian</b></span>
+                    </div>
+                    <div class="signature">
+                        <img src="" id="teachersignature" style="width:115px; height:60px;" alt="" />
+                        <span class="ft15"><b>Class Teacher</b></span>
+                    </div>
+                    <div class="signature">
+                        <img src="~/Content/Images/principle.png" style="width:115px; height:60px;" alt="" />
+                        <span class="ft15"><b>Principal</b></span>
+                    </div>
+                </div>
+
+                <div class="ft15 px-1 mt-2">
+                    <span><b>Grading scale for Scholastic Areas : </b></span>
+                    <span>Grades are awarded on a 6-point grading scale as follows -</span>
+                </div>
+
+                <!-- marks range section  -->
+                <table class="text-center ft15" id="GradingCriteria">
+                    <tbody class="grate-tbody"></tbody>
+
+
+                    @*<tr>
+                            <th>Range (%)</th>
+                            <td><span id="dgrade"></span></td>
+
+
+                            @foreach (var item in ViewBag.gradingCriteria)
+                            {
+                                <td>@item.MinimumPercentage - @item.MaximumPercentage</td>
+                            }
+                            <td>32.5 - 49.4</td>
+                                <td>49.5 - 64.4</td>
+                                <td>64.5 - 74.4</td>
+                                <td>74.5 - 89.4</td>
+                                <td>89.5 - 100</td>
+                        </tr>
+                        <tr>
+                            <th>Grade</th>
+                            @foreach (var item in ViewBag.gradingCriteria)
+                            {
+                                <td>@item.Grade</td>
+                            }
+                            <td>D (Failed)</td>
+                            <td>C</td>
+                            <td>B</td>
+                            <td>B+</td>
+                            <td>A</td>
+                            <td>A+</td>
+                        </tr>*@
+                    @*<tr>
+                            <td colspan="7" scope="colgroup" class="text-start ps-1 ps-1">
+                                <div class="ft15">
+                                    4.
+                                    N.B. There will be no second attempt for English Language and
+                                    Literature. Second attempt is allowed for one subject provided
+                                    the score is below 35.
+                                </div>
+                                <div class="ft15">Minimum mark for passing is 35.</div>
+                                <div class="ft15">** It Indicates Improvement Exam.</div>
+                            </td>
+                        </tr>*@
+                </table>
+                <table class="text-center ft15" id="StaticGradingCriteria" style="display:none;">
+                    <tr>
+                        <th>Range (%)</th>
+                        <td>34 & Below</td>
+                        <td>35 - 49</td>
+                        <td>50 - 64</td>
+                        <td>65 - 74</td>
+                        <td>75 - 89</td>
+                        <td>90 - 100</td>
+                    </tr>
+                    <tr>
+                        <th>Grade</th>
+                        <td>D (Failed)</td>
+                        <td>C</td>
+                        <td>B</td>
+                        <td>B+</td>
+                        <td>A</td>
+                        <td>A+</td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="7" scope="colgroup" class="text-start ps-1 ps-1">
+                            <div class="ft15">
+                                N.B. There will be no second attempt for English Language and
+                                Literature. Second attempt is allowed for one subject provided
+                                the score is below 35.
+                            </div>
+                            <div class="ft15">Minimum mark for passing is 35.</div>
+                            <div class="ft15">** It Indicates Improvement Exam.</div>
+                        </td>
+                    </tr>
+                </table>
+                <!-- End  -->
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+</div>
+<div id="customAlert">
+    <div id="alertBox">
+        <div class="row">
+            <div class="col-sm-12">
+                <label id="message" style="font-weight:bold"> </label>
+            </div>
+        </div>
+        <div class="row" id="remarkdiv">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <label>Remark</label>
+                            <label id="holdstudentid" style="display:none"></label>
+                            <label id="holdTerm" style="display:none"></label>
+                            <label id="holdBatch" style="display:none"></label>
+                            <label id="holdclassid" style="display:none"></label>
+                            <label id="holdisHold" style="display:none"></label>
+
+                        </div>
+                        <div class="col-sm-8">
+                            <input type="text" id="holdremark" placeholder="Type something..." class="form-control">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+        <button id="HoldButton">Save</button>
+        <button id="CloseButton" onclick="ClosePopUp()">Cancel</button>
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="~/Scripts/DevelopmentJS/Report.js"></script>
+    @*<script src="~/Scripts/DevelopmentJS/CBSEReport.js"></script>*@
+}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script>
+
+    $(document).ready(function () {
+        $('.select2').select2();
+        //$('#ClassID').change(function () {
+
+        //    var selectedOptionId = $(this).val();
+        //    if (selectedOptionId != 0) {
+        //        if ($('#SectionId').val() != '0' && $('#TermID').val() != '0') {
+        //            var FreezeObj = {
+        //                classid: $('#ClassID').val(),
+        //                sectionid: $('#SectionId').val(),
+        //                TermId: $('#TermID').val(),
+        //            };
+        //            getFreezeitem(FreezeObj);
+
+
+        //        }
+
+        //    }
+        //    else {
+        //        var freezeButton = $('#freezeButton');
+        //        freezeButton.prop('disabled', true);
+        //    }
+
+        //});
+        //$('#SectionId').change(function () {
+        //    var selectedOptionId = $(this).val();
+        //    if (selectedOptionId != 0) {
+        //        if ($('#ClassID').val() != 0 && $('#TermID').val() != 0) {
+        //            var FreezeObj = {
+        //                classid: $('#ClassID').val(),
+        //                sectionid: $('#SectionId').val(),
+        //                TermId: $('#TermID').val(),
+        //            };
+        //            getFreezeitem(FreezeObj);
+        //        }
+
+        //    }
+        //    else {
+        //        var freezeButton = $('#freezeButton');
+        //        freezeButton.prop('disabled', true);
+        //    }
+        //    // Call your function and pass the selected option ID as a parameter
+        //});
+
+        //$('#TermID').change(function () {
+        //    var selectedOptionId = $(this).val();
+        //    if (selectedOptionId != 0) {
+        //        if (($('#ClassID').val() != 0 && $('#SectionId').val() != 0) || $('#BatchID').val() != 0) {
+        //            var FreezeObj = {
+        //                classid: $('#ClassID').val(),
+        //                sectionid: $('#SectionId').val(),
+        //                TermId: $('#TermID').val(),
+        //            };
+        //            getFreezeitem(FreezeObj);
+        //        }
+        //    }
+        //    else {
+        //        var freezeButton = $('#freezeButton');
+        //        freezeButton.prop('disabled', true);
+        //    }
+        //});
+        //$('#BatchID').change(function () {
+        //    var selectedOptionId = $(this).val();
+        //    if (selectedOptionId != 0) {
+        //        if ($('#TermID').val() != 0) {
+        //            var FreezeObj = {
+        //                classid: $('#ClassID').val(),
+        //                sectionid: $('#SectionId').val(),
+        //                TermId: $('#TermID').val(),
+        //            };
+        //            getFreezeitem(FreezeObj);
+        //            getPublishitem(objPublishDetail);
+        //        }
+        //    }
+        //    else {
+        //        var freezeButton = $('#freezeButton');
+        //        freezeButton.prop('disabled', true);
+        //        var BtnPublish = $('#BtnPublish');
+        //        BtnPublish.prop('disabled', true);
+
+        //    }
+        //});
+        $('#BatchID,#TermID,#SectionId,#ClassID').change(function () {
+
+            InvokeGetFreezeitem();
+        });
+
+    });
+
+    function InvokeGetFreezeitem() {
+        var obj = splitValue($("#TermID").val());
+        console.log("obj " + obj);
+        console.log($("#TermID").val())
+        if (($('#ClassID').val() != 0 && $('#SectionId').val() != 0 && $('#TermID').val() != 0)
+            || $('#BatchID').val() != 0) {
+            var FreezeObj = {
+                classid: $('#ClassID').val(),
+                sectionid: $('#SectionId').val(),
+                TermId: obj.id,
+                batchid: $("#BatchID").val()
+            };
+
+            var objPublishDetail = {
+                classid: $('#ClassID').val(),
+                sectionid: $('#SectionId').val(),
+                TermId: obj.id,
+                batchid: $("#BatchID").val()
+            };
+
+
+            getFreezeitem(FreezeObj);
+            getPublishitem(objPublishDetail);
+        }
+
+        else {
+            var freezeButton = $('#freezeButton');
+            freezeButton.prop('disabled', true);
+            var BtnPublish = $('#BtnPublish');
+            BtnPublish.prop('disabled', true);
+
+        }
+    }
+
+    function getFreezeitem(FreezeObj) {
+        $.ajax({
+            url: "/Exam/GetFreezingData",
+            type: 'POST',
+            dataType: "json",
+            contentType: 'application/json',
+            data: JSON.stringify(FreezeObj),
+            success: function (result) {
+
+                if (result.data) {
+                    if (result.data.IsFreeze) {
+                        // Assuming the freezing ID is returned in result.data.freezingId
+                        var freezingId = result.data.FreezeId;
+                        // Update button
+                        var freezeButton = $('#freezeButton');
+                        freezeButton.text('UnFreezed');
+                        freezeButton.prop('disabled', false);
+                        freezeButton.html('UnFreezed <i class="fa fa-unlock" aria-hidden="true"></i>');  // Change button text and icon
+                        // Optionally store the freezing ID as data attribute if needed later
+                        freezeButton.data('freezingId', freezingId);
+                    } else {
+                        var freezeButton = $('#freezeButton');
+                        freezeButton.text('Freezing');
+                        freezeButton.html('Freezing <i class="fa fa-lock" aria-hidden="true"></i>');
+                        // Remove the freezing ID data attribute
+                        freezeButton.removeData('freezingId');
+                        freezeButton.prop('disabled', false);
+                    }
+
+                }
+                else {
+                    var freezeButton = $('#freezeButton');
+                    freezeButton.text('Freezing');
+                    freezeButton.html('Freezing <i class="fa fa-lock" aria-hidden="true"></i>');
+                    // Remove the freezing ID data attribute
+                    freezeButton.removeData('freezingId');
+                    freezeButton.prop('disabled', false);
+                }
+
+
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }
+
+    function showCustomAlert(StudentId, Term, Batch, classid, holdorpublish) {
+        $('#customAlert').css('display', 'block');
+        if (holdorpublish == 1) {
+            $('#holdisHold').text('1');
+            $('#remarkdiv').show();
+            $('#message').text('Are you Sure ,you want to hold the report card?');
+            $("#holdremark").attr("required", "required");
+        }
+        if (holdorpublish == 0) {
+            $('#remarkdiv').hide();
+            $('#holdisHold').text('0');
+            console.log('Test')
+            $('#message').text('Are you Sure ,you want to publish the report card?');
+            $("#holdremark").removeAttr("required");
+        }
+        $('#customAlert').css('display', 'block');
+        $('#holdstudentid').text(StudentId);
+        $('#holdTerm').text(Term);
+        $('#holdBatch').text(Batch);
+        $('#holdclassid').text(classid);
+
+        console.log($('#holdisHold').text())
+        //HoldStudentResult(StudentId, Term, Batch, classid);
+    }
+    function checkInput() {
+        var userInput = $('#inputText').val();
+        if (userInput.trim() === "") {
+            alert("Please enter something before proceeding.");
+        } else {
+
+            //$('#customAlert').css('display', 'none');
+        }
+    }
+    function ClosePopUp() {
+        $("#holdremark").removeAttr("required");
+        $('#customAlert').css('display', 'none');
+    }
+    function getPublishitem(objPublishDetail) {
+        $.ajax({
+            url: "/Exam/GetPublishData",
+            type: 'POST',
+            dataType: "json",
+            contentType: 'application/json',
+            data: JSON.stringify(objPublishDetail),
+            success: function (result) {
+                if (result.data) {
+                    if (result.data.IsPublish) {
+                        // Assuming the Publish ID is returned in result.data.Publishid
+                        var PublishId = result.data.PublishId;
+                        // Update button
+                        var PublishButton = $('#BtnPublish');
+                        PublishButton.text('UnPublished');
+                        PublishButton.prop('disabled', false);
+                        PublishButton.html('UnPublished <i class="fa fa-unlock" aria-hidden="true"></i>');  // Change button text and icon
+                        // Optionally store the Publish ID as data attribute if needed later
+                        PublishButton.data('PublishId', PublishId);
+                    } else {
+                        var PublishButton = $('#BtnPublish');
+                        PublishButton.text('Publish');
+                        PublishButton.html('Publish <i class="fa fa-lock" aria-hidden="true"></i>');
+                        // Remove the freezing ID data attribute
+                        PublishButton.removeData('PublishId');
+                        PublishButton.prop('disabled', false);
+                    }
+
+                }
+                else {
+                    var PublishButton = $('#BtnPublish');
+                    PublishButton.text('Publish');
+                    PublishButton.html('Publish <i class="fa fa-lock" aria-hidden="true"></i>');
+                    // Remove the freezing ID data attribute
+                    PublishButton.removeData('PublishId');
+                    PublishButton.prop('disabled', false);
+                }
+
+
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }
+    function HoldStudentResult(StudentId, Term, Batch, classid, holdorpublish) {
+        var A;
+        var Remark = $("#holdremark").val();
+        if (holdorpublish = 1) {
+            A = true;
+        }
+        else {
+            A = false;
+        }
+        debugger
+        $.ajax({
+            url: "/Test/HoldUnHoldStudentReportCard",
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                StudentId: StudentId,
+                term: Term,
+                Batch: Batch,
+                classid: classid,
+                Remark: Remark,
+                isHold: A
+            }),
+            success: function (result) {
+                $('#customAlert').css('display', 'none');
+                $('#BtnShowReportStudent').click();
+            }
+        })
+    }
+    $('#HoldButton').on('click', function () {
+
+        HoldStudentResult($('#holdstudentid').text(), $('#holdTerm').text(), $('#holdBatch').text(), $('#holdclassid').text(), $('#holdisHold').text());
+    })
+    //$('#HoldButton').on('click', function () {
+
+    //    HoldStudentResult($('#holdstudentid').val(), $('#holdTerm').val(), $('#holdBatch').val(), $('#holdclassid').val());
+    //})
+</script>

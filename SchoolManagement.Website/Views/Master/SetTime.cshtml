@@ -1,0 +1,157 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4>  Add TimePeriod  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6">
+                            @*<button class="btn btn-info pull-right"><a href="#" class="button_a">Add New</a></button>
+                                <button class="btn btn-danger pull-right"><a href="#" class="button_a">Manage</a></button>*@
+                        </div>
+
+
+                    </div><!-- col-sm-12 closed -->
+                </div><!--row x_title closed -->
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+        <div class="col-sm-12" style="margin-top: 15px;">
+            <form action="/Master/AddTime" id="TimePeriodForm" enctype="multipart/form-data" method="post">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <input type="hidden" id="Time_Id" name="Time_Id" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Add TimePeriod :</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="Time" name="Time" maxlength="100">
+                        </div>
+                    </div>
+                    <div class="col-sm-8" style="margin-top:20px;">
+                        <button type="submit" class="btn btn-success pull-right" id="Timeperiodsave">Save</button>
+                        <button type="button" class="btn btn-success pull-right" id="BtnClear" onclick="ClearData()">Clear</button>
+                    </div>
+                </div>
+
+            </form>
+            <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+
+
+                <table class="table table-bordered " id="TimeperiodTable" style="margin-top:10px">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>TimePeriod</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            foreach (var item in ViewBag.Timeperiod as IEnumerable<SchoolManagement.Website.Models.Tbl_SetTime>)
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@item.Time</td>
+                                    <td>
+                                        <button type="button" class="btn btn-info TimePeriodEdit" data-val="@item.Time_Id">Edit</button>
+                                        <button type="button" class="btn btn-info TimePeriodDelete" data-val="@item.Time_Id">Delete</button>
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div><!-- 1st row closed -->
+</div>
+
+@section scripts{
+
+    <script>
+
+        $("#TimeperiodTable").DataTable();
+
+        $(".TimePeriodEdit").on('click', function () {
+            $("#TimePeriodForm").attr('action', '/Master/UpdateTime');
+            var id = $(this).attr("data-val");
+
+            $("#Timeperiodsave").text("Update");
+            GetTimeById(id);
+        });
+
+        function GetTimeById(id) {
+            $.ajax({
+                url: "/Master/GetTimeById?id=" + id,
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json;charset=UTF-8",
+                success: function (result) {
+
+                    if (result != null) {
+                        $("#Time_Id").val(result.Time_Id);
+                        $("#Time").val(result.Time);
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+
+            });
+        }
+
+
+        $(".TimePeriodDelete").on('click', function () {
+            var id = $(this).attr("data-val");
+            if (confirm("Do You Want to Delete?")) {
+                window.location.href = "/Master/DeleteTime?id=" + id;
+            }
+        });
+
+
+        function ClearData() {
+            var cnf = confirm("Are You Sure, You Want to Clear all the data?");
+            if (cnf == true) {
+                $("#Time_Id").val('');
+                $("#Time").val('');
+
+
+                $("#TimePeriodForm").attr('action', '/Master/AddTime');
+                $("#Timeperiodsave").text("Save");
+
+            }
+        }
+
+
+        //function UpdateDepartment(id) {
+        //    $("#DepartmentForm").attr('action', '/Master/UpdateDepartment');
+
+        //    $("#Departmentsave").text("Update");
+        //    GetDepartmentById(id);
+        //}
+
+
+        //function DeleteDepartment(id) {
+        //    if (confirm("Do You Want to Delete?")) {
+        //        window.location.href = "/Master/DeleteDepartment?id=" + id;
+        //    }
+        //}
+
+    </script>
+
+}

@@ -1,0 +1,378 @@
+﻿
+@{
+    ViewBag.Title = "AdmissionPortal";
+    Layout = null;
+}
+<link href="~/Content/WebsiteCss/css/fontawesome/font-awesome.min.css" rel="stylesheet" />
+<link href="~/Content/DatePicker2/css/jquery.datepick.css" rel="stylesheet" />
+<div class="preloader-area">
+    <div class="sk-cube-grid">
+        <div class="sk-cube sk-cube1"></div>
+        <div class="sk-cube sk-cube2"></div>
+        <div class="sk-cube sk-cube3"></div>
+        <div class="sk-cube sk-cube4"></div>
+        <div class="sk-cube sk-cube5"></div>
+        <div class="sk-cube sk-cube6"></div>
+        <div class="sk-cube sk-cube7"></div>
+        <div class="sk-cube sk-cube8"></div>
+        <div class="sk-cube sk-cube9"></div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="navbar navbar-fixed-top navbar-default org-titlebar">
+        <div class="container">
+            <h3 style="padding-left:150px">
+                Carmel Teresa
+                <small style="font-size:60%">Admission Portal</small>
+                <span class="pull-right" style="float:right; padding-right:150px">Hi Guest!</span>
+            </h3>
+        </div>
+    </div>
+
+
+    <div>
+        <div class="ui-card">
+            <div class="ui-card-body">
+                <div class="ui-card-content">
+                    <div class="container" style="margin-top:1px;">
+                        <div style="box-sizing:border-box">
+                            <form style="box-sizing:border-box" class="form-control" action="AddAdmissionDetails" enctype="multipart/form-data" method="post" id="RegisterForm">
+                                <div class="form-group">
+                                    <input type="hidden" id="StudentRegisterID" name="StudentRegisterID"/>
+                                </div>
+                                <div class="ui-grid ui-grid-responsive ui-grid-pad ui-fluid" style="margin:10px 0px">
+                                    <div class="ui-grid-row" style="display:flex; margin-right: 500px;">
+                                        <div class="ui-grid-col-6" style="text-align:right">
+                                            Parent's Email *:
+                                        </div>
+                                        <div class="ui-grid-col-6 form-group">
+                                            <div>
+                                                <input type="email" class="form-control" placeholder="Parent's Email" style="width:450px; height:35px; border: 1px solid #a80000;" id="ParentEmail" name="Parents_Email" required />
+                                                <span class="ui-inputgroup-addon"><i class="fa fa-envelope"></i></span>
+                                                <label id="lbltext" style="color:red;display:none">Space and Special Characters are not allowed</label>
+                                            </div>
+                                        </div>
+                                        @*<div class="ui-grid-col-3">
+
+            </div>*@
+                                    </div>
+                                    <div class="ui-grid-row" style="display:flex; margin-right: 500px;">
+                                        <div class="ui-grid-col-6" style="text-align:right">
+                                            Child's DOB (As per birth certificate) *:
+                                        </div>
+                                        <div class="ui-grid-col-6">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control datepicker" style="width:450px; height:35px;border: 1px solid #a80000;" autocomplete="off" id="DateofBirth" name="DOB" required/>
+
+                                                <span class="ui-inputgroup-addon" style="background-color:#007ad9;border-color:#007ad9;color:white"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                                                @*<span class="ui-calender">
+                        <input type="text" class="ui-inputtext" placeholder="" style="width:300px; height:30px;" autocomplete="off" />
+                        <button type="button" class="ui-datepicker-trigger ui-calendar-button ng-tns-c101-2 ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only ng-star-inserted" >
+                            <span aria-hidden="true" class="ui-button-icon-left pi pi-calender"></span>
+                            <span aria-hidden="true" class="ui-button-text"></span>
+                        </button>
+                    </span>*@
+                                                @*<span class="ui-inputgroup-addon"><i class="fa fa-envelope"></i></span>*@
+                                            </div>
+                                        </div>
+                                        @*<div class="ui-grid-col-3">
+
+            </div>*@
+                                    </div>
+                                    <div class="ui-grid-row" style="display:flex;margin-right: 500px;">
+                                        <div class="ui-grid-col-6" style="text-align:right">
+                                            Child's First Name *:
+                                        </div>
+                                        <div class="ui-grid-col-6">
+                                            <div>
+
+                                                <input type="text" class="form-control" placeholder="Child's First Name" style="width:450px; height:35px;border: 1px solid #a80000;" id="ChildName" name="Name" required/>
+                                                <span class="ui-inputgroup-addon"><i class="fa fa-user"></i></span>
+                                            </div>
+                                        </div>
+                                        @*<div class="ui-grid-col-3">
+
+            </div>*@
+                                    </div>
+                                    <div class="ui-grid-row" style="display:flex;margin-right: 500px;">
+                                        <div class="ui-grid-col-6" style="text-align:right">
+                                            Child's Last Name *:
+                                        </div>
+                                        <div class="ui-grid-col-6">
+                                            <div>
+
+                                                <input type="text" class="form-control" placeholder="Child's Last Name" style="width:450px; height:35px;border: 1px solid #a80000;" id="ChildName1" name="Last_Name" required />
+                                                <span class="ui-inputgroup-addon"><i class="fa fa-user"></i></span>
+                                            </div>
+                                        </div>
+                                       
+                                    </div>
+                                    <div class="ui-grid-row" style="display:flex;margin-right: 500px;">
+                                        <div class="ui-grid-col-6" style="text-align:right">
+                                            Select Class *:
+                                        </div>
+                                        <div class="ui-grid-col-6">
+                                            <div>
+                                                <select class="form-control" style="width:450px;height:35px;border: 1px solid #a80000;" required name="Class_Id">
+                                                    @{
+                                                        foreach (var item in ViewBag.Class as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                                        {
+                                                            <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                                        }
+                                                    }
+                                                </select>
+                                                <span class="ui-inputgroup-addon"><i class="fa fa-user"></i></span>
+
+                                            </div>
+                                        </div>
+                                       
+                                    </div>
+                                    <div class="ui-grid-row">
+                                        <div class="ui-grid-col-4">
+                                        </div>
+                                        <div class="ui-grid-col-8" style="margin-left:510px;">
+                                            <div>
+                                                <button type="submit" class="ui-button-success" style="width:495px; height:35px;" id="Savebtn">
+                                                    Start Filling Your Application
+                                                    @*<a href="/Student/AddStudent" >Start Filling Your Application</a>*@
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="col-sm-12" style="padding-left:200px;">
+                                        <div class="row" style="margin-top:5px">
+                                            <small style="font-style:italic">
+                                                * All the fields are required and will be used to retrieve your admission form for future reference
+                                            </small>
+                                        </div>
+                                        <div class="row" style="margin-top:5px">
+                                            <small style="font-style:italic">
+                                                * If you have already filled the registration form then you will be presented with partially filled form
+                                            </small>
+                                        </div>
+                                        <div class="row" style="margin-top:5px">
+                                            <small style="font-style:italic">
+                                                * In the course of filling admission form, anytime if you feel to do it later then you can save that form and continue it later
+                                            </small>
+                                        </div>
+                                        <div class="row" style="margin-top:5px">
+                                            <small style="font-style:italic; color:red;">
+                                                * Mandatory fields are marked. However please fill as much information as possible for smooth application processing.
+                                            </small>
+                                        </div>
+                                        <div class="row" style="margin-top:5px">
+                                            <small style="font-style:italic; color:red;">
+                                                * At the end please check the iagree checkbox to be able to submit your application.
+                                            </small>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <hr />
+
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+@*<h2>AdmissionPortal</h2>*@
+<script src="~/Scripts/WebsiteJs/js/jquery.js"></script>
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>*@
+
+<script src="~/Content/DatePicker2/js/jquery.plugin.min.js"></script>
+
+<script src="~/Content/DatePicker2/js/jquery.datepick.js"></script>
+<script>
+    $('.datepicker').datepick({ dateFormat: 'dd/mm/yyyy' });
+
+
+</script>
+<script>
+
+   
+        $("#ParentEmail1").keypress(function (event) {
+            var regexpres = new RegExp("^[a-zA-Z]+$ ");
+            var key = String.fromCharCode(!event.CharCode ? event.which : event.CharCode);
+            if (!regexpres.test(key)) {
+                event.preventDefault();
+                document.getElementById("lbltext").style.display = 'block';
+                return false;
+            }
+            else
+            {
+                document.getElementById("lbltext").style.display = 'none';
+
+            }
+        });
+   
+
+    //$("#Savebtn").on('click', function () {
+    //    
+    //    var email = $("#ParentEmail").val();
+    //    var dob = $("#DateofBirth").val();
+    //    var name = $("#ChildName").val();
+
+    //    if (email != null && email != "" && dob != null && dob != "" && name != null && name != "") {
+    //        //$.ajax({
+    //        //    url: "Portal",
+    //        //    data: { Email: email, DOB: dob, Name: name },
+    //        //    error: function (errormessage) {
+    //        //        alert(errormessage.responseText);
+    //        //    }
+    //        //});
+    //        window.location.href = "/Student/Portal?Name=" + name + "&Email=" + email + "&DOB=" + dob;
+
+    //    } else {
+    //        alert("Please Fill All the Fields");
+    //        window.location.reload();
+    //    }
+
+
+
+    //});
+
+
+</script>
+
+
+<style>
+    .container {
+        max-width: 1580px;
+    }
+
+    .org-titlebar {
+        background-image: linear-gradient(to left,#48bbef,#00bcd4) !important;
+        color: white;
+    }
+
+    .navbar {
+        min-height: 75px;
+    }
+
+    h3, .h3 {
+        font-size: 1.825em;
+        line-height: 2.1;
+        /*margin: 20px 0 10px;*/
+    }
+
+    .ui-inputgroup-addon {
+        border-color: #a6a6a6;
+        background-color: #eaeaea;
+        color: #848484;
+        padding: 0.429em;
+        min-width: 2em;
+        display: inline-block;
+        text-align: center;
+        min-width: 1.5em;
+        /*padding: 0.25em;*/
+        border-width: 1px;
+        border-style: solid;
+    }
+
+   
+
+    .ui-grid-row {
+        display: flex;
+        clear: both;
+    }
+
+        .ui-grid-row > div {
+            padding: 0.25em 0.5em;
+        }
+
+    .ui-grid-col-6 {
+        width: 60%;
+    }
+
+    .ui-grid-col-3 {
+        width: 25%;
+        text-align: right;
+    }
+
+    .ui-button-success {
+        color: #ffffff;
+        background-color: #34A835;
+        border: 1px solid #34A835;
+        height: 50px;
+    }
+
+    body .ui-card {
+        background-color: #ffffff;
+        color: #333333;
+        /*box-shadow: 0 1px 3px 0 rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 2px 1px -1px rgb(0 0 0 / 12%);*/
+    }
+
+    .ui-card-body {
+        padding: 1em;
+    }
+
+    .ui-calendar {
+        width: 100%;
+    }
+
+    /*.ui-inputtext {
+        width: calc(100% - 2.357em);
+    }
+
+    .ui-button {
+        display: inline-block;
+        position: relative;
+        padding: 0;
+        text-decoration: none !important;
+        cursor: pointer;
+        text-align: center;
+        overflow: visible;
+        margin: 0;
+        color: #ffffff;
+        background-color: #007ad9;
+        border: 1px solid #007ad9;
+        font-size: 14px;
+        transition: background-color 0.2s, box-shadow 0.2s;
+    }*/
+
+
+    /*.ui-button-icon-left {
+        top: 50%;
+        left: 50%;
+        margin-top: -0.5em;
+        margin-left: -0.5em;
+        width: 1em;
+        height: 1em;
+    }
+
+    .ui-button-text {
+        padding: 0.429em;
+        display: block;
+        line-height: normal;
+    }
+
+    .pi {
+        font-family: 'primeicons';
+        speak: none;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+        display: inline-block;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    body .ui-calendar.ui-calendar-w-btn .ui-datepicker-trigger.ui-button {
+        width: 2.357em;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }*/
+</style>

@@ -1,0 +1,315 @@
+﻿
+@{
+    ViewBag.Title = "RolePermissionnew";
+}
+
+@{ 
+    var data = ViewBag.Createpermission;
+}
+
+<style>
+    .myAlert-bottom {
+        position: fixed;
+        bottom: 5px;
+        left: 2%;
+        width: 96%;
+    }
+
+    div.fullscreen {
+        position: absolute;
+        width: 100%;
+        height: 960px;
+        top: 0;
+        left: 0;
+        background-color: lightblue;
+    }
+
+    .alert {
+        display: none;
+    }
+</style>
+
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <div class="col-sm-12">
+                        @*<div class="col-sm-6">
+                            <h4 id="headingName"> Add New Staff  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6">
+                            <button class="btn btn-info pull-right"><a href="/Staf/ViewStaff" class="button_a">View All Staff </a></button>
+                            <button class="btn btn-danger pull-right"><a href="/Staf/ManageStaff" class="button_a">Manage Staff</a> </button>
+                        </div>*@
+                    </div>
+                </div>
+            </div><!-- dashboard_graph closed-->
+
+            <ul class="nav nav-tabs" id="myTab">
+                <li class="active"><a data-toggle="tab" href="#add" class="sis_tab_a">Menu Details</a></li>
+                <li><a data-toggle="tab" href="#add1" class="sis_tab_a click" id="primarytab">Pagename Details</a></li>
+                <li><a data-toggle="tab" href="#add2" class="sis_tab_a click_1" id="pastemploymenttab">Role Permission</a></li>
+            </ul>
+
+            <div class="row">
+                <div class="tab-content tab_sis">
+                    <div class="tab-pane fade in active" id="add">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <form method="post" id="Menuform" action="/UserCredentials/AddBank" enctype="multipart/form-data">
+                                    <h4 class="std_head well-sm">Menu Details</h4>
+                                    <input type="hidden" id="Menu_Id" name="Menu_Id" />
+                                    <div class="col-sm-6" @*style="border-right:1px solid #eee;"*@>
+                                        <div class="form-group">
+                                            <label>Menu Name :</label>
+                                            <input type="text" name="Menu_Name" id="Menu_Name" class="form-control" required>
+                                        </div>
+                                        <div class="form-group" style="text-align:right">
+                                            @{
+                                                if (data != null)
+                                                {
+                                                    if (data == "true")
+                                                    {
+                                                        <button type="submit" id="BtnMenuSubmit" class="btn btn-success">Submit</button>
+                                                    }
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <hr />
+                            <div class="col-sm-12" style="margin-top:20px;">
+                                <div>
+                                    <table class="table table-bordered" id="MenuTable">
+                                        <thead>
+                                            <tr>
+                                                <td>S.No</td>
+                                                <td>Menu Name</td>
+                                                <td>Action</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="TableBody">
+                                            @{
+                                                var i = 1;
+                                                foreach (var item in ViewBag.MenuList1 as IEnumerable<SchoolManagement.Website.ViewModels.Tbl_MenuViewmodel>)
+                                                {
+                                                    <tr>
+                                                        <td>@i</td>
+                                                        <td>@item.MenuName</td>
+                                                        <td>
+                                                            @{
+                                                                if (item.Editpermission == "true")
+                                                                {
+
+                                                                    <button type="button" id="BtnEdit" class="btn btn-info BtnMenuEdit" data-val="@item.Menu_Id">Edit</button>
+                                                                }
+                                                                if (item.DeletePermission == "true")
+                                                                {
+                                                                    <button type="button" class="btn btn-danger BtnMenuDelete" data-val="@item.Menu_Id">Delete</button>
+                                                                }
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                    i++;
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="add1" class="tab-pane fade">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <form method="post" id="Submenuform" action="/UserCredentials/AddSubmenu" enctype="multipart/form-data">
+                                    <h4 class="std_head well-sm">Submenu Details</h4>
+                                    <input type="hidden" id="Submenu_Id" name="Submenu_Id" />
+                                    <div class="col-sm-6" style="border-right:1px solid #eee;">
+                                        <div class="form-group">
+                                            <label>Menu Name :</label>
+                                            <select class="form-control" id="Menu_Id1" name="Menu_Id">
+                                                <option value="0">---Select---</option>
+                                                @{
+                                                    foreach (var item in ViewBag.MenuList as IEnumerable<SchoolManagement.Data.Models.Tbl_MenuName>)
+                                                    {
+                                                        <option value="@item.Menu_Id">@item.Menu_Name</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>SubMenu Name :</label>
+                                            <input type="text" id="Submenu_Name" name="Submenu_Name" class="form-control" required/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>SubMenu Url :</label>
+                                            <input type="text" id="Submenu_Url" name="Submenu_Url" class="form-control" required/>
+                                        </div>
+                                        <div class="form-group" style="text-align:right">
+                                            @{
+                                                if (data != null)
+                                                {
+                                                    if (data == "true")
+                                                    {
+                                                        <button type="submit" id="BtnSubmenuSubmit" class="btn btn-success">Submit</button>
+                                                    }
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <hr />
+                            <div class="col-sm-12" style="margin-top:20px;">
+                                <div>
+                                    <table class="table table-bordered" id="BankTable1" style="width:-1px;">
+                                        <thead>
+                                            <tr>
+                                                <td>S.No</td>
+                                                <td>Menu Name</td>
+                                                <td>Submenu Name</td>
+                                                <td>Url</td>
+                                                <td>Action</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="TableBankBody">
+                                            @{
+                                                var j = 1;
+                                                foreach (var item in ViewBag.SubmenuList as IEnumerable<SchoolManagement.Website.Controllers.SubmenuList>)
+                                                {
+                                                    <tr>
+                                                        <td>@j</td>
+                                                        <td>@item.MenuName</td>
+                                                        <td>@item.Submenu_Name</td>
+                                                        <td>@item.Submenu_Url</td>
+                                                        <td>
+                                                            @{
+                                                                if (item.Editpermission == "true")
+                                                                {
+                                                                    <button type="button" id="BtnEdit" class="btn btn-info BtnsubMenuEdit" data-val="@item.Submenu_Id">Edit</button>
+                                                                }
+
+                                                                if (item.DeletePermission == "true")
+                                                                {
+                                                                    <button type="button" class="btn btn-danger BtnsubMenuDelete" data-val="@item.Submenu_Id">Delete</button>
+                                                                }
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                    j++;
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="add2">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                    <h4 class="std_head well-sm">Branch Details</h4>
+                                    <div class="col-sm-6" style="border-right:1px solid #eee;">
+                                        <div class="form-group">
+                                            <label>Role Name :</label>
+                                            @Html.DropDownList("UserRole", new SelectList(ViewBag.Roles, "Value", "Text"), new { @class = "form-control" })
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Menu Name :</label>
+                                            <select class="form-control" id="MenuId4">
+                                                <option value="0">---Select---</option>
+                                                @{
+                                                    foreach (var item in ViewBag.MenuList as IEnumerable<SchoolManagement.Data.Models.Tbl_MenuName>)
+                                                    {
+                                                        <option value="@item.Menu_Id">@item.Menu_Name</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                       
+                                    </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group" id="stafflist">
+                                        <label>Staff ;</label>
+                                        <select class="form-control" id="staffid">
+                                            <option value="0">---select---</option>
+                                            @{ 
+                                                foreach(var item in ViewBag.StaffDetails as IEnumerable<SchoolManagement.Data.Models.StafsDetails>)
+                                                {
+                                                    <option value="@item.StafId">@item.Name</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                   
+                            </div>
+                            <div id="HideSubmenuHeader">
+                                <div class="row">
+                                    <div class="col-md-7"></div>
+                                    <div class="col-md-5">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="sexbox">
+                                                    <label>SelectAll</label>
+                                                    <input id="inactive2" class="css-checkbox" type="checkbox" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-top: 20px; padding-bottom: 20px;">
+                                    <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                                        <!-- col-msx-12 started -->
+                                        <table class="table table-bordered">
+                                            <thead style="background-color: #3c6b9a; color: white;">
+                                                <tr>
+                                                    <th>SubmenuName</th>
+                                                    <th>PageName</th>
+                                                    <th>Create</th>
+                                                    <th>Edit</th>
+                                                    <th>View</th>
+                                                    <th>Delete</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="Tblsubmenubody"></tbody>
+                                        </table>
+                                        <div class="form-group" style="text-align:right">
+                                            @{
+                                                if (data != null)
+                                                {
+                                                    if (data == "true")
+                                                    {
+                                                        <button type="button" id="BtnSubmit" class="btn btn-success">Submit</button>
+                                                    }
+                                                }
+                                            }
+                                        </div>
+                                    </div><!-- col-msx-12  closed -->
+                                </div>
+                            </div>
+                            <hr />
+                        </div>
+                    </div>
+
+
+                </div>
+                <!-- col-msx-12  closed -->
+            </div>
+        </div><!-- col-msx-12  closed -->
+    </div><!-- 1st row closed -->
+</div>
+
+
+@section scripts{
+<script src="~/Scripts/DevelopmentJS/RolePermissionnew.js"></script>
+}

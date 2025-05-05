@@ -1,0 +1,554 @@
+﻿
+@{
+    ViewBag.Title = "ApplyTC";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<link rel="stylesheet" href="~/Content/WebsiteCss/css/style.css" />*@
+<style>
+    table.dataTable thead th {
+        color: black;
+    }
+</style>
+<link href="~/Content/DropDownSelect2/fSelect.css" rel="stylesheet" />
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <h4>Apply TC &nbsp;<i class="fa fa-forward"></i></h4>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="col-sm-3">
+                            @*<div class="form-group">
+                                    <label>Academic Year :</label>
+                                    @Html.DropDownList("Batchddl", new SelectList(ViewBag.AllBatch, "DataListItemId", "DataListItemName"), "select", new { @id = "Batchddl", @class = "form-control" })
+                                </div>*@
+
+                            <div class="form-group">
+                                <label>Select Year :</label>
+                                @Html.DropDownList("Batchddl", ViewBag.BatcheNames as SelectList, "---Select Year---", new { @id = "Batchddl", @class = "form-control" })
+
+
+
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Filter By Section</label>
+                                @Html.DropDownList("Sectionddl", new SelectList(ViewBag.Section, "DataListItemId", "DataListItemName"), "---Select Section", new { @id = "Sectionddl", @class = "form-control" })
+
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Filter By Class :</label>
+                                @Html.DropDownList("Classddl", new SelectList(ViewBag.AllClass, "DataListItemId", "DataListItemName"), "select", new { @id = "Classddl", @class = "form-control" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <input type="button" value="Apply TC" id="applyTC" class="applyTcBtnClass btn btn-primary" />
+                        </div>
+                    </div>
+
+                    @*<div class="col-sm-12">
+                            <input type="button" value="Apply TC" id="applyTC" class=" pull-right btn btn-primary" />
+                        </div>*@
+                    <!--row x_title closed -->
+                </div><!-- dashboard_graph closed-->
+            </div><!--col-msx-12 closed-->
+
+            <div class="row">
+                <!-- row started -->
+                <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                    <!-- col-msx-12 started -->
+                    <!-- col-sm-12 closed -->
+                    <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                        <!-- col-msx-12 started -->
+
+                        <table class="table table-responsive table-striped" style="width: 100%" id="ApplyTcTbl">
+                            <thead>
+                                <tr>
+                                    @*<th>UIN</th>*@
+                                    <th style="display: none;">Student ID</th>
+                                    <th style="width:3%">SR</th>
+                                    <th style="width:13%">Student Name</th>
+                                    <th style="width:10%">Date Of Birth</th>
+                                    <th style="width:7%">Class</th>
+                                    <th style="width:7%">Scholar no</th>
+                                    @*<th>Batch</th>*@
+                                    @*<th style="width:5%">Gender</th>*@
+                                    <th style="width:10%">Contact</th>
+                                    <th style="width:12%">Father Name</th>
+                                    <th style="width:12%">Mother Name</th>
+                                    @*<th>Category</th>*@
+                                    <th style="width:9%">Apply TC<input type="checkbox" id="SelectAllChk" /></th>
+                                    <th style="width:17%">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ApplyTcBody"></tbody>
+                        </table>
+                    </div>
+                    <!-- col-msx-12  closed -->
+                </div>
+                <!-- col-msx-12  closed -->
+            </div>
+        </div><!-- 1st row closed -->
+    </div>  <!-- /page content -->
+</div>
+
+<!-- Modal -->
+<div id="StudentTCDetails" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Student Transfer Certificate Details</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row rowmargin">
+                    <div class="col-sm-3">Application No</div>
+                    <div class="col-sm-9">
+                        <input type="text" id="txtApplicationNo" disabled class="form-control" />
+                    </div>
+                </div>
+                <div class="row rowmargin">
+                    <div class="col-sm-3">Standard</div>
+                    <div class="col-sm-9">
+                        @Html.DropDownList("Standard", new SelectList(ViewBag.AllClass, "DataListItemId", "DataListItemName"), "---Select Standard---", new { @id = "ddlStandard", @class = "form-control", @disabled = "disabled" })
+                    </div>
+                </div>
+                <div class="row rowmargin">
+                    <div class="col-sm-3">Exam Year</div>
+                    @*<div class="col-sm-9">
+                @Html.DropDownList("ExamYear", new SelectList(ViewBag.AllBatch, "DataListItemId", "DataListItemName"), "---Select Exam Year---", new { @id = "ddlExamYear", @class = "form-control", @disabled = "disabled" })
+            </div>*@
+                    <div class="col-sm-9">
+                        @Html.DropDownList("ExamYear", ViewBag.BatcheNames as SelectList, "---Select Year---", new { @id = "ddlExamYear", @class = "form-control", @disabled = "disabled" })
+                    </div>
+
+                </div>
+                <div class="row rowmargin">
+                    <div class="col-sm-3">Exam Status</div>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="ddlExamStatus">
+                            <option>---Select Exam Status---</option>
+                            <option value="1">Pass</option>
+                            <option value="2">Fail</option>
+                            <option value="3">Not Attended</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row rowmargin">
+                    <div class="col-sm-3">Promotion to Class</div>
+                    <div class="col-sm-9">
+                        @Html.DropDownList("PromoteClass", new SelectList(ViewBag.AllClass, "DataListItemId", "DataListItemName"), "---Select Promote Class---", new { @id = "ddlPromoteClass", @class = "form-control" })
+                    </div>
+                </div>
+                <div class="row rowmargin">
+                    <div class="col-sm-3">Promotion to Section</div>
+                    <div class="col-sm-9">
+                        @Html.DropDownList("PromoteSection", new SelectList(ViewBag.Section, "DataListItemId", "DataListItemName"), "---Select Promote Section---", new { @id = "ddlPromoteSection", @class = "form-control" })
+                    </div>
+                </div>
+                <div class="row rowmargin">
+                    <div class="col-sm-3">Remarks</div>
+                    <div class="col-sm-9">
+                        @Html.DropDownList("PromoteSection", new SelectList(ViewBag.Remarks, "DataListItemId", "DataListItemName"), "---Select Remarks ---", new { @id = "ddlPromoteRemarks", @class = "form-control" })
+                        @*<input type="text" id="txtRemarks" class="form-control" />*@
+                    </div>
+                </div>
+                <div class="row rowmargin">
+                    <div class="col-sm-3">Reason for Leaving</div>
+                    <div class="col-sm-9">
+                        @Html.DropDownList("PromoteSection", new SelectList(ViewBag.Reason, "DataListItemId", "DataListItemName"), "---Select Reason ---", new { @id = "ddlPromoteReason", @class = "form-control" })
+                        @*<input type="text" id="txtReason" class="form-control" />*@
+                    </div>
+                </div>
+                <div class="row rowmargin">
+                    <div class="col-sm-3">School Left Date</div>
+                    <div class="col-sm-9">
+                        <input type="date" id="ddlSchoolLeftDate" class="form-control" />
+                    </div>
+                </div>
+                <div class="row rowmargin">
+                    <div class="col-sm-3">Fee Paid Upto</div>
+                    <div class="col-sm-9">
+                        <input type="text" id="FeePaidUpto" class="form-control" />
+                    </div>
+                </div>
+                <div class="row rowmargin">
+                    <div class="col-sm-3">Total Attendance</div>
+                    <div class="col-sm-9">
+                        <input type="text" id="TotalAttendance" class="form-control" />
+                    </div>
+                </div>
+                <div class="row rowmargin">
+                    <div class="col-sm-3">Total Working Days</div>
+                    <div class="col-sm-9">
+                        <input type="text" id="TotalWorkingDays" class="form-control" />
+                    </div>
+                </div>
+                <div class="row rowmargin">
+                    <div class="col-sm-3">Other Remarks</div>
+                    <div class="col-sm-9">
+                        <input type="text" id="OtherRemarks" class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" id="Student_id" />
+                <button type="button" id="TCDetails" class="btn btn-success" style="margin-top:6px;">Submit</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
+<style>
+    .applyTcBtnClass {
+        float: none;
+        margin: 10px 10px 10px 10px;
+        top: 10px;
+        position: absolute;
+    }
+
+    .rowmargin {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+</style>
+
+@section Scripts{
+    @*<script src="~/Content/Dropdown3/fSelect.js"></script>
+        <script src="~/Content/Dropdown3/ikrPluginsForfSelect.js"></script>*@
+<script>
+     //FilterStudentsData();
+
+        function PrintTC(id) {
+            localStorage.setItem("StudentId", id);
+            var url = '@Url.Action("PrintTC", "AdmissionFee",new { id = "__id__" })';
+            window.open(url.replace('__id__', id), "_blank");
+        }
+        function PrintTC2(id) {
+    localStorage.setItem("StudentId", id);
+    var url = '@Url.Action("PrintTC2", "AdmissionFee",new { id = "__id__" })';
+    window.open(url.replace('__id__', id), "_blank");
+}
+
+        function applyTCFunction() {
+
+            var uinList = [];
+            var studentIdList = [];
+            $("#ApplyTcBody tr").each(function () {
+                // if ($(this).find("input").is(":checked")) {
+                if ($(this).find("input")[0].checked) {
+                    uinList.push($(this).find("td:eq(0)").html());
+                    studentIdList.push($(this).find("td:eq(0)").html());
+                }
+            });
+
+            if (uinList.length > 0 && studentIdList.length > 0) {
+                var obj = {};
+                obj.uinList = uinList;
+                obj.studentIdList = studentIdList;
+                obj.isCancelTC = false;
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Fee/ApplyTcToStudents",
+                    data: JSON.stringify(obj),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (msg) {
+                        alert(msg);
+                        FilterStudentsData();
+                    }
+                });
+
+            } else {
+                alert("Please select a student");
+            }
+        }
+
+
+        function loaddatatable() {
+            if ($.fn.DataTable.isDataTable('#ApplyTcTbl')) {
+                $('#ApplyTcTbl').DataTable().destroy();
+            }
+
+            $('#ApplyTcTbl').dataTable({
+                "autoWidth": true,
+                "scrollX": true
+            });
+
+        }
+
+        $("#Batchddl").on("change", function () {
+            FilterStudentsData();
+        });
+        $("#Classddl").on("change", function () {
+            FilterStudentsData();
+        });
+        $("#Sectionddl").on("change", function () {
+            FilterStudentsData();
+        });
+
+        $("#SelectAllChk").on("click", function () {
+            //$('input:checkbox').not(this).prop('checked', this.checked);
+            $('.applytcclass').not(this).prop('checked', this.checked);
+        });
+
+        function EditTCDetails(StudentId, ClassId, BatchId, ApplicationNo, ExamStatusId, PromoteClassId, PromoteSectionId, Remark, Reason, SchoolLeftDate, FeePaidUpto, OtherRemarks, TotalAttendance, TotalWorkingDays) {
+            debugger
+            $("#txtApplicationNo").val(ApplicationNo);
+            $("#ddlStandard").val(ClassId);
+            $("#ddlExamYear").val(BatchId);
+            $("#Student_id").val(StudentId);
+            $("#ddlExamStatus").val(ExamStatusId);
+            if (PromoteClassId > 0) {
+                $("#ddlPromoteClass").val(PromoteClassId);
+            }
+            else {
+                $("#ddlPromoteClass").val("");
+            }
+            if (PromoteSectionId > 0) {
+                $("#ddlPromoteSection").val(PromoteSectionId);
+            }
+            else {
+                $("#ddlPromoteSection").val("");
+            }
+            if (Remark > 0) {
+                $("#ddlPromoteRemarks").val(Remark);
+            }
+            else {
+                $("#ddlPromoteRemarks").val("");
+            }
+            if (Reason > 0) {
+                $("#ddlPromoteReason").val(Reason);
+            }
+            else {
+                $("#ddlPromoteReason").val("");
+            }
+            if (SchoolLeftDate.length > 0) {
+                $("#ddlSchoolLeftDate").val(SchoolLeftDate);
+            }
+            else {
+                $("#ddlSchoolLeftDate").val("");
+            }
+            if (FeePaidUpto.length > 0) {
+                $("#FeePaidUpto").val(FeePaidUpto);
+            }
+            else {
+                $("#FeePaidUpto").val("");
+            }
+            if (OtherRemarks.length > 0) {
+                $("#OtherRemarks").val(OtherRemarks);
+            }
+            else {
+                $("#OtherRemarks").val("");
+            }
+            if (TotalAttendance.length > 0) {
+                $("#TotalAttendance").val(TotalAttendance);
+            }
+            else {
+                $("#TotalAttendance").val("");
+            }
+            console.log(TotalWorkingDays)
+            if (TotalWorkingDays.length > 0) {
+                $("#TotalWorkingDays").val(TotalWorkingDays);
+            }
+            else {
+                $("#TotalWorkingDays").val("");
+            }
+            //if (Remark != "No") {
+            //    $("#txtRemarks").val(Remark);
+            //}
+            //else {
+            //    $("#txtRemarks").val("");
+            //}
+            //if (Reason != "No") {
+            //    $("#txtReason").val(Reason);
+            //}
+            //else {
+            //    $("#txtReason").val("");
+            //}
+            $("#StudentTCDetails").modal('show');
+        }
+
+        $("#TCDetails").on("click", function () {
+            debugger
+            if ($("#ddlExamYear").val() == "") {
+                alert("Please Select Exam Year");
+                return false;
+            }
+            //else if ($("#txtRemarks").val() == "") {
+            //    alert("Please Enter Remark");
+            //    return false;
+            //}
+            else if ($("#ddlPromoteRemarks").val() == "") {
+                alert("Please Enter Remark");
+                return false;
+            }
+            else if ($("#ddlPromoteReason").val() == "") {
+                alert("Please Enter Reason for Leaving ");
+                return false;
+            }
+            else if ($("#ddlSchoolLeftDate").val() == "") {
+                alert("Please choose a date ");
+                return false;
+            }
+            else if ($("#FeePaidUpto").val() == "") {
+                alert("Please enter Fee Paid Upto ");
+                return false;
+            }
+            else if ($("#TotalAttendance").val() == "") {
+                alert("Please enter Total Attendance ");
+                return false;
+            }
+            else if ($("#TotalWorkingDays").val() == "") {
+                alert("Please enter Total Working Days ");
+                return false;
+            }
+            else {
+                var StudentTcDetails = {};
+                StudentTcDetails.StudentId = $("#Student_id").val();
+                StudentTcDetails.ClassId = $("#ddlStandard").val();
+                StudentTcDetails.BatchId = $("#ddlExamYear").val();
+                StudentTcDetails.ExamStatusId = $("#ddlExamStatus").val();
+                StudentTcDetails.PromoteClassId = $("#ddlPromoteClass").val();
+                StudentTcDetails.PromoteSectionId = $("#ddlPromoteSection").val();
+                StudentTcDetails.RemarksID = $("#ddlPromoteRemarks").val();
+                StudentTcDetails.ReasonID = $("#ddlPromoteReason").val();
+                StudentTcDetails.SchoolLeftDate = $('#ddlSchoolLeftDate').val();
+                StudentTcDetails.FeePaidUpto = $('#FeePaidUpto').val();
+                StudentTcDetails.OtherRemarks = $('#OtherRemarks').val();
+                StudentTcDetails.TotalAttendance = $('#TotalAttendance').val();
+                StudentTcDetails.TotalWorkingDays = $('#TotalWorkingDays').val();
+                $.ajax({
+                    type: "POST",
+                    url: "/Fee/ApplyTCDetailstoStudent",
+                    data: JSON.stringify(StudentTcDetails),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        $("#StudentTCDetails").modal('hide');
+                        alert(data);
+                        FilterStudentsData();
+                    }
+                });
+            }
+
+
+        });
+        $("#applyTC").on("click", function () {
+            var batch = $("#Batchddl").val();
+
+            var className = $("#Classddl").val();
+            var sectionName = $("#Sectionddl").val();
+
+            if (batch == "" && className == "" && sectionName == "") {
+                alert("Please Select Batch & Class");
+                return false;
+            }
+            else if (batch == "") {
+                alert("Please Select Batch");
+                return false;
+            }
+            else if (className == "") {
+                alert("Please Select Class");
+                return false;
+            }
+
+            var studentIdList = [];
+            $("#ApplyTcBody tr").each(function () {
+                if ($(this).find("input").is(":checked")) {
+                    studentIdList.push($(this).find("td:eq(1)").html());
+                }
+            });
+            if (studentIdList.length <= 0) {
+                alert("Please select a student to apply for TC");
+                return false;
+            }
+
+            //jQuery.noConflict();
+            applyTCFunction();
+        });
+
+        function CancelTC(studentId) {
+            $.ajax({
+                url: "/Fee/CancelTC?id=" + studentId,
+                method: "POST",
+                dataType: "json",
+                success: function (response) {
+                    if (response.Success) {
+
+                        alert(response.msg);
+                        FilterStudentsData();
+                    }
+                    else {
+                        alert(response.msg);
+                    }
+                },
+                error: function () {
+                    alert("Some error occured. Request failed");
+                }
+            })
+        }
+        function FilterStudentsData() {
+            var tb = document.getElementById('ApplyTcTbl');
+            while (tb.rows.length > 1) {
+                tb.deleteRow(1);
+            }
+            var html = "";
+            var batch = $("#Batchddl").val();
+            var className = $("#Classddl").val();
+            var sectionList = $("#Sectionddl").val();
+
+
+            $.ajax({
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                // url: "Student.asmx/GetAllStudents",
+                //url: "/Fee/GeStudentListForApplyTc?batch=" + batch + "&className=" + className + "&sectionName=" + sectionName,
+                url: "/Fee/GeStudentListForApplyTc?batch=" + batch + "&className=" + className + "&sectionList=" + sectionList,
+                dataType: "json",
+                success: function (data) {
+                    $('#ApplyTcTbl').DataTable().destroy();
+                    $('#ApplyTcTbl').find('tbody').html('');
+
+                    ////$('#ApplyTcTbl').find('tbody').append(data);
+                    $('#ApplyTcTbl').find('tbody').html(data);
+                    //$('#ApplyTcTbl').DataTable().draw();
+                    $('#ApplyTcTbl').DataTable();
+                },
+                error: function (result) {
+                    // //
+                    alert("Error");
+                }
+            });
+        }
+        $(document).ready(function(){
+            $("#Batchddl").trigger('change');
+
+
+        });
+</script>
+}
+
+
+
+

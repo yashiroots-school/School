@@ -1,0 +1,119 @@
+﻿
+@{
+    ViewBag.Title = "EmailReport";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <div class="col-sm-12">
+                        <div class="col-sm-4">
+                            <label>From Date:</label>
+                            <input type="text" id="Fromdate" class="form-control datepicker" readonly />
+                        </div>
+
+                        <div class="col-sm-4">
+                            <label>To Date:</label>
+                            <input type="text" id="Todate" class="form-control datepicker" readonly />
+                        </div>
+
+                        <div class="col-sm-4" style="margin-top:20px;">
+                            <button type="button" id="BtnFilter" class="btn btn-info">Filter</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                        <!-- col-msx-12 started -->
+                        <!-- col-sm-12 closed -->
+                        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                            <!-- col-msx-12 started -->
+                            <div id="loadStudent">
+                                <table class="table table-responsive table-striped" style="width: 100%" id="Studenttbl">
+                                    <thead id="stdnttblhead">
+                                        <tr>
+                                            <th>S.No</th>
+                                            <th>Name</th>
+                                            <th>Application Number</th>
+                                            <th>Date</th>
+                                            <th>Content</th>
+                                            <th> Parent Email</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="stdnttblbody">
+
+                                        @{
+                                            var i = 1;
+                                            foreach (var item in ViewBag.EmailReport as IEnumerable<SchoolManagement.Data.Models.TblEmailArchieve>)
+                                            {
+                                                <tr>
+                                                    <td class="row-data">@i</td>
+                                                    <td class="row-data">@item.Name</td>
+                                                    <td class="row-data">@item.ApplicationNumber</td>
+                                                    <td class="row-data">@item.Email_Date</td>
+                                                    <td class="row-data">@item.Email_Content</td>
+                                                    <td class="row-data">@item.Parent_Email</td>
+                                                </tr>
+                                                i++;
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $("#Studenttbl").DataTable();
+        });
+        $("#BtnFilter").on('click', function () {
+            var fromdate = $("#Fromdate").val();
+            var todate = $("#Todate").val();
+            $.ajax({
+                url: "/SMSandEmail/FilterEmailReport",
+                data: { fromdate: fromdate, todate: todate },
+                type: "GET",
+                datatype: "json",
+                success: function (result) {
+                    if (result != null) {
+                        var html = "";
+                        var i = 1;
+                        for (var x = 0; x < result.length; x++) {
+                            html += "<tr>";
+                            html += "<td class='row-data'>" + i + "</td>";
+                            html += "<td class='row-data'>" + result[x].Name + "</td>";
+                            html += "<td class='row-data'>" + result[x].ApplicationNumber + "</td>";
+                            html += "<td class='row-data'>" + result[x].Email_Date + "</td>";
+                            html += "<td class='row-data'>" + result[x].Email_Content + "</td>";
+                            html += "<td class='row-data'>" + result[x].Parent_Email + "</td>";
+                            html += "</tr>";
+                            i++;
+                        }
+                        $("#stdnttblbody").empty();
+                        $("#stdnttblbody").append(html);
+                        $("#Fromdate").val('');
+                        $("#Todate").val('');
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        });
+    </script>
+    }

@@ -1,0 +1,354 @@
+﻿
+@{
+    ViewBag.Title = "AdmissionFeeReports";
+}
+
+<link href="~/Content/DropDownSelect2/dist/css/select2.min.css" rel="stylesheet" />
+<!-- page content -->
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-sm-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-12">
+                            <h4> View Outstanding Fee By Class  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+
+                        <div class="col-sm-12" style="margin-top: 15px;">
+                            <div class="col-sm-3">
+                                @*<div class="form-group">*@
+                                <div class="form-group stright_line">
+                                    <label>Class:</label>
+                                    @*@Html.DropDownList("Semester", ViewBag.Classes as SelectList, "Select", new { @class = "form-control" })*@
+                                    <select id="Semester" class="form-control">
+                                        @{
+                                            foreach (var item in ViewBag.Classes as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                            {
+                                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                            }
+                                        }
+                                    </select>
+
+                                    @*@Html.DropDownList("Semester",ViewBag.Classes as SelectList,"Select",new { @class="form-control"})*@
+
+                                    @*<select id='Semester' class="form-control"></select>*@
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                @*<div class="form-group">*@
+                                <div class="form-group stright_line">
+                                    <label> :</label>
+                                    <select id='Students' class="form-control"></select>
+                                </div>
+                            </div>
+                            @*<div class="col-sm-3">
+                                    <div class="form-group">
+                                        <select id='Batch' class="form-control"></select>
+                                    </div>
+                                </div>*@
+                            @*<div class="col-sm-2">
+                                    <div class="form-group">
+                                        <select id='Course' class="form-control"></select>
+                                    </div>
+                                </div>*@
+                            <div class="col-sm-2">
+                                <div class="form-group stright_line">
+                                    <label>Date From:</label>
+                                    <input type="text" name="DateFrom" id="DateFrom" class="form-control datepicker" readonly>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group stright_line">
+                                    <label>Date To:</label>
+                                    <input type="text" name="DateTo" id="DateTo" class="form-control datepicker" readonly>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <button type="button" id="SearchBtn" class="btn btn-success ">Search</button>
+                                    @*<input type="button" id="SearchBtn" value="Search" class="btn btn-success form-control" />*@
+                                </div>
+                            </div>
+                        </div>
+
+                    </div> <!-- dashboard_graph closed-->
+                </div> <!--col-msx-12 closed-->
+                <div class="col-sm-12">
+                    <!-- col-msx-12 started -->
+                    <button class="btn btn-warning pull-right" id="printBtn">Print Report</button>
+                </div> <!-- col-msx-12  closed -->
+                <div class="col-md-12 col-sm-12 col-xs-12 table-responsive" id="PrintTbl">
+                    <!-- col-msx-12 started -->
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Student Name</th>
+                                <th>Class</th>
+                                <th>Paid Amount</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="StudentPaidDetails"></tbody>
+                    </table>
+                </div><!-- col-msx-12  closed -->
+
+            </div><!-- 1st row closed -->
+        </div>  <!-- /page content -->
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Content/DropDownSelect2/dist/js/select2.min.js"></script>
+    <script src="~/Scripts/printThis.js"></script>
+    $(function () {
+
+    $("#DateFrom").datepick({
+
+    onSelect: function (selected) {
+    var dt = new Date(selected);
+    dt.setDate(dt.getDate() + 1);
+    $("#ToDate").datepicker("option", "minDate", dt);
+    $("#TodayDate").val('');
+    $("#ToDate").val('');
+    },
+    dateFormat: 'dd/mm/yy'
+    });
+
+    $("#DateTo").datepick({
+    onSelect: function (selected) {
+    var dt = new Date(selected);
+    dt.setDate(dt.getDate() - 1);
+    $("#FromDate").datepicker("option", "maxDate", dt);
+    $("#TodayDate").val('');
+    },
+    dateFormat: 'dd/mm/yy'
+    });
+
+
+    });
+
+    <script>
+        $('#printBtn').on("click", function () {
+            $('#PrintTbl').printThis();
+            $("#Semester").select2({
+
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        GetAllStudents();
+        //GetAllBatch();
+        //GetAllCourses();
+        GetAllSemesters();
+
+        $("#SearchBtn").on("click", function () {
+            var scholarNumer = $("#Students option:selected").val();
+            //var batch = $("#Batch option:selected").val();
+            var semester = $("#Semester option:selected").val();
+
+            //console.log("semester", semester);
+            var fromDt = $('#DateFrom').val();
+            var toDt = $('#DateTo').val();
+
+            var inputData = {
+                ScholarNumer: scholarNumer,
+                //Batch: batch,
+                Semester: semester,
+                DateFrom: fromDt,
+                DateTo: toDt
+            };
+
+
+            
+
+            $.ajax({
+                url: "/AdmissionFee/GetStudentsAdmissionFeeDetails",
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(inputData),
+                success: function (response) {
+                    $("#StudentPaidDetails").empty();
+                    var html = "";
+                    if (response.length > 0) {
+                        var x = 1;
+                        for (var i = 0; i < response.length; i++) {
+                            html += "<tr>";
+                            html += "<td>" + x + "</td>";
+                            html += "<td>" + response[i].StudentName + "</td>";
+                            html += "<td>" + response[i].ClassName + "</td>";
+                            html += "<td>" + response[i].PaidAmount + "</td>";
+                            html += "</tr>";
+                            x++;
+                        }
+                        $("#StudentPaidDetails").append(html);
+
+                    }
+                    else {
+                        alert("No Record");
+                    }
+
+                    $("#Students").val('').trigger('change');
+                    $("#Semester").val('').trigger('change');
+                    //
+                    //if (response.count > 0 && response != null) {
+
+                    //}
+                    //$("#StudentPaidDetails").html("");
+                    //$("#StudentPaidDetails").html(response);
+                    //$("#Students").val('').trigger('change');
+                    //$("#Semester").val('').trigger('change');
+                },
+                error: function (er) {
+                    //
+                    alert(er);
+                }
+            });
+        });
+        function GetAllStudents() {
+            $.ajax({
+                url: "/Student/GetAllStudents1",
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.length > 0) {
+                        var allStudents = [];
+                        var omObj = {};
+                        $('#Students').html('').select2({ data: [{ id: '', text: '' }] });
+                        allStudents.push({ id: '', text: '-- Select Student --' });
+                        for (var i = 0; i < response.length; i++) {
+                            allStudents.push({ id: response[i].StudentRegisterID, text: response[i].Name });
+                        }
+                        $("#Students").html('').select2({
+                            data: allStudents
+                        });
+                    }
+                },
+                error: function (er) {
+                    //
+                    alert(er);
+                }
+            });
+        }
+        function GetAllBatch() {
+            $.ajax({
+                url: "/Fee/GetAllBatch",
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //
+                    if (response.length > 0) {
+                        var allBatches = [];
+                        $('#Batch').html('').select2({ data: [{ id: '', text: '' }] });
+                        allBatches.push({ id: '', text: '-- Select Batch --' });
+                        for (var i = 0; i < response.length; i++) {
+                            allBatches.push({ id: response[i].DataListItemName, text: response[i].DataListItemName });
+                        }
+                        $("#Batch").html('').select2({
+                            data: allBatches
+                        });
+                    }
+                },
+                error: function (er) {
+                    //
+                    alert(er);
+                }
+            });
+        }
+        function GetAllCourses() {
+            $.ajax({
+                url: "/Fee/GetAllCourses",
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //
+                    if (response.length > 0) {
+                        var allCourses = [];
+                        $('#Course').html('').select2({ data: [{ id: '', text: '' }] });
+                        allCourses.push({ id: '', text: '-- Select Course --' });
+                        for (var i = 0; i < response.length; i++) {
+                            allCourses.push({ id: response[i].DataListItemId, text: response[i].DataListItemName });
+                        }
+                        $("#Course").html('').select2({
+                            data: allCourses
+                        });
+                    }
+                },
+                error: function (er) {
+                    //
+                    alert(er);
+                }
+            });
+        }
+        function GetAllSemesters() {
+            $.ajax({
+                url: "/Fee/GetAllSemesters",
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    //
+                    if (response.length > 0) {
+
+                        var allSemester = [];
+                        $('#Semester').html('').select2({ data: [{ id: '', text: '' }] });
+                        allSemester.push({ id: '', text: '-- Select Class --' });
+                        for (var i = 0; i < response.length; i++) {
+                            allSemester.push({ id: response[i].DataListItemId, text: response[i].DataListItemName });
+                        }
+
+                        $("#Semester").html('').select2({
+                            data: allSemester
+                        });
+                    }
+                },
+                error: function (er) {
+                    //
+                    alert(er);
+                }
+            });
+        }
+
+        $("#Semester").change(function () {
+            var classid = this.value;
+            if (classid == 0 || classid == "")
+                return false;
+            $.ajax({
+                url: "/AdmissionFee/GetStudentByClass?classid=" + classid + '&Filtertype=1',
+                type: "GET",
+                dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    if (data.length > 0 && data != "Fail") {
+                        var alldata = [];
+                        $("#Students").html('').select2({ data: [{ id: '', text: '' }] });
+                        alldata.push({ id: 0, text: "Select" });
+                        for (var i = 0; i < data.length; i++) {
+                            alldata.push({
+                                id: data[i].StudentRegisterID, text: data[i].Name + " " + data[i].Last_Name
+                            });
+                        }
+                        $("#Students").html('').select2({
+                            data: alldata
+                        });
+                    }
+                    else {
+                        alert("There is no student Present in this class");
+                        window.location.reload();
+                    }
+                }
+            });
+        });
+
+    </script>
+}

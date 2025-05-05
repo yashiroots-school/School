@@ -1,0 +1,733 @@
+﻿@{
+    /**/
+
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<style>
+    .select2-container .select2-selection--single {
+        height: 34px !important;
+    }
+
+    .select2-container--default .select2-selection--single {
+        border: 1px solid #ccc !important;
+        border-radius: 0px !important;
+    }
+
+    .select2 {
+        width: 100%;
+    }
+
+    .readonly-input {
+        background-color: #f2f2f2; /* Set a background color for disabled appearance */
+        cursor: pointer !important; /* Change cursor to a hand icon */
+    }
+
+    .no-border {
+        border: none; /* Remove the border */
+    }
+</style>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<div class="right_col" role="main">
+
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="row">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4> Mark Students Attendence  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6">
+                            <button class="btn btn-info pull-right"><a href="~/Student/ViewStudentAttendane" class="button_a" style="color:white">View Students Attendence</a></button>
+                            <button class="btn btn-info pull-right"><a href="~/Student/EditStudentAttendance" class="button_a" style="color:white">Update Students Attendence</a></button>
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Select Staff :</label>
+
+                                <select class="form-control select2  @(ViewBag.Staff is IEnumerable<SchoolManagement.Data.Models.StafsDetails> staffList1 && staffList1.Count() == 1 ? "no-border" : "")" id="Staff_Id" name="Staff_Id" @(ViewBag.Staff is IEnumerable<SchoolManagement.Data.Models.StafsDetails> staffList2 && staffList2.Count() == 1 ? "disabled" : "")>
+                                    @if (ViewBag.Staff is IEnumerable<SchoolManagement.Data.Models.StafsDetails> staffList && staffList.Count() == 1)
+                                    {
+                                        <option value="@staffList.First().StafId" selected>@staffList.First().Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option>---Select Staff---</option>
+                                        foreach (var item in ViewBag.Staff as IEnumerable<SchoolManagement.Data.Models.StafsDetails>)
+                                        {
+                                            <option value="@item.StafId">@item.Name</option>
+                                        }
+                                    }
+                                </select>
+
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Select Class :</label>
+
+                                <select class="form-control " id="Class_Id" name="Class_Id">
+                                    <option>---Select Class---</option>
+                                </select>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="row">
+
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Select Section :</label>
+
+                                <select class="form-control " id="Section_Id" name="Section_Id">
+                                    <option>---Select Section---</option>
+
+                                </select>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Select Date :</label>
+                                <div class="input-group input-append date">
+                                    <input type="text" class="form-control datepicker readonly-input" placeholder="Select Date" name="Day" id="Day" readonly />
+                                    <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6" style="margin-top: 10px;">
+                            <div>
+                                <button type="button" class="btn btn-success" id="BtnShowAttendance">Show</button>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Batch :</label>
+                                @Html.DropDownList("BatchId", ViewBag.AllBatchs as SelectList, "---Select Batch---", new { @id = "BatchId", @class = "form-control select2" })
+                                @*<select class="form-control" id="BatchId">
+                                        <option value="0">---Select Batch ---</option>
+                                        @foreach (var item in ViewBag.AllBatchs.items)
+                                        {
+                                            <option value="@item.Batch_Id">@item.Batch_Name</option>
+                                        }
+                                    </select>*@
+                            </div>
+                        </div>
+                    </div><!-- row x_title closed-->
+                </div><!-- dashboard_graph closed-->
+            </div><!--col-msx-12 closed-->
+
+
+            <div class="col-sm-12 table-responsive">
+
+                <table class="table table-bordered " id="TableStudentAttendance">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Student Name</th>
+                            <th>Class</th>
+                            <th>Section</th>
+                            <th>Mark full day present</th>
+                            @*<th>Attendance Date</th>*@
+                            <th><input type="checkbox" id="FulldayAbsentHeader" /></th>
+                            <th>Mark half day present</th>
+                            <th><input type="checkbox" id="HalfdayAbsentHeader" /></th>
+                            <th>Other</th>
+                            <th><input type="checkbox" id="OtherAbsentHeader" /></th>
+                            @*<th><input type="checkbox" id="Halfday" /></th>*@
+                        </tr>
+                    </thead>
+                    <tbody id="TableBody"></tbody>
+                </table>
+
+                <button class="btn btn-success pull-right" id="SaveButton">Save</button>
+
+            </div><!-- col-msx-12  closed -->
+        </div><!-- 1st row closed -->
+    </div>
+</div>
+@section scripts{
+
+
+
+    <script>
+
+        function selectCheckbox(event,headerCheckBoxId) {
+            $('#'+headerCheckBoxId).prop('checked', false);
+            $(event.target).prop('checked', $(this).prop('checked'));
+            
+            var checkboxId = event.target.id;
+            validateCheckboxes(checkboxId);
+
+
+
+        }
+        function getClassData(staffId) {
+            // Make an AJAX request to the controller method
+            $.ajax({
+                url: '/Student/GetStaffClass', // Replace with the actual URL of your controller method
+                type: 'GET',
+                data: { staffId: staffId },
+                success: function (data) {
+                    // Populate the class select box with the retrieved data
+                    var classSelect = $('#Class_Id');
+                    classSelect.empty();
+                    if (data.length === 1) {
+                        classSelect.append('<option value="' + data[0].DataListItemId + '" selected>' + data[0].DataListItemName + '</option>');
+                        classSelect.trigger('change'); // Trigger the change event to call the event handler
+                        classSelect.prop('disabled', true).addClass('no-border');
+                    } else {
+                        classSelect.prop('disabled', false).removeClass('no-border');
+                        var count = 1;
+                        classSelect.append('<option>---Select Class---</option>');
+                        $.each(data, function (index, item) {
+                            if (count == 1) {
+                                classSelect.append('<option value="' + item.DataListItemId + '" selected>' + item.DataListItemName + '</option>');
+                                classSelect.trigger('change');
+
+                            } else {
+                                classSelect.append('<option value="' + item.DataListItemId + '">' + item.DataListItemName + '</option>');
+                            }
+                            count = count + 1;
+                        });
+                    }
+                },
+                error: function () {
+                    // Handle error if any
+                }
+            });
+        }
+
+        function getSectionData(staffId,classId) {
+            // Make an AJAX request to the controller method
+            $.ajax({
+                url: '/Student/GetClassSection', // Replace with the actual URL of your controller method
+                type: 'GET',
+                data: { staffId: staffId, classId:classId },
+                success: function (data) {
+                    // Populate the class select box with the retrieved data
+                    var sectionSelect = $('#Section_Id');
+                    sectionSelect.empty();
+
+                    if (data.length === 1) {
+                        sectionSelect.append('<option value="' + data[0].DataListItemId + '" selected>' + data[0].DataListItemName + '</option>');
+                        sectionSelect.trigger('change');
+                        sectionSelect.prop('disabled', true).addClass('no-border');
+                    } else {
+                        sectionSelect.prop('disabled', false).removeClass('no-border');
+                        sectionSelect.append('<option>---Select Section---</option>');
+                        var count = 1;
+                        $.each(data, function (index, item) {
+
+                            if (count == 1) {
+                                sectionSelect.append('<option value="' + item.DataListItemId + '" selected>' + item.DataListItemName + '</option>');
+                                sectionSelect.trigger('change');
+                            } else {
+                                sectionSelect.append('<option value="' + item.DataListItemId + '">' + item.DataListItemName + '</option>');
+                            }
+                            count = count + 1;
+                        });
+
+                    }
+                },
+                error: function () {
+                    // Handle error if any
+                }
+            });
+        }
+
+        function getSectionDataBatch(staffId, classId, sectionId) {
+            // Make an AJAX request to the controller method
+            $.ajax({
+                url: '/Student/GetClassSectionBatch', // Replace with the actual URL of your controller method
+                type: 'GET',
+                data: { staffId: staffId, classId: classId, sectionId: sectionId },
+                success: function (data) {
+                    // Populate the class select box with the retrieved data
+                    var batchSelect = $('#BatchId');
+                    batchSelect.empty();
+
+                    if (data.length === 1) {
+                        batchSelect.append('<option value="' + data[0].Batch_Id + '" selected>' + data[0].Batch_Name + '</option>');
+                        batchSelect.prop('disabled', true).addClass('no-border');
+                    } else {
+                        batchSelect.prop('disabled', false).removeClass('no-border');
+                        batchSelect.append('<option>---Select Section---</option>');
+                        $.each(data, function (index, item) {
+                            batchSelect.append('<option value="' + item.Batch_Id + '">' + item.Batch_Name + '</option>');
+                        });
+                    }
+                },
+                error: function () {
+                    // Handle error if any
+                }
+            });
+        }
+
+
+        function validateCheckboxes(checkBoxID) {
+            
+            var studentID = checkBoxID.replace(/\D/g, '');
+
+            if (checkBoxID == studentID + "RowFulldayabsent") {
+                var halfdayCheckbox = $('#' + studentID + 'RowHalfdayabsent')[0];
+                var otherCheckbox = $('#' + studentID + 'RowOtherdayabsent')[0];
+                halfdayCheckbox.checked = false;
+                otherCheckbox.checked = false;
+            }
+            else if (checkBoxID == studentID + "RowHalfdayabsent") {
+                var fulldayCheckbox = $('#' + studentID + 'RowFulldayabsent')[0];
+                var otherCheckbox = $('#' + studentID + 'RowOtherdayabsent')[0];
+                fulldayCheckbox.checked = false;
+                otherCheckbox.checked = false;
+            }
+            else if (checkBoxID == studentID + "RowOtherdayabsent") {
+                var fulldayCheckbox = $('#' + studentID + 'RowFulldayabsent')[0];
+                var halfCheckbox = $('#' + studentID + 'RowHalfdayabsent')[0];
+                fulldayCheckbox.checked = false;
+                halfCheckbox.checked = false;
+            }
+        }
+
+        function getCurrentDate() {
+            var today = new Date();
+            return today.getDate().toString().padStart(2, '0') + "/" + (today.getMonth() + 1).toString().padStart(2, '0') + "/" + today.getFullYear();
+        }
+            $(document).ready(function () {
+
+            //// Make a GET request to the WorldTimeAPI endpoint
+            //fetch('http://worldtimeapi.org/api/ip')
+            //    .then(response => response.json())
+            //    .then(data => {
+            //        // Extract the current date and time from the response
+            //        var currentDateTime = data.datetime;
+            //        localStorage.setItem("CurrentDate", currentDateTime)
+            //        // Convert the current date and time to a Date object
+            //        var currentDate = new Date(currentDateTime);
+
+            //        // Format the current date as needed
+            //        var formattedToday = ("0" + currentDate.getDate()).slice(-2) + "/" + ("0" + (currentDate.getMonth() + 1)).slice(-2) + "/" + currentDate.getFullYear();
+            //        alert(formattedToday);
+            //        // Set the formatted current date as the default value for the date picker
+            //        $('.datepicker').val(formattedToday);
+            //    })
+            //    .catch(error => {
+            //        console.error("Error fetching data:", error);
+            //    });
+
+                $('.datepicker').val(getCurrentDate());
+                 //$('.select2').select2();
+         $('#Staff_Id').change(function () {
+            var selectedOptionId = $(this).val();
+            getClassData(selectedOptionId); // Call your function and pass the selected option ID as a parameter
+        });
+
+        // Call the function immediately if there's only one option
+        @if (ViewBag.Staff is IEnumerable<SchoolManagement.Data.Models.StafsDetails> singleStaffList && singleStaffList.Count() == 1)
+        {
+            <text>
+                getClassData('@singleStaffList.First().StafId');
+            </text>
+        }
+
+            $('#Class_Id').change(function () {
+                var selectedOptionId = $(this).val();
+                var selectedStaffId = $('#Staff_Id').val();
+                getSectionData(selectedStaffId,selectedOptionId); // Call your function and pass the selected option ID as a parameter
+                });
+
+                $('#Section_Id').change(function () {
+                    var selectedOptionId = $(this).val();
+                    var selectedStaffId = $('#Staff_Id').val();
+                    var selectedClassId = $('#Class_Id').val();
+                    getSectionDataBatch(selectedStaffId, selectedClassId, selectedOptionId); // Call your function and pass the selected option ID as a parameter
+                });
+                
+            //$("#FulldayAbsentHeader").click(function () {
+            //    var checkbox = $('#FulldayAbsentHeader');
+            //    if (checkbox.is(':checked')) {
+            //        var checkboxes = $('.RowFulldayabsent');
+            //        checkboxes.prop('checked', true);
+            //    } else {
+            //        var checkboxes = $('.RowFulldayabsent');
+            //        checkboxes.prop('checked', false);
+            //    }
+            //});
+
+                //$("#HalfdayAbsentHeader").click(function () {
+                //    var checkbox = $('#HalfdayAbsentHeader');
+                //    if (checkbox.is(':checked')) {
+                //        var checkboxes = $('.RowHalfdayabsent');
+
+                //        // Check all the selected checkboxes
+                //        checkboxes.prop('checked', true);
+                //    } else {
+                //        // Checkbox is not checked
+                //        var checkboxes = $('.RowHalfdayabsent');
+
+                //        // Check all the selected checkboxes
+                //        checkboxes.prop('checked', false);
+                //    }
+                //});
+
+                //$("#OtherAbsentHeader").click(function () {
+                //    var checkbox = $('#OtherAbsentHeader');
+                //    if (checkbox.is(':checked')) {
+                //        var checkboxes = $('.RowOtherdayabsent');
+
+                //        // Check all the selected checkboxes
+                //        checkboxes.prop('checked', true);
+                //    } else {
+                //        // Checkbox is not checked
+                //        var checkboxes = $('.RowOtherdayabsent');
+
+                //        // Check all the selected checkboxes
+                //        checkboxes.prop('checked', false);
+                //    }
+                //});
+
+
+
+                $("#FulldayAbsentHeader").click(function () {
+                    var checkbox = $('#FulldayAbsentHeader');
+                    if (checkbox.is(':checked')) {
+                        var checkboxes = $('.RowFulldayabsent');
+                       
+                        checkboxes.each(function () {
+                                $(this).prop('checked', true);
+                                selectCheckbox({ target: this }, 'FulldayAbsentHeader');
+                        });
+                        checkbox.prop('checked', true);
+                    } else {
+                        var checkboxes = $('.RowFulldayabsent');
+                        checkboxes.prop('checked', false);
+                    }
+                });
+                $("#HalfdayAbsentHeader").click(function () {
+                    var checkbox = $('#HalfdayAbsentHeader');
+                    if (checkbox.is(':checked')) {
+                        var checkboxes = $('.RowHalfdayabsent');
+                        checkboxes.each(function () {
+                            $(this).prop('checked', true);
+                            selectCheckbox({ target: this }, 'HalfdayAbsentHeader');
+                        });
+                        checkbox.prop('checked', true);
+                    } else {
+                        // Checkbox is not checked
+                        var checkboxes = $('.RowHalfdayabsent');
+
+                        // Check all the selected checkboxes
+                        checkboxes.prop('checked', false);
+                        checkbox.prop('checked', false);
+                    }
+                });
+
+                $("#OtherAbsentHeader").click(function () {
+                    var checkbox = $('#OtherAbsentHeader');
+                    if (checkbox.is(':checked')) {
+                        var checkboxes = $('.RowOtherdayabsent');
+                        checkboxes.each(function () {
+                            $(this).prop('checked', true);
+                            selectCheckbox({ target: this }, 'OtherAbsentHeader');
+                        });
+                        checkbox.prop('checked', true);
+                    } else {
+                        // Checkbox is not checked
+                        var checkboxes = $('.RowOtherdayabsent');
+
+                        // Check all the selected checkboxes
+                        checkboxes.prop('checked', false);
+                        checkbox.prop('checked', false);
+                    }
+                });
+
+
+            // Save button click event handler
+            $('#SaveButton').click(function () {
+                var rowData = [];
+                var selectedSectionId = $('#Section_Id').val(); // Get the selected section ID
+                var selectedClassId = $('#Class_Id').val();// Get the selected class ID
+                var selectedStarffId = $("#Staff_Id").val();
+                var date = $("#Day").val();
+                // Validate section ID, class ID, and staff ID
+                if (selectedStarffId === null || selectedStarffId === '' || selectedStarffId === '---Select Staff---') {
+                    alert('Please select a staff member!');
+                }
+                else if (selectedClassId === null || selectedClassId === '' || selectedClassId === '---Select Class---') {
+                    alert('Please select a class!');
+                 }
+                else if (selectedSectionId === null || selectedSectionId === '' || selectedSectionId === '---Select Section---') {
+                    alert('Please select a section!');
+
+                }
+                else if (date === '') {
+                    alert('Please select a date!');
+                } else {
+
+                    var dateComponents = date.split('/');//22/06/2023
+
+                    var month = parseInt(dateComponents[1], 10); // Extract the month component and convert to integer
+                    var day = parseInt(dateComponents[0], 10);
+                    var year = parseInt(dateComponents[2], 10);
+                    var dateStr = month + '/' + day + '/' + year;
+                    var dateNew = new Date(dateStr);
+                    var dayName = dateNew.toLocaleDateString("en-US", { weekday: "long" });
+
+                    console.log(dayName); // Output: "Friday"
+
+                    $('#TableBody tr').each(function (index, row) {
+                        var rowDataItem = {
+                            //Student_Name = item.Student_Name,
+                            //Class_Name = item.Class_Name,
+                            //Section_Name = item.Section_Name,
+                            //Mark_FullDayAbsent = item.Mark_FullDayAbsent,
+                            //Mark_HalfDayAbsent = item.Mark_HalfDayAbsent,
+                            //Class_Id=item.Class_Id,
+                            //Section_Id=item.Section_Id,
+                            //StudentRegisterID=item.StudentRegisterID,
+                            Student_Name: $(row).find('.studentName').text(),
+                            BatchId: $(row).find('.Batch_Id').text(),
+                            Class_Name: $(row).find('.className').text(),
+                            Section_Name: $(row).find('.section').text(),
+                            Mark_FullDayAbsent: $(row).find('.RowFulldayabsent').is(':checked'),
+                            Mark_HalfDayAbsent: $(row).find('.RowHalfdayabsent').is(':checked'),
+                            Others: $(row).find('.RowOtherdayabsent').is(':checked'),
+                            Class_Id: selectedClassId,
+                            Section_Id: selectedSectionId,
+                            StudentRegisterID: $(row).find('.sno').attr('name'),
+                            Created_Date: date,
+                            Day: dayName,
+                            Created_By: selectedStarffId
+                            //isOtherAbsent: $(row).find('.RowOtherdayabsent').is(':checked')
+                        };
+                        rowData.push(rowDataItem);
+                    });
+
+                    // Make an AJAX request to the controller method
+                    $.ajax({
+                        url: '/Student/SaveAttendanceData', // Replace with the actual URL of your controller method
+                        type: 'POST',
+                        data: JSON.stringify({
+                            rowData: rowData,
+                            classId: selectedClassId,
+                            sectionId: selectedSectionId,
+                            attendanceDate: date
+                        }),
+                        contentType: 'application/json',
+                        success: function (response) {
+                            // Handle success response
+                            if (response.success == false) {
+                                alert(response.errormsg)
+                            }
+                            else {
+                                alert("Attendance Recorded");
+                                window.location.reload();
+                            }
+                        },
+                        error: function () {
+                            // Handle error if any
+                        }
+                    });
+                }
+                });
+
+
+        });
+        $("#BtnShowAttendance").on('click', function () {
+            var classid = $("#Class_Id").val();
+            var staffId = $("#Staff_Id").val();
+            var sectionid = $("#Section_Id").val();
+            var batchid = $("#BatchId").val();
+            var date = $("#Day").val();
+
+            console.log(classid, sectionid, date);
+            if (staffId === null || staffId === '' || staffId === '---Select Staff---') {
+                alert('Please select a staff!');
+            }
+           else if (classid === null || classid === '' || classid === '---Select Class---') {
+                alert('Please select a class!');
+            }
+            else if (sectionid === null || sectionid === '' || sectionid === '---Select Section---') {
+                alert('Please select a section!');
+            }else if (date === '') {
+                alert('Please select a date!');
+            } else if (batchid === '') {
+                alert('Please select a batch!');
+            }
+            else
+            {
+                //var storedDateStr = localStorage.getItem("CurrentDate"); // Get the stored date string
+                var storedDate = new Date(); // Convert the stored date string to a Date object
+
+                // Parse the selected date string into day, month, and year components
+                var dateComponents = date.split("/");
+                var selectedDay = parseInt(dateComponents[0], 10);
+                var selectedMonth = parseInt(dateComponents[1], 10) - 1; // Months are 0-indexed
+                var selectedYear = parseInt(dateComponents[2], 10);
+
+                // Create a Date object from the components
+                var selectedDateObject = new Date(selectedYear, selectedMonth, selectedDay);
+
+                // Compare the selected date with the stored date
+                if (selectedDateObject > storedDate) {
+                    // Show an error message or take appropriate action
+                    alert("Please select a past or today's date.");
+                    // Reset the datepicker's value if needed
+                    var currentDate = new Date(storedDate);
+
+                    // Format the current date as needed
+                    var formattedToday = ("0" + currentDate.getDate()).slice(-2) + "/" + ("0" + (currentDate.getMonth() + 1)).slice(-2) + "/" + currentDate.getFullYear();
+
+                    // Set the formatted current date as the default value for the date picker
+                    $('.datepicker').val(formattedToday);
+                    return false;
+                }
+                $.ajax({
+                    url: "/Student/StudentAttendanceById",
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json;charset=UTF-8",
+                    data: { classid: classid, sectionid: sectionid, date: "2023-06-21", batchid: batchid }, // Replace with your actual parameter values
+                    success: function (result) {
+                        //alert(result[1].StafId);
+                        $("#TableBody").empty();
+                        var serialNumber = 1;
+                        var row = "";
+                        $.each(result, function (key, data) {
+                            row = row + "<tr>";
+                            row = row + "<td  class='sno' name='" + data.StudentId + "'>" + serialNumber + "</td>";
+                           // row = row + "<td class='SerialNo'>" + serialNumber + "</td>";
+                            row = row + "<td class='studentName'>" + data.Name + "</td>";
+                            row = row + "<td class='className'>" + data.Class + "</td>";
+                            row = row + "<td class='section'>" + data.Section + "</td>";
+                            row = row + "<td class='Batch_Id' hidden>" + data.Batch_Id + "</td>";
+                            row = row + "<td>A</td>";
+                            row = row + "<td><input type='checkbox' class='RowFulldayabsent'  id= '" +data.StudentId +"RowFulldayabsent' onchange=\"selectCheckbox(event,'FulldayAbsentHeader')\" /></td>"
+                            row = row + "<td>H</td>";
+                            row = row + "<td><input type='checkbox' class='RowHalfdayabsent'  id= '" + data.StudentId +"RowHalfdayabsent' onchange=\"selectCheckbox(event,'HalfdayAbsentHeader')\"/></td>";
+                            row = row + "<td>O</td>";
+                            row = row + "<td><input type='checkbox'  class='RowOtherdayabsent' id= '" + data.StudentId +"RowOtherdayabsent' onchange=\"selectCheckbox(event, 'OtherAbsentHeader')\" /></td>";
+                            row = row + "</tr>";
+                            serialNumber++;
+                        }
+                        );
+                        $("#TableBody").append(row);
+                       // $("#TableStudentAttendance").DataTable();
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+                });
+
+            }
+
+        });
+        $(document).ready(function () {
+            $('.select2').select2();
+            $.ajax({
+                url: "/Account/StudentAttendanceList",
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json;charset=UTF-8",
+                success: function (result) {
+                    //alert(result[1].StafId);
+                    $("#TableBody").empty();
+                    var row = "";
+                    $.each(result, function (key, data) {
+                        row = row + "<tr>";
+                        row = row + "<td>" + data.StafId + "</td>";
+                        //row = row + "<td>" + data.Name + "</td>";
+                        row = row + "<td>A</td>";
+                        row = row + "<td><input type='checkbox' id='Fulldayabsent'/></td>"
+                        row = row + "<td>H</td>";
+                        row = row + "<td><input type='checkbox' id='Halfdayabsent'/></td>";
+                        row = row + "</tr>";
+                    }
+                    );
+                    $("#TableBody").append(row);
+                   // $("#TableStaffAttendance").DataTable();
+
+                },
+                error: function (errormessage) {
+                    //alert(errormessage.responseText);
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+                },
+                traditional: true,
+                jsonp: false,
+                jsonpCallback: false
+            });
+
+        });
+        $("#BtnSaveAttendance").on('click', function () {
+
+            var StaffAttendanceViewmodl = {}
+            var Staff_Id = []
+            var Staff_Name = []
+            var FullDay_Absent = []
+            var HalfDay_Absent = []
+            
+
+            var tableid = document.getElementById('TableStaffAttendance');
+            var tBody = tableid.getElementsByTagName('tbody')[0];
+            var tableRow = tBody.getElementsByTagName('tr');
+            alert(tableRow);
+            var row_value = "";
+            var data = "";
+            for (var i = 0; i < tableRow.length; i++) {
+                //var staffid = $(this).find("td:eq(0)").html();
+                //Staff_Id.push(staffid);
+                //row_value += data[i].innerHTML;
+                console.log(tableRow[i].innerHTML);
+
+            }
+            alert(row_value);
+            StaffAttendanceViewmodl.Staff_Id = Staff_Id;
+            StaffAttendanceViewmodl.Staff_Name = Staff_Name;
+            StaffAttendanceViewmodl.FullDay_Absent = FullDay_Absent;
+            StaffAttendanceViewmodl.HalfDay_Absent = HalfDay_Absent;
+            alert(StaffAttendanceViewmodl.Staff_Id);
+            //
+            $.ajax({
+                url: "/Account/AddStaffAttendence",
+                dataType: "json",
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                data: JSON.stringify(StaffAttendanceViewmodl),
+                async: true,
+                processData: false,
+                cache: false,
+                success: function (result) {
+                    alert("Attendence Added Successfully");
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+
+            });
+
+        });
+
+    </script>
+
+}

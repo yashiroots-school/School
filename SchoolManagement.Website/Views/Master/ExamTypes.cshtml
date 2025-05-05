@@ -1,0 +1,155 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6">
+                            <h4> Set Exam Types  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6">
+                            <!--  <button class="btn btn-info pull-right"><a href="sis_view_all_rooms.html" class="button_a">View Rooms </a></button>-->
+
+                        </div>
+                    </div>
+                </div>
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+
+
+        <div class="col-sm-12" style="border-bottom: 1px solid #E6E9ED;">
+            <!-- col-sm-12 started -->
+            <h4 class="std_head well-sm">Set Exam Types</h4>
+
+            <form action="/Master/AddExamTypes" id="ExamTypeForm" method="post" enctype="multipart/form-data">
+
+
+                <div class="col-sm-3">
+                    <!-- col-sm-3 started -->
+                </div><!-- col-sm-3 closed -->
+                <div class="col-sm-6">
+                    <!-- col-sm-6 started -->
+
+                    <div class="form-group">
+                        <input type="hidden" id="Examid" name="Exam_Id" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Add Exam Type : </label>
+                        <input type="text" class="form-control" placeholder="Preparatory" id="ExamType" name="Exam_Type" />
+                    </div>
+
+
+                </div><!-- col-sm-6 closed -->
+                <div class="col-sm-7" style="margin-top:20px;">
+                    <!-- col-sm-6 started -->
+
+                    <button type="submit" class="btn btn-success pull-right" id="BtnExamSave">Save</button>
+                    <button type="button" class="btn btn-success pull-right" onclick="ClearData()">Clear</button>
+
+                </div> <!-- col-sm-6 closed -->
+            </form>
+
+            <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+
+                <table class="table table-bordered" style="margin-top:10px" id="ExamTypeTable">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Exam Type</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            foreach (var item in ViewBag.Examdetails as IEnumerable<SchoolManagement.Website.Models.Tbl_ExamTypes>)
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@item.Exam_Type</td>
+                                    <td>
+                                        <button type="button" class="btn btn-info EditExamType" data-val="@item.Exam_Id">Edit</button>
+                                        <button type="button" class="btn btn-info DeleteExamType" data-val="@item.Exam_Id">Delete</button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div><!-- col-sm-12 closed -->
+
+
+    </div><!-- col-msx-12  closed -->
+</div>
+
+@section scripts{
+
+    <script src="https://cdn.datatables.net/1.11.0/js/jquery.dataTables.min.js" defer></script>
+
+
+    <script>
+       
+
+         $("#ExamTypeTable").DataTable();
+
+        $(".EditExamType").on('click', function () {
+            $("#ExamTypeForm").attr('action', '/Master/UpdateExamType');
+            var id = $(this).attr("data-val");
+
+            $("#BtnExamSave").text("Update");
+            GetExamById(id);
+        });
+
+        function GetExamById(id) {
+            $.ajax({
+                url: "/Master/GetExamTypeById?id=" + id,
+                type: "GET",
+                dataType: "json",
+                success: function (result) {
+                    if (result != null) {
+                        $("#Examid").val(result.Exam_Id);
+                        $("#ExamType").val(result.Exam_Type);
+
+
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+
+        $(".DeleteExamType").on('click', function () {
+            var id = $(this).attr("data-val");
+            if (confirm("Do You Want to Delete?")) {
+                window.location.href = "/Master/DeleteExamType?id=" + id;
+            }
+        });
+
+        function ClearData() {
+            var cnf = confirm("Are You Sure, You want to delete?");
+            if (cnf != null) {
+                $("#Examid").val('');
+                $("#ExamType").val('');
+
+                $("#ExamTypeForm").attr('action', '/Master/AddExamTypes');
+                $("#BtnExamSave").text("Save");
+
+            }
+
+        }
+
+    </script>
+
+}

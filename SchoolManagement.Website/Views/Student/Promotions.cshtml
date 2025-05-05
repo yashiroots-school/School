@@ -1,0 +1,852 @@
+﻿
+@{
+    ViewBag.Title = "Promotions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="right_col" role="main">
+    <div id="overlay">
+        <div class="cv-spinner">
+            <span class="spinner"></span>
+        </div>
+    </div>
+
+    <style>
+        #overlay {
+            position: fixed;
+            top: 0;
+            z-index: 100;
+            width: 100%;
+            height: 100%;
+            display: none;
+            left: 0;
+            background: rgba(0,0,0,0.6);
+        }
+
+        .cv-spinner {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px #ddd solid;
+            border-top: 4px #2e93e6 solid;
+            border-radius: 50%;
+            animation: sp-anime 0.8s infinite linear;
+        }
+
+        @@keyframes sp-anime {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .is-hide {
+            display: none;
+        }
+    </style>
+
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4> Promotions  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        @*<div id="loader-container">
+                            <div class="custom-loader"></div>
+                            <div class="overlay"></div>
+                        </div>*@
+
+
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Select Class :</label>
+                                <select class="form-control" id="ClassId">
+                                    <option value="0">---Select Class---</option>
+                                    @foreach (var item in ViewBag.Classes as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                    {
+                                        <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Select Year :</label>
+                                @Html.DropDownList("Batches", ViewBag.BatcheNames as SelectList, "---Select Year---", new { @id = "batches", @class = "form-control" })
+
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Select Section :</label>
+                                <select class="form-control" id="SectionId">
+                                    <option value="0">---Select Section---</option>
+                                    @foreach (var item in ViewBag.Sections as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                    {
+                                        <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        @*<div class="col-sm-3">
+                            @*<div class="form-group">
+                                <label>Select Btach :</label>
+                                <select class="form-control" id="ClassId">
+                                    <option value="0">---Select Batch ---</option>
+                                    @foreach (var item in ViewBag.AllBatchs as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                    {
+                                        <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                    }
+                                </select>
+                            </div>*@
+
+                        @*<div class="form-group">
+                                <label>Select Year :</label>
+                                @Html.DropDownList("Batches", ViewBag.BatcheNames as SelectList, "---Select Year---", new { @id = "Batches", @class = "form-control" })
+
+                            </div>*@
+
+                        @*<div class="col-sm-3">
+                                <div class="form-group">
+                                    <label>Promote</label>
+                                    <select class="form-control" id="promotestudentd">
+                                        <option value="0">---Select---</option>
+                                        <option value="yes">Promoted</option>
+                                        <option value="no">NotPromoted</option>
+                                    </select>
+                                </div>
+                            </div>*@
+                        @*<div class="col-sm-3">
+                                <div class="form-group">
+                                    <label>Batch :</label>
+                                    @Html.DropDownList("Batchddl", new SelectList(ViewBag.AllBatchs, "DataListItemName", "DataListItemName"), "select", new { @id = "Batchddl", @class = "form-control" })
+                                    <select class="form-control" id="Batchddl">
+                                        <option>---Select Batch---</option>
+                                        @foreach (var item in ViewBag.AllBatchs as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                        {
+                                            <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>*@
+
+                        @*<div class="col-sm-3">
+                                <div class="form-group">
+                                    <label>Course :</label>
+                                    @Html.DropDownList("Courseddl", new SelectList(ViewBag.AllCourses, "DataListItemName", "DataListItemName"), "select", new { @id = "Courseddl", @class = "form-control" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label>Semister :</label>
+                                    @Html.DropDownList("Class", new SelectList(ViewBag.Classes, "DataListItemName", "DataListItemName"), "select", new { @id = "class", @class = "form-control" })
+                                </div>
+                            </div>*@
+
+                        <!-- col-sm-12 started -->
+
+
+                        <div class="col-sm-3" style="margin-top:20px;">
+                            <input type="button" value=" Filter Student " id="FilterStudents" class="btn btn-success" />
+
+                        </div>
+                    </div>
+
+                    @*<div class="col-sm-8">
+                            Filter By Semester  @Html.DropDownList("Class", new SelectList(ViewBag.Classes, "DataListItemName", "DataListItemName"), "select", new { @id = "classFilter", @class = "form-control" })
+                        </div>*@<!--row x_title closed -->
+                </div><!-- dashboard_graph closed-->
+            </div><!--col-msx-12 closed-->
+
+            <div class="row">
+                <!-- row started -->
+                <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                    <!-- col-msx-12 started -->
+                    <!-- col-sm-12 closed -->
+                    <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                        <!-- col-msx-12 started -->
+
+                        <table class="table table-responsive table-striped" style="width: 100%" id="PromotionTbl">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="chkpromotion" onchange="chkpromotion(this)">All</th>
+                                    <th>Role Number</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Gender</th>
+                                    <th>Date Of Birth</th>
+                                    @*<th>Father Name</th>*@
+                                    <th>Promote To</th>
+                                </tr>
+                            </thead>
+                            <tbody id="PromotionBody"></tbody>
+                        </table>
+                    </div>
+                    <!-- col-msx-12  closed -->
+                </div>
+                <!-- col-msx-12  closed -->
+            </div>
+            <div style="text-align:right;margin-top:20px; display:none" id="PromoteAllBtn">
+                <button type="button" class="btn btn-info btn-sm" onclick=PromoteAll()>Promote All To</button>
+                @*<button type="button" id="BtnSend" class="btn btn-success">Promote</button>*@
+            </div>
+        </div><!-- 1st row closed -->
+    </div>  <!-- /page content -->
+</div>
+
+<div id="loader" class="loader-container">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Student Promotion</h4>
+            </div>
+            <br />
+            <div class="modal-body">
+                <div class="row rowmargin">
+                    <div class="col-sm-3">Promote To</div>
+                    <div class="col-sm-9">
+                        @*@Html.DropDownList("Class", new SelectList(ViewBag.Classes, "DataListItemName", "DataListItemName"), "select", new { @id = "class", @class = "form-control" })*@
+                        <input type="hidden" id="Student_id" />
+                        <select class="form-control" id="newclassid">
+                            <option>---Select Class---</option>
+                            @foreach (var item in ViewBag.Classes as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                            {
+                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                            }
+                        </select>
+
+                        <input type="text" id="newclassname" style="display:none" />
+                        <br />
+                    </div>
+                </div>
+                <div class="row rowmargin">
+                    <div class="col-sm-3"> Section </div>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="ddlSction">
+                            <option value="">---Select Section---</option>
+                            @foreach (var item in ViewBag.Sections as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                            {
+                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <br>
+                <div class="row rowmargin">
+                    <div class="col-sm-3"> Acadamic Year </div>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="ddlAcadamicYear">
+                            <option value="">---Select Acatamic Year---</option>
+                            @foreach (var item in ViewBag.AcadamicYear as IEnumerable<SchoolManagement.Website.Models.Tbl_Batches>)
+                            {
+                                <option value="@item.Batch_Id">@item.Batch_Name</option>
+                            }
+                        </select>
+                        <input type="text" id="newclassname" style="display:none" />
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+                    <button type="button" id="promoteChangeBtn" class="btn btn-success" style="margin-top:6px;">Change</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- modal2-->
+<div id="myModal2" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Student Promotion</h4>
+            </div>
+            <br />
+            <div class="modal-body">
+                <div class="row rowmargin">
+                    <div class="col-sm-3">Promote To</div>
+                    <div class="col-sm-9">
+                        @*@Html.DropDownList("Class", new SelectList(ViewBag.Classes, "DataListItemName", "DataListItemName"), "select", new { @id = "class", @class = "form-control" })*@
+                        <input type="hidden" id="Student_id" />
+                        <select class="form-control" id="newclassid1">
+                            <option>---Select Class---</option>
+                            @foreach (var item in ViewBag.Classes as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                            {
+                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                            }
+                        </select>
+
+                        <input type="text" id="newclassname1" style="display:none" />
+                        <br />
+                    </div>
+                </div>
+                <div class="row rowmargin">
+                    <div class="col-sm-3"> Section </div>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="ddlSction1">
+                            <option value="">---Select Section---</option>
+                            @foreach (var item in ViewBag.Sections as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                            {
+                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <br>
+                <div class="row rowmargin">
+                    <div class="col-sm-3"> Acadamic Year </div>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="ddlAcadamicYear1">
+                            <option value="">---Select Acatamic Year---</option>
+                            @foreach (var item in ViewBag.AcadamicYear as IEnumerable<SchoolManagement.Website.Models.Tbl_Batches>)
+                            {
+                                <option value="@item.Batch_Id">@item.Batch_Name</option>
+                            }
+                        </select>
+                        <input type="text" id="newclassname1" style="display:none" />
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+                    <button type="button" id="promoteAllChangeBtn" class="btn btn-success" style="margin-top:6px;">Change All</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="~/Scripts/DevelopmentJS/Promotions.js"></script>
+    <script src="~/Scripts/WebsiteJs/js/jquery.min.js"></script>
+    <script src="~/Scripts/WebsiteJs/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+
+    <script>
+        //function Promotion1(StudentID, oldclassname, classid) {
+        //    //
+        //    StudentID = StudentID;
+        //    OldClassName = oldclassname;
+        //    OldClassId = classid;
+        //    $("#oldclassid").val(classid);
+        //    $("#oldclassname").val(oldclassname);
+        //    $("#Student_id").val(StudentID);
+        //    jQuery.noConflict();
+        //    $('#myModal').modal('show');
+        //}
+        function showLoder() {
+            $("#overlay").fadeIn(300);
+        }
+        function hideLoder() {
+            $("#overlay").fadeOut(300);
+        }
+        $(document).ready(function () {
+            // To hide the Promote All button
+            $("#PromoteAllBtn").hide();
+            var checkedRows = []; // Array to store the student TD of checked rows
+            var StudentID = '';
+            var OldClassName = '';
+            var OldClassId = '';
+            var AllStudentOldClassName = '';
+            var AllStudentOldClassId = '';
+            var AllStudentOldSectionName = '';
+            var AllStudentOldSectionId = '';
+            var PromoteToAll = false;
+            // Event handler for checkbox change event using class selector and event delegation
+            $(document).on('change', '.Usernameselectbox', function () {
+                //
+                var isChecked = $(this).is(':checked');
+                var row = $(this).closest('tr');
+                var secondTd = row.find('td:nth-child(2)');;
+
+                if (isChecked) {
+                    if (!checkedRows.includes(secondTd.text())) {
+                        checkedRows.push(secondTd.text());
+                    }
+                } else {
+                    var index = checkedRows.indexOf(secondTd.text());
+                    if (index !== -1) {
+                        checkedRows.splice(index, 1);
+                    }
+                }
+                console.log(checkedRows);
+
+            });
+            $("#promoteChangeBtn").click(function () {
+                console.log(PromoteToAll);
+
+                if ($("#newclassid").val() == "") {
+                    alert("Please Select Class!")
+                    return false;
+                }
+                else if ($("#ddlSction").val() == "") {
+                    alert("Please Select Section!")
+                    return false;
+                }
+                else if ($("#ddlAcadamicYear").val() == "") {
+                    alert("Please Select Acadamic Year!")
+                    return false;
+                }
+                else {
+                    //promote single student
+                    var studentid = $("#Student_id").val();
+                    var newClassId = $("#newclassid").val();
+                    var newClassName = $("#newclassname").val();
+                    //alert(newClassId);
+                    if (newClassId != '0' && newClassId != OldClassId) {
+                        //rows
+                        //array =[]
+                        //table row  td stid,
+                        showLoder();
+                        var obj = {};
+                        obj.Student_Id = studentid;
+                        obj.FromClass = OldClassName;
+                        obj.ToClass = newClassName;
+                        obj.FromClass_Id = OldClassId;
+                        obj.ToClass_Id = newClassId;
+                        obj.Section_Id = $("#ddlSction").val();
+                        obj.Batch_Id = $("#ddlAcadamicYear").val();
+
+                        $.ajax({
+                            type: "POST",
+                            url: "/Student/SendPromotion",
+                            //url: "/Student/AddPromotion",
+                            data: JSON.stringify(obj),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (msg) {
+                                hideLoder();
+                                console.log(msg);
+                                alert(msg);
+                                window.location.reload();
+
+                            }
+                        });
+
+                    } else {
+                        alert("Please select Class or New Class");
+                    }
+
+                }
+            });
+            $("#promoteAllChangeBtn").click(function () {
+                console.log(PromoteToAll);
+                if ($("#newclassid1").val() == "") {
+                    alert("Please Select Class!")
+                    return false;
+                }
+                else if ($("#ddlSction1").val() == "") {
+                    alert("Please Select Section!")
+                    return false;
+                }
+                else if ($("#ddlAcadamicYear1").val() == "") {
+                    alert("Please Select Acadamic Year!")
+                    return false;
+                }
+                else {
+
+                    //promote All checked students
+
+                    var studentid = $("#Student_id").val();
+                    var newClassId = $("#newclassid1").val();
+                    var newClassName = $("#newclassname").val();
+                    var newSectionName = $('#ddlSction1 option:selected').text();
+                    var newSectionId = $("#ddlSction1").val();
+                    //alert(newClassId);
+                    if (newClassId != '0' && newClassId != OldClassId) {
+                        //rows
+                        //array =[]
+                        //table row  td stid,
+
+
+
+                        var resultArray = [];
+                        if (checkedRows.length > 0) {
+
+
+                            checkedRows.forEach(function (rowText) {
+                                var obj = {};
+                                obj.Student_Id = rowText;
+                                obj.FromClass = OldClassName;
+                                obj.ToClass = newClassName;
+                                obj.FromClass_Id = OldClassId;
+                                obj.ToClass_Id = newClassId;
+                                obj.Section_Id = $("#ddlSction1").val();
+                                obj.Batch_Id = $("#ddlAcadamicYear1").val();
+
+                                resultArray.push(obj);
+                            });
+                        }
+                        else {
+
+
+                            //$('#PromotionTbl').DataTable().rows().iterator('row', function (context, index) {
+                            //    
+                            //    var node = $(this.row(index).node());
+                            //    if (node[0].getElementsByTagName('input')[0].checked) {
+                            //        var secondTdData = node[0].find('td:nth-child(2)').text();  // Error                                   checkedRows.push(secondTdData);
+                            //    }
+                            //    
+                            //    //node.context is element of tr generated by jQuery DataTables.
+                            //});
+
+                            $('#PromotionTbl').DataTable().rows().iterator('row', function (context, index) {
+                                //
+                                var node = $(this.row(index).node());
+                                if (node.find('.Usernameselectbox').prop('checked')) {
+                                    var secondTdData = node.find('td:nth-child(2)').text();
+                                    checkedRows.push(secondTdData);
+                                }
+                                //node.context is element of tr generated by jQuery DataTables.
+                            });
+
+
+                            //$('.Usernameselectbox').each(function () {
+                            //    if ($(this).is(':checked')) {
+                            //        var row = $(this).closest('tr');
+                            //        var secondTdData = row.find('td:nth-child(2)').text();
+                            //        checkedRows.push(secondTdData);
+                            //    }
+                            //});
+
+                            checkedRows.forEach(function (rowText) {
+                                var obj = {};
+                                obj.Student_Id = rowText;
+                                obj.FromClass = OldClassName;
+                                obj.ToClass = newClassName;
+                                obj.FromClass_Id = OldClassId;
+                                obj.ToClass_Id = newClassId;
+                                obj.Section_Id = $("#ddlSction1").val();
+                                obj.Batch_Id = $("#ddlAcadamicYear1").val();
+
+                                resultArray.push(obj);
+                            });
+                        }
+                        console.log(resultArray.length)
+                        if (resultArray.length > 0) {
+                            showLoder();
+                            $('#myModal2 .btn-default').click();
+                            $.ajax({
+                                type: "POST",
+                                url: "/Student/SendMultiplePromotion",
+                                //url: "/Student/AddPromotion",
+                                data: JSON.stringify(resultArray),
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                success: function (msg) {
+                                    hideLoder();
+                                    console.log(msg);
+                                    alert(msg);
+                                    window.location.reload();
+
+                                }
+                            });
+
+                        }
+
+
+                    } else {
+                        alert("Please select Class or New Class");
+                    }
+
+                }
+            });
+
+        });
+
+        function loaddatatable() {
+            //
+            if ($.fn.DataTable.isDataTable('#PromotionTbl')) {
+                $('#PromotionTbl').DataTable().destroy();
+            }
+
+            $('#PromotionTbl').DataTable({
+                "autoWidth": true,
+                "scrollX": true,
+                "columnDefs": [
+                    { "orderable": false, "targets": 0 }
+                ]
+            });
+
+        }
+
+        $("#FilterStudents").on("click", function () {
+
+            var classid = $("#ClassId").val();
+            var batch = $("#batches").val();
+            var sectionid = $("#SectionId").val();
+            var tb = document.getElementById('PromotionTbl');
+            var promote = $("#promotestudentd").val();
+            if (classid == 0 && sectionid == 0 && batch == "" && promote == "0") {
+
+                alert("Please Select Class Year and section");
+            }
+            else if (classid == 0 && sectionid == 0 && batch == "" && promote == "0") {
+                alert("Please Select Class Year Section or Admission Process");
+                //window.location.reload();
+            }
+            while (tb.rows.length > 1) {
+                tb.deleteRow(1);
+            }
+            var html = "";
+            var classlist = $("#ClassId").val();
+            var batchlist = $("#batches").val();
+            var sectionlist = $("#SectionId").val();
+            //var SectionId = $("#Courseddl option:selected").val();
+            //var semester = $("#class option:selected").val();
+            $.ajax({
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                // url: "Student.asmx/GetAllStudents",
+                url: "/Student/GeStudentList1",
+                data: { classlist: classlist, sectionlist: sectionlist, batchlist: batchlist, promote: promote },
+                dataType: "json",
+                success: function (data) {
+                    if (data.length > 0) {
+                        // To show the Promote All button
+                        $("#PromoteAllBtn").show();
+                    } else {
+                        // To hide the button
+                        $("#PromoteAllBtn").hide();
+                    }
+                    console.log(data);
+                    for (var i = 0; i < data.length; i++) {
+                        html += "<tr>";
+                        // html += '<td class="userpass" id="Studid_' + i + '">' + data[i].StudentId + '</td>';
+                        html += "<td><input class='Usernameselectbox' type='checkbox'/>";
+                        html += '<td class="userpass" id="Studid_' + i + '">' + data[i].StudentId + "</td>";
+                        html += '<td class="userpass" id="Studid_' + i + '">' + data[i].Name + "</td>";
+                        html += '<td class="userpass" id="Studid_' + i + '">' + data[i].Last_Name + "</td>";
+                        html += '<td class="userpass" id="Studid_' + i + '">' + data[i].Gender + "</td>";
+                        html += '<td class="userpass" id="Studid_' + i + '">' + data[i].DOB + "</td>";
+                        //html += "<td>" + data[i].FatherName + "</td>";
+                        html += "<td>";
+                        //html += '<input type="button" class="btn btn-info btn-sm promotionBtn" data-val=' + data[i].StudentId + ' data-class="' + data[i].Class + '" value="Promote To"/>';
+                        if (data[i].CreatePermission == "true") {
+                            html += '<button type="button" class="btn btn-info btn-sm" onclick=(Promotion("' + data[i].StudentId + '","' + data[i].Class + '","' + data[i].Class_Id + '"))>Promote To</button>';
+                        }
+                        html += "</td>";
+                        //html += '<button type="button" class"btn btn-info btn-sm" onclick=()>Save</button>';
+                        html += "</tr>";
+                    }
+                    $('#PromotionTbl').DataTable().destroy();
+                    $('#PromotionTbl').find('tbody').html('');
+                    $('#PromotionTbl').find('tbody').append(html);
+                    $('#PromotionTbl').DataTable().draw();
+                    //$('#PromotionTbl').DataTable().column(0).order('asc', false).draw(false);
+
+                },
+                error: function (result) {
+                    alert("Error");
+                }
+            });
+        });
+        function Promotion(StudentID, oldclassname, classid) {
+
+            PromoteToAll = false;
+            StudentID = StudentID;
+            OldClassName = oldclassname;
+            OldClassId = classid;
+            $("#oldclassid").val(classid);
+            $("#oldclassname").val(oldclassname);
+            $("#Student_id").val(StudentID);
+            jQuery.noConflict();
+            $('#myModal').modal('show');
+
+
+        }
+
+        function PromoteAll() {
+            //debugger
+            //
+            //PromoteToAll = true;
+            //AllStudentOldSectionId = $('#SectionId').val();
+            //AllStudentOldSectionName = $('#SectionId option:selected').text();
+            //AllStudentOldClassId = $('#ClassId').val();
+            //AllStudentOldClassName = $('#ClassId option:selected').text();
+            //$('#myModal').on('shown.bs.modal', function () {
+            //    // Code to execute after the modal is shown
+            //    PromoteToAll = true;
+            //    AllStudentOldSectionId = $('#SectionId').val();
+            //    AllStudentOldSectionName = $('#SectionId option:selected').text();
+            //    AllStudentOldClassId = $('#ClassId').val();
+            //    AllStudentOldClassName = $('#ClassId option:selected').text();
+            //    console.log("Modal shown");
+            //    // Any additional logic or actions
+
+            //    // Reset the modal event handler to prevent multiple executions
+            //    $('#myModal').off('shown.bs.modal');
+            //});
+
+            $('#myModal2').modal('show');
+        }
+        function chkpromotion(e) {
+            //debugger
+            checked = e.checked;
+            let table = $('#PromotionTbl').DataTable();
+            if (checked) {
+                $('.Usernameselectbox', table.rows().nodes()).prop('checked', true);
+                //$(".Usernameselectbox").each(function (a, b) {
+                //    $(this).prop("checked", true);
+                //    //var classid = $()
+                //});
+            } else {
+                //$(".Usernameselectbox").each(function () {
+                //    $(this).prop("checked", false);
+                //});
+                $('.Usernameselectbox', table.rows().nodes()).prop('checked', false);
+            }
+        };
+
+        $("#BtnSend").on('click', function () {
+            var Tbl_StudentPromote = {};
+            var StudentId = [];
+            var Name = [];
+            var Username = [];
+            var Last_Name = [];
+            var Gender = [];
+            var DOB = [];
+            var CheckAll = "False";
+
+            if (checked) {
+                CheckAll = "True";
+                $(".Usernameselectbox").each(function (a, b) {
+                    //$(this).prop("checked", true);
+                    var studentid = $(this).parent().closest('tr').find("td:eq(1)").html();
+                    var sname = $(this).parent().closest('tr').find("td:eq(2)").html();
+                    //var name = $(this).parent().closest('tr').find("td:eq(3)").html();
+                    var lastname = $(this).parent().closest('tr').find("td:eq(7)").html();
+                    var username = $(this).parent().closest('tr').find("td:eq(5)").html();
+                    var gender = $(this).parent().closest('tr').find("td:eq(6)").html();
+                    var dob = $(this).parent().closest('tr').find("td:eq(5)").html();
+
+                    StudentId.push(studentid);
+                    Name.push(sname);
+                    Username.push(username);
+                    Last_Name.push(lastname);
+                    Gender.push(gender);
+                    DOB.push(dob);
+
+                });
+            }
+            else {
+                CheckAll = "False";
+                $(".Usernameselectbox").each(function (a, b) {
+                    if ($(this).prop("checked")) {
+                        var studentid = $(this).parent().closest('tr').find("td:eq(1)").html();
+                        var sname = $(this).parent().closest('tr').find("td:eq(2)").html();
+                        // var name = $(this).parent().closest('tr').find("td:eq(3)").html();
+                        var lastname = $(this).parent().closest('tr').find("td:eq(4)").html();
+                        var username = $(this).parent().closest('tr').find("td:eq(7)").html();
+                        var gender = $(this).parent().closest('tr').find("td:eq(6)").html();
+                        //var Isaprov = $(this).parent().closest('tr').find("td:eq(6)").html();
+                        var dob = $(this).parent().closest('tr').find("td:eq(5)").html();
+
+                        StudentId.push(studentid);
+                        Name.push(sname);
+                        Username.push(username);
+                        Last_Name.push(lastname);
+                        Gender.push(gender);
+                        DOB.push(dob);
+                    }
+
+                });
+            }
+
+            Tbl_StudentPromote.StudentID = StudentId;
+            Tbl_StudentPromote.Name = Name;
+            Tbl_StudentPromote.Username = Username;
+            Tbl_StudentPromote.Last_Name = Last_Name;
+            Tbl_StudentPromote.Gender = Gender;
+            Tbl_StudentPromote.DOB = DOB;
+
+            if (Tbl_StudentPromote != null) {
+
+                $.ajax({
+                    url: "/Student/SendPromotion",
+                    data: JSON.stringify(Tbl_StudentPromote),
+                    type: "POST",
+                    dataType: "json",
+                    contentType: "application/json;charset=utf-8",
+                    success: function (result) {
+
+                        if (result == "S") {
+                            alert("Promoted Successfully");
+                            window.location.reload();
+                        } else {
+                            //alert(result);
+                            alert("Please Select Receipient");
+                            window.location.reload();
+                        }
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+
+                });
+            }
+
+        });
+
+
+
+
+
+
+
+
+
+
+    </script>
+    <script>
+        $(".promotionBtn").on('click', function () {
+
+            var StudentID = $(this).attr("data-val");
+            var OldClass = $(this).attr("data-class");
+            //$('#class option[value="' + OldClass + '"]').attr("selected", "selected");
+            jQuery.noConflict();
+            $('#myModal').modal('show');
+        });
+    </script>
+}
+
+

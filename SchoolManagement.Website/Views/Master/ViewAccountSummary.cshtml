@@ -1,0 +1,140 @@
+﻿
+@{
+    ViewBag.Title = "ViewAccountSummary";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-4">
+                            <h4> Account Summary &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-4">
+                            <h4>Summary For The  Month Of Jun 2015 </h4>
+                        </div>
+                        <div class="col-sm-4">
+                            <button class="btn btn-info pull-right"><a href="sis_view_all_pay_roll.html" class="button_a">View All</a></button>
+                            <button class="btn btn-danger pull-right"><a href="sis_pay_slips.html" class="button_a">Pay Slip</a></button>
+                        </div>
+                        <div class="col-sm-12" style="margin-top: 15px;">
+                            <div class="col-sm-7" style="margin-top: 15px;">
+                                @*<div class="col-sm-6">
+
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-6">Select Dept :</label>
+                                        <div class="col-sm-6">
+                                            <select class="form-control" id="sel1">
+                                                <option>English</option>
+                                                <option>Hindi</option>
+                                                <option>Maths</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5">Emp Type :</label>
+                                        <div class="col-sm-7">
+                                            <select class="form-control" id="sel1">
+                                                <option>All</option>
+                                                <option>Teachers</option>
+                                                <option>Staff</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>*@
+                            </div>
+                        </div>
+                        <div class="col-sm-4" style="margin-top: 15px;">
+                            <h5> Total Payment Disbursed Rs : 2,30,0000 </h5>
+                        </div> <div class="col-sm-5" style="margin-top: 15px;">
+                            <h5> Total No Of Staff : @ViewBag.StaffCount </h5>
+                        </div>
+                    </div>
+
+                </div><!--row x_title closed -->
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+        <div class="col-md-2 col-sm-2 col-xs-12 table-responsive">
+            <!-- col-msx-2 started -->
+        </div><!-- col-sm-2 closed -->
+
+
+        <div class="col-md-8 col-sm-8 col-xs-12 table-responsive">
+            <!-- col-msx-12 started -->
+            <table class="table table-bordered" id="TableAccountSummary">
+                <thead>
+                    <tr>
+                        <th class="serialno_width">S.No</th>
+                        <th>Staff ID</th>
+                        <th>Name</th>
+                        <th>NetPay</th>
+                        @*<th>PF</th>
+                            <th>Basic Salary</th>*@
+                        @*<th style="text-align: right;">Amount</th>*@
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int i = 1;
+                        foreach (var item in ViewBag.AccountSummary as IEnumerable<SchoolManagement.Website.Models.Tbl_AccountSummary>)
+                        {
+                            <tr>
+                                <td>@i</td>
+                                <td>@item.Staff_Id</td>
+                                <td>@item.Staff_Name</td>
+                                <td>@item.NetPay</td>
+                                @*<td>@item.PF</td>
+                                    <td>@item.Basic_Salary</td>*@
+                            </tr>
+                            i++;
+                        }
+                    }
+
+                    @*<tr>
+
+                            <td colspan="5" style="text-align:right;padding-left:0px;padding-right:0px;">
+                                Total Amount = 78,500/-
+                            </td>
+                        </tr>*@
+                </tbody>
+            </table>
+        </div><!-- col-msx-8  closed -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="col-sm-6"></div>
+            <div class="col-sm-3 pull-left table-responsive">
+                <table class="table table-borderedless">
+                    <tr>
+                        <td style="border-top:0px solid #ccc;"><button class="btn btn-warning" id="PrintBtn">Print</button></td>
+                    </tr>
+                </table>
+            </div>
+        </div> <!-- col-msx-12  closed -->
+
+    </div><!-- 1st row closed -->
+
+
+
+
+
+</div>
+
+<script src="~/Scripts/printThis.js"></script>
+
+<script>
+
+    $("#PrintBtn").on('click', function () {
+        $("#TableAccountSummary").printThis();
+    });
+
+    $("#TableAccountSummary").DataTable();
+</script>

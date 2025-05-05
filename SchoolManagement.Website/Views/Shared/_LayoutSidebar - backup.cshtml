@@ -1,0 +1,248 @@
+﻿<div class="col-md-3 left_col">
+    <div class="left_col scroll-view">
+
+        <div class="navbar nav_title" style="border: 0;">
+            <a href="index.html" class="site_title"><i class="fa fa-tachometer"></i> <span style="font-size:19px;">Dash Board</span></a>
+        </div>
+        <div class="clearfix"></div>
+
+        <!-- menu prile quick info -->
+        <div class="profile">
+            <div class="profile_pic">
+                <img src="~/WebsiteImages/images/user.png" alt="image" class="img-circle profile_img">
+            </div>
+            <div class="profile_info">
+                <span>Welcome</span>
+                <h2>Admin</h2>
+            </div>
+        </div>
+        <!-- /menu prile quick info -->
+
+        <br />
+
+        <!-- sidebar menu -->
+        <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+
+            <div class="menu_section">
+                <ul class="nav side-menu">
+                    <li>
+                        <a><i class="fa fa-weixin"></i> Student Module <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu" style="display: none">
+                            <li><a href="/Student/ManageStudent">View All</a></li>
+                            @*<li><a href="/Student/AddStudent">Add New</a></li>*@
+                            <li><a href="/Student/PreRegisterStudent">New Registration</a></li>
+                            <li><a href="#">Manage</a></li>
+                            <li><a href="sis_student_attendance.html">Attendance</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a><i class="fa fa-text-width"></i> Teachers Module<span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu" style="display: none">
+                            <li><a href="sis_view_all_teachers.html">View All</a></li>
+                            <li><a href="sis_add_new_teacher.html">Add New</a></li>
+                            <li><a href="sis_manage_teacher.html">Manage</a></li>
+                            <li><a href="sis_teacher_attendance.html">Attendance</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a><i class="fa fa-male"></i> Staff Module<span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu" style="display: none">
+                            <li><a href="sis_view_all_staff.html">Manage All</a></li>
+                            <li><a href="sis_add_new_staff.html">Create Staff</a></li>
+                        </ul>
+                    </li>
+                    <li>
+
+                        <a><i class="fa fa-film"></i> Attendance Module<span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu" style="display: none">
+                            <li>
+                                <a href="#">Students</a>
+                                <ul class="nav child_menu_1" style="display: none">
+                                    <li><a href="sis_view_all_attendane_of_students.html">View all</a></li>
+                                    <li><a href="sis_mark_attendance_of_students.html">Mark Attendance</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#">Teachers</a>
+                                <ul class="nav child_menu_1" style="display: none">
+                                    <li><a href="sis_view_all_attendane_of_teachers.html">View All</a></li>
+                                    <li><a href="sis_mark_attendance_of_teachers.html">Mark Attendance</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#">Staff </a>
+                                <ul class="nav child_menu_1" style="display: none">
+                                    <li><a href="sis_view_all_attendane_of_staff.html">View All</a></li>
+                                    <li><a href="sis_mark_attendance_of_staff.html">Mark Attendance</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a><i class="fa fa-money"></i> Fee Configuration<span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu" style="display: none">
+                            <li>
+                                <a href="#">Fee Setup</a>
+                                <ul class="nav child_menu_1" style="display: none">
+                                    <li><a href="/Fee/FeeHeadingsList">Fee Headings</a></li>
+                                    <li><a href="/Fee/ConfigureFeePlanes">Configure Fee Planes</a></li>
+                                    <li><a href="/Fee/FeeReceipts">Student Fee Receipts</a></li>
+                                    <li><a href="/Fee/AllReceipts">All Receipts</a></li>
+
+                                </ul>
+                            </li>
+                            <li>
+                            </li>
+                            @*<li><a href="sis_collect_fee.html">Fee Register</a></li>*@
+                        </ul>
+                    </li>
+                    <li>
+                        <a><i class="fa fa-money"></i> Fee Reports<span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu" style="display: none">
+                            <li>
+                                <a href="#">View Reports</a>
+                                <ul class="nav child_menu_1" style="display: none">
+                                    <li><a href="/Fee/FeeReportsByClass">View by Class</a></li>
+                                    <li><a href="/Fee/AllFeeReports">View all</a></li>
+
+                                </ul>
+                            </li>
+                            @*<li><a href="sis_collect_fee.html">Collect Fee</a></li>*@
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a><i class="fa fa-table"></i> Time Table<span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu" style="display: none">
+                            <li><a href="sis_set_time_table.html">Set Time Table </a></li>
+                            <li><a href="sis_view_schedule_time_table.html">View Time Table</a></li>
+                            <li><a href="sis_manage_time_table.html">Manage</a></li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a><i class="fa fa-envelope-o"></i> SMS Module<span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu" style="display: none">
+                            <li><a href="sis_sms_settings.html">Settings</a></li>
+                            <li><a href="sis_message.html">Message</a></li>
+                            <li>
+                                <a href="#"> Message templates</a>
+                                <ul class="nav child_menu_1" style="display: none">
+                                    <li><a href="sis_creat_new_message.html">Create message </a></li>
+                                    <li><a href="sis_view_templates.html">View templates</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a><i class="fa fa-windows"></i> Library Management<span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu" style="display: none">
+                            <li><a href="sis_masters_and_setup.html">Masters & Setup</a></li>
+                            <li><a href="sis_view_day_activity.html"> View Day Activity</a></li>
+                            <li><a href="sis_library_reports.html">Reports</a></li>
+
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a><i class="fa fa-inbox"></i> Assets & Inventory<span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu" style="display: none">
+                            <li><a href="sis_view_inventory_list.html">View All</a></li>
+                            <li><a href="sis_add_new_inventory_product.html"> Add New Product </a></li>
+                            <li><a href="sis_manage_inventory_product.html">Manage Product</a></li>
+
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a><i class="fa fa-laptop"></i> Front Office <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu" style="display: none">
+                            <!-- <li><a href="sis_events.html">  Events</a></li> -->
+                            <li>
+                                <a href="sis_circulars.html"> Circulars</a>
+                                <ul class="nav child_menu" style="display: none">
+                                    <li><a href="sis_add_new_circular.html">Add New</a></li>
+                                    <li><a href="sis_view_circular_list.html">View List</a></li>
+                                    <li><a href="sis_manage_circular.html">Manage</a></li>
+                                </ul>
+                            </li>
+                            <!-- <li><a href="sis_communications.html"> Communications</a></li>
+            <li><a href="sis_school_magazine.html"> School Magazine</a></li> -->
+                            <li>
+                                <a href="sis_notifications.html"> Notifications</a>
+                                <ul class="nav child_menu" style="display: none">
+                                    <li><a href="sis_add_new_notifications.html">Add New</a></li>
+                                    <li><a href="sis_view_notifications_list.html">View List</a></li>
+                                    <li><a href="sis_manage_notifications.html">Manage</a></li>
+                                </ul>
+                            </li>
+
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a><i class="fa fa-bug"></i> Home Work <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu" style="display: none">
+                            <li>
+                                <a href="sis_set_assignments.html"> Assignments</a>
+                                <ul class="nav child_menu" style="display: none">
+                                    <li><a href="sis_add_new_assignment.html">Add New</a></li>
+                                    <li><a href="sis_view_assignment_list.html">View List</a></li>
+                                    <li><a href="sis_manage_assignment.html">Manage</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="sis_view_all_assignments.html">Revisions</a>
+                                <ul class="nav child_menu" style="display: none">
+                                    <li><a href="sis_add_new_revision.html">Set New</a></li>
+                                    <li><a href="sis_view_revision_list.html">View All</a></li>
+                                    <li><a href="sis_manage_revision.html">Manage</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="sis_manage_assignments.html">Portions</a>
+                                <ul class="nav child_menu" style="display: none">
+                                    <li><a href="sis_add_new_portion.html">Set New</a></li>
+                                    <li><a href="sis_view_portion_list.html">View All</a></li>
+                                    <li><a href="sis_manage_portion.html">Manage</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a><i class="fa fa-pinterest-square"></i> Pay Roll <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu" style="display: none">
+                            <li><a href="sis_view_all_pay_roll.html"> View All</a></li>
+                            <li><a href="sis_pay_slips.html"> Pay Slips</a></li>
+                            <li><a href="sis_accounts_summary.html"> Accounts Summary </a></li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a><i class="fa fa-users"></i> Masters Setup <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu" style="display: none">
+                            <li><a href="sis_class_and_sections.html"> Class & Sections</a></li>
+                            <li><a href="sis_teachers_allocation.html"> Teacher's Allocation</a></li>
+                            <li><a href="sis_subjects_setup.html"> Subjects Setup</a></li>
+                            <li><a href="sis_add_new_management.html"> Department</a></li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a><i class="fa fa-users"></i> Users Credentials <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu" style="display: none">
+                            <li><a href="/UserCredentials/ManageUsers">Manage Users</a></li>
+                            <li><a href="/UserCredentials/ManageDepartments"> Manage Departments</a></li>
+                        </ul>
+                    </li>
+
+                    <li><a href="sis_reports.html"><i class="fa fa-list-alt"></i>Fee Reports </a></li>
+                    <li><a href="sis_user_management.html"><i class="fa fa-magnet"></i> User Management</a></li>
+                    <li><a href="sis_license_info.html"><i class="fa fa-key"></i> License Info</a></li>
+                </ul>
+            </div>
+
+        </div>
+        <!-- /sidebar menu -->
+    </div>
+</div>

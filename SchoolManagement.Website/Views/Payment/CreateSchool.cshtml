@@ -1,0 +1,659 @@
+﻿
+@{
+    ViewBag.Title = "CreateSchool";
+}
+
+<style>
+    .myAlert-bottom {
+        position: fixed;
+        bottom: 5px;
+        left: 2%;
+        width: 96%;
+    }
+
+    div.fullscreen {
+        position: absolute;
+        width: 100%;
+        height: 960px;
+        top: 0;
+        left: 0;
+        background-color: lightblue;
+    }
+
+    .alert {
+        display: none;
+    }
+</style>
+
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6">
+                            <h4 id="headingName"> School & Bank Details  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6" style="display:none">
+                            <button class="btn btn-info pull-right"><a href="/Staf/ViewStaff" class="button_a">View All Staff </a></button>
+                            <button class="btn btn-danger pull-right"><a href="/Staf/ManageStaff" class="button_a">Manage Staff</a> </button>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- dashboard_graph closed-->
+
+            <ul class="nav nav-tabs" id="myTab">
+                <li class="active"><a data-toggle="tab" href="#add" class="sis_tab_a">School Details</a></li>
+                <li><a data-toggle="tab" href="#add1" class="sis_tab_a click" id="primarytab">Bank Details</a></li>
+                <li><a data-toggle="tab" href="#add2" class="sis_tab_a click_1" id="pastemploymenttab">Gateway Details</a></li>
+                <li><a data-toggle="tab" href="#add3" class="sis_tab_a click_2" id="accounttypetab">Merchant Details</a></li>
+                <li><a data-toggle="tab" href="#add4" class="sis_tab_a click_3" id="salarydetailstab">Merchant Id Details</a></li>
+                <li><a data-toggle="tab" href="#add5" class="sis_tab_a click_3" id="statusdetails">Status Details</a></li>
+            </ul>
+
+            <div class="row">
+                @*<h4 class="std_head well-sm"> Staff Information Form</h4>*@
+                <div class="tab-content tab_sis">
+                    <div class="tab-pane fade in active" id="add">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <form method="post" id="Schoolform" action="/Payment/AddSchool" enctype="multipart/form-data">
+                                    <h4 class="std_head well-sm">School Details</h4>
+                                    <input type="hidden" id="School_Id" name="School_Id" />
+                                    <div class="col-sm-6" style="border-right:1px solid #eee;">
+                                        <div class="form-group">
+                                            <label>School Name :</label>
+                                            <input type="text" name="School_Name" id="School_Name" class="form-control" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Email :</label>
+                                            <input type="email" id="Email" name="Email" class="form-control" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Password :</label>
+                                            <input type="password" id="Password" name="Password" class="form-control" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Website :</label>
+                                            <input type="text" name="Website" id="Website" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Board :</label>
+                                            <select class="form-control  " id="BoardID" name="BoardID">
+                                                <option>---Select Board---</option>
+                                                @foreach (var item in ViewBag.SchoolBoards as IEnumerable<SchoolManagement.Website.Models.SchoolBoards>)
+                                                {
+                                                    <option value="@item.BoardID">@item.BoardName</option>
+                                                }
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Address</label>
+                                            <textarea id="Address" name="Address" class="form-control"></textarea>
+                                            @*<input type="text" id="Address" class="form-control" name="Address" />*@
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Upload Image</label>
+                                            <input type="file" id="file" name="Upload_Image" />
+                                            <label type="text" id="Upload_Image" name="Upload_Image"></label>
+                                            @*<span id="Upload_Image"></span>*@
+                                            @*<input type="text" id="Upload_Image" style="display:none" />*@
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Status</label>
+                                            <select id="Status" name="Status" class="form-control">
+                                                <option value="InActive">Inactive</option>
+                                                <option value="Active">Active</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" style="text-align:right">
+                                        <button type="submit" id="BtnSchoolSubmit" class="btn btn-success">Submit</button>
+                                    </div>
+                                </form>
+
+
+                            </div>
+                            <hr />
+                            <div class="col-sm-12" style="margin-top:20px;">
+                                <div>
+                                    <table class="table table-bordered display" id="SchoolTable" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <td>S.No</td>
+                                                <td>School Name</td>
+                                                <td>Email</td>
+                                                <td>Password</td>
+                                                <td>Website</td>
+                                                <td>Address</td>
+                                                <td>Upload Image</td>
+                                                <td>Status</td>
+                                                <td>Action</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="TableBody">
+                                            @{
+                                                var i = 1;
+                                                foreach (var item in ViewBag.Schoolist as IEnumerable<SchoolManagement.Data.Models.TblCreateSchool>)
+                                                {
+                                            <tr>
+                                                <td>@i</td>
+                                                <td>@item.School_Name</td>
+                                                <td>@item.Email</td>
+                                                <td>@item.Password</td>
+                                                <td>@item.Website</td>
+                                                <td>@item.Address</td>
+                                                <td>
+                                                    @if (item.Upload_Image != null)
+                                                    {
+                                                        <a href="/WebsiteImages/SchoolImage/@item.Upload_Image" target="_blank">View</a>
+                                                    }
+                                                </td>
+                                                <td>@item.Status</td>
+                                                <td>
+                                                    <button type="button" id="BtnEdit" class="btn btn-info BtnSchoolEdit" data-val="@item.School_Id">Edit</button>
+                                                    <button type="button" class="btn btn-danger BtnSchoolDelete" data-val="@item.School_Id">Delete</button>
+                                                </td>
+                                            </tr>
+                                                    i++;
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="add1" class="tab-pane fade">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <form method="post" id="Bankform" action="/Payment/AddBank" enctype="multipart/form-data">
+                                    <h4 class="std_head well-sm">Bank Details</h4>
+                                    <input type="hidden" id="Bank_Id" name="Bank_Id" />
+                                    <div class="col-sm-6" style="border-right:1px solid #eee;">
+                                        <div class="form-group">
+                                            <label>Bank Name :</label>
+                                            <input type="text" name="Bank_Name" id="Bank_Name" class="form-control" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Bank Code :</label>
+                                            <input type="text" id="Bank_Code" name="Bank_Code" class="form-control" />
+                                        </div>
+                                        @*<div class="form-group">
+            <label>Contact No :</label>
+            <input type="tel" name="Contact_No" id="Contact_No" class="form-control">
+        </div>*@
+                                        <div class="form-group" style="text-align:right">
+                                            <button type="submit" id="BtnBankSubmit" class="btn btn-success">Submit</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6" style="display:none">
+                                        @*<div class="form-group">
+                                            <label>Contactperson Name:</label>
+                                            <input type="text" id="Contactperson_Name" name="Contactperson_Name" class="form-control" />
+                                        </div>*@
+                                        @*<div class="form-group">
+                                            <label>LandlineNo</label>
+                                            <input type="text" id="LandlineNo" class="form-control" name="LandlineNo" />
+                                        </div>*@
+                                    </div>
+
+                                   
+                                </form>
+                            </div>
+                            <hr />
+                            <div class="col-sm-12" style="margin-top:20px;">
+                                <div>
+                                    <table class="table table-bordered display" id="" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <td>S.No</td>
+                                                <td>Bank Name</td>
+                                                <td>Bank Code</td>
+                                                @*<td>Contact No</td>
+                                                <td>Contact Name</td>
+                                                <td>Landline No</td>*@
+                                                <td>Action</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="TableBankBody">
+                                            @{
+                                                var j = 1;
+                                                foreach (var item in ViewBag.BanlLIst as IEnumerable<SchoolManagement.Data.Models.Tbl_CreateBank>)
+                                                {
+                                                    <tr>
+                                                        <td>@j</td>
+                                                        <td>@item.Bank_Name</td>
+                                                        <td>@item.Bank_Code</td>
+                                                        @*<td>@item.Contact_No</td>
+                                                        <td>@item.Contactperson_Name</td>
+                                                        <td>
+                                                            @item.LandlineNo
+                                                        </td>*@
+                                                        <td>
+                                                            <button type="button" id="BtnEdit" class="btn btn-info BtnBankEdit" data-val="@item.Bank_Id">Edit</button>
+                                                            <button type="button" class="btn btn-danger BtnBankDelete" data-val="@item.Bank_Id">Delete</button>
+                                                        </td>
+                                                    </tr>
+                                                    j++;
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="add2">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <form method="post" id="Branchform" action="/Payment/AddBranch" enctype="multipart/form-data">
+                                    <h4 class="std_head well-sm">Gateway Details</h4>
+                                    <input type="hidden" id="Branch_ID" name="Branch_ID" />
+                                    <div class="col-sm-6" style="border-right:1px solid #eee;">
+                                        <div class="form-group">
+                                            <label>Bank Name :</label>
+                                            <select class="form-control" id="Bank_Id1" name="Bank_Id">
+                                                <option value="0">---Select Bank---</option>
+                                                @{
+                                                    foreach (var item in ViewBag.BanlLIst)
+                                                    {
+                                                        <option value="@item.Bank_Id">@item.Bank_Name</option>
+                                                    }
+                                                }
+                                            </select>
+                                            @*<input name="Bank_Name" id="Bank_Name" style="display:none">*@
+                                        </div>
+                                        <div class="form-group">
+                                            <label>GateWay :</label>
+                                            <input type="text" id="Branch_Name" name="Branch_Name" class="form-control" required />
+                                        </div>
+                                        <div class="form-group" style="text-align:right">
+                                            <button type="submit" id="BtnBranchSubmit" class="btn btn-success">Submit</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Contact No :</label>
+                                            <input type="tel" name="Contact_No" id="Contact_No" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Contactperson Name:</label>
+                                            <input type="text" id="Contact_Name" name="Contact_Name" class="form-control" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>LandlineNo</label>
+                                            <input type="text" id="LandlineNo" class="form-control" name="Landline_No" />
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <hr />
+                            <div class="col-sm-12" style="margin-top:20px;">
+                                <div>
+                                    <table class="table table-bordered display" id="" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <td>S.No</td>
+                                                <td>Bank Name</td>
+                                                <td>GateWay</td>
+                                                <td>Contact No</td>
+                                                <td>Contact Name</td>
+                                                <td>Landline No</td>
+                                                <td>Action</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="TableBranchBody">
+                                            @{
+                                                var k = 1;
+                                                foreach (var item in ViewBag.Bramchlist as IEnumerable<SchoolManagement.Data.Models.Tbl_CreateBranch>)
+                                                {
+                                                    <tr>
+                                                        <td>@k</td>
+                                                        <td>@item.Bank_Name</td>
+                                                        <td>@item.Branch_Name</td>
+                                                        <td>@item.Contact_No</td>
+                                                        <td>@item.Contact_Name</td>
+                                                        <td>@item.Landline_No</td>
+                                                        <td>
+                                                            <button type="button" id="BtnEdit" class="btn btn-info BtnBranchEdit" data-val="@item.Branch_ID">Edit</button>
+                                                            <button type="button" class="btn btn-danger BtnBranchDelete" data-val="@item.Branch_ID">Delete</button>
+                                                        </td>
+                                                    </tr>
+                                                    k++;
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="add3" class="tab-pane fade">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <form method="post" id="MerchantNameform" action="/Payment/AddMerchantName" enctype="multipart/form-data">
+                                    <h4 class="std_head well-sm">MerchantName Details</h4>
+                                    <input type="hidden" id="MerchantName_Id" name="MerchantName_Id" />
+                                    <div class="col-sm-6" style="border-right:1px solid #eee;">
+                                        <div class="form-group">
+                                            <label>School Name :</label>
+                                            <select class="form-control" id="School_Id1" name="School_Id">
+                                                <option value="0">---select school---</option>
+                                                @{
+                                                    foreach (var item in ViewBag.Schoolist as IEnumerable<SchoolManagement.Data.Models.TblCreateSchool>)
+                                                    {
+                                                        <option value="@item.School_Id">@item.School_Name</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Merchant Name:</label>
+                                            <input type="text" id="MerchantName" name="MerchantName" class="form-control" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" style="text-align:right">
+                                        <button type="submit" id="BtnMerchantSubmit" class="btn btn-success">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <hr />
+                            <div class="col-sm-12" style="margin-top:20px;">
+                                <div>
+                                    <table class="table table-bordered display" id="MerchantnameTable" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <td>S.No</td>
+                                                <td>School Name</td>
+                                                <td>Merchant Name</td>
+                                                <td>Action</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="TableMerchantBody">
+                                            @{
+                                                var l = 1;
+                                                foreach (var item in ViewBag.Merchantname as IEnumerable<SchoolManagement.Website.Controllers.TblMerchantclass>)
+                                                {
+                                                    <tr>
+                                                        <td>@l</td>
+                                                        <td>@item.Schoolname</td>
+                                                        <td>@item.MerchantName</td>
+                                                        <td>
+                                                            <button type="button" id="BtnEdit" class="btn btn-info BtnMerchantNameEdit" data-val="@item.MerchantName_Id">Edit</button>
+                                                            <button type="button" class="btn btn-danger BtnMerchantNameDelete" data-val="@item.MerchantName_Id">Delete</button>
+                                                        </td>
+                                                    </tr>
+                                                    l++;
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="add4">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <form method="post" id="MerchantIdform" action="/Payment/AddMerchantId" enctype="multipart/form-data">
+                                    <h4 class="std_head well-sm">MerchantID Details</h4>
+                                    <input type="hidden" id="Merchant_Id" name="Merchant_Id" />
+                                    <div class="col-sm-6" style="border-right:1px solid #eee;">
+                                        <div class="form-group">
+                                            <label>School Name :</label>
+                                            <select class="form-control" id="School_Id2" name="School_Id">
+                                                <option value="0">---select school---</option>
+                                                @{
+                                                    foreach (var item in ViewBag.Schoolist as IEnumerable<SchoolManagement.Data.Models.TblCreateSchool>)
+                                                    {
+                                                        <option value="@item.School_Id">@item.School_Name</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Bank Name :</label>
+                                            <select class="form-control" id="Bank_Id3" name="Bank_Id">
+                                                <option value="0">---select Bank---</option>
+                                                @{
+                                                    foreach (var item in ViewBag.BanlLIst as IEnumerable<SchoolManagement.Data.Models.Tbl_CreateBank>)
+                                                    {
+                                                        <option value="@item.Bank_Id">@item.Bank_Name</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Gateway :</label>
+                                            <select class="form-control" id="Branch_Id2" name="Branch_Id">
+                                                <option value="0">---select Branch---</option>
+                                                @{
+                                                    foreach (var item in ViewBag.Bramchlist as IEnumerable<SchoolManagement.Data.Models.Tbl_CreateBranch>)
+                                                    {
+                                                        <option value="@item.Branch_ID">@item.Branch_Name</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Merchant Name :</label>
+                                            <select class="form-control" id="MerchantName_Id1" name="MerchantName_Id">
+                                                <option value="0">---select MerchantName---</option>
+                                                @{
+                                                    foreach (var item in ViewBag.Merchantnamelist as IEnumerable<SchoolManagement.Data.Models.Tbl_MerchantName>)
+                                                    {
+                                                        <option value="@item.MerchantName_Id">@item.MerchantName</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Merchant ID:</label>
+                                            <input type="text" id="MerchantMID" name="MerchantMID" class="form-control" required />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Merchant Key:</label>
+                                            <input type="text" id="MerchantKey" name="MerchantKey" class="form-control" required />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" style="text-align:right">
+                                        <button type="submit" id="BtnMerchantIDSubmit" class="btn btn-success">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <hr />
+                            <div class="col-sm-12" style="margin-top:20px;">
+                                <div>
+                                    <table class="table table-bordered display" id="MerchantIdTable" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <td>S.No</td>
+                                                <td>School Name</td>
+                                                <td>Bank Name</td>
+                                                <td>Branch Name</td>
+                                                <td>Merchant Name</td>
+                                                <td>Merchant Id</td>
+                                                <td>Merchant Key</td>
+                                                <td>Action</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="TableMerchantIDBody">
+                                            @{
+                                                var m = 1;
+                                                foreach (var item in ViewBag.MerchantIdlist as IEnumerable<SchoolManagement.Website.Controllers.TblMerchantclass>)
+                                                {
+                                                    <tr>
+                                                        <td>@m</td>
+                                                        <td>@item.Schoolname</td>
+                                                        <td>@item.BankName</td>
+                                                        <td>@item.BranchName</td>
+                                                        <td>@item.MerchantName</td>
+                                                        <td>@item.MerchantMID</td>
+                                                        <td>@item.MerchantKey</td>
+                                                        <td>
+                                                            <button type="button" id="BtnEdit" class="btn btn-info BtnMerchantIdEdit" data-val="@item.MerchantId">Edit</button>
+                                                            <button type="button" class="btn btn-danger BtnMerchantIdDelete" data-val="@item.MerchantId">Delete</button>
+                                                        </td>
+                                                    </tr>
+                                                    m++;
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="add5">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <form method="post" id="MerchantIdform" action="/Payment/AddSchoolsetup" enctype="multipart/form-data">
+                                    <h4 class="std_head well-sm">Status Details</h4>
+                                    <input type="hidden" id="Schoolsetup_Id" name="Schoolsetup_Id" />
+                                    <div class="col-sm-6" style="border-right:1px solid #eee;">
+                                        <div class="form-group">
+                                            <label>School Name :</label>
+                                            <select class="form-control" id="School_Id3" name="School_Id" required>
+                                                <option value="0">---select school---</option>
+                                                @{
+                                                    foreach (var item in ViewBag.Schoolist as IEnumerable<SchoolManagement.Data.Models.TblCreateSchool>)
+                                                    {
+                                                        <option value="@item.School_Id">@item.School_Name</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Bank Name :</label>
+                                            <select class="form-control" id="Bank_Id4" name="Bank_Id">
+                                                <option value="0">---select Bank---</option>
+                                                @{
+                                                    foreach (var item in ViewBag.BanlLIst as IEnumerable<SchoolManagement.Data.Models.Tbl_CreateBank>)
+                                                    {
+                                                        <option value="@item.Bank_Id">@item.Bank_Name</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                       
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Gateway :</label>
+                                            <select class="form-control" id="Branch_Id3" name="Branch_Id">
+                                                <option value="0">---select Branch---</option>
+                                                @{
+                                                    foreach (var item in ViewBag.Bramchlist as IEnumerable<SchoolManagement.Data.Models.Tbl_CreateBranch>)
+                                                    {
+                                                        <option value="@item.Branch_ID">@item.Branch_Name</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+
+                                        @*<div class="form-group">
+                                            <label>Fee Fine</label>
+                                            <select class="form-group" id="Fee_configurationId" name="Fee_configurationId">
+                                                <option value="0">--select--</option>
+                                                <option value="Active">Active</option>
+                                                <option value="InActive">InActive</option>
+                                            </select>
+                                        </div>*@
+
+                                        @*<div class="form-group">
+                                            <label>Fee Configuration</label>
+                                            <select class="form-control" id="Fee_configurationId" name="Fee_configurationId">
+                                                <option value="0">--select--</option>
+                                                @{ 
+                                                    foreach(var item in ViewBag.FeeConfiguration as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                                    {
+                                                        <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>*@
+
+                                        <div class="form-group">
+                                            <label>Status:</label>
+                                            <select class="form-control" id="Status" name="Status">
+                                                <option>---select---</option>
+                                                <option value="Active">Active</option>
+                                                <option value="InActive">InActive</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" style="text-align:right">
+                                        <button type="submit" id="BtnschoolsetupSubmit" class="btn btn-success">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <hr />
+                            <div class="col-sm-12" style="margin-top:20px;">
+                                <div>
+                                    <table class="table table-bordered display" id="SchoolsetupId" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <td>S.No</td>
+                                                <td>School Name</td>
+                                                <td>Bank Name</td>
+                                                <td>Gateway</td>
+                                                <td>Fee Configuration</td>
+                                                <td>Status</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="TableBody">
+                                            @{
+                                                var n = 1;
+                                                foreach (var item in ViewBag.Schoolsetup as IEnumerable<SchoolManagement.Website.Controllers.TblMerchantclass>)
+                                                {
+                                                    <tr>
+                                                        <td>@n</td>
+                                                        <td>@item.Schoolname</td>
+                                                        <td>@item.BankName</td>
+                                                        <td>@item.BranchName</td>
+                                                        <td>@item.Feeconfiguration</td>
+                                                        <td>@item.Status</td>
+                                                    </tr>
+                                                    n++;
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- col-msx-12  closed -->
+            </div>
+        </div><!-- col-msx-12  closed -->
+    </div><!-- 1st row closed -->
+</div>
+
+
+@section scripts{
+    <script src="~/Scripts/DevelopmentJS/AddSchoolDetails.js"></script>
+}

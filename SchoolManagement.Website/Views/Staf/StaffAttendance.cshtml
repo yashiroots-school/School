@@ -1,0 +1,326 @@
+﻿@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4> Mark Students Attendence  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6">
+                            <button class="btn btn-info pull-right"><a href="/Staf/ViewStaffAttendence" class="button_a">View Attendence</a></button>
+                        </div>
+                        @*<div class="col-sm-6" style="margin-top: 15px;">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="control-label col-sm-7">Student Class :</label>
+                    <div class="col-sm-5">
+                        <select class="form-control" id="Class_Id" name="Class_Id">
+                            <option>---Select Class---</option>
+                            @foreach (var item in ViewBag.Class as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                            {
+                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                            }
+
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="control-label col-sm-6">Section :</label>
+                    <div class="col-sm-6">
+                        <select class="form-control" id="Section_Id" name="Section_Id">
+                            <option>---select section---</option>
+                            @foreach (var item in ViewBag.sectionlist as IEnumerable<SchoolManagement.Website.Models.Tbl_SectionSetup>)
+                            {
+                                <option value="@item.Section_Id">@item.Section</option>
+                            }
+
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+                        <div class="col-sm-6" style="margin-top: 15px;">
+                            <!-- <div class="form-group">
+            <label class="col-xs-2 control-label">Day : </label>
+            <div class="col-xs-5 date">
+                <div class="input-group input-append date" id="datePicker">
+                    <input type="text" class="form-control" name="date" />
+                    <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+                </div>
+            </div>
+        </div>-->
+                            <div class="col-sm-6">
+                                <div class="control-group">
+                                    <label class="col-xs-2 control-label">Day  </label>
+                                    <div class="col-xs-5 date">
+                                        <div class="input-group input-append date">
+                                            <input type="text" class="form-control datepicker" name="Day" id="Day" />
+                                            <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div>
+                                    <button type="button" class="btn btn-success" id="BtnSaveAttendance">Show</button>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="button" value="Upload" class="btn btn-success" id="UploadStaffBtn" />
+                            <div class="col-sm-6">
+                                <input type="file" accept=".xlsx" id="UploadStafffile" />
+                            </div>
+                        </div>
+
+                    </div><!-- col-sm-12 closed -->
+
+                </div><!-- row x_title closed-->
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+
+
+        <div class="col-sm-12 table-responsive">
+            <!-- col-msx-12 started -->
+            <table class="table table-bordered " id="TableStaffAttendance">
+                <thead>
+                    <tr>
+                        <th>Staff Id</th>
+                        <th>Staff Name</th>
+                        <th>Mark full day absent</th>
+                        @*<th>Attendance Date</th>*@
+                        <th><input type="checkbox" id="Fullday" /></th>
+                        <th>Mark half day absent</th>
+
+                        <th><input type="checkbox" id="Halfday" /></th>
+                    </tr>
+                </thead>
+                <tbody id="TableBody"></tbody>
+
+
+
+
+            </table>
+
+            <button type="button" id="BtnSaveStaffAttendance" class="btn btn-success pull-right">Save</button>
+
+        </div><!-- col-msx-12  closed -->
+    </div><!-- 1st row closed -->
+
+
+
+
+</div>
+
+@section scripts{
+
+    <script src="~/Scripts/WebsiteJs/js/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: "/Staf/StaffAttendanceList",
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json;charset=UTF-8",
+                success: function (result) {
+                    //alert(result[1].StafId);
+                    var row = "";
+                    $.each(result, function (key, data) {
+                        row = row + "<tr>";
+                        row = row + "<td>" + data.StafId + "</td>";
+                        row = row + "<td>" + data.Name + "</td>";
+                        row = row + "<td>A</td>";
+                        row = row + "<td><input type='checkbox' id='Fulldayabsent'/></td>"
+                        row = row + "<td>H</td>";
+                        row = row + "<td><input type='checkbox' id='Halfdayabsent'/></td>";
+                        row = row + "</tr>";
+                    }
+                    );
+                    $("#TableBody").append(row);
+                    $("#TableStaffAttendance").DataTable();
+
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+
+        });
+
+
+        $("#Fullday").change(function () {
+            //
+            var checked = $(this).is(':checked');
+            var checkedlenght = $('#Fulldayabsent', "#TableStaffAttendance").length;
+            $('input[type=checkbox id=Fulldayabsent]', "#TableStaffAttendance").each(function () {
+                if (checked) {
+                    $(this).attr('checked', true);
+                } else {
+                    $(this).removeAttr('checked');
+                }
+            });
+            //if (checked) {
+            //    $("#Fulldayabsent").each(function (a, b) {
+            //        $(this).prop("checked", true);
+            //    });
+            //    $("#TableStaffAttendance tbody tr:not()").not(':first').not(':last').each(function () {
+            //        $(this).prop('checked', 'checked');
+            //    });
+            //}
+        });
+
+
+        $("#BtnSaveStaffAttendance").on('click', function () {
+
+            var StaffAttendanceViewmodl = {}
+            var Staff_Id = []
+            var Staff_Name = []
+            var FullDay_Absent = []
+            var HalfDay_Absent = []
+            
+
+            var tableid = document.getElementById('TableStaffAttendance');
+            var tBody = tableid.getElementsByTagName('tbody')[0];
+            var tableRow = tBody.getElementsByTagName('tr');
+            alert(tableRow);
+
+            //$("#TableStaffAttendance tbody tr ").data(':first').data(':last').each(function () {
+            //    var checkbox = $(this).find('input[type="checkbox"]').is(':checked');
+            //    if (checkbox == true) {
+            //        var staffid = $(this).find("td:eq(0)").html();
+            //        var staffname = $(this).find("td:eq(1)").html();
+            //        if ($("#Fulldayabsent").attr('checked', true)) {
+            //            var Fulldayabsent = $(this).find("td:eq(2)").html();
+            //        } else {
+            //            var Halfdayabsent = $(this).find("td:eq(4)").html();
+            //        }
+            //        //alert(staffid);
+            //        Staff_Id.push(staffid);
+            //        Staff_Name.push(staffname);
+            //        FullDay_Absent.push(Fulldayabsent);
+            //        HalfDay_Absent.push(Halfdayabsent);
+            //    }
+            //});
+            var row_value = "";
+            var data = "";
+            for (var i = 0; i < tableRow.length; i++) {
+                 //var staffid = $(this).find("td:eq(0)").html();
+                //Staff_Id.push(staffid);
+                //row_value += data[i].innerHTML;
+                console.log(tableRow[i].innerHTML);
+
+            }
+            alert(row_value);
+            StaffAttendanceViewmodl.Staff_Id = Staff_Id;
+            StaffAttendanceViewmodl.Staff_Name = Staff_Name;
+            StaffAttendanceViewmodl.FullDay_Absent = FullDay_Absent;
+            StaffAttendanceViewmodl.HalfDay_Absent = HalfDay_Absent;
+            alert(StaffAttendanceViewmodl.Staff_Id);
+            //
+            $.ajax({
+                url: "/Staf/AddStaffAttendence",
+                dataType: "json",
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                data: JSON.stringify(StaffAttendanceViewmodl),
+                async: true,
+                processData: false,
+                cache: false,
+                success: function (result) {
+                    alert("Attendence Added Successfully");
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+
+            });
+
+        });
+
+
+        $("#UploadStaffBtn").on('click', function () {
+            if (window.FormData !== undefined) {
+                var fileupload = $("#UploadStafffile").get(0);
+                var files = fileupload.files;
+
+                var fileData = new FormData();
+
+                for (var i = 0; i < files.length; i++) {
+                    fileData.append(files[i].Name, files[i]);
+                }
+                $("#UploadStaffBtn").attr('disabled');
+
+                $.ajax({
+                    url: "/ExcelWork/UploadStaffExcelFile",
+                    type: "POST",
+                    contentType: false,
+                    processData: false,
+                    data: fileData,
+                    success: function (result) {
+                        $("#UploadStaffBtn").removeAttr('disabled');
+
+                        if (result == "1") {
+                            alert("Excel Upload Successfully");
+                            window.location.reload();
+                        }
+                        else if (result == "2") {
+                            alert("No File is Selected");
+                            window.location.reload();
+                        }
+                        else if (result == "3") {
+                            alert("Columns Cannot be Blank");
+                            window.location.reload();
+                        }
+                        else if (result == "4") {
+                            alert("Upload the Correct Excel Sheet Format");
+                            window.location.reload();
+                        }
+                        else {
+                            alert("Please Check the Excel Sheet");
+                            window.location.reload();
+                        }
+                    },
+                    error: function (err) {
+                        alert(err.statusText);
+                    }
+                });
+
+            } else {
+                alert("FormData is not supported.");
+            }
+        });
+
+    </script>
+
+    <script>
+                //$("#BtnSaveAttendance").on('click', function () {
+                //    var classid = $("#Class_Id").val();
+                //    //var sectionid = $("#Section_Id").val();
+                //    //var date = $("#Day").val();
+
+
+                //    {
+
+                //    }
+
+                //});
+    </script>
+
+}

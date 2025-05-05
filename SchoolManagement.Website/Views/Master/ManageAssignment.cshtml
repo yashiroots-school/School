@@ -1,0 +1,244 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4> Assignment List &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6">
+                            <button class="btn btn-info pull-right"><a href="/Master/TableAssignment" class="button_a">Add New</a></button>
+                            <button class="btn btn-danger pull-right"><a href="/Master/ViewAssignment" class="button_a">View </a> </button>
+                        </div>
+                        <div class="col-sm-12" style="margin-top: 15px;">
+
+
+                            <div class="col-sm-3">
+
+                                <div class="form-group">
+                                    <label class="control-label col-sm-5">Select Class :</label>
+                                    <div class="col-sm-6">
+                                        <select class="form-control" id="Class_Id" name="Class_Id" @*onclick="GetClass()"*@>
+                                            <option value="0">---Select Class---</option>
+                                            @foreach (var item in ViewBag.ClassList as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                            {
+                                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="control-label col-sm-5">Select Section :</label>
+                                    <div class="col-sm-5">
+                                        <select class="form-control" id="Section_Id" name="Subject_ID">
+                                            <option value="0">---Select Section---</option>
+                                            @foreach (var item in ViewBag.SectionList as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                            {
+                                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+
+                                <div class="form-group">
+                                    <label class="control-label col-sm-5">Select Subject :</label>
+                                    <div class="col-sm-6">
+                                        <select class="form-control" id="Subject_ID" name="Subject_ID">
+                                            <option value="0">---Select Subject---</option>
+                                            @{
+                                                foreach (var item1 in ViewBag.SubjectList as IEnumerable<SchoolManagement.Website.Models.Tbl_SubjectsSetup>)
+                                                {
+                                                    <option value="@item1.Subject_ID">@item1.Subject_Name</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-3">
+                                <button type="button" class="btn btn-success" id="BtnManageTimetable">show</button>
+                            </div>
+
+                        </div><!-- col-sm-12 closed -->
+
+                    </div><!-- col-sm-12 closed -->
+                </div><!--row x_title closed -->
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+
+        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+            <!-- col-msx-12 started -->
+            <h4 class="std_head well-sm">  List </h4>
+            <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                <!-- col-msx-12 started -->
+                <table class="table table-bordered" id="AssignmentTable">
+                    <thead>
+                        <tr>
+                            @*<th>S.No</th>*@
+                            <th>Description</th>
+                            <th>Class</th>
+                            <th>Section</th>
+                            <th>Subject</th>
+                            <th>Date of Assign</th>
+                            <th>Date of Submission</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                </table>
+            </div><!-- col-msx-12  closed -->
+        </div><!-- col-msx-12  closed -->
+
+
+    </div><!-- 1st row closed -->
+
+
+
+
+
+</div>
+
+
+@section scripts{
+    <script src="~/Scripts/WebsiteJs/js/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+
+
+    <script>
+
+        $(document).ready(function () {
+            InitDatatable();
+        });
+
+        $("#BtnManageTimetable").on('click', function () {
+            var classid = $("#Class_Id").val();
+            var sectionid = $("#Section_Id").val();
+            var subjectid = $("#Subject_ID").val();
+
+            if (classid == 0 || sectionid == 0 || subjectid == 0) {
+                alert("Please select  Class, section and subject");
+            } else {
+                InitDatatable();
+            }
+        });
+
+        function InitDatatable() {
+            $("#AssignmentTable").DataTable().destroy();
+            
+
+            datatable = $("#AssignmentTable")
+                .DataTable({
+                    "sAjaxSource": "/Master/GetAllAssignmentDetails",
+                    "fnServerParams": function (aoData) {
+                        aoData.push(
+                            {
+                                "name": "classid", "value": $("#Class_Id").val()
+                            },
+                            {
+                                "name": "sectionid", "value": $("#Section_Id").val()
+                            },
+                            {
+                                "name": "subjectid", "value": $("#Subject_ID").val()
+                            }
+                        );
+                    },
+                    "retrieve": true,
+                    "bServerSide": true,
+                    "bProcessing": true,
+                    "bSearchable": false,
+                    "order": [[1, 'asc']],
+                    "autoWidth": false,
+                    "columns":
+                        [
+                            {
+                                "data": "New_Assignment",
+                                "autoWidth": false,
+                                "width": "200px",
+                                "searchable": true
+                            },
+                            {
+                                "data": "Class_Name",
+                                "autoWidth": false,
+                                "width": "200px",
+                                "searchable": true
+                            },
+                            {
+                                "data": "Section_Name",
+                                "autoWidth": false,
+                                "width": "200px",
+                                "searchable": true
+                            },
+                            {
+                                "data": "Subject_Name",
+                                "autoWidth": false,
+                                "width": "200px",
+                                "searchable": true
+                            },
+                            {
+                                "data": "Assignment_Date",
+                                "autoWidth": false,
+                                "width": "200px",
+                                "searchable": true
+                            },
+                            {
+                                "data": "Submitted_Date",
+                                "autoWidth": false,
+                                "width": "200px",
+                                "searchable": true
+                            },
+                            {
+                                "data": "Assignment_Id",
+                                "searchable": true,
+                                "render": function (data, type, row) {
+                                    if (data != null && data != '') {
+                                        return '<button type="button"><i style = "font-size:12px; color:#39b2e1; cursor:pointer;"data-val="' + data + '" class="fa fa-edit AssignmentEdit"onclick=updateAssignment(' + data + ')></i></button><button><i style="font-size:12px; color:#29b2e1; cursor:pointer;"data-val="' + data + '"class = "fa fa-trash-o AssignmentDelete" onclick = DeleteAssignment(' + data + ')></i></button>';
+                                    }
+                                }
+                            }
+
+                        ]
+                });
+
+        }
+
+
+        function updateAssignment(id) {
+            //$("#Subsetupform").attr('action', "/Master/UpdateSubject");
+
+            //$("#Btnsavesubject").text("Update");
+            //GetSubjectById(id);
+            window.location.href = "/Master/UpdateAssignmentById?id=" + id;
+        }
+        function DeleteAssignment(id) {
+            if (confirm("Do You Want to delete?")) {
+                window.location.href = "/Master/DeleteAssignment?id=" + id;
+            }
+        }
+
+        $(".AssignmentDelete").on('click', function () {
+            var id = $(this).attr("data-val");
+            if (confirm("Do you want to Delete?")) {
+                window.location.href = "/Master/DeleteAssignment?id=" + id;
+            }
+        });
+
+    </script>
+
+}

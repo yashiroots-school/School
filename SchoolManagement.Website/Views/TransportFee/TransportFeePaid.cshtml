@@ -1,0 +1,395 @@
+﻿@model SchoolManagement.Data.Models.StudentsRegistration
+@{
+    ViewBag.Title = "TransportFeePaid";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-8">
+                            <h4> View Individual Account of Student  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-4">
+                            <button class="btn btn-info pull-right"><a href="sis_full_view_of_students.html" class="button_a">Back</a></button>
+                        </div>
+                        <div class="col-sm-12 well-sm" style="margin-top: 15px;">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2">Name &nbsp; :</label>
+                                    <div class="col-sm-6">
+                                        <label class="control-label col-sm-9">@Model.Name</label>
+                                        <input type="hidden" id="StudentName" value="@Model.Name" />
+                                        <input type="hidden" id="StudentId" value="@Session["StudentId"]" />
+                                    </div>
+                                </div><br />
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2">Class &nbsp; :</label>
+                                    <div class="col-sm-6">
+                                        <label class="control-label col-sm-9">@Model.Class</label>
+                                        <input type="hidden" id="StudentClass" value="@Model.Class" />
+                                    </div>
+                                </div><br />
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2">Category &nbsp; :</label>
+                                    <div class="col-sm-6">
+                                        <label class="control-label col-sm-9">@Model.Category</label>
+                                        <input type="hidden" id="StudentCategory" value="@Model.Category" />
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2">Select &nbsp; :</label>
+                                    <div class="col-sm-4">
+                                        <select class="form-control" id="transportrange">
+                                            @{ 
+                                                foreach(var item in ViewBag.Transportrange as IEnumerable<SchoolManagement.Website.Models.TblTransportReducedAmount>)
+                                                {
+                                                    <option value="@item.ReducedAmount_Id">@item.Range</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div><!-- col-sm-12 closed -->
+
+                </div><!-- row x_title closed-->
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+
+        <div class="col-sm-12 table-responsive">
+            <!-- col-msx-12 started -->
+            <div class="col-sm-3 table-responsive">
+                <!-- col-msx-3 started -->
+            </div><!-- col-msx-3 closed -->
+            <div class="col-sm-6 table-responsive">
+                <!-- col-msx-6 started -->
+                <table id="FeePaidTable" class="table table-bordered ">
+                    <tr>
+                        @*<th><input type="checkbox" /> All</th>*@
+                        <th><input Id="Mycheckforall" type="checkbox" /> All</th>
+                        @*<input type="checkbox" Id="Mycheckforall" style="margin-left:18px;" />*@
+                        <th>Fees Types</th>
+                        @*<th>Months</th>*@
+                        <th>Ammount</th>
+                        @*<th>Pay Now</th>*@
+                    </tr>
+                    <tbody id="paidfeebody"></tbody>
+
+                </table>
+
+                <button class='btn btn-info pull-right'><a href='#' onclick="BtnPayNow()" id="BtnPayNow" class='button_a'>Pay Now</a></button>
+
+            </div><!-- col-msx-6 closed -->
+        </div><!-- col-msx-12  closed -->
+    </div><!-- 1st row closed -->
+</div>
+
+<div id="myModalPayment" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+
+
+        </div>
+
+    </div>
+</div>
+
+
+@section scripts{
+<script>
+
+        var branchdata = '@ViewBag.TblBranch';
+
+
+        var duefee = "";
+        GetStudentLoginForFeesPaid();
+        //var transportrange = $("#transportrange").val();
+        function GetStudentLoginForFeesPaid() {
+            $.ajax({
+                url: "/Fee/GetStudentLoginForFeesPaid?Fee_id=2" + '&transportrange=' + $("#transportrange").val(),
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    // 
+                    var row = "";
+                    $.each(result, function (key, value) {
+                        if (value.FeeHeading == "Due Fees") {
+                            duefee = value.Ammount;
+                        }
+                        row = row + "<tr>";
+                        row = row + " <td><input class='Feeselectbox' type='checkbox'/></td>";
+                        row = row + " <td>" + value.FeeHeading + "</td>";
+                        //row = row + "<td>" + value.Months +"</td>";
+                        row = row + "<td>" + value.Ammount + "</td>";
+                        //row = row + "<td><button class='btn btn-info pull-right'><a href='#' class='button_a'>Pay Now</a></button></td>";
+                        row = row + "</tr>";
+                    });
+                    $("#paidfeebody").html(row);
+
+                    row = "";
+                    row = row + "<tr>";
+                    row = row + " <td></td>";
+                    row = row + " <td>Total : </td>";
+                    //row = row + "<td>" + value.Months +"</td>";
+                    row = row + "<td><span id='allTotal'></span></td>";
+                    // row = row + "<td><button class='btn btn-info pull-right'><a href='#' class='button_a'>Pay Now</a></button></td>";
+                    row = row + "</tr>";
+
+                    $("#paidfeebody").append(row);
+
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+
+        $("#transportrange").on('click', function () {
+            $.ajax({
+                url: "/Fee/GetStudentLoginForFeesPaid?Fee_id=2" + '&transportrange=' + $("#transportrange").val(),
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    // 
+                    var row = "";
+                    $.each(result, function (key, value) {
+                        if (value.FeeHeading == "Due Fees") {
+                            duefee = value.Ammount;
+                        }
+                        row = row + "<tr>";
+                        row = row + " <td><input class='Feeselectbox' type='checkbox'/></td>";
+                        row = row + " <td>" + value.FeeHeading + "</td>";
+                        //row = row + "<td>" + value.Months +"</td>";
+                        row = row + "<td>" + value.Ammount + "</td>";
+                        //row = row + "<td><button class='btn btn-info pull-right'><a href='#' class='button_a'>Pay Now</a></button></td>";
+                        row = row + "</tr>";
+                    });
+                    $("#paidfeebody").html(row);
+
+                    row = "";
+                    row = row + "<tr>";
+                    row = row + " <td></td>";
+                    row = row + " <td>Total : </td>";
+                    //row = row + "<td>" + value.Months +"</td>";
+                    row = row + "<td><span id='allTotal'></span></td>";
+                    // row = row + "<td><button class='btn btn-info pull-right'><a href='#' class='button_a'>Pay Now</a></button></td>";
+                    row = row + "</tr>";
+
+                    $("#paidfeebody").append(row);
+
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        })
+
+        $("#Mycheckforall").change(function () {
+            allfee = 0;
+            var checked = $(this).is(':checked');
+            if (checked) {
+                $(".Feeselectbox").each(function (a, b) {
+                    $(this).prop("checked", true);
+                });
+                var total = 0;
+                $("#FeePaidTable tbody tr:not() ").not(':first').not(':last').each(function () {
+                    total = $(this).find("td:nth-last-child(1)").html();
+                    allfee = Number(allfee) + Number(total);
+                });
+
+                $("#allTotal").html(allfee);
+
+            } else {
+                $(".Feeselectbox").each(function () {
+                    $(this).prop("checked", false);
+                });
+
+                allfee = 0;
+                $("#allTotal").html(0);
+            }
+
+        });
+
+        var allfee = 0;
+        $(document).on('change', '.Feeselectbox', function () {
+
+            var total = $(this).parent().closest('tr').find("td:nth-last-child(1)").html();
+
+            if ($(this).prop("checked")) {
+                allfee = allfee + Number(total);
+            } else {
+                allfee = allfee - Number(total);
+                $(this).parent().parent("tr").find(':input[type="number"]').val("0");
+            }
+            $("#allTotal").html(allfee);
+        });
+        function BtnPayNowOld() {
+            //  $('#myModalPayment').modal('show');
+            //$("#allTotal").text();
+            //alert($('#StudentName').val() + " - " + $("#allTotal").text());
+
+            var PaymentGatewayModel = [];
+            PaymentGatewayModel.StudentId = $("#allTotal").text();
+            PaymentGatewayModel.Amount = $('#StudentName').val();
+            var viewModel = { StudentId: $('#StudentName').val(), Amount: $("#allTotal").text() };
+
+            $.ajax({
+                url: "/Fee/AmountTransferGateway?isStudent=true",
+                type: "POST",
+                dataType: "json",
+                data: { StudentId: $('#StudentId').val(), Amount: $("#allTotal").text() },
+                success: function (data) {
+                    //alert(data);
+                    window.location.href = data;
+                }
+            });
+        }
+        function BtnPayNow() {
+            
+            var feeReceiptViewModel = {}
+            var FeeHeadings = [];
+            var FeeHeadingAmt = [];
+            var Selectedmonths = [];
+            var collectFees = [];
+            //var oldAmount = $("#OldBalance1").val();
+
+            //GetStudentDetailsById1($('#StudentId').val());
+            feeReceiptViewModel.StudentId = $('#StudentId').val();// $("#StudentName option:selected").val();
+            feeReceiptViewModel.CourseSpecialization = _CourseSpecialization;
+            feeReceiptViewModel.ClassName = $('#StudentClass').val();;
+            feeReceiptViewModel.CategoryName = $('#StudnetCategory').val();
+            feeReceiptViewModel.StudentName = $('#Studentname').val();;
+            feeReceiptViewModel.BatchName = _Batch;
+
+            //$.each($("input[name='category']:checked"), function () {
+            //    Selectedmonths.push($(this).val());
+            //});
+            //feeReceiptViewModel.Selectedmonths = Selectedmonths;
+            
+            $("#FeePaidTable tbody tr:not() ").not(':first').not(':last').each(function () {
+
+                var checkBox = $(this).find('input[type="checkbox"]').is(':checked');
+                if (checkBox == true) {
+                    var FeeHeading = $(this).find("td:eq(1)").html();
+                    var total = $(this).find("td:nth-last-child(1)").html();
+                    var collectFee = $(this).find(':input[type="number"]').val();
+                    FeeHeadings.push(FeeHeading);
+                    FeeHeadingAmt.push(total);
+                    collectFees.push(total);
+                    // collectFees.push(collectFee);
+                }
+            });
+            if (FeeHeadings.length <= 0) {
+                alert("Please select Fee Headings.")
+                return;
+            }
+
+            feeReceiptViewModel.DueAmountYesNo = "no";
+            feeReceiptViewModel.FeeHeadings = FeeHeadings;
+            feeReceiptViewModel.FeeHeadingAmt = FeeHeadingAmt;
+            feeReceiptViewModel.collectFees = collectFees;
+            feeReceiptViewModel.TotalFee = $("#allTotal").text();
+            feeReceiptViewModel.OldBalance = 0;
+            feeReceiptViewModel.LateFee = 0;
+            feeReceiptViewModel.Concession = 0;
+            feeReceiptViewModel.ConcessionAmt = 0;
+            feeReceiptViewModel.NetFee = $("#allTotal").text();
+            feeReceiptViewModel.ReceiptAmt = $("#allTotal").text();
+            feeReceiptViewModel.BalanceAmt = 0;
+            feeReceiptViewModel.PaymentMode = "Online";
+            feeReceiptViewModel.BankName = "";
+            feeReceiptViewModel.CheckId = "";
+            feeReceiptViewModel.Remark = "";
+            feeReceiptViewModel.Course = _cource;
+            $.ajax({
+                //url: "/Fee/AmountTransferGateway/*?isStudent=true*/",
+                //  url: '/Fee/AddFeeReceipt1',
+                url:"/Fee/AmountTransferGateway?isStudent=true",
+                dataType: "json",
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(feeReceiptViewModel),
+                async: true,
+                processData: false,
+                cache: false,
+                success: function (data) {
+
+                    if (branchdata == "Worldline") {
+
+                        window.location.href = '@Url.Action("PaymentProcess", "Payment")';
+                    }
+                    else if (branchdata == "Razorpay ") {
+                        window.location.href = '@Url.Action("RazorpayPaymentprocess", "Payment")';
+                    }
+                    //alert("Fee Saved Successfully.")
+                    //window.location.reload();
+                    //return Json(new { result = "Redirect", url = Url.Action("StudnetPaymentSummary", "FeeConfiguration") });
+                },
+                error: function (xhr) {
+                    // window.location.reload();
+                }
+            });
+
+        }
+
+        var _cource = "";
+        var _CourseSpecialization = "";
+        var _Class = "";
+        var _Category = "";
+        var _Name = "";
+        var _Batch = "";
+        function GetStudentDetailsById1(studentId) {
+            if (studentId == "") {
+                return;
+            }
+            // alert(studentId);
+            $.ajax({
+                url: '/Student/GetStudentDetailsById?studentId=' + studentId,
+                dataType: "json",
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                //data: {'id': Frequency},
+                async: false,
+                processData: false,
+                cache: false,
+                success: function (data) {
+                    //_cource = data.Course;
+                    //_CourseSpecialization = data.CourseSpecialization;
+                    //_Class = data.Class;
+                    //_Category = data.Category;
+                    //_Name = data.StudentName;
+                    //_Batch = data.Batch;
+                    //$("#Name").val(data.StudentName);
+                    //$("#FatherName").val(data.FatherName);
+
+                    //$("#Course").val(data.Course);
+                    //$("#Class").val(data.Class);
+                    //$("#Category").val(data.Category);
+                    //$("#OldBalance1").val(data.OldBalance);
+                    //$("#roleNumber").val(data.RoleNumber);
+                    //$("#ContNum").val(data.Contact);
+                    //$("#Batch").val(data.Batch);
+                    //$("#CourseSpecialization").val(data.CourseSpecialization);
+                },
+                error: function (xhr) {
+                    alert("Some Error Occure");
+                }
+            });
+        }
+</script>
+}

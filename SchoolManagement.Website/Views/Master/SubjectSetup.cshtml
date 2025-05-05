@@ -1,0 +1,438 @@
+﻿@model SchoolManagement.Data.Models.Subjects
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4>  Subjects Setup  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <!--<div class="col-sm-6">
+                        <button class="btn btn-info pull-right"><a href="sis_add_new_teacher.html" class="button_a">Add New</a></button>
+                         <button class="btn btn-danger pull-right"><a href="sis_manage_teacher.html" class="button_a">Manage</a></button>
+                          </div>-->
+
+
+                    </div><!-- col-sm-12 closed -->
+                </div><!--row x_title closed -->
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+        <div class="col-sm-12" style="margin-top: 15px;">
+            <h4 class="std_head well-sm">Subjects Setup </h4>
+            <form action="/Master/Addsubject" method="post" id="Subsetupform" enctype="multipart/form-data">
+                <div class="col-sm-12 ">
+                    <div class="col-sm-3 pull-right ">
+                        <label>Academic Year</label>
+                        
+                            @Html.DropDownList("Batch_Id", ViewBag.BatcheNames as SelectList, "---Select Year---", new { @id = "Batch_Id", @class = "form-control" })
+                        
+                        @*<input type="text" id="FromDate" readonly class="form-control datepicker"/>*@
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <input type="hidden" id="Subjectid" name="Id" />
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-6">
+                                <div class="form-group" style="margin-top:60px;">
+                                    <label class="control-label col-sm-4">Add Teacher  :</label>
+                                    <select class="form-control" id="StaffId" name="StaffId">
+                                        <option>---Select Teacher---</option>
+                                        @foreach (var item1 in ViewBag.Teacher as IEnumerable<SchoolManagement.Data.Models.StafsDetails>)
+                                        {
+                                            <option value="@item1.StafId">@item1.Name</option>
+                                        }
+
+                                    </select>
+                                    <input type="text" id="Teacher" name="Teacher" style="display:none" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group" style="margin-top:60px;">
+                                    <label class="control-label col-sm-4">Select Class  :</label>
+                                    <select class="form-control" id="Class_Id" name="Class_Id">
+                                        <option>---Select Class---</option>
+                                        @*@foreach (var item1 in ViewBag.Classlist as IEnumerable<SchoolManagement.Website.Models.Tbl_Class>)
+                                            {
+                                                <option value="@item1.Class_Id">@item1.Class_Name</option>
+                                            }*@
+                                        @foreach (var item in ViewBag.schoolClasses as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                        {
+                                            <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                        }
+                                    </select>
+                                    <input id="Class" name="Class" class="form-control" style="display:none" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-6">
+                                <div class="form-group" style="margin-top:60px;">
+                                    <label class="control-label col-sm-4">Select Subject : </label>
+                                    <br />
+                                    <select class="form-control" id="Subject_ID" name="Subject_ID">
+                                        <option>---Select Subject---</option>
+                                        @*@foreach (var item1 in ViewBag.subjectlist as IEnumerable<SchoolManagement.Website.Models.Tbl_SubjectsSetup>)
+                                        {
+                                            <option value="@item1.Subject_ID">@item1.Subject_Name</option>
+                                        }*@
+                                        @foreach (var item in ViewBag.subject as IEnumerable<SchoolManagement.Website.Models.Tbl_SubjectsSetup>)
+                                        {
+                                            <option value="@item.Subject_ID">@item.Subject_Name</option>
+                                        }
+
+                                    </select>
+                                    <input type="text" id="Subject" name="Subject" style="display:none" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group" style="margin-top:60px;">
+                                    <label class="control-label col-sm-4">Select Section  <span style="color:red">*</span> </label>
+                                    <br />
+                                    <select class="form-control" id="Section_ID" name="Section_ID">
+                                        <option value="0">---Select Section---</option>
+                                        {
+                                        @foreach (var item in ViewBag.Section as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                        {
+                                            <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                        }
+                                        }
+
+                                    </select>
+                                    <input type="text" id="Section" name="Section" style="display:none" />
+                                </div>
+                            </div>
+                            <br />
+                            <div class="col-md-6">
+                                <div class="form-group" style="margin-top:60px;">
+                                    <label>Class Teacher :</label>
+
+                                    <label class="radio-inline"><input type="checkbox" id="Teacher1" name="Class_Teacher" value="True" >Yes</label>
+                                    <label class="radio-inline"><input type="checkbox" id="Teacher2" name="Class_Teacher" value="False" >No</label>
+
+
+                                </div>
+                            </div>
+                            @*<div class="col-md-2">
+                                <div class="form-group"  style="margin-top:60px;">
+                                    <label>Class Teacher : Yes / No <span style="color:red">*</span></label>
+                                    <select class="form-control" id="ClassTeacher"  name="ClassTeacher">
+                                        <option value="0">---select option---</option>
+                                        <option value="yes">Yes</option>
+                                        <option value="no">No</option>
+                                    </select>
+                                    <input type="text" name="ClassTeacher" id="ClassTeacher" class="form-control">
+                                </div>
+                            </div>*@
+                            
+                        </div>
+                    </div>
+                    <div class="col-sm-8" style="margin-top:20px;">
+                        <button type="button" class="btn btn-success pull-right" id="BtnClear" onclick="ClearData()">Clear</button>
+                        <button type="submit" class="btn btn-success pull-right" id="Btnsavesubject" onclick="GetAllStudentDetails()">Save</button>
+                    </div>
+                </div>
+
+            </form>
+
+            <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+                <!-- col-msx-12 started -->
+                <table class="table table-bordered" id="TblSubjectsetup" style="margin-top:5px;">
+                    <thead>
+                        <tr>
+                            <th>Teacher</th>
+                            <th>Class</th>
+                            <th>Subject</th>
+                            <th>Section</th>
+                            <th>BatchName</th>
+                            <th>ClassTeacher</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    @*<tbody>
+                            @{
+                                int i = 1;
+                                foreach(var item in ViewBag.subjectlist as IEnumerable<SchoolManagement.Data.Models.Subjects>)
+                                {
+                                    <tr>
+                                        <td>@i</td>
+                                        <td>@item.Teacher</td>
+                                        <td>@item.Class</td>
+                                        <td>@item.Subject</td>
+                                        <td>
+                                            <button type="button" class="btn btn-info SubjectEdit" data-val="@item.Id" >Edit</button>
+                                            <button type="button" class="btn btn-success SubjectDelete" data-val="@item.Id" >Delete</button>
+                                        </td>
+                                    </tr>
+                                    i++;
+                                }
+
+                            }
+                        </tbody>*@
+                </table>
+            </div>
+
+        </div>
+
+
+    </div><!-- 1st row closed -->
+
+
+
+
+
+</div>
+@section Scripts{
+
+    <script>
+        //$(document).ready(function () {
+        //    
+        //    alert("Working");
+        //    InitDatatable();
+        //});
+        InitDatatable();
+       
+        $(".SubjectEdit").on("click", function () {
+            $("#Subsetupform").attr('action', "/Master/UpdateSubject");
+            var id = $(this).attr("data-val");
+            //debugger
+            $("#Btnsavesubject").text("Update");
+            GetSubjectById(id);
+
+        });
+        
+        function GetSubjectById(id) {
+            $.ajax({
+                url: "/Master/GetSubjectById?id=" + id,
+                type: "GET",
+                datatype: "json",
+                contentType: "application/json;charset=UTF-8",
+                success: function (result) {
+                    console.log(result);
+                   
+                    if (result != null) {
+                        $("#Teacher").val(result.Teacher);
+                        $("#StaffId").val(result.StaffId);
+                        $("#Subjectid").val(result.Id);
+                        $("#Subject_ID").val(result.Subject_ID);
+                        $("#Section_ID").val(result.Section_Id);
+                        $("#Class_Id").val(result.Class_Id);
+                        //$("#Class_Id").val(result.Class);
+                        $("#Class").val(result.Class);
+                        $("#Subject").val(result.Subject);
+                        $("#Section").val(result.Section);
+                        $("#Batch_Id").val(result.Batch_Id);
+                        $("#Class_Teacher").val(result.Class_Teacher);
+                        var classTeacher = result.Class_Teacher;
+                        if (classTeacher === "true" || classTeacher === true) {
+                            $("#Teacher1").prop("checked", true);
+                            $("#Teacher2").prop("checked", false);
+                        } 
+                        if (classTeacher === "false" || classTeacher === false) {
+                            $("#Teacher1").prop("checked", false);
+                            $("#Teacher2").prop("checked", true);
+                        } 
+                        //if (classTeacher == true)
+                        //    $("#Teacher1").prop("checked", true);
+                        //else
+                        //    $("#Teacher2").prop("checked", true);
+
+
+
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+
+        function GetAllStudentDetails() {
+            //GetProcessList();
+            var StudentRegMasterModel = {};
+
+            var staffid = $("#StaffId").val();
+            var classid = $("#Class_Id").val();
+            var subjectid = $("#Subject_ID").val();
+            if (staffid == "") {
+                alert("Please Select Staff ");
+                //window.location.reload();
+            }
+            if (classid == "") {
+                alert("Please Select Class ");
+                //window.location.reload();
+            }
+        }
+
+        $(".SubjectDelete").on("click", function () {
+            var id = $(this).attr("data-val");
+            if (confirm("Do You Want to Delete?")) {
+                window.location.href = "DeleteSubject?id=" + id;
+            }
+        });
+
+
+
+        function InitDatatable() {
+            debugger
+            $("#TblSubjectsetup").DataTable().destroy();
+           
+
+            datatable = $("#TblSubjectsetup")
+                .DataTable({
+                    "sAjaxSource": "/Master/GetAllSubjectDetails",
+                    "retrieve": true,
+                    "bServerSide": true,
+                    "bProcessing": true,
+                    "bSearchable": false,
+                    "order": [[1, 'asc']],
+                    "autoWidth": false,
+                    "columns":
+                        [
+                            {
+                                "data": "Teacher",
+                                "autoWidth": false,
+                                "width": "200px",
+                                "searchable": true
+                            },
+                            {
+                                "data": "Class",
+                                "autoWidth": false,
+                                "width": "200px",
+                                "searchable": true
+                            },
+                            {
+                                "data": "Subject",
+                                "autoWidth": false,
+                                "width": "200px",
+                                "searchable": true
+                            },
+                            {
+                                "data": "Section",
+                                "autoWidth": false,
+                                "width": "200px",
+                                "searchable": true
+                            },
+                            {
+                                "data": "BatchName",
+                                "autoWidth": false,
+                                "width": "200px",
+                                "searchable": true
+                            },
+                            {
+                                "data": "Class_Teacher",
+                                "autoWidth": false,
+                                "width": "200px",
+                                "searchable": true
+                            },
+                            {
+                                "data": "Id",
+                                "searchable": true,
+                                "render": function (data, type, row) {
+                                    if (data != null && data != '') {
+                                        return '<button type="button"><i style = "font-size:12px; color:#39b2e1; cursor:pointer;"data-val="' + data + '" class="fa fa-edit SubjectEdit"onclick=updatesubject(' + data + ')></i></button><button><i style="font-size:12px; color:#29b2e1; cursor:pointer;"data-val="' + data + '"class = "fa fa-trash-o SubjectDelete" onclick = DeleteSubject(' + data + ')></i></button>';
+                                    }
+                                }
+                            }
+                        ]
+                });
+
+        }
+
+        function updatesubject(id) {
+            $("#Subsetupform").attr('action', "/Master/UpdateSubjects");
+           
+            $("#Btnsavesubject").text("Update");
+            GetSubjectById(id);
+        }
+        function DeleteSubject(id) {
+            if (confirm("Do You Want to delete?")) {
+                window.location.href = "/Master/DeleteSubject?id=" + id;
+            }
+        }
+        function ClearData() {
+           
+            var cnf = confirm('Are you sure, you want to clear all the data?');
+
+            if (cnf == true) {
+                $("#Subjectid").val('');
+                $("#Class").val('');
+                $("#subject").val('');
+                $("#Teacher").val('');
+
+                $("#BtnSaveSubject").text("save");
+            }
+
+        }
+       
+    </script>
+    <script>
+
+    </script>
+    @*<script>
+
+            function updatesubject(id) {
+                $("#Subsetupform").attr('action', "/Master/UpdateSubject");
+
+                $("#Btnsavesubject").text("Update");
+                GetSubjectById(id);
+            }
+            function DeleteSubject(id) {
+                if (confirm("Do You Want to delete?")) {
+                    window.location.href = "/Master/DeleteSubject?id=" + id;
+                }
+            }
+        </script>
+
+        <script>
+
+            $(".SubjectEdit").on("click", function () {
+                $("#Subsetupform").attr('action', "/Master/UpdateSubject");
+                var id = $(this).attr("data-val");
+
+                $("#Btnsavesubject").text("Update");
+                GetSubjectById(id);
+
+            });
+
+            function GetSubjectById(id) {
+                
+                $.ajax({
+                    url: "/Master/GetSubjectById?id=" + id,
+                    type: "GET",
+                    datatype: "json",
+                    contentType: "application/json;charset=UTF-8",
+                    success: function (result) {
+                        if (result != null) {
+                            $("#Subjectid").val(result.Id);
+                            $("#Class").val(result.Class);
+                            $("#subject").val(result.Subject);
+                            //$("#Staffid").val(result.StaffId);
+                            $("#Teacher").val(result.Teacher);
+
+
+                        }
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+                });
+            }
+
+        </script>*@
+
+}

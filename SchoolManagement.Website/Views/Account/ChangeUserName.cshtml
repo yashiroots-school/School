@@ -1,0 +1,46 @@
+﻿
+@{
+    ViewBag.Title = "ChangeUserName";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6">
+                            <h4 id="HeadingText"> Change UserName &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <form action="/Account/UpdateUserName" id="ChangePasswordForm" method="post" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <input type="hidden" id="StudentId" name="StudentId" value="@ViewBag.Studentid"/>
+                                <div class="col-sm-6">
+                                    <div style="margin-top:10px">
+                                        <label>Old UserName</label>
+                                        <input type="text" id="OldUserName" class="form-control" name="Old_UserName" />
+                                    </div>
+                                    <div style="margin-top:10px">
+                                        <label>New UserName</label>
+                                        <input type="text" id="NewUserName" class="form-control" name="User_Name" />
+                                    </div>
+                                    <div style="margin-top:10px">
+                                        <button type="submit" id="BtnSubmit" class="btn btn-success">Change</button>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,247 @@
+﻿@{
+    ViewBag.Title = "ViewIdcard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .id-container {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .id-card {
+        width: 280px;
+        height: 512px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        background: #fff;
+        position: relative;
+        page-break-inside: avoid;
+    }
+
+    .print-button {
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        background-color: #0d1b3e;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    .front, .back {
+        background: #0d1b3e;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        position: relative;
+    }
+
+    .front .logo img {
+        width: 50px;
+        height: 60px;
+    }
+
+    .hil {
+        width: 210px;
+        height: 60px;
+    }
+    .HOT1 {
+        color: white !important;
+    }
+
+    .HOT {
+        font-family: 'Roboto Condensed', sans-serif;
+        font-size: 12px;
+        white-space: nowrap;
+        max-width: 210px;
+        transform-origin: left center;
+        transform: scaleY(1.5);
+        height: 30px;
+        color: white !important;
+    }
+
+    .front .photo img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+    .front .student-id {
+        background: #ffcc00;
+        color: #000;
+        padding: 4px 10px;
+        font-weight: 700;
+        font-size: 12px;
+        margin: 12px 0;
+        display: inline-block;
+    }
+
+    .front .details {
+        text-align: left;
+        margin-top: 10px;
+        color: white !important;
+    }
+
+    .front .details p {
+        margin: 6px 0;
+        font-size: 14px;
+        color: white !important;
+    }
+
+    .front .details span {
+        font-weight: bold;
+        color: white !important;
+    }
+
+    .curve {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 100%;
+        height: 60px;
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 336 60"><path fill="%23ffcc00" d="M336,60 C236,0 100,80 0,0 L0,60 Z"/></svg>') no-repeat bottom right;
+        background-size: cover;
+    }
+
+    /* PRINT */
+    @@media print {
+        body {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            background: white !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        header,
+        footer,
+        .nav_menu, /* agar bootstrap navbar hai */
+        .top_nav, /* agar header top bar ka class hai */
+        .left_col, /* agar sidebar hai */
+        .sidebar, /* agar koi aur sidebar hai */
+        #printBtn {
+            display: none !important;
+        }
+
+        /* Print button + header hide */
+        #printBtn, .print-button, .right_col > .row > h1, .nav_menu, .left_col {
+            display: none !important;
+        }
+        #sigma {
+            display: none !important;
+        }
+
+        .id-container {
+            display: flex !important;
+            justify-content: center !important;
+            flex-wrap: wrap !important;
+            gap: 20px !important;
+        }
+
+        .id-card {
+            width: 280px !important;
+            height: 512px !important;
+            border-radius: 12px !important;
+            overflow: hidden !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
+            background: #fff !important;
+            position: relative !important;
+            page-break-inside: avoid !important;
+        }
+
+        .front, .back {
+            background: #0d1b3e !important;
+            color: white !important;
+            padding: 20px !important;
+            text-align: center !important;
+            position: relative !important;
+        }
+
+        .front .details p,
+        .front .details span,
+        .HOT {
+            color: white !important;
+        }
+
+        .curve {
+            position: absolute !important;
+            bottom: 0 !important;
+            right: 0 !important;
+            width: 100% !important;
+            height: 60px !important;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 336 60"><path fill="%23ffcc00" d="M336,60 C236,0 100,80 0,0 L0,60 Z"/></svg>') no-repeat bottom right !important;
+            background-size: cover !important;
+        }
+    }
+
+    #printBtn:hover {
+        background: #0d1656;
+    }
+</style>
+
+<div class="right_col" role="main">
+    <div class="row">
+        <button id="printBtn" class="print-button" onclick="window.print()">🖨️ Print ID Card</button>
+
+        <div class="id-container">
+<!-- FRONT SIDE -->
+<div class="id-card front">
+                @foreach (var student in ViewBag.allStudentData as IEnumerable<SchoolManagement.Data.Models.Student>)
+                {
+                    <div class="logo">
+                        <div class="row">
+                            <div class="col-sm-2" style="padding: 0px;">
+                                <img src="~/WebsiteImages/SchoolImage/@Session["SchoolImage"]" alt="Logo" />
+                            </div>
+                            <div class="col-sm-9 hil" style="margin-top:0px;">
+                                <p class="HOT" style="height:20px; margin-bottom:0px;">@Session["SchoolName"] </p>
+                                <p class="HOT1" style="height:40px; margin-top:0px;">@Session["SchoolAddress"]</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="photo" style="padding:20px;">
+                        @{
+                            if (!string.IsNullOrWhiteSpace(student.ProfileAvatar))
+                            {
+                                <img src="~/WebsiteImages/StudentPhoto/@student.ProfileAvatar" />
+                            }
+                            else
+                            {
+                                <img src="~/WebsiteImages/images/user.png" />
+                            }
+                        }
+                    </div>
+
+                    <div class="details">
+                        <p><span>Name</span> : @student.Name @student.Last_Name</p>
+                        <p><span>Class</span> : @student.Class</p>
+                        <p><span>DOB</span> : @student.DOB</p>
+                        <p><span>Gender</span> : @student.Gender </p>
+                    </div>
+                }
+
+                @{
+                    var firstData = (ViewBag.allData as IEnumerable<SchoolManagement.Data.Models.FamilyDetail>)?.FirstOrDefault();
+                }
+
+                @if (firstData != null)
+                {
+                    <div class="details">
+                        <p><span>FatherName</span> : @firstData.FatherName Mob.@firstData.FMobile</p>
+                        <p><span>MotherName</span> : @firstData.MotherName </p>
+                        <p><span>Permanent Address</span> : @firstData.MPermanentAddress </p>
+                    </div>
+                }
+
+
+                <div class="curve"></div>
+            </div>
+        </div>
+    </div>
+</div>

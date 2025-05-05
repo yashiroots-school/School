@@ -1,0 +1,246 @@
+﻿
+@{
+    ViewBag.Title = "ViewPaySlip";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div id="PrintReceipt">
+
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <!-- col-msx-12 started -->
+                <div class="dashboard_graph">
+                    <div class="row x_title">
+                        <div class="col-sm-12">
+                            <div class="col-sm-3">
+                                <h4> Generate Pay Slip  &nbsp;<i class="fa fa-forward"></i></h4>
+                            </div>
+                            <div class="col-sm-4">
+
+                            </div>
+                            <div class="col-sm-5">
+                                <button class="btn btn-danger pull-right"><a href="sis_accounts_summary.html" class="button_a">Accounts Summary</a> </button>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- dashboard_graph closed-->
+            </div><!--col-msx-12 closed-->
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <!-- col-msx-12 started -->
+                <h4 class="std_head well-sm"> Enter Details Of Employee</h4>
+                <div class="col-sm-12" style="border-bottom: 1px solid #E6E9ED;">
+                    <!-- col-sm-12 started -->
+                    <h2 style="text-align:center;margin-bottom:30px;">Pay For The Month of Jun 2015</h2>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label col-sm-5">Name :</label>
+                            <div class="col-sm-7">
+                                <select class="form-control" style="margin-bottom:10px;" id="GetStaffData">
+                                    <option value="0">---Select Staff---</option>
+                                    @{
+                                        foreach (var item in ViewBag.StaffDetails as IEnumerable<SchoolManagement.Data.Models.StafsDetails>)
+                                        {
+                                            <option value="@item.StafId">@item.Name</option>
+                                        }
+                                    }
+                                </select>
+                                @*<input type="text" name="R.no" style="margin-bottom:5px;">*@
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-5">Emp ID :</label>
+                            <div class="col-sm-7">
+                                <input type="text" id="Staff_ID" style="margin-bottom:10px;">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label col-sm-5">Qualification  :</label>
+                            <div class="col-sm-7">
+                                <input type="text" id="Department" style="margin-bottom:5px;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-5">Gender :</label>
+                            <div class="col-sm-7">
+                                <input type="text" id="Gender" style="margin-bottom:5px;">
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- col-sm-12 closed -->
+                <div class="col-sm-12" style="border-bottom: 1px solid #E6E9ED;margin-top:10px;">
+                    <!-- col-sm-12 started -->
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label col-sm-5">Basic Salary :</label>
+                            <div class="col-sm-7">
+                                <input type="text" id="Basicsalary" style="margin-bottom:5px;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-5">DA :</label>
+                            <div class="col-sm-7">
+                                <input type="text" id="DAdetails" style="margin-bottom:5px;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-5">HRA  :</label>
+                            <div class="col-sm-7">
+                                <input type="text" name="R.no" style="margin-bottom:5px;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-5">CCA :</label>
+                            <div class="col-sm-7">
+                                <input type="text" name="R.no" style="margin-bottom:5px;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <h2>Deductions :-</h2>
+                        <div class="form-group">
+                            <label class="control-label col-sm-5">PF  :</label>
+                            <div class="col-sm-7">
+                                <input type="text" id="pfdetails" style="margin-bottom:5px;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-5">PT  :</label>
+                            <div class="col-sm-7">
+                                <input type="text" name="R.no" style="margin-bottom:5px;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-5">MISC  :</label>
+                            <div class="col-sm-7">
+                                <input type="text" name="R.no" style="margin-bottom:5px;">
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- col-sm-12 closed -->
+                <div class="col-sm-12 table-responsive" style="margin-top:10px;">
+                    <!-- col-sm-12 started -->
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label col-sm-5">Net Pay  :</label>
+                            <div class="col-sm-7">
+                                <input type="text" id="netpay" style="margin-bottom:10px;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-5">In Words  :</label>
+                            <div class="col-sm-7">
+                                <input type="text" name="R.no" style="margin-bottom:5px;">
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- col-sm-12 closed -->
+                <div class="col-sm-12 table-responsive">
+                    <!-- col-sm-12 started -->
+                    <p style="font-size: 15px;padding-left:10px;padding-right:10px;text-align:left;">Mode of payment : <input type="checkbox"> Cash <input type="checkbox"> Cheque</p>
+                    <table class="table table-bordered" style="margin-top:10px;">
+                        <tbody>
+                            <tr style="background-color: #1ABB9C;color: #fff;">
+                                <td>Cheque No</td>
+                                <td>Drawn on bank</td>
+                                <td>Date</td>
+                                <td>Amount</td>
+                            </tr>
+                            <tr>
+                                <td>632458</td>
+                                <td>State Bank of India</td>
+                                <td>26-5-2014</td>
+                                <td>20,000/-</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="text-align:left;">Amount in Rupees : Twenty Thousand Ruppes Only</td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">Payment date   :</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="R.no" style="margin-bottom:10px;">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">Authorised By  :</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="R.no" style="margin-bottom:5px;">
+                        </div>
+                    </div>
+                </div><!-- col-sm-12 closed -->
+            </div>
+
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <!-- col-msx-12 started -->
+                <div class="col-sm-6"></div>
+                <div class="col-sm-3 pull-left table-responsive">
+                    <table class="table table-borderedless">
+                        <tbody>
+                            <tr>
+                                <td style="border-top:0px solid #ccc;"><button class="btn btn-warning" id="PrintButton">Print Receipt</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div> <!-- col-msx-12  closed -->
+
+        </div><!-- col-msx-12  closed -->
+    </div><!-- 1st row closed -->
+
+
+
+
+</div>
+
+<script src="~/Scripts/printThis.js"></script>
+
+<script>
+
+    $("#PrintButton").on('click', function () {
+        $("#PrintReceipt").printThis();
+    });
+    //
+    //function GetStaffData() {
+    //    alert("Working");
+    //}
+    $("#GetStaffData").on('click', function () {
+        var stffid = $("#GetStaffData").val();
+        if (stffid == 0) {
+            $("#GetStaffData").val("---Select Staff---");
+        } else {
+            $.ajax({
+                url: "/Master/GetStafDataById?id=" + stffid,
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json;charset=utf-8",
+                success: function (result) {
+                    //alert(result.payrollBasicDetails.NetPay);
+                    if (result != null) {
+                        $("#Staff_ID").val(result.data.StafId);
+                        $("#Department").val(result.data.Qualification);
+                        $("#Gender").val(result.data.Gender);
+                        $("#Basicsalary").val(result.payrollBasicDetails.BasicSalary);
+                        $("#pfdetails").val(result.payrollBasicDetails.PF);
+                        $("#netpay").val(result.payrollBasicDetails.NetPay);
+                        $("#DAdetails").val(result.DA.Basic_Amount);
+
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+
+
+    });
+</script>
+

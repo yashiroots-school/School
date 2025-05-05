@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <meta charset="utf-8" />
+    @Scripts.Render("~/bundles/modernizr")
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/WebsiteImages/images/icons.png">
+    <link href="~/Content/WebsiteCss/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Content/WebsiteCss/css/animate.min.css" rel="stylesheet">
+    @*
+    <link href="~/Content/DatePicker/datepicker.css" rel="stylesheet">*@
+    <link href="~/Content/WebsiteCss/css/custom.css" rel="stylesheet">
+    <link href="~/Content/WebsiteCss/css/floatexamples.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    @*
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">*@
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" />
+    <link href="~/Content/DatePicker2/css/jquery.datepick.css" rel="stylesheet" />
+    <style>
+        table.dataTable thead th {
+            color: black;
+        }
+    </style>
+    <script src="~/Scripts/WebsiteJs/js/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+</head>
+<body class="nav-md">
+    <div class="container body">
+        <div class="main_container">
+            @{ Html.RenderPartial("_LayoutHeader");}
+            @{ Html.RenderPartial("_AccountSidebarLayout");}
+            @{ Html.RenderPartial("_LayoutTopNavBar");}
+
+            @RenderBody();
+        </div>
+    </div>
+    <script src="~/Scripts/WebsiteJs/js/custom.js"></script>
+    <script src="~/Scripts/WebsiteJs/js/nprogress.js"></script>
+    <script src="~/Scripts/WebsiteJs/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/WebsiteJs/js/moment.min.js"></script>
+
+    @*<script src="~/Scripts/WebsiteJs/js/jquery.min.js"></script>*@
+    <script src="~/Scripts/RegistrationJs/StudentAcadamicDetails.js"></script>
+    <script src="~/Scripts/RegistrationJs/StudentWorkExperienceWr.js"></script>
+    <script src="~/Scripts/RegistrationJs/RegistrationJS.js"></script>
+    <script src="~/Scripts/RegistrationJs/StudentRegistration.js"></script>
+    <script src="~/Scripts/RegistrationJs/RegMethods.js"></script>
+    <script src="~/Scripts/DevelopmentJS/leftMenuBinderJS.js"></script>
+
+
+    @RenderSection("scripts", required: false)
+
+</body>
+</html>

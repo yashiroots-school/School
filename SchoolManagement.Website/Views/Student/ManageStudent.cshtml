@@ -1,0 +1,1468 @@
+﻿
+@{
+    /**/
+
+    ViewBag.Title = "Manage Student";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    //$(document).ready(function () {
+    //    $('#Studenttbl').DataTable();
+    //});
+</script>
+@*<link href="~/Content/WebsiteCss/css/custom.css" rel="stylesheet" />*@
+@*<link href="~/Content/WebsiteCss/css/theme-default.css" rel="stylesheet" />*@
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+            <!-- col-msx-12 started -->
+            @*  <div class="dashboard_graph">
+                    <div class="row x_title">
+                        <!--row x_title started -->
+                        <div class="col-sm-12">
+                            <!-- col-sm-12 started -->
+                            <div class="col-sm-6">
+                                <h4> Manage Student Admission  &nbsp;<i class="fa fa-forward"></i></h4>
+                            </div>
+                            <div class="col-sm-3">
+                                <button class="btn btn-danger pull-right"><a href="/Student/AddStudent" class="button_a">Create New Student</a></button>
+                            </div>
+                            <div class="col-sm-3">
+                                    <button class="btn btn-success pull-right"><a href="/Student/VewAllStudent" class="button_a">Vew All Student</a></button>
+                                </div>
+
+                        </div>
+
+                        <div class="col-sm-12" style="margin-top: 15px;">
+                            <form action="/Student/ViewStudent" method="get">
+                            <div class="col-sm-12">
+                                <div class="col-sm-3">
+                                    <div class="form-group stright_line">
+                                        <label>Filter by Class :</label>
+                                        @Html.DropDownList("semester", new SelectList(ViewBag.Classes, "DataListItemName", "DataListItemName"), "select", new { @id = "classDll", @class = "form-control" })
+
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="form-group stright_line">
+                                        <label>Filter By Batch :</label>
+                                        @Html.DropDownList("Batchddl", new SelectList(ViewBag.AllBatchs, "DataListItemName", "DataListItemName"), "select", new { @id = "Batchddl", @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group stright_line">
+                                        <label>Search :</label><br />
+                                        <button type="submit" class="btn btn-success"> Filter Records </button>
+                                        <button type="button" onclick="GetAllStudentDetails()" class="btn btn-success"> Filter Records </button>
+
+                                    </div>
+                                </div>
+                            </div>
+                            </form>
+                        </div>
+                        <div class="col-sm-12" style="display:none;">
+                           *<div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label>Year :</label>
+                                        @Html.DropDownList("Yearddl", new SelectList(ViewBag.AllYears, "DataListItemName", "DataListItemName"), "select", new { @id = "Yearddl", @class = "form-control" })
+                                    </div>
+                                </div>
+                            <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label>Batch :</label>
+                                        @Html.DropDownList("Batchddl", new SelectList(ViewBag.AllBatchs, "DataListItemName", "DataListItemName"), "select", new { @id = "Batchddl", @class = "form-control" })
+                                    </div>
+                                </div>
+
+                            <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label>Course :</label>
+                                        @Html.DropDownList("Courseddl", new SelectList(ViewBag.AllCourses, "DataListItemName", "DataListItemName"), "select", new { @id = "Courseddl", @class = "form-control" })
+                                    </div>
+                                </div>
+
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>Class :</label>
+                                    @Html.DropDownList("Class", new SelectList(ViewBag.Classes, "DataListItemName", "DataListItemName"), "select", new { @id = "class", @class = "form-control" })
+                                </div>
+                            </div>
+
+                            <!-- col-sm-12 started -->
+
+
+                        </div>
+                        <div class="col-sm-12" style="display:none;">
+                            <input type="button" value=" Filter Student " id="FilterStudents" class=" pull-right btn btn-success" />
+
+                        </div>
+                    </div>
+                </div>*@
+            <div class="col-md-12">
+                <div class="panel panel-primary">
+                    <div class="panel-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                                    <div class="tab-content tab_sis">
+                                        <div id="Generalate" class="tab-pane fade in active">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="panel panel-primary">
+                                                        <div class="panel-body" style="height:auto;">
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <div class="box box-info">
+                                                                        <div class="row">
+                                                                            <div class="col-md-12">
+                                                                                <div class="col-md-5">
+                                                                                    @*<ol class="breadcrumb" role="navigation" style="background-color:#ffffff !important"><li class="breadcrumb-item active"></li></ol>*@
+                                                                                </div>
+                                                                                <div class="col-md-5">
+                                                                                    <input type="text" id="SearchTxt" class="o_searchview_input" accesskey="Q" placeholder="Search..." aria-haspopup="true" aria-keyshortcuts="Alt+Shift+Q" />
+                                                                                    <input type="hidden" id="isFilterPorC" />
+                                                                                    <input type="hidden" id="strFilterTypeData" />
+                                                                                    <input type="hidden" id="ageFilterGroupByData" />
+                                                                                </div>
+                                                                                <div class="col-md-2" id="clearfilterdiv" style="padding-bottom:10px; display:none">
+                                                                                    <button type="button" class="btn btn-primary" id="ClearFilter">Remove Filter ✘</button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row" style="margin-top:20px;">
+                                                                            <div class="col-lg-12">
+                                                                                <div class="col-lg-3">
+                                                                                    <div class="o_list_buttons" role="toolbar" aria-label="Main actions">
+                                                                                        <button type="button" class="btn btn-primary o_list_button_add" accesskey="c" data-original-title="" title="" aria-keyshortcuts="Alt+Shift+c" style="position: relative;">
+                                                                                            <a href="/Student/AddStudent" class="CreateButton"><i class="d-inline d-sm-none fa fa-plus" title="Create"></i><span class="d-none d-sm-inline">Create</span></a>
+                                                                                        </button>
+                                                                                        @*<div class="dropdown" id="Formation">*@
+                                                                                       
+                                                                                        @*</div>*@
+                                                                                        <button type="button" id="ExportMemberData" class="btn btn-secondary fa fa-download o_list_export_xlsx" title="Export All" accesskey="x" aria-keyshortcuts="Alt+Shift+X" >@*<a href="@Url.Action("ExportToExcel","Student")">Download</a>*@Download</button>
+
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-lg-9">
+                                                                                    <div class="col-lg-4">
+                                                                                        <div class="col-lg-2">
+                                                                                            <button type="button" class="btn btn-success" id="uploadMembersBtn">Upload</button>
+                                                                                            @*<input class="btn btn-success btn-sm" type="button" value="Upload" id="uploadMembersBtn" />*@
+                                                                                        </div>
+                                                                                        <div class="col-lg-2">
+                                                                                            <input class="" type="file" accept=".xlsx" id="uploadMembersfile" style="margin-left:30px;"/>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-lg-3" style="">
+                                                                                        <div class="o_pager">
+                                                                                            <span class="o_pager_counter">
+                                                                                                <span class="o_pager_value"><input id="startingid" class="numberonly" value="1" style="width:15%; border:none;" />-  <input id="LastId" class="numberonly" value="10" style="width:20%; border:none" /></span>/<span id="totalcount" class="o_pager_limit">@ViewBag.sudentcounts</span>
+
+                                                                                            </span>
+                                                                                            <button type="button" id="previousData"><</button>
+                                                                                            <button type="button" id="nextData">></button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-lg-2" style="">
+                                                                                        <button type="button" accesskey="1" class="btn btn-secondary fa fa-lg fa-list-ul o_cp_switch_list  active" aria-label="View list" data-view-type="list" title="" tabindex="-1" data-original-title="View list" aria-keyshortcuts="Alt+Shift+l" style="position: relative;"></button>
+                                                                                        <button type="button" class="btn btn-secondary fa fa-lg fa-bar-chart o_cp_switch_graph " aria-label="View graph" data-view-type="graph" title="" tabindex="-1" data-original-title="View graph"></button>
+                                                                                        <button type="button" class="btn btn-secondary fa fa-lg fa-table o_cp_switch_pivot " aria-label="View pivot" data-view-type="pivot" title="" tabindex="-1" data-original-title="View pivot"></button>
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <br />
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <input value="1" id="Dynamic_Checkbox" type="hidden" />
+                                                                            <div id="mySidenav" class="sidenav" style="">
+                                                                                <div style="border-style:solid">
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-1" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                S.No
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-2" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                StudentId
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-3" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                ApplicationNumber
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-4" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                UIN
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-5" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                Date
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-6" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                Name
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-7" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                Class
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-8" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                Section
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-9" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                Gender
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-10" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                LastName
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-11" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                Medium
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-12" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                Caste
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    @*<div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-13" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                AgeInWords
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>*@
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-14" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                DOB
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-15" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                POB
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-16" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                Nationality
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-17" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                Religion
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-18" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                MotherTongue
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-19" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                Category
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-20" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                BloodGroup
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    @*<div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-21" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                MedicalHistory
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>*@
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-22" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                Hobbies
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-23" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                Sports
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    @*<div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-24" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                OtherDetails
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>*@
+                                                                                    @*<div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-25" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                ProfileAvatar
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>*@
+                                                                                    @*<div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-26" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                MarkForIdentity
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>*@
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-27" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                AdharNo
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    @*<div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-28" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                AdharFile
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>*@
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-29" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                OtherLanguages
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    @*<div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-30" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                IsApplyforTC
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-31" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                IsApplyforAdmission
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>*@
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-32" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                IsApprove
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    @*<div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-33" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                IsActive
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-34" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                IsAdmissionPaid
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-35" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                IsInsertFromAd
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-36" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                RegNumber
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>*@
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-37" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                FatherName
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-38" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                MotherName
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-39" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                FMobile
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-40" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                MMobile
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-41" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                Parent's Email'
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row notdivhide">
+                                                                                        <div class="col-md-12">
+                                                                                            <div class="col-md-1">
+                                                                                                <input type="checkbox" checked id="checkbox-grid-42" class="notdivhide" />
+                                                                                            </div>
+                                                                                            <div class="col-md-9">
+                                                                                                Address
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-12">
+                                                                                <div id="PartialTable"></div>
+                                                                                <div id="statiscs" style="display:none">
+                                                                                    <!-- Modal -->
+
+
+
+                                                                                </div>
+                                                                                <div id="MembersViewList" style="display:none;border:1px solid black">
+                                                                                    <!-- Modal -->
+
+
+
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*   <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                        <!-- col-msx-12 started -->
+                        <!-- col-sm-12 closed -->
+                        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                            <!-- col-msx-12 started -->
+                            <div id="loadStudent">
+                                <table class="table table-responsive table-striped" style="width: 100%" id="Studenttbl">
+                                    <thead id="stdnttblhead">
+                                        <tr>
+                                            <th>Student ID</th>
+                                            <th>Name</th>
+                                            <th>Catogory</th>
+                                            <th>Class</th>
+                                            <th>Authorized By</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="stdnttblbody">
+                                        @foreach (var item in ViewBag.StudentList as IEnumerable<SchoolManagement.Website.ViewModels.StudentDetailVM>)
+                                        {
+                                            <tr>
+                                                <td>@item.StudentId</td>
+                                                <td>@item.StudentName</td>
+                                                <td>@item.Category</td>
+                                                <td>@item.Course</td>
+                                                <td>@item.Semester</td>
+                                                <td><a href="/Student/FullStudentView?id=@item.ScholarNumber">View</a>&nbsp&nbsp;<a href="/Student/AddStudent?UpdateId=@item.ScholarNumber ">Edit</a>&nbsp&nbsp;<a href="#" onclick="DeleleStudent(@item.StudentId)">Delete</a></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>*@
+        <!-- 1st row closed -->
+    </div>  <!-- /page content -->
+</div>
+
+@section Scripts{
+    @*<script src="~/Scripts/WebsiteJs/js/jquery.min.js"></script>*@
+    @*<script src="~/Scripts/jquery-3.3.1.js"></script>*@
+    @*<script src="~/Scripts/jquery-3.3.1.min.js"></script>*@
+    @*<script src="~/Scripts/jquery-ui.js"></script>*@
+    @*<script src="~/Scripts/bootstrap.min.js"></script>*@
+    <script src="~/Scripts/WebsiteJs/js/jquery.js"></script>
+    @*<script src="~/Scripts/WebsiteJs/js/jquery.min.js"></script>*@
+    <script src="https://cdn.datatables.net/1.11.0/js/jquery.dataTables.min.js" defer></script>
+    @*<script src="~/Scripts/WebsiteJs/js/custom.js" defer></script>*@
+    <script src="~/Scripts/DevelopmentJS/StudentDetails.js"></script>
+
+
+       
+
+    <script>
+
+        $(document).ready(function () {
+            GetGrid();
+            GetMembersViewList();
+
+            $("#checkedAll").change(function () {
+                if (this.checked) {
+                    $(".checkSingle").each(function () {
+                        this.checked = true;
+                    });
+                } else {
+                    $(".checkSingle").each(function () {
+                        this.checked = false;
+                    });
+                }
+            });
+
+            $("#example").DataTable({
+                dom: 'Bfrtip',
+                buttons: ['columnsToggle'],
+                searching: false,
+                paging: false,
+                info: false,
+                "order": [[1, "asc"]],
+                'columnDefs': [{
+                    'targets': [0, 4, 6, 7],
+                    'orderable': false,
+                }]
+            });
+
+        });
+
+        $(".numberonly").keypress(function (e) {
+            var charcode = (e.which) ? e.which : event.KeyCode
+
+            if (String.fromCharCode(charcode).match(/[^0-9]/g))
+
+                return false;
+        });
+
+
+        $("#checkbox-grid-1").on('click', function () {
+            if ($('input#checkbox-grid-1').prop('checked')) {
+                $(".hide-1").show();
+            } else {
+                $("#.hide-1").hide();
+            }
+        });
+        $("#checkbox-grid-2").on('click', function () {
+            if ($('input#checkbox-grid-2').prop('checked')) {
+                $(".hide-2").show();
+            } else {
+                $("#.hide-2").hide();
+            }
+        });
+        $("#checkbox-grid-3").on('click', function () {
+            if ($('input#checkbox-grid-3').prop('checked')) {
+                $(".hide-3").show();
+            } else {
+                $("#.hide-3").hide();
+            }
+        });
+        $("#checkbox-grid-4").on('click', function () {
+            if ($('input#checkbox-grid-4').prop('checked')) {
+                $(".hide-4").show();
+            } else {
+                $("#.hide-4").hide();
+            }
+        });
+        $("#checkbox-grid-5").on('click', function () {
+            if ($('input#checkbox-grid-5').prop('checked')) {
+                $(".hide-5").show();
+            } else {
+                $("#.hide-5").hide();
+            }
+        });
+        $("#checkbox-grid-6").on('click', function () {
+            if ($('input#checkbox-grid-6').prop('checked')) {
+                $(".hide-6").show();
+            } else {
+                $("#.hide-6").hide();
+            }
+        });
+        $("#checkbox-grid-7").on('click', function () {
+            if ($('input#checkbox-grid-7').prop('checked')) {
+                $(".hide-7").show();
+            } else {
+                $("#.hide-7").hide();
+            }
+        });
+        $("#checkbox-grid-8").on('click', function () {
+            if ($('input#checkbox-grid-8').prop('checked')) {
+                $(".hide-8").show();
+            } else {
+                $("#.hide-8").hide();
+            }
+        });
+        $("#checkbox-grid-9").on('click', function () {
+            if ($('input#checkbox-grid-9').prop('checked')) {
+                $(".hide-9").show();
+            } else {
+                $("#.hide-9").hide();
+            }
+        }); $("#checkbox-grid-10").on('click', function () {
+            if ($('input#checkbox-grid-10').prop('checked')) {
+                $(".hide-10").show();
+            } else {
+                $("#.hide-10").hide();
+            }
+        });
+        $("#checkbox-grid-11").on('click', function () {
+            if ($('input#checkbox-grid-11').prop('checked')) {
+                $(".hide-11").show();
+            } else {
+                $("#.hide-11").hide();
+            }
+        }); $("#checkbox-grid-12").on('click', function () {
+            if ($('input#checkbox-grid-12').prop('checked')) {
+                $(".hide-12").show();
+            } else {
+                $("#.hide-12").hide();
+            }
+        });
+        //$("#checkbox-grid-13").on('click', function () {
+        //    if ($('input#checkbox-grid-13').prop('checked')) {
+        //        $(".hide-13").show();
+        //    } else {
+        //        $("#.hide-13").hide();
+        //    }
+        //});
+        $("#checkbox-grid-14").on('click', function () {
+            if ($('input#checkbox-grid-14').prop('checked')) {
+                $(".hide-14").show();
+            } else {
+                $("#.hide-14").hide();
+            }
+        });
+        $("#checkbox-grid-15").on('click', function () {
+            if ($('input#checkbox-grid-15').prop('checked')) {
+                $(".hide-15").show();
+            } else {
+                $("#.hide-15").hide();
+            }
+        });
+        $("#checkbox-grid-16").on('click', function () {
+            if ($('input#checkbox-grid-16').prop('checked')) {
+                $(".hide-16").show();
+            } else {
+                $("#.hide-16").hide();
+            }
+        });
+        $("#checkbox-grid-17").on('click', function () {
+            if ($('input#checkbox-grid-17').prop('checked')) {
+                $(".hide-17").show();
+            } else {
+                $("#.hide-17").hide();
+            }
+        });
+        $("#checkbox-grid-18").on('click', function () {
+            if ($('input#checkbox-grid-18').prop('checked')) {
+                $(".hide-18").show();
+            } else {
+                $("#.hide-18").hide();
+            }
+        });
+        $("#checkbox-grid-19").on('click', function () {
+            if ($('input#checkbox-grid-19').prop('checked')) {
+                $(".hide-19").show();
+            } else {
+                $("#.hide-19").hide();
+            }
+        });
+        $("#checkbox-grid-20").on('click', function () {
+            if ($('input#checkbox-grid-20').prop('checked')) {
+                $(".hide-20").show();
+            } else {
+                $("#.hide-20").hide();
+            }
+        });
+        //$("#checkbox-grid-21").on('click', function () {
+        //    if ($('input#checkbox-grid-21').prop('checked')) {
+        //        $(".hide-21").show();
+        //    } else {
+        //        $("#.hide-21").hide();
+        //    }
+        //});
+        $("#checkbox-grid-22").on('click', function () {
+            if ($('input#checkbox-grid-22').prop('checked')) {
+                $(".hide-22").show();
+            } else {
+                $("#.hide-22").hide();
+            }
+        });
+        $("#checkbox-grid-23").on('click', function () {
+            if ($('input#checkbox-grid-23').prop('checked')) {
+                $(".hide-23").show();
+            } else {
+                $("#.hide-23").hide();
+            }
+        });
+        //$("#checkbox-grid-24").on('click', function () {
+        //    if ($('input#checkbox-grid-24').prop('checked')) {
+        //        $(".hide-24").show();
+        //    } else {
+        //        $("#.hide-24").hide();
+        //    }
+        //});
+        //$("#checkbox-grid-25").on('click', function () {
+        //    if ($('input#checkbox-grid-25').prop('checked')) {
+        //        $(".hide-25").show();
+        //    } else {
+        //        $("#.hide-25").hide();
+        //    }
+        //});
+        //$("#checkbox-grid-26").on('click', function () {
+        //    if ($('input#checkbox-grid-26').prop('checked')) {
+        //        $(".hide-26").show();
+        //    } else {
+        //        $("#.hide-26").hide();
+        //    }
+        //});
+        $("#checkbox-grid-27").on('click', function () {
+            if ($('input#checkbox-grid-27').prop('checked')) {
+                $(".hide-27").show();
+            } else {
+                $("#.hide-27").hide();
+            }
+        });
+        //$("#checkbox-grid-28").on('click', function () {
+        //    if ($('input#checkbox-grid-28').prop('checked')) {
+        //        $(".hide-28").show();
+        //    } else {
+        //        $("#.hide-28").hide();
+        //    }
+        //});
+        $("#checkbox-grid-29").on('click', function () {
+            if ($('input#checkbox-grid-29').prop('checked')) {
+                $(".hide-29").show();
+            } else {
+                $("#.hide-29").hide();
+            }
+        });
+        //$("#checkbox-grid-30").on('click', function () {
+        //    if ($('input#checkbox-grid-30').prop('checked')) {
+        //        $(".hide-30").show();
+        //    } else {
+        //        $("#.hide-30").hide();
+        //    }
+        //});
+        //$("#checkbox-grid-31").on('click', function () {
+        //    if ($('input#checkbox-grid-31').prop('checked')) {
+        //        $(".hide-31").show();
+        //    } else {
+        //        $("#.hide-31").hide();
+        //    }
+        //});
+        $("#checkbox-grid-32").on('click', function () {
+            if ($('input#checkbox-grid-32').prop('checked')) {
+                $(".hide-32").show();
+            } else {
+                $("#.hide-32").hide();
+            }
+        });
+        //$("#checkbox-grid-33").on('click', function () {
+        //    if ($('input#checkbox-grid-33').prop('checked')) {
+        //        $(".hide-33").show();
+        //    } else {
+        //        $("#.hide-33").hide();
+        //    }
+        //});
+        //$("#checkbox-grid-34").on('click', function () {
+        //    if ($('input#checkbox-grid-34').prop('checked')) {
+        //        $(".hide-34").show();
+        //    } else {
+        //        $("#.hide-34").hide();
+        //    }
+        //});
+        //$("#checkbox-grid-35").on('click', function () {
+        //    if ($('input#checkbox-grid-35').prop('checked')) {
+        //        $(".hide-35").show();
+        //    } else {
+        //        $("#.hide-35").hide();
+        //    }
+        //});
+        //$("#checkbox-grid-36").on('click', function () {
+        //    if ($('input#checkbox-grid-36').prop('checked')) {
+        //        $(".hide-36").show();
+        //    } else {
+        //        $("#.hide-36").hide();
+        //    }
+        //});
+        $("#checkbox-grid-37").on('click', function () {
+            if ($('input#checkbox-grid-37').prop('checked')) {
+                $(".hide-37").show();
+            } else {
+                $("#.hide-37").hide();
+            }
+        });
+        $("#checkbox-grid-38").on('click', function () {
+            if ($('input#checkbox-grid-38').prop('checked')) {
+                $(".hide-38").show();
+            } else {
+                $("#.hide-38").hide();
+            }
+        });
+        $("#checkbox-grid-39").on('click', function () {
+            if ($('input#checkbox-grid-39').prop('checked')) {
+                $(".hide-39").show();
+            } else {
+                $("#.hide-39").hide();
+            }
+        });
+        $("#checkbox-grid-40").on('click', function () {
+            if ($('input#checkbox-grid-40').prop('checked')) {
+                $(".hide-40").show();
+            } else {
+                $("#.hide-40").hide();
+            }
+        });
+        $("#checkbox-grid-41").on('click', function () {
+            if ($('input#checkbox-grid-41').prop('checked')) {
+                $(".hide-41").show();
+            } else {
+                $("#.hide-41").hide();
+            }
+        });
+        $("#checkbox-grid-42").on('click', function () {
+            if ($('input#checkbox-grid-42').prop('checked')) {
+                $(".hide-42").show();
+            } else {
+                $("#.hide-42").hide();
+            }
+        });
+
+
+
+
+
+
+        $("#startingid").on('focusout', function () {
+            var firstitem = $("#startingid").val();
+            var lastitem = $("#LastId").val();
+
+            if (firstitem != null && lastitem != null) {
+                GetGrid();
+            }
+        });
+
+
+        $("#LastId").on('focusout', function () {
+            var firstitem = $("#startingid").val();
+            var lastitem = $("#LastId").val();
+
+            if (firstitem != null && lastitem != null) {
+                GetGrid();
+            }
+
+        });
+
+        $("#SearchTxt").on('input', function () {
+            if ($("#example").is(":visible")) {
+                GetGrid();
+            }
+            if ($("#MembersViewList").is(":visible")) {
+                GetMembersViewList();
+            }
+        });
+
+        $("#previousData").on('click', function () {
+            var firstitem = $("#startingid").val();
+            var lasitem = $("#LastId").val();
+
+            if (firstitem != 1) {
+                $("#startingid").val(firstitem * 1 - 10);
+                $("#LastId").val(lasitem * 1 - 10);
+                if ($("#example").is(":visible")) {
+                    GetGrid();
+                }
+                if ($("#MembersViewList").is(":visible")) {
+                    GetMembersViewList();
+                }
+            }
+        });
+
+        $("#nextData").on('click', function () {
+            //
+            var firstitem = $("#startingid").val();
+            var lastitem = $("#LastId").val();
+
+            var totalcount = $("#totalcount").text();
+            if (lastitem <= totalcount) {
+                $("#startingid").val(firstitem * 1 + 10);
+                $("#LastId").val(lastitem * 1 + 10);
+
+                if ($("#example").is(":visible")) {
+                    GetGrid();
+                }
+                if ($("#MembersViewList").is(":visible")) {
+                    GetMembersViewList();
+                }
+
+            }
+        });
+
+        $(".o_cp_switch_graph").on('click', function () {
+            $("#example").hide();
+            $("#statiscs").show();
+            $("#MembersViewList").hide();
+            $("#formation").show();
+            $(".o_list_button_add").hide();
+            $(this).siblings().removeClass('active');
+            $(this).addClass('active');
+        });
+        $(".o_cp_switch_list").on('click', function () {
+            $("#example").show();
+            $("#statiscs").hide();
+            $("#MembersViewList").hide();
+            $("#formation").hide();
+            $(".o_list_button_add").show();
+            $(this).siblings().removeClass('active');
+            $(this).addClass('active');
+        });
+        $(".o_cp_switch_pivot").on('click', function () {
+            $("#example").hide();
+            $("#statiscs").hide();
+            $("#MembersViewList").show();
+            $(this).siblings().removeClass('active');
+            $(this).addClass('active');
+
+        });
+
+        function openNav() {
+            //
+            document.getElementById("mySidenav").style.width = "250px";
+        }
+
+        function closeNav() {
+            //
+            document.getElementById("mySidenav").style.width = "0";
+            var ListType = $('#Dynamic_Checkbox').val();
+            var checkedlist = '';
+            $('input[class=notdivhide]').each(function () {
+                var sThisVal = (this.checked ? $(this).val() : "");
+                if (sThisVal == 'on') {
+                    checkedlist += $(this).attr("id").replace('checkbox-grid-', '') + ',';
+                }
+            });
+            //alert(checkedlist);
+            var ListData = checkedlist.replace(/,\s*$/, "");
+            //alert(ListData);
+            jQuery.ajax({
+                url: '/Student/SetDynamicColumn',
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({ ListType: ListType, ListData: ListData }),
+                success: function (result) {
+
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                }
+            });
+        }
+
+        function closeNavExp() {
+            document.getElementById("mySidenav_Dynamic").style.width = "0";
+            var ListType = 3;
+            var checkedlist = '';
+            $('input[class=notdivhide2]').each(function () {
+                var sThisVal = (this.checked ? $(this).val() : "");
+                if (sThisVal == 'on') {
+                    checkedlist += $(this).attr("id").replace('checkbox-grid2-', '') + ',';
+                }
+            });
+            //alert(checkedlist);
+            var ListData = checkedlist.replace(/,\s*$/, "");
+            jQuery.ajax({
+                url: '/Student/SetDynamicColumn',
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({ ListType: ListType, ListData: ListData }),
+                success: function (result) {
+
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                }
+            });
+        }
+
+        $('body').click(function (evt) {
+            //alert(evt.target.id);
+            if (evt.target.id == "mySidenav")
+                return;
+            else if (evt.target.className == "notdivhide" || evt.target.className == "notdivhide2") {
+                return;
+            }
+
+            else if (document.getElementById("mySidenav").style.width == '250px') {
+                closeNav();
+                return;
+            }
+            //else if (evt.target.id == "ExportGrid") {
+            //    //$('#mySidenav_Dynamic2').toggle();
+            //    //closeNavExp();
+            //    return;
+            //}
+            else if (document.getElementById("mySidenav_Dynamic").style.width == '250px') {
+                //$('#mySidenav_Dynamic2').toggle();
+                closeNavExp();
+                return;
+            }
+            else {
+                //closeNav();
+                return;
+            }
+            //For descendants of menu_content being clicked, remove this check if you do not want to put constraint on descendants.
+            if ($(evt.target).closest('#menu_content').length)
+                return;
+
+            //Do processing of click event here for every element except with id menu_content
+
+        });
+
+        function GetGrid() {
+            //
+            var firstitem = $("#startingid").val();
+            var lastitem = $("#LastId").val();
+            var searchtxt = $("#SearchTxt").val();
+
+            //
+            jQuery.ajax({
+                url: "/Student/GetGrid_Student",
+                type: "POST",
+                contentType: "application/json; charset= utf-8",
+                data: JSON.stringify({ firstitem: firstitem, lastitem: lastitem, searchtxt: searchtxt }),
+                success: function (result) {
+                    //alert(result);
+                    $("#PartialTable").empty();
+                    $("#PartialTable").html(result);
+                },
+                error: function (er) {
+                    alert(er.statusText);
+                }
+            });
+        }
+
+        function GetMembersViewList() {
+            var firstItem = $("#startingid").val();
+            var lastItem = $("#LastId").val();
+            var SearchTxt = $("#SearchTxt").val();
+            jQuery.ajax({
+                url: '/Student/StudentViewList/?SearchTxt=' + SearchTxt + '&first=' + firstItem + '&last=' + lastItem,
+                type: "POST",
+                contentType: "application/json; charset=urf-8",
+                success: function (result) {
+                    $("#MembersViewList").empty();
+                    $("#MembersViewList").html(result);
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                }
+            });
+        }
+
+                    //$(document).ready(function () {
+                    //    
+                    //    var data = document.getElementById('PartialTable');
+                    //    alert(data);
+                    //})
+
+    </script>
+
+    <script>
+        $("#uploadMembersBtn").on('click', function () {
+            if (window.FormData !== undefined) {
+
+                var fileUpload = $("#uploadMembersfile").get(0);
+                var files = fileUpload.files;
+
+                // Create FormData object
+                var fileData = new FormData();
+
+                // Looping over all files and add it to FormData object
+                for (var i = 0; i < files.length; i++) {
+                    fileData.append(files[i].name, files[i]);
+                }
+
+                // Adding one more key to FormData object
+                //fileData.append('username', ‘Manas’);
+
+                $.ajax({
+                    url: '/ExcelWork/UploadStudentExcelFile',
+                    type: "POST",
+                    contentType: false, // Not to set any content header
+                    processData: false, // Not to process data
+                    data: fileData,
+                    success: function (result) {
+                        if (result == "1") {
+                            alert("Excel uploaded Successfully");
+                            window.location.reload();
+                        } else {
+                            alert("Some Error Occure");
+                        }
+                    },
+                    error: function (err) {
+                        alert(err.statusText);
+                    }
+                });
+            } else {
+                alert("FormData is not supported.");
+            }
+        });
+
+
+        $("#ExportMemberData").on('click', function () {
+            var firstItem = $("#startingid").val();
+            var lastitem = $("#LastId").val();
+            var SearchTxt = $("#SearchTxt").val();
+
+            window.location.href = "/Student/ExportStudentdata?firstItem=" + firstItem + "&lastitem=" + lastitem + "&SearchTxt=" + SearchTxt + "";
+            //$.ajax({
+            //    url: "/Student/ExportStudentdata",
+            //    type: "GET",
+            //    data: { firstItem: firstItem, lastitem: lastitem, SearchTxt: SearchTxt },
+            //    contentType: "application/json; charset=urf-8",
+            //    success: function (data) {
+            //        alert("Excel Downloaded");
+            //    },
+            //    error: function (errormessage) {
+            //        alert(errormessage.responseText);
+            //    }
+            //});
+
+        });
+
+
+    </script>
+
+
+}
+<style>
+    .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+        color: white;
+        background-color: #29b2e1;
+        border: 1px solid #dddddd;
+        border-bottom-color: transparent;
+        cursor: default;
+    }
+
+    .o_control_panel .breadcrumb {
+        font-size: 15px;
+    }
+
+    .o_control_panel .breadcrumb, .o_control_panel .o_cp_left {
+        -webkit-box-flex: 1;
+        -webkit-flex: 1 1 auto;
+        flex: 1 1 auto;
+    }
+
+        .o_control_panel .breadcrumb > li {
+            display: inline-block;
+            max-width: 90%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            vertical-align: top;
+        }
+
+    .breadcrumb-item.active {
+        color: #777777;
+    }
+
+    .o_searchview_input {
+        width: 100%;
+        border: none;
+        border-bottom: 1px solid #3b7495 !important;
+    }
+
+    .sidenav {
+        /*height: 1%;*/
+        width: 0;
+        position: absolute;
+        z-index: 1;
+        top: 0;
+        right: 0;
+        background-color: #fff;
+        overflow-x: hidden;
+        transition: 0.5s;
+        padding-top: 0px;
+    }
+
+        .sidenav a {
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #818181;
+            display: block;
+            transition: 0.3s;
+        }
+
+            .sidenav a:hover {
+                color: #f1f1f1;
+            }
+
+        .sidenav .closebtn {
+            position: absolute;
+            top: 0;
+            left: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+        }
+
+    .CreateButton:hover {
+        color: white;
+    }
+
+    .CreateButton {
+        color: white;
+    }
+    /*.table tr {
+            cursor: pointer;
+        }
+
+        .hiddenRow {
+            padding: 0 4px !important;
+            background-color: #eeeeee;
+            font-size: 13px;
+        }*/
+    .provinceCount {
+        display: none;
+    }
+
+    /*.panel.panel-primary {
+        border-top-color: #1b1e24;
+    }*/
+
+    .panel .panel-body {
+        padding: 15px;
+        position: relative;
+    }
+
+    .container-fluid {
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+
+
+    .row {
+        margin-right: -15px;
+        margin-left: -15px;
+    }
+
+    .tab_sis {
+        border: 1px solid #eee;
+        padding: 15px;
+    }
+
+    .tab-content > .active {
+        display: block;
+    }
+
+    div.box {
+        /*height: 700px;*/
+        padding: 10px;
+        overflow: auto;
+        border: 1px solid #111112;
+        /*background-color: #E5E5FF;*/
+    }
+    /*.panel {
+        border: -3px solid transparent;
+    }*/
+</style>

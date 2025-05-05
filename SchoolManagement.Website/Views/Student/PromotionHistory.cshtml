@@ -1,0 +1,301 @@
+﻿
+@{
+    ViewBag.Title = "PromotionHistory";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4> Promotions History &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Class:</label>
+                                @*@Html.DropDownList("Yearddl", new SelectList(ViewBag.AllYears, "DataListItemName", "DataListItemName"), "select", new { @id = "Yearddl", @class = "form-control" })*@
+                                <select class="form-control" id="Yearddl">
+                                    <option>---Select Class---</option>
+                                    @foreach (var item in ViewBag.Classes as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                    {
+                                        <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Section :</label>
+                                @*@Html.DropDownList("Yearddl", new SelectList(ViewBag.AllYears, "DataListItemName", "DataListItemName"), "select", new { @id = "Yearddl", @class = "form-control" })*@
+                                <select class="form-control" id="Sectionddl">
+                                    <option>--- Select Section---</option>
+                                    @foreach (var item in ViewBag.Section as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                    {
+                                        <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Btach :</label>
+                                <select class="form-control" id="ClassId">
+                                    <option value="0">---Select Batch ---</option>
+                                    @foreach (var item in ViewBag.AllBatchs as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                    {
+                                        <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>From Date</label>
+                                <input type="text" readonly class="form-control datepicker" id="FromDate" />
+                            </div>
+
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>To Date</label>
+                                <input type="text" readonly class="form-control datepicker" id="Todate" />
+                            </div>
+                        </div>
+
+                        @*<div class="col-sm-3">
+            <div class="form-group">
+                <label>Batch :</label>
+                @Html.DropDownList("Batchddl", new SelectList(ViewBag.AllBatchs, "DataListItemName", "DataListItemName"), "select", new { @id = "Batchddl", @class = "form-control" })
+                <select class="form-control" id="Batchddl">
+                    <option>---Select Batch---</option>
+                    @foreach (var item in ViewBag.AllBatchs as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                    {
+                        <option value="@item.DataListItemId">@item.DataListItemName</option>
+                    }
+                </select>
+            </div>
+        </div>*@
+
+                        @*<div class="col-sm-3">
+            <div class="form-group">
+                <label>Course :</label>
+                @Html.DropDownList("Courseddl", new SelectList(ViewBag.AllCourses, "DataListItemName", "DataListItemName"), "select", new { @id = "Courseddl", @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label>Semister :</label>
+                @Html.DropDownList("Class", new SelectList(ViewBag.Classes, "DataListItemName", "DataListItemName"), "select", new { @id = "class", @class = "form-control" })
+            </div>
+        </div>*@
+
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-3" style="margin-top:20px;">
+                            <input type="button" value=" Filter Student " id="FilterpastStudents" class=" pull-right btn btn-success" />
+
+                        </div>
+
+                        @*<div class="col-sm-3">
+            <input type="file" accept=".xlsx" id="UploadPaststudent" />
+            <input type="button" value="upload" id="BtnStudentUpload" />
+        </div>*@
+
+                    </div>
+                   
+                    @*<div class="col-sm-8">
+                    Filter By Semester  @Html.DropDownList("Class", new SelectList(ViewBag.Classes, "DataListItemName", "DataListItemName"), "select", new { @id = "classFilter", @class = "form-control" })
+                </div>*@<!--row x_title closed -->
+                </div><!-- dashboard_graph closed-->
+            </div><!--col-msx-12 closed-->
+            <div class="row">
+                <!-- row started -->
+                <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                    <!-- col-msx-12 started -->
+                    <!-- col-sm-12 closed -->
+                    <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                        <!-- col-msx-12 started -->
+
+                        <table class="table table-responsive table-striped" style="width: 100%" id="PromotionHistoryTbl">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>From Class</th>
+                                    <th>To Class</th>
+                                    <th>To Section</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody id="PromotionHistoryBody">
+                                @*@{ 
+                                    foreach(var item in ViewBag.PaststudentHistory as IEnumerable<SchoolManagement.Data.Models.Tbl_StudentPromote>)
+                                    {
+                                        <tr>
+                                            <td>@item.PromoteId</td>
+                                            <td>@item.Firstname</td>
+                                            <td>@item.Lastname</td>
+                                            <td>@item.FromClass</td>
+                                        </tr>
+                                    }
+                                }*@
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- col-msx-12  closed -->
+                </div>
+                <!-- col-msx-12  closed -->
+            </div>
+        </div>
+    </div>
+</div>    
+
+<script>
+
+    $(document).ready(function () {
+        var html = "";
+        $.ajax({
+            url: "/Student/FilterStudent",
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json;charset=utf-8",
+            success: function (result) {
+                //alert(result);
+                if (result != null) {
+                    for (var i = 0; i < result.length; i++) {
+                        html += "<tr>";
+                        html += "<td>" + result[i].PromoteId + "</td>";
+                        html += "<td>" + result[i].Firstname + "</td>";
+                        html += "<td>" + result[i].Lastname + "</td>";
+                        html += "<td>" + result[i].FromClass + "</td>";
+                        html += "<td>" + result[i].ToClass + "</td>";
+                        html += "<td>" + result[i].ToSection + "</td>";
+                    }
+                    $("#PromotionHistoryBody").empty();
+                    $("#PromotionHistoryBody").html(html);
+
+                    $("#PromotionHistoryTbl").DataTable();
+                    //loaddatatable();
+                }
+            },
+            error: function (errormessage) {
+                alert(errormessage.errormessage);
+            }
+        });
+
+    });
+
+
+
+
+    $("#BtnStudentUpload").on('click', function () {
+        if (window.FormData !== undefined) {
+
+            var fileUpload = $("#UploadPaststudent").get(0);
+            var files = fileUpload.files;
+
+            // Create FormData object
+            var fileData = new FormData();
+
+            // Looping over all files and add it to FormData object
+            for (var i = 0; i < files.length; i++) {
+                fileData.append(files[i].name, files[i]);
+            }
+
+            // Adding one more key to FormData object
+            //fileData.append('username', ‘Manas’);
+
+            $.ajax({
+                url: '/ExcelWork/UploadPastStudentExcelFile',
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                data: fileData,
+                success: function (result) {
+                    if (result == "1") {
+                        alert("Excel uploaded Successfully");
+                        window.location.reload();
+                    } else {
+                        alert("Some Error Occure");
+                    }
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                }
+            });
+        } else {
+            alert("FormData is not supported.");
+        }
+    });
+
+    $("#FilterpastStudents").on('click', function () {
+
+        var classid = $("#Yearddl").val();
+        var Fromdate = $("#FromDate").val();
+        var Todate = $("#Todate").val();
+        var Section = $("#Sectionddl").val();
+        if (classid == 0 || Fromdate == null || Todate == null || Fromdate == "" || Todate == "" || Section == "") {
+            alert("Please Select Class, Fromdate and Todate");
+        }
+        else {
+            var html = "";
+            $.ajax({
+                url: "/Student/FilterPastStudent",
+                data: { classid: classid, Fromdate: Fromdate, Todate: Todate, section:section },
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json;charset=utf-8",
+                success: function (result) {
+                    //alert(result);
+                    if (result != null) {
+                        for (var i = 0; i < result.length; i++) {
+                            html += "<tr>";
+                            html += "<td>" + result[i].PromoteId + "</td>";
+                            html += "<td>" + result[i].Firstname + "</td>";
+                            html += "<td>" + result[i].Lastname + "</td>";
+                            html += "<td>" + result[i].FromClass_Id + "</td>";
+                        }
+                        //$("#PromotionHistoryTbl").DataTable().fnClearTable();
+                        $("#PromotionHistoryTbl").DataTable().destroy();
+                        //$("#PromotionHistoryTbl").dataTable({
+                        //    "destroy": true,
+                        //    // ... skipped ...
+                        //});
+                        $("#PromotionHistoryBody").empty();
+                        $("#PromotionHistoryBody").html(html);
+
+                        $("#PromotionHistoryTbl").DataTable();
+
+                        //loaddatatable();
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.errormessage);
+                }
+            });
+        }
+
+    });
+
+    function loaddatatable() {
+        if ($.fn.DataTable.isDataTable('#PromotionHistoryTbl')) {
+            $('#PromotionHistoryTbl').DataTable().destroy();
+        }
+
+        $("#PromotionHistoryTbl").DataTable({
+            "autoWidth": true,
+            "scrollX": true
+        });
+    }
+
+</script>

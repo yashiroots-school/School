@@ -1,0 +1,400 @@
+﻿
+@{
+    ViewBag.Title = "PrintAdmitCard";
+    Layout = null;
+}
+
+<style>
+      @@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+    * {
+        margin: 0px;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #f0f5ff;
+        padding: 20px;
+    }
+    .admit-card {
+      
+            width: 210mm;
+            min-height: 297mm;
+            background: white;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            padding: 12mm;
+            position: relative;
+            border: 1px solid #ccc;
+            margin-top:500px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #1a3c6c;
+            padding-bottom: 10px;
+        }
+
+        .logo-container {
+            width: 80px;
+            height: 80px;
+            border: 2px solid #1a3c6c;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+            background: #f0f7ff;
+        }
+
+        .logo-placeholder {
+            color: #1a3c6c;
+            font-size: 12px;
+            text-align: center;
+            padding: 5px;
+        }
+
+        .school-info {
+            flex: 1;
+            text-align: center;
+        }
+
+        .school-name {
+            font-size: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            line-height: 1.2;
+            color: #1a3c6c;
+        }
+
+        .school-address {
+            font-size: 13px;
+            margin-top: 3px;
+        }
+
+        .school-contact {
+            font-size: 14px;
+            margin-top: 3px;
+            font-weight: 500;
+            color: #1a3c6c;
+        }
+
+        .admit-card-title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: 700;
+            margin: 15px 0;
+            text-decoration: underline;
+            color:  #1a3c6c;
+        }
+
+        .student-details-container {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .student-info {
+            flex: 3;
+            border-collapse: collapse;
+        }
+
+        .student-info td {
+            padding: 6px 10px;
+            vertical-align: top;
+        }
+
+        .student-info tr td:first-child {
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .student-photo {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .photo-placeholder {
+            width: 100px;
+            height: 120px;
+            border: none;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .photo-text {
+            font-size: 12px;
+            color: #555;
+            text-align: center;
+        }
+
+        .exam-schedule {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+
+        .exam-schedule th, .exam-schedule td {
+            border: 1px solid #000;
+            padding: 8px 5px;
+            text-align: center;
+        }
+
+        .exam-schedule th {
+            background-color: #7da3da;
+            color: white;
+            font-weight: 600;
+        }
+
+        .exam-schedule tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .instructions {
+            margin-top: 20px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .instructions h3 {
+            text-decoration: underline;
+            margin-bottom: 8px;
+            font-size: 15px;
+            color: #1a3c6c;
+        }
+
+        .instructions ol {
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 5px;
+            text-align: justify;
+        }
+
+        .signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 0 30px;
+        }
+
+        .signature-box {
+            text-align: center;
+            width: 200px;
+            border-top: 1px solid #000;
+            padding-top: 5px;
+            font-weight: 500;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            border-top: 1px solid #000;
+            padding-top: 5px;
+            color: #1a3c6c;
+        }
+
+        .watermark {
+            position: absolute;
+            opacity: 0.1;
+            font-size: 120px;
+            transform: rotate(-45deg);
+            top: 40%;
+            left: 15%;
+            z-index: -1;
+            color: #2b61ad;
+            font-weight: bold;
+            pointer-events: none;
+        }
+
+        @@media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .admit-card {
+                box-shadow: none;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                border: none;
+                margin-top: 80px;
+            }
+
+            .watermark {
+                opacity: 0.05;
+            }
+        }
+</style>
+
+        <div class="admit-card">
+            <div class="watermark">ST. PAUL'S SCHOOL</div>
+
+            <div class="header">
+                <div class="logo-container">
+                    <div class="logo-placeholder">SCHOOL LOGO</div>
+                </div>
+                <div class="school-info">
+                    <div class="school-name">ST. PAUL'S SCHOOL RAWATBHATA</div>
+                    <div class="school-address">A UNIT OF THE CATHOLIC DIOCESAN EDUCATION SOCIETY OF UDAIPUR UNITED CHURCH CAMPUS, RAWATBHATA, CHITTORGARH-323307</div>
+                    <div class="school-contact">01475-233649</div>
+                </div>
+            </div>
+
+            <div class="admit-card-title">ADMIT CARD<br>FOR PER. TEST 1 (2025-2026)</div>
+
+            <div class="student-details-container">
+                <table class="student-info">
+                    <tr>
+                        <td>Scholar No.</td>
+                        <td>: 2284/24</td>
+                        <td style="width: 0%;"></td>
+                        <td>Roll No.</td>
+                        <td>:</td>
+                    </tr>
+                    <tr>
+                        <td>Student's Name</td>
+                        <td>: KRITESH SUTHAR/   KRITESH SUTHAR</td>
+                    </tr>
+                    <tr>
+                        <td>Father's Name</td>
+                        <td>: NITESH SUTHAR</td>
+                    </tr>
+                    <tr>
+                        <td>Mother's Name</td>
+                        <td>: SURBHI</td>
+                    </tr>
+                    <tr>
+                        <td>Class and Sec.</td>
+                        <td>: FIRST B</td>
+                        <td></td>
+                        <td>DOB</td>
+                        <td>: 29-Oct-2018</td>
+                    </tr>
+                </table>
+
+                <div class="student-photo">
+                    <div class="photo-placeholder">
+                        Student Photo
+                    </div>
+                    <div class="photo-text">Affix recent passport size photo</div>
+                </div>
+            </div>
+
+            <table class="exam-schedule">
+                <thead>
+                    <tr>
+                        <th>S. No.</th>
+                        <th>Subject</th>
+                        <th>Exam Date</th>
+                        <th>Exam Time</th>
+                        <th>Sign.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>MATHS-WRITTEN</td>
+                        <td>14-Jul-2025</td>
+                        <td>7:45 am - 8:30 am</td>
+                        <td>blue</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>ENGLISH I-WRITTEN</td>
+                        <td>15-Jul-2025</td>
+                        <td>7:45 am - 8:30 am</td>
+                        <td>blue</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>ENGLISH II-WRITTEN</td>
+                        <td>16-Jul-2025</td>
+                        <td>7:45 am - 8:30 am</td>
+                        <td>blue</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>SCIENCE-WRITTEN</td>
+                        <td>17-Jul-2025</td>
+                        <td>7:45 am - 8:30 am</td>
+                        <td>blue</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>HINDI I-WRITTEN</td>
+                        <td>18-Jul-2025</td>
+                        <td>7:45 am - 8:30 am</td>
+                        <td>blue</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>HINDI II-WRITTEN</td>
+                        <td>19-Jul-2025</td>
+                        <td>7:45 am - 8:30 am</td>
+                        <td>blue</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>G. K.-ORAL</td>
+                        <td>21-Jul-2025</td>
+                        <td>7:45 am - 10:30 am</td>
+                        <td>blue</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>COMP. SCIENCE-WRITTEN</td>
+                        <td>22-Jul-2025</td>
+                        <td>7:45 am - 8:30 am</td>
+                        <td>blue</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>MORAL SCIENCE-WRITTEN</td>
+                        <td>23-Jul-2025</td>
+                        <td>7:45 am - 8:30 am</td>
+                        <td>blue</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="instructions">
+                <h3>Instructions for the students</h3>
+                <ol>
+                    <li>All the students must be present in the school premises before 7.30 am.</li>
+                    <li>Clear all your dues before the examinations begin.</li>
+                    <li>The written exam begins at 7.45 am till 08.30 am.</li>
+                    <li>No Student will be allowed to go home after the exam. Classes will continue as usual</li>
+                    <li>Late corners will not be allowed to write the exam.</li>
+                </ol>
+            </div>
+
+            <div class="signatures">
+                <div class="signature-box">Class Teacher</div>
+                <div class="signature-box">Principal's Signature</div>
+            </div>
+
+            <div class="footer">
+                ST PAUL'S SCHOOL RAWATBHATA/ADMIT CARD/2025-2026
+            </div>
+        </div>
+  

@@ -1,0 +1,603 @@
+﻿
+@{
+    ViewBag.Title = "PFCalculation";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <ul class="nav nav-tabs">
+
+                <li class="active"><a data-toggle="tab" href="#add" class="sis_tab_a">Salary Details</a></li>
+                <li><a data-toggle="tab" href="#add1" class="sis_tab_a click">Arrear & Deductions </a></li>
+                <li><a data-toggle="tab" href="#add2" class="sis_tab_a click_1">Deductions</a></li>
+
+            </ul>
+
+            <form @*action="/Staf/AddPFCalculation"*@ method="post" id="Salaryform" enctype="multipart/form-data">
+                <div class="tab-content">
+                    <div id="add" class="tab-pane fade in active">
+
+                        <h4 class="std_head well-sm">  Salary Calculation</h4>
+                        <div class="col-sm-12">
+                            <div class="col-sm-4">
+                                <label>Select Staff:</label>
+                                <select class="form-control" style="margin-bottom:10px;" id="GetStaffData">
+                                    <option value="0">---Select Staff---</option>
+                                    @{
+                                        foreach (var item in ViewBag.StaffDetails as IEnumerable<SchoolManagement.Data.Models.StafsDetails>)
+                                        {
+                                            <option value="@item.StafId">@item.Name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-sm-4">
+                                <label>Select Date:</label>
+                                <div class="form-group">
+                                    <input type="text" class="form-control datepicker" id="FromDate" name="Added_Date" readonly />
+                                </div>
+                            </div>
+                            <div class="col-sm-4" style="margin-top:20px">
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-success" id="BtnFileter">Filter</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="col-sm-12" style="border-right:1px solid #eee;">
+                                <div class="form-group">
+                                    <input type="hidden" id="Summary_Id" name="Summary_Id" />
+                                    <input type="hidden" id="Category_Id" name="Category_Id" />
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Staff Name</label>
+                                        <input type="text" id="Staff_Name" name="Staff_Name" class="form-control" />
+                                    </div>
+                                    <div class="form-group">
+                                        <div>
+                                            <label>Gross:</label>
+                                            <input type="text" id="Gross" name="Gross" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div>
+                                            <label>DA:</label>
+                                            <input type="text" id="DA" name="DA" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div>
+                                            <label>HRA:</label>
+                                            <input type="text" id="HRA" name="HRA" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div>
+                                            <label>CCA:</label>
+                                            <input type="text" id="CCA" name="CCA" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div>
+                                            <label>Employer Contribution:</label>
+                                            <input type="text" id="Employer_Contribution" name="Employer_Contribution" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div>
+                                            <label>LOP:</label>
+                                            <input type="text" id="LOP" name="LOP" class="form-control" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div>
+                                            <label>Net Pay:</label>
+                                            <input type="text" id="Net_Pay" name="Net_Pay" class="form-control" />
+                                            <input type="hidden" id="netamt" name="NetPay" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div>
+                                            <label>Attendance Percentage:</label>
+                                            <input type="text" id="TotalPercentage" name="TotalPercentage" class="form-control" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div>
+
+                                            <label> <input type="radio" id="WithLOP" value="LOP" checked />LOP</label>
+
+                                            <label> <input type="radio" id="WithoutLOP" value="WithoutLOP" /> Without Lop </label>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-sm-6">
+
+                                    <div class="form-group">
+                                        <div>
+                                            <label>Employee Code:</label>
+                                            <input type="text" id="Staff_Id" name="Staff_Id" class="form-control" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div>
+                                            <label>Basic:</label>
+                                            <input type="text" id="Basic_Salary" name="Basic_Salary" class="form-control" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div>
+                                            <label>PF:</label>
+                                            <input type="text" id="PF" name="PF" class="form-control" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div>
+                                            <label>Professional Tax:</label>
+                                            <input type="text" id="Professional_Tax" name="Professional_Tax" class="form-control" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div>
+                                            <label>ESI:</label>
+                                            <input type="text" id="ESI" name="ESI" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div>
+                                            <label>Other Allowances</label>
+                                            <input type="text" id="OtherALlowance" name="OtherALlowance" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div>
+                                            <label>No Of Days Present:</label>
+                                            <input type="text" id="NoOfdayspresent" name="NoOfdayspresent" class="form-control" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+                            <table class="table table-bordered" id="TblSalary" style="margin-top:5px;">
+                                <thead>
+                                    <tr>
+                                        <th>Staff Name</th>
+                                        <th>Staff ID</th>
+                                        <th>Gross</th>
+                                        <th>DA</th>
+                                        <th>PF</th>
+                                        <th>ESI</th>
+                                        <th>LOP</th>
+                                        <th>Net Pay</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int i = 1;
+                                        foreach (var item in ViewBag.summarydetails as IEnumerable<SchoolManagement.Website.Models.Tbl_AccountSummary>)
+                                        {
+                                            <tr>
+
+                                                <td>@item.Staff_Name</td>
+                                                <td>@item.Staff_Id</td>
+                                                <td>@item.Gross</td>
+                                                <td>@item.DA</td>
+                                                <td>@item.PF</td>
+                                                <td>@item.ESI</td>
+                                                <td>@item.LOP</td>
+                                                <td>@item.Net_Pay</td>
+                                            </tr>
+                                            i++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                    </div>
+
+                    <div id="add1" class="tab-pane fade">
+                        <h4 class="std_head well-sm">  Arrears & Deductions</h4>
+                        <div class="col-sm-12">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <div>
+                                        <label>Arrear(Yes/No)</label>
+                                        <select class="form-control" id="Arrear" name="Arrear">
+                                            <option value="No">No</option>
+                                            <option value="Yes">Yes</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="display:none" id="arreardiv">
+                                    <div>
+                                        <label>Arrear Amount:</label>
+                                        <input type="number" id="ArrearAmt" name="Arrear_Amt" class="form-control" />
+                                    </div>
+                                </div>
+                                @*<div class="form-group">
+                                        <div>
+                                            <label>Deductions</label>
+                                            <input type="number" id="Deductions" name="Deduction_Amt" class="form-control" />
+                                        </div>
+                                    </div>*@
+                                <div class="form-group">
+                                    <label>Remarks:</label>
+                                    <textarea class="form-control" id="ArrearRemarks" name="Arrear_remarks"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>Select Date</label>
+                                    <input type="text" id="arreardate" class="form-control datepicker" name="Pastarreardate" />
+                                </div>
+                                <div class="form-group" style="display:none" id="pastarreraramtdiv">
+                                    <label>Past Arrear Amount</label>
+                                    <input type="number" id="pastarrearamt" class="form-control" name="Pastarrearamt" />
+                                    <input type="hidden" id="hiddenarrearamt" />
+                                </div>
+                                <div class="form-group" style="display:none" id="parstdeductiondiv">
+                                    <label>Past Deductions Amount</label>
+                                    <input type="number" id="pastdeductionsamt" class="form-control" name="Pastdeductionamt" />
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" id="checkarrear" class="btn btn-success pull-right">Check</button>
+                                </div>
+
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="col-sm-12">
+                            <div>
+                                <table class="table table-bordered" id="Arreartable">
+                                    <thead>
+                                        <tr>
+                                            <th>S.No</th>
+                                            <th>Name</th>
+                                            <th>Arrear Amt</th>
+                                            <th>Deduction Amt</th>
+                                            <th>Date</th>
+                                            <th>Remarks</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            var j = 1;
+                                            foreach (var item in ViewBag.ArrearDetails as IEnumerable<SchoolManagement.Data.Models.Tbl_Arrear>)
+                                            {
+                                                <tr>
+                                                    <td>@j</td>
+                                                    <td>@item.Staff_Name</td>
+                                                    <td>@item.Arrear_Amt</td>
+                                                    <td>@item.Deduction_Amt</td>
+                                                    <td>@item.Added_Day</td>
+                                                    <td>@item.Remarks</td>
+                                                </tr>
+                                                j++;
+
+                                            }
+                                        }
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="add2" class="tab-pane fade">
+                        <h4 class="std_head well-sm">  Deductions</h4>
+                        <div class="col-sm-12">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <div>
+                                        <label>Deductions</label>
+                                        <input type="number" id="Deductions" name="Deduction_Amt" class="form-control" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Remarks:</label>
+                                    <textarea id="Deductionremarks" class="form-control" name="DeductionRemarks"></textarea>
+                                </div>
+                                <div class="form-group" style="text-align:right">
+                                    <button type="submit" class="btn btn-success" id="BtnSave">Save</button>
+                                </div>
+                            </div>
+
+                        </div>
+                        <hr />
+                        <div class="col-sm-12">
+                            <div>
+                                <table class="table table-bordered" id="DeductionForm">
+                                    <thead>
+                                        <tr>
+                                            <th>S.No</th>
+                                            <th>Name</th>
+                                            <th>Deduction Amount</th>
+                                            <th>Date</th>
+                                            <th>Remarks</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            var k = 1;
+                                            foreach (var item in ViewBag.DeductinDetails as IEnumerable<SchoolManagement.Data.Models.Tbl_Deductions>)
+                                            {
+                                                <tr>
+                                                    <td>@k</td>
+                                                    <td>@item.Staff_Name</td>
+                                                    <td>@item.Deduction_Amt</td>
+                                                    <td>@item.AddedDate</td>
+                                                    <td>@item.Remarks</td>
+                                                </tr>
+                                                k++;
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+
+
+    </div>
+</div>
+
+
+<script>
+
+    $("#TblSalary").DataTable();
+
+    $("#WithLOP").on('click', function () {
+        $("#WithoutLOP").attr('checked', false);
+    });
+
+    $("#WithoutLOP").on('click', function () {
+        $("#WithLOP").attr('checked', false);
+    });
+
+    $("#BtnFileter").on('click', function () {
+
+        var staffid = $("#GetStaffData").val();
+        var Fromdate = $("#FromDate").val();
+        var checkid = "";
+        var checked = "";
+
+        checked = $("#WithLOP").prop('checked');
+
+        if (checked == true) {
+            checkid = 1;
+            if (staffid == 0 || Fromdate == "") {
+                alert("Please Select Staff and Year");
+            } else {
+                $.ajax({
+                    url: "/Account/FileterPF",
+                    data: { id: staffid, Date: Fromdate, checkid: checkid },
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json;charset=utf-8",
+                    success: function (result) {
+                        //alert(result.)
+                        $("#Staff_Name").val(result.Staff_Name);
+                        $("#Gross").val(result.Gross);
+                        $("#DA").val(result.DA);
+                        $("#Employer_Contribution").val(result.Employer_Contribution);
+                        $("#LOP").val(result.LOP);
+                        $("#Net_Pay").val(result.NetPay);
+                        $("#Staff_Id").val(result.Staff_Id);
+                        $("#Basic_Salary").val(result.BasicSalary);
+                        $("#PF").val(result.PF);
+                        $("#Professional_Tax").val(result.Professional_Tax);
+                        $("#ESI").val(result.ESI);
+                        $("#HRA").val(result.HRA);
+                        $("#CCA").val(result.CCA);
+                        $("#OtherALlowance").val(result.OtherAllowance);
+                        $("#NoOfdayspresent").val(result.Noofdayspresent);
+                        $("#TotalPercentage").val(result.TotalPercentage);
+                        $("#Category_Id").val(result.Category_ID);
+                        $("#netamt").val(result.NetPay);
+                        $("#ArrearAmt").val(0);
+                        //$("#pastarrearamt").val(result.Arrear_Amt);
+                        //$("#hiddenarrearamt").val(result.Arrear_Amt);
+
+                    }
+                });
+            }
+        }
+        else {
+            checkid = 0;
+            //alert(staffid);
+            if (staffid == 0 || Fromdate == "") {
+                alert("Please Select Staff and Year");
+            } else {
+                $.ajax({
+                    url: "/Account/FileterPF",
+                    data: { id: staffid, Date: Fromdate, checkid: checkid },
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json;charset=utf-8",
+                    success: function (result) {
+
+                        $("#Staff_Name").val(result.Staff_Name);
+                        $("#Gross").val(result.Gross);
+                        $("#DA").val(result.DA);
+                        $("#Employer_Contribution").val(result.Employer_Contribution);
+                        $("#LOP").val(result.LOP);
+                        $("#Net_Pay").val(result.NetPay);
+                        $("#Staff_Id").val(result.Staff_Id);
+                        $("#Basic_Salary").val(result.BasicSalary);
+                        $("#PF").val(result.PF);
+                        $("#Professional_Tax").val(result.Professional_Tax);
+                        $("#ESI").val(result.ESI);
+                        $("#HRA").val(result.HRA);
+                        $("#CCA").val(result.CCA);
+                        $("#OtherALlowance").val(result.OtherAllowance);
+                        $("#NoOfdayspresent").val(result.Noofdayspresent);
+                        $("#TotalPercentage").val(result.TotalPercentage);
+                        $("#Category_Id").val(result.Category_ID);
+                        $("#netamt").val(result.NetPay);
+                        $("#ArrearAmt").val(0);
+                        //$("#Arrear_Amt").val(result.Arrear_Amt);
+                        //$("#hiddenarrearamt").val(result.Arrear_Amt);
+                    }
+                });
+            }
+        }
+    });
+
+
+
+
+    $("#BtnSave").on('click', function () {
+        var FromDate = $("#FromDate").val();
+        var GetStaffData = $("#GetStaffData").val();
+
+        console.log("fromdate", FromDate);
+
+        if (FromDate != null && FromDate != "" && GetStaffData != 0) {
+            $("#Salaryform").attr("action", "/Staf/AddPFCalculation");
+        }
+        else {
+            alert("Please select Date and Staffname");
+        }
+
+    });
+
+
+    $("#Deductions").on("input", function () {
+        var deductamt = $(this).val();
+        var totalamit = $("#Net_Pay").val();
+        console.log("Netpay", totalamit);
+        console.log("deductionsamt", deductamt);
+        if (deductamt == 0) {
+            var amt = $("#netamt").val();
+            $("#Net_Pay").val(amt);
+            console.log("deductamt0", amt);
+        }
+        else {
+            //console.log("Deductions", deductamt);
+            var neramount = $("#netamt").val();
+            var totaldeductions = Number(neramount) - Number(deductamt);
+            $("#Net_Pay").val(totaldeductions);
+            deductamt = 0;
+            console.log("totaldeductionsamt", totaldeductions);
+        }
+
+    });
+
+
+    $("#Arrear").on('click', function () {
+        var arrear = $(this).val();
+        var neramount = $("#netamt").val();
+
+        if (arrear == "Yes") {
+            $("#arreardiv").show();
+            $("#ArrearAmt").val(neramount);
+            $("#Net_Pay").val(0);
+
+        }
+        else {
+            $("#arreardiv").hide();
+            $("#ArrearAmt").val(0);
+            $("#Net_Pay").val(neramount);
+        }
+    });
+
+    $("#ArrearAmt").on("input", function () {
+        var arrearamt = $(this).val();
+
+        if (arrearamt == 0) {
+            var amt = $("#netamt").val();
+            $("#Net_Pay").val(amt);
+            //console.log("deductamt0", amt);
+        }
+        else {
+            var neramount = $("#netamt").val();
+            var totaldeductions = Number(neramount) - Number(arrearamt);
+            $("#Net_Pay").val(totaldeductions);
+
+        }
+
+
+    });
+
+    pastdeductionsamt
+    $("#pastarrearamt").on("input", function () {
+        var pastarrearamt = $(this).val();
+        var hiddenarrearamt = $("#hiddenarrearamt").val();
+        var amt = $("#netamt").val();
+        if (pastarrearamt == 0) {
+            $("#Net_Pay").val(Number(amt) + Number(hiddenarrearamt));
+            $("#pastdeductionsamt").val(0);
+            //$("#pastarrearamt").val(hiddenarrearamt);
+        }
+        else {
+            var totalamt = Number(hiddenarrearamt) - Number(pastarrearamt);
+            $("#pastdeductionsamt").val(totalamt);
+            $("#Net_Pay").val(Number(pastarrearamt) + Number(amt));
+            var pastdeductionamt = $("#pastdeductionsamt").val();
+
+            $("#pastarrearamt").val(pastarrearamt);
+            if (pastdeductionamt == hiddenarrearamt) {
+                $("#pastarrearamt").val(0);
+                $("#pastdeductionsamt").val(0);
+            }
+        }
+
+    });
+
+
+    $("#checkarrear").on('click', function () {
+        var arreardate = $("#arreardate").val();
+        var staffid = $("#GetStaffData").val();
+        console.log("arreardate", arreardate);
+
+        if (staffid == 0)
+            return false;
+        if (arreardate == "")
+            return false;
+
+        $.ajax({
+            url: "/Staf/CheckArrear",
+            data: { date: arreardate, stafid: staffid },
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                if (data != 0) {
+                    $("#pastarreraramtdiv").show();
+                    $("#parstdeductiondiv").show();
+                    $("#pastarrearamt").val(data);
+                    $("#hiddenarrearamt").val(data);
+                    $("#pastdeductionsamt").val(0);
+                }
+                else {
+                    alert("No Arrear Amount");
+                }
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+
+    });
+
+</script>

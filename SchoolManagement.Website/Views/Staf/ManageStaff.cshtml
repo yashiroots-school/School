@@ -1,0 +1,107 @@
+﻿
+@{
+    ViewBag.Title = "ManageStaff";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<style>
+    .myAlert-bottom {
+        position: fixed;
+        bottom: 5px;
+        left: 2%;
+        width: 96%;
+    }
+
+    div.fullscreen {
+        position: absolute;
+        width: 100%;
+        height: 960px;
+        top: 0;
+        left: 0;
+        background-color: lightblue;
+    }
+
+    .alert {
+        display: none;
+    }
+</style>
+<!-- page content -->
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4>  Manage Staff   &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6">
+                            <button class="btn btn-info pull-right"><a href="/Staf/AddStaf" class="button_a">Add New</a></button>
+                            <button class="btn btn-danger pull-right"><a href="/Staf/ViewStaff" class="button_a">View All</a></button>
+                        </div>
+
+                        <div class="col-sm-7" style="margin-top: 15px;">
+                            <div class="col-sm-6">
+
+                                <div class="form-group">
+                                    <label class="control-label col-sm-4">Filter by :</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" id="sel1">
+                                            @*@Html.DropDownList("StafDetails.EmpId", ViewBag.EmpId as SelectList, "Select", new { @class = "form-control" })*@
+                                            @*@Html.DropDownList("EmpId", new SelectList(ViewBag.EmpId, "EmpId", "EmpId"), "select", new { @id = "EmpId", @class = "form-control" })*@
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div id="custom-search-input">
+                                    <div class="input-group col-md-12">
+                                        <input type="text" class="form-control input-sm" placeholder="Search" />
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-info btn-sm" type="button" id="FilterStaff">
+                                                <i class="glyphicon glyphicon-search"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-5" style="margin-top: 15px;">
+                            <h5>Total No Of Teachers : @ViewBag.totalEmp</h5>
+                        </div>
+                    </div><!-- col-sm-12 closed -->
+                </div><!--row x_title closed -->
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+
+        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+            <table class="table table-bordered" id="Stafftbl">
+                <thead>
+                    <tr>
+                        <th style="color: white;">Employee ID</th>
+                        <th style="color: white;">Name</th>
+                        <th style="color: white;">Qualification</th>
+                        <th style="color: white;">Gender</th>
+                        <th style="color: white;">Date of Employment</th>
+                      
+                        <th style="color: white;">Edit / Delete</th>
+                    </tr>
+                </thead>
+                <tbody id="stafftblbody"></tbody>
+
+            </table>
+        </div><!-- 1st row closed -->
+    </div><!-- 1st row closed -->
+</div>
+
+
+@section Scripts{
+    <script src="~/Scripts/DevelopmentJS/StaffDetails.js"></script>
+}
+

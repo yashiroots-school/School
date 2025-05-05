@@ -1,0 +1,160 @@
+﻿@model IEnumerable<SchoolManagement.Data.Models.Classrooms>
+@{
+    ViewBag.Title = "ClassRoomSetup1";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6">
+                            <h4> Class Room Setup  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+
+        <div class="col-sm-12" style="margin-top: 15px;">
+            <h4 class="std_head well-sm">Class Room Setup</h4>
+            <div class="col-sm-3"></div>
+            <form method="post" action="/MastersSetup/ClassroomSetup" id="ClassroomSetup" enctype="multipart/form-data">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Class Name :</label>
+                        <input type="hidden" id="Id" name="Id" class="form-control" />
+                        @Html.DropDownList("className", new SelectList(ViewBag.Class, "DataListItemName", "DataListItemName"), "select", new { @id = "className", @class = "form-control" })
+                    </div>
+
+                    <div class="form-group">
+                        <label>Room No : </label>
+                        @Html.DropDownList("RoomNo", new SelectList(ViewBag.RoomNo, "DataListItemName", "DataListItemName"), "select", new { @id = "RoomNo", @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        <label>Room Type : </label>
+                        @Html.DropDownList("RoomType", new SelectList(ViewBag.RoomType, "DataListItemName", "DataListItemName"), "select", new { @id = "RoomType", @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        <label>Seating Capacity :</label>
+                        <input type="text" class="form-control" id="Seatingcapacity" name="Seatingcapacity">
+                    </div>
+                    <div class="form-group">
+                        <label>Location / Land Mark :</label>
+                        <input type="text" class="form-control" id="Location" name="Location">
+                    </div>
+                    <div class="form-group">
+                        <label>Remarks :</label>
+                        <textarea type="text" class="form-control" id="Remarks" name="Remarks"></textarea>
+                    </div>
+                    <div class="col-sm-8" style="margin-top:20px;">
+                    <button type="submit" class="btn btn-success pull-right" value="Submit Form" id="btnsave">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+            <!-- col-msx-12 started -->
+            <table class="table table-bordered" id="tblclasess" style="margin-top:5px;">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Class</th>
+                        <th>Room No.</th>
+                        <th>Room Type</th>
+                        <th>Seating Capacity</th>
+                        <th>Location / Land Mark </th>
+                        <th>Remarks </th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int i = 1; }
+                    @foreach (var item in ViewBag.Classrooms as IEnumerable<SchoolManagement.Data.Models.Classrooms>)
+                    {
+                        <tr>
+                            <td>@i</td>
+                            <td>@item.className</td>
+                            <td>@item.RoomNo</td>
+                            <td>@item.RoomType</td>
+                            <td>@item.Seatingcapacity</td>
+                            <td>@item.Location</td>
+                            <td>@item.Remarks</td>
+                            <td><button class="btn btn-success btn-sm EditBtn" data-val="@item.Id" role="button">Edit</button> <button id="@item.Id" class="btn btn-danger btn-sm deleteBtn" data-val="@item.Id" role="button">Delete</button></td>
+                        </tr>
+                        i++;
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    <script type="text/javascript">
+        $('#tblclasess').DataTable();
+    </script>
+
+    <script type="text/javascript">
+        $(".EditBtn").on('click', function () {
+            var Id = $(this).attr("data-val");
+            GetClassroomSetupById(Id);
+
+        });
+        function GetClassroomSetupById(Id) {
+            $.ajax({
+                url: "/MastersSetup/GetClassroomSetupById?id=" + Id,
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    
+                    $('#ClassroomSetup').attr('action', '/MastersSetup/UpdateClassroomSetup');
+                    $("#btnsave").val("Update");
+                    if (result != null) {
+                        $("#Id").val(result.Id);
+                        $("#Seatingcapacity").val(result.Seatingcapacity);
+                        $("#Location").val(result.Location);
+                        $("#Remarks").val(result.Remarks);
+                        $('#className option[value="' + result.className + '"]').attr("selected", "selected");
+                        $('#className').val(result.className).change();
+
+                        $('#RoomNo option[value="' + result.RoomNo + '"]').attr("selected", "selected");
+                        $('#RoomNo').val(result.RoomNo).change();
+
+                        $('#RoomType option[value="' + result.RoomType + '"]').attr("selected", "selected");
+                        $('#RoomType').val(result.RoomType).change();
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+        $(".deleteBtn").on('click', function () {
+            var Id = $(this).attr("data-val");
+            $.ajax({
+                url: "/MastersSetup/DeleteClassroomSetup?id=" + Id,
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    
+                    alert(result);
+                    window.location.reload();
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        });
+    </script>
+}
+

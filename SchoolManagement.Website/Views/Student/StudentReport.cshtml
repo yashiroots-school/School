@@ -1,0 +1,362 @@
+﻿
+
+@{
+    ViewBag.Title = "StudentReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+
+
+
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4> Student Report &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label>Select Class</label>
+                                <select class="form-control" id="ClassId">
+                                    <option value="0">---Select Class---</option>
+                                    @foreach (var item in ViewBag.Classes as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                    {
+                                        <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label>Select Section</label>
+                                <select class="form-control" id="SectionId">
+                                    <option value="0">---Select Section---</option>
+                                    @foreach (var item in ViewBag.Sections as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                    {
+                                        <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label>Select Year :</label>
+                                @Html.DropDownList("Batches", ViewBag.BatcheNames as SelectList, "---Select Year---", new { @id = "Batches", @class = "form-control" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2">
+                            @*<label>Select Admission Process</label>*@
+                            <label>
+                                Admission Process
+                            </label>
+                            <select class="form-control" id="SelectProcess">
+                                <option value="0">---select Process---</option>
+                                @{
+                                    foreach (var item in ViewBag.Admissionprocess as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                    {
+                                        <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-sm-2" style="margin-top:20px;">
+                            <div class="form-group">
+                                @*<button type="button" id="FilterStudentsReport" cla></button>*@
+                                <input type="button" value=" Filter Student " id="FilterStudentsReport" class=" btn btn-success" />
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="col-sm-2" style="margin-top:20px">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-info" id="Exportotexcel">Download</button>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- dashboard_graph closed-->
+            </div><!--col-msx-12 closed-->
+            <div class="row">
+                <!-- row started -->
+                <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                    <!-- col-msx-12 started -->
+                    <!-- col-sm-12 closed -->
+                    <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                        <!-- col-msx-12 started -->
+
+                        <table class="table table-responsive table-striped" style="width: 100%" id="StudentReportTbl">
+                            <thead>
+                                <tr>
+                                    <th>Scholar No</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th> Class</th>
+                                    <th> Section</th>
+                                    <th>Parents Email</th>
+                                    @*<th>Blood Group</th>
+                                        <th>Admission Process</th>
+                                        <th>DOB</th>*@
+                                    <th>FMobile</th>
+                                    <th>FName</th>
+                                    <th>MMobile</th>
+                                    <th>MName</th>
+                                    <th>Action</th>
+
+                                </tr>
+                            </thead>
+                            <tbody id="StudentReportTblBody">
+                                @{
+                                    foreach (var item in ViewBag.StudentDetails as IEnumerable<SchoolManagement.Website.ViewModels.AllStudentDetailsViewModel>)
+                                    {
+                                        <tr>
+
+                                            <td>@item.ScholarNo</td>
+                                            <td>@item.Name</td>
+                                            <td>@item.Last_Name</td>
+                                            <td>@item.Class</td>
+                                            <td>@item.Section</td>
+                                            <td>@item.ParentEmail</td>
+                                            @*<td>@item.BloodGroup</td>
+                                                <td>@item.BatchName</td>
+                                                <td>@item.DOB</td>*@
+                                            <td>@item.FMobile</td>
+                                            <td>@item.FatherName</td>
+                                            <td>@item.MMobile</td>
+                                            <td>@item.MotherName</td>
+
+                                            <td class="row-data">
+                                                @{
+                                                    if (item.Editpermission == "true")
+                                                    {
+                                                        <a href="/Student/UdateStudentDetails?Id=@item.StudentRegisterID&routingid=1">Edit</a>
+                                                    }
+                                                    if (item.ViewPermission == "true")
+                                                    {
+                                                        <a href="/Student/FullStudentView?id=@item.StudentRegisterID">View</a>
+                                                    }
+                                                    <!--if (item.DeletePermission == "true")
+                                                    {
+                                                        //<a href="/Student/DeleteStudent?id=@item.StudentRegisterID">Delete</a>-->
+                                                        @*<a href='' onclick='DeleteStudent(@item.StudentRegisterID)'>Delete</a>*@
+                                                    <!--}-->
+                                                    @*<a href="/Student/Deletestudentdata?id=@item.StudentRegisterID">Delete</a>*@
+
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- col-msx-12  closed -->
+                </div>
+                <!-- col-msx-12  closed -->
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+<script>
+
+    // $("#StudentReportTbl").DataTable();
+    var table = $("#StudentReportTbl").DataTable({
+        "dom": '<"d-flex justify-content-between align-items-center"lBf>rtip',
+        "buttons": [
+
+            {
+                extend: 'excelHtml5',
+                text: 'Excel',
+                className: 'btn btn-info',
+                exportOptions: {
+                    columns: ':visible', // Export only visible columns
+                    modifier: {
+                        search: 'applied' // Export only filtered data
+                    }
+                }
+            }
+        ],
+        "order": [], // Disable default sorting
+        "columnDefs": [
+            { "targets": 0, "searchable": true, "orderable": false } // Disable sorting for the first column (scholar number)
+        ]
+    });
+    $("#FilterStudentsReport").on('click', function () {
+
+        var StudentRegMasterModel = {};
+
+        var classid = $("#ClassId").val();
+        var batch = $("#Batches").val();
+        var admissionprocessid = $("#SelectProcess").val();
+        var sectionid = $("#SectionId").val();
+
+
+        if (classid == 0 && sectionid == 0 && batch == "" && admissionprocessid != 0) {
+
+            alert("Please Select Class Year and section");
+            //window.location.reload();
+        }
+        else if (classid == 0 && sectionid == 0 && batch == "" && admissionprocessid == 0) {
+            alert("Please Select Class Year Section or Admission Process");
+            //window.location.reload();
+        }
+        else {
+            //var html = "";
+            //StudentRegMasterModel.Class = $("#ClassId").val();
+            //StudentRegMasterModel.SectionId = $("#SectionId").val();
+            //StudentRegMasterModel.SectionId = $("#Batches").val();
+
+            var html = "";
+            var StudentRegFilterModel = {};
+            StudentRegFilterModel.ClassId = $("#ClassId").val();
+            StudentRegFilterModel.BatchId = $("#Batches").val();
+            StudentRegFilterModel.AdmissionProcessId = $("#SelectProcess").val();
+            StudentRegFilterModel.SectionId = $("#SectionId").val();
+            $.ajax({
+                url: "/Student/FileterStudentReport",
+                data: JSON.stringify(StudentRegFilterModel),
+                //data: { id: classid, Date: Date },
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json;charset=utf-8",
+                success: function (result) {
+                    console.log(result)
+                    //alert(result);
+                    if (result != null) {
+                        for (var i = 0; i < result.length; i++) {
+                            html += "<tr>";
+                            html += "<td>" + result[i].ScholarNo + "</td>";
+                            html += "<td>" + result[i].Name + "</td>";
+                            html += "<td>" + result[i].Last_Name + "</td>";
+                            html += "<td>" + result[i].Class + "</td>";
+                            html += "<td>" + result[i].Section + "</td>";
+                            html += "<td>" + result[i].ParentEmail + "</td>";
+                            //html += "<td>" + result[i].BloodGroup + "</td>";
+                            //html += "<td>" + result[i].BatchName + "</td>";
+                            //html += "<td>" + result[i].DOB + "</td>";
+                            html += "<td>" + result[i].FMobile + "</td>";
+                            html += "<td>" + result[i].FatherName + "</td>";
+                            html += "<td>" + result[i].MMobile + "</td>";
+                            html += "<td>" + result[i].MotherName + "</td>";
+                            //html += "<td>" + result[i].StudentRegisterID + "</td>";
+                            //html += "<td>" + result[i].Section + "<td>";
+                            html += "<td class='row-data'>";
+                            if (result[i].Editpermission == "true") {
+                                html += "<a href='/Student/UdateStudentDetails?Id=" + result[i].StudentRegisterID + "&routingid=1'>Edit</a>";
+                            }
+                            if (result[i].ViewPermission == "true") {
+                                html += "<a href='/Student/FullStudentView?id=" + result[i].StudentRegisterID + "&routingid=1'>View</a>";
+                            }
+                            //if (result[i].Deletepermission == "true") {
+                            //    html += "<a href='/Student/DeleteStudent?Id=" + result[i].StudentRegisterID + "&routingid=1'>Delete</a>";
+                            //}
+                            if (result[i].Deletepermission == "true") {
+                                html += "<a href='' onclick='DeleteStudent(" + result[i].StudentRegisterID + ")'>Delete</a>";
+                            }
+                            html += "</td>";
+                            //html += '<td class="row-data"><a href="/Student/UdateStudentAdmissionDetails?Id=' + result[i].StudentRegisterID + '">Edit</a><a href="/Student/FullStudentView?id=' + result[i].StudentRegisterID + '">View</a></td>';
+
+                            html += "</tr>";
+                        }
+
+                        //$("#PromotionHistoryTbl").DataTable().fnClearTable();
+                        $("#StudentReportTbl").DataTable().destroy();
+                        //$("#PromotionHistoryTbl").dataTable({
+                        //    "destroy": true,
+                        //    // ... skipped ...
+                        //});
+                        $("#StudentReportTblBody").empty();
+                        $("#StudentReportTblBody").html(html);
+                        var table = $("#StudentReportTbl").DataTable({
+                            "dom": '<"d-flex justify-content-between align-items-center"lBf>rtip',
+                            "buttons": [
+
+                                {
+                                    extend: 'excelHtml5',
+                                    text: 'Excel',
+                                    className: 'btn btn-info',
+                                    exportOptions: {
+                                        columns: ':visible', // Export only visible columns
+                                        modifier: {
+                                            search: 'applied' // Export only filtered data
+                                        }
+                                    }
+                                }
+                            ],
+                            "order": [], // Disable default sorting
+                            "columnDefs": [
+                                { "targets": 0, "searchable": true, "orderable": false } // Disable sorting for the first column (scholar number)
+                            ]
+                        });
+                        //$("#ClassId").val('');
+                        //$("#FromDate").val('');
+                        //$("#SelectProcess").val('');
+                        //loaddatatable();
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.errormessage);
+                }
+            });
+        }
+
+    });
+
+
+    $("#Exportotexcel").on('click', function () {
+
+        var classid = $("#ClassId").val();
+        //var Date = $("#FromDate").val();
+        var sectionid = $("#SectionId").val();
+        var batch = $("#Batches").val();
+        if (classid == 0 || sectionid == 0) {
+            alert("Please Select Class Section and Year");
+        }
+        else {
+            //debugger
+            window.location.href = "/Student/ExportStudentToExcelReport?Classid=" + classid + "&Sectionid=" + sectionid + "&BatchId=" + batch;
+
+            //window.location.href = "/Student/ExportStudentToExcelReport?Classid=" + classid + "&Sectionid&=" + sectionid;
+        }
+
+    });
+
+    function DeleteStudent(id) {
+        $.ajax({
+            url: '/Student/DeleteStudent?id=' + id,
+            type: 'GET',
+            success: function (result) {
+                if (result.message === "Student Deleted Successfully") {
+                    window.location.reload()
+                } else {
+                    alert(result.message);
+                }
+            },
+            error: function () {
+                // alert("An error occurred.");
+            }
+        });
+    }
+
+</script>

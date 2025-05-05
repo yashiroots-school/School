@@ -1,0 +1,579 @@
+﻿@{
+    ViewBag.Title = "RolePermissions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="col-sm-3">
+            <label>Select Role :</label>
+            @Html.DropDownList("UserRole", new SelectList(ViewBag.Roles, "Value", "Text"), new { @class = "form-control" })
+        </div>
+
+        <div class="col-sm-12">
+            <h4 class="well-sm">Student</h4>
+            <div class="col-sm-3">
+                <div class="checkbox">
+                    <label><input type="checkbox" value="/Dashboard/Dashboard" name="Student Dashboard" data-val="1" id="StudentDashboard">Student Dashboard</label>
+                </div>
+            </div><!-- col-sm-6 closed -->
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Fee/FeeDetails" name="Fee Details" data-val="1" id="FeeDetails">Fee Details</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Student/AddStudent" name="Student Register" data-val="1" id="StudentRegistration">Student Registration</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Student/ManageStudent" name="Manage Student" data-val="1" id="StudentManage">Student Manage</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Student/StudentReport" name="Student Report" data-val="1" id="StudentManage">StudentReport</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Student/Promotions" name="Promotions" data-val="1" id="Promotions">Promotions</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Student/PromotionsReport" name="Promotions Report" data-val="1" id="PromotionsReport">Promotions Report</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/StudentAdmission/StudentAdmission" name="Student Admission Process" data-val="1" id="StudentAdmissionProcess">Student Admission</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Student/ExistingStudentAdmissionProcess" name="Existing Student Admission Process" data-val="1" id="ExistingStudentAdmissionProcess">Existing Student Admission</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Student/PromotionHistory" name="PromotionHistory" data-val="1" id="PromotionHistory">Promotion History</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/AdmissionFee/ApplyTC" name="ApplyTC" data-val="1" id="ApplyTC">Apply TC</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Student/StudentAtendance</a>" data-val="3" name=" Student Attendance " id="Attendanceupdate">Student Attendance </label>
+                    </div>
+                </div>
+            </div><
+        </div>
+
+        <div class="col-sm-12">
+            <h4 class="well-sm">Exam</h4>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Exam/ExamTimeTable" name="Exam Time Table" data-val="2" id="ExamTimeTable">Exam TimeTable</label>
+                    </div>
+                </div>
+            </div><!-- col-sm-6 closed -->
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Result/ResultUpdate" name="Result Update" data-val="2" id="ResultUpdate">Result Update</label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-sm-12">
+            <h4 class="well-sm">Attendance</h4>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Student/StudentAtendance</a>" data-val="3" name=" Student Attendance " id="Attendanceupdate">Student Attendance </label>
+                    </div>
+                </div>
+            </div><!-- col-sm-6 closed -->
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Student/Attendanceupdate" data-val="3" name="Attendance Update" id="Attendanceupdate">Attendance update</label>
+                    </div>
+                </div>
+            </div><!-- col-sm-6 closed -->
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Account/StaffAttendance" data-val="5" name="StaffAttendance" id="StaffAttendance">Staff Attendance</label>
+                    </div>
+                </div>
+            </div><!-- col-sm-6 closed -->
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Account/ViewStaffAttendence" data-val="5" name="ViewStaffAttendence" id="ViewStaffAttendence">ViewStaffAttendence</label>
+                    </div>
+                </div>
+            </div><!-- col-sm-6 closed -->
+        </div>
+        <div class="col-sm-12">
+            <h4 class="well-sm">Account</h4>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Account/AccountReports" data-val="3" name="Account Reports" id="AccountReports">Account reports</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Payroll/payroles" name="pay Roles" data-val="3" id="payroles">payroles</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-12">
+            <h4 class="well-sm">Staff</h4>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Exam/StaffExamtimetable" data-val="5" name="Manage Exam Time table" id="ExamTimetable">Exam Time Table</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Staf/AddStaf" data-val="5" name="Staff Register" id="StaffRegister">Staff Register</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Staf/ManageStaff" data-val="5" name="Manage Staff" id="ManageStaff">Manage Staff</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Account/CreateEmployeeLogin" data-val="5" name="Staff Login" id="Staff Login">Staff Login</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <h4 class="well-sm">Reception</h4>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/FeeCollect/FeeCollection" data-val="6" name="Fee Collection" id="FeeCollection">Fee collection</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Payment/PaymentProcessResultSummary" data-val="6" name="Payment Process Result Summary" id="PaymentProcessResultSummary">Payment Process Result Summary</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Payment/PaymentProcessSuccessSummary" data-val="6" name="Payment Process Success Summary" id="PaymentProcessSuccessSummary">Payment Process Success Result Summary</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <h4 class="well-sm">Administrators</h4>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/AdmissionFee/FeeHeadingsList" data-val="6" name="Fee Headings List" id="FeeHeadingsList">Fee Headings List</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/AdmissionFee/ConfigureFeePlanes" data-val="6" name="Configure Fee Planes" id="ConfigureFeePlanes">Configure Fee Planes</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/AdmissionFee/FeeReceipts" name="Fee Receipts" data-val="6" id="FeeReceipts">Fee Receipts</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/AdmissionFee/AllReceipts" data-val="6" name="All Receipts" id="AllReceipts">All Receipts</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/AdmissionFee/FeeReportsByClass" data-val="6" name="Fee Reports By Class" id="FeeReportsByClass">Fee Reports By Class</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/AdmissionFee/AllFeeReports" data-val="6" name="All Fee Reports" id="AllFeeReports">All Fee Reports</label>
+                    </div>
+                </div>
+            </div>
+          
+        </div>
+        <div class="col-sm-12">
+            <h4 class="well-sm">Transport Fee</h4>
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/TransportFee/TransportFeeHeadingsList" data-val="10" name="Transport Fee Headings List" id="TransportFeeHeadingsList">TransportFee Headings List</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/TransportFee/TransportFeeConfiguration" data-val="10" name="Transport Fee Configuration" id="ConfigureTransportFeePlanes">Configure TransportFee Planes</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/TransportFee/TransportConfigureFeePlanes" name="Transport Fee Configure Planes" data-val="10" id="TransportFeeReceipts">Transport Fee Configure Planes</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/TransportFee/TransportFeeReceipts" data-val="10" name="Transport Fee Receipts" id="AllReceipts">Transport Fee Receipts</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/TransportFee/AllTransportReceipts" data-val="10" name="All Transport Receipts" id="AllReceipts">All Transport Receipts</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/TransportFee/AllTransportReport" data-val="10" name="Transport Reports" id="Transportreport">All Transport Reports</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/AdmissionFee/AllTransportFeeReports" data-val="10" name="All TransportFee Reports" id="AllTransportFeeReports">All TransportFee Reports</label>
+                    </div>
+                </div>
+            </div>
+            @*<div class="col-sm-3">
+            <div class="form-group">
+                <div class="checkbox">
+                    <label><input type="checkbox" value="/AdmissionFee/FeeReportsByClass" data-val="6" name="Fee Reports By Class" id="FeeReportsByClass">Fee Reports By Class</label>
+                </div>
+            </div>
+        </div>*@
+            @*<div class="col-sm-3">
+            <div class="form-group">
+                <div class="checkbox">
+                    <label><input type="checkbox" value="/AdmissionFee/AllFeeReports" data-val="10" name="All TransportFee Reports" id="AllTransportFeeReports">All TransportFee Reports</label>
+                </div>
+            </div>
+        </div>*@
+        </div>
+        <div class="col-sm-12">
+            <h4 class="well-sm">User Credentials</h4>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/UserCredentials/ManageUsers" data-val="7" name="Manage Users" id="ManageUsers">Manage Users</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/UserCredentials/RolePermissions" data-val="7" name="Role Permissions" id="RolePermissions">Role Permissions</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/UserCredentials/RolePermissionnew" data-val="7" name="Role Permissionsnew" id="RolePermissionsnew">Role Permissionsnew</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <h4 class="well-sm">Master</h4>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Master/DataList" data-val="9" name="Data List" id="DataList">Data List</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Master/DataListItem" data-val="9" name="Data List Item" id="DataListItem">Data List Item</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Master/TableBatches" data-val="9" name="BatchSetup" id="Batchsetup">Batch Setup</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Payment/CreateSchool" data-val="9" name="SchoolSetup" id="Schoolsetup">School Setup</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <h4 class="well-sm">Time Table</h4>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Master/SetTimeTable" data-val="12" name="Set TimeTable" id="Settimetable">Set TimeTable</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Master/ViewTimeTable" data-val="12" name="View TimeTable" id="ViewTimeTable">View TimeTable</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Master/ManageTimeTable" data-val="12" name="Manage TimeTable" id="ManageTimeTable">Manage TimeTable</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <h4 class="well-sm">Home Work</h4>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Master/TableAssignment" data-val="13" name="Add Assignment" id="AddAssignment">Add Assignment</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Master/ViewAssignment" data-val="13" name="View Assignment" id="ViewAssignment">View Assignment</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Master/ManageAssignment" data-val="13" name="Manage Assignment" id="ManageAssignment">Manage Assignment</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Master/TableRevision" data-val="13" name="Set New" id="ViewRevision">Set New</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Master/ViewRevision" data-val="13" name="View Assignment" id="ViewRevision">View All</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Master/ManageRevision" data-val="13" name="Manage Assignment" id="ManageRevision">Manage </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <h4 class="well-sm">Messages</h4>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/SMSandEmail/SMSandEmailNotification" data-val="11" name="SendEmailNotification" id="SendEmailNotification">Send Email Notification</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/SMSandEmail/Sendusernamepassword" data-val="11" name="SendUsernamepassword" id="SendUsernamePassword">Send UsernamePassword</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/SMSandEmail/EmailReport" data-val="11" name="EmailRseport" id="Emailreport">Email Report</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <h4 class="well-sm">Payroll</h4>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Account/BasicpayMaster" data-val="15" name="BasicpayMaster" id="BasicpayMaster" />BasicpayMaster</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Account/AccountType" data-val="15" name="AccountType" id="AccountType" />AccountType</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Account/StaffCategory" data-val="15" name="StaffCategory" id="StaffCategory" />StaffCategory</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Account/BasicPay" data-val="15" name="BasicPay" id="BasicPay" />BasicPay</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Account/StaffSalary" data-val="15" name="StaffSalary" id="StaffSalary" />StaffSalary</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Account/PFCalculation" data-val="15" name="PFCalculation" id="PFCalculation" />PFCalculation</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Account/PFCalculation" data-val="15" name="PFCalculation" id="PFCalculation" />PFCalculation</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Account/PFCalulationSummary" data-val="15" name="PFCalulationSummary" id="PFCalulationSummary" />PFCalulationSummary</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Account/SalaryStatement" data-val="15" name="SalaryStatement" id="SalaryStatement" />SalaryStatement</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Account/EPFStatement" data-val="15" name="EPFStatement" id="EPFStatement" />EPFStatement</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="/Account/GeneratePayslip" data-val="15" name="GeneratePayslip" id="GeneratePayslip" />GeneratePayslip</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+      
+        <div class="col-sm-12" style="border-top:2px solid #ededed;">
+            <div class="form-group">
+                <div class="checkbox">
+                    <input type="button" class="btn btn-success pull-right" id="SaveUpBtn" value="Save" />
+                </div>
+            </div>
+        </div>
+    </div>
+     
+</div>
+
+@section scripts{
+    <script src="~/Scripts/RolePermissionJs/RolePermissions.js"></script>
+}

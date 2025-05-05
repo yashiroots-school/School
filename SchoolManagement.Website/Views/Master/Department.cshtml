@@ -1,0 +1,202 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4>  Add Department  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6">
+                            @*<button class="btn btn-info pull-right"><a href="#" class="button_a">Add New</a></button>
+                            <button class="btn btn-danger pull-right"><a href="#" class="button_a">Manage</a></button>*@
+                        </div>
+
+
+                    </div><!-- col-sm-12 closed -->
+                </div><!--row x_title closed -->
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+        <div class="col-sm-12" style="margin-top: 15px;">
+            <form action="/Master/AddDepartment" id="DepartmentForm" enctype="multipart/form-data" method="post">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <input type="hidden" id="DepartmentId" name="DepartmentId"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Add New Department :</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="DepartmentName" name="DepartmentName" maxlength="100">
+                        </div>
+                    </div>
+                    <div class="col-sm-8" style="margin-top:20px;">
+                        <button  type="submit" class="btn btn-success pull-right" id="Departmentsave">Save</button>
+                        <button  type="button" class="btn btn-success pull-right" id="BtnClear" onclick="ClearData()">Clear</button>
+                    </div>
+                </div>
+
+            </form>
+            <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+
+
+                <table class="table table-bordered " id="DepartmentTable" style="margin-top:10px">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Department</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ 
+                            int i = 1;
+                            foreach(var item in ViewBag.DepartmentList as IEnumerable<SchoolManagement.Data.Models.tbl_Department>)
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@item.DepartmentName</td>
+                                    <td>
+                                        <button type="button" class="btn btn-info DepartmentEdit" data-val="@item.DepartmentId">Edit</button>
+                                        <button type="button" class="btn btn-info DepartmentDelete" data-val="@item.DepartmentId">Delete</button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div><!-- 1st row closed -->
+</div>
+
+@section scripts{
+    
+    @*<script>
+
+        $(document).ready(function () {
+            alert();
+            GetDepartmentTable();
+
+        });
+        function GetDepartmentTable() {
+            
+            $("#DepartmentTable").DataTable().destroy();
+
+            datatable = $("#DepartmentTable")
+                .DataTable({
+                    "sAjaxSource": "/Master/GetAllDepartmentlist",
+                    "retrieve": true,
+                    "bServerSide": true,
+                    "bProcessing": true,
+                    "bSearchable": false,
+                    "order": [[1, 'asc']],
+                    "autoWidth": false,
+                    "columns": [
+                        {
+                            "data": "DepartmentName",
+                            "autoWidth": false,
+                            "width": "200px",
+                            "searchable": true
+                        },
+
+                        {
+                            "data": "Gallery_Id",
+                            "searchable": true,
+                            "render": function (data, type, row) {
+                                if (data != null && data != '') {
+                                    return '<button type="button"><i style = "font-size:12px; color:#39b2e1; cursor:pointer;"data-val="' + data + '" class="fa fa-edit DepartmentEdit"onclick=UpdateDepartment(' + data + ')></i></button><button><i style="font-size:12px; color:#29b2e1; cursor:pointer;"data-val="' + data + '"class = "fa fa-trash-o DepartmentDelete" onclick = DeleteDepartment(' + data + ')></i></button>';
+                                }
+                            }
+                        }
+
+                    ]
+                });
+
+        }
+
+    </script>*@
+
+    <script>
+
+        $("#DepartmentTable").DataTable();
+
+        $(".DepartmentEdit").on('click', function () {
+            $("#DepartmentForm").attr('action', '/Master/UpdateDepartment');
+            var id = $(this).attr("data-val");
+
+            $("#Departmentsave").text("Update");
+            GetDepartmentById(id);
+        });
+
+        function GetDepartmentById(id) {
+            $.ajax({
+                url: "/Master/GetDepartmentById?id=" + id,
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json;charset=UTF-8",
+                success: function (result) {
+
+                    if (result != null) {
+                        $("#DepartmentId").val(result.DepartmentId);
+                        $("#DepartmentName").val(result.DepartmentName);
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+                
+            });
+        }
+
+
+        $(".DepartmentDelete").on('click', function () {
+            var id = $(this).attr("data-val");
+            if (confirm("Do You Want to Delete?")) {
+                window.location.href = "/Master/DeleteDepartment?id=" + id;
+            }
+        });
+
+
+        function ClearData() {
+            var cnf = confirm("Are You Sure, You Want to Clear all the data?");
+            if (cnf == true) {
+                $("#DepartmentId").val('');
+                $("#DepartmentName").val('');
+
+
+                $("#DepartmentForm").attr('action', '/Master/AddDepartment');
+                $("#Departmentsave").text("Save");
+
+            }
+        }
+
+       
+        function UpdateDepartment(id) {
+            $("#DepartmentForm").attr('action', '/Master/UpdateDepartment');
+
+            $("#Departmentsave").text("Update");
+            GetDepartmentById(id);
+        }
+
+
+        function DeleteDepartment(id) {
+            if (confirm("Do You Want to Delete?")) {
+                window.location.href = "/Master/DeleteDepartment?id=" + id;
+            }
+        }
+
+    </script>
+
+  
+
+    }

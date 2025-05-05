@@ -1,0 +1,159 @@
+﻿
+@{
+    ViewBag.Title = "CreateEmployeeLogin";
+}
+
+<div class="right_col" role="main">
+    <div class="container">
+        <div class="row">
+            <div>
+                <h3>Create Staff Login</h3>
+            </div>
+            <div class="col-sm-12" style="margin-top:20px;">
+                <div class="col-sm-2">
+
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Select Staff:</label>
+                        <select class="form-control" id="Staffid">
+                            <option value="0">---Select Staff---</option>
+                            @{
+                                foreach (var item in ViewBag.Stafflist as IEnumerable<SchoolManagement.Data.Models.StafsDetails>)
+                                {
+                                    <option value="@item.StafId">@item.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Role :</label>
+                        @Html.DropDownList("UserRole", new SelectList(ViewBag.Roles, "Value", "Text"), new { @class = "form-control" })
+                    </div>
+                    <div class="form-group" style="margin-top:20px;text-align:right;">
+                        @{ 
+                            var data = ViewBag.Permission;
+                            if(data != null)
+                            {
+                                if(data == "true")
+                                {
+                        <button type="button" id="BtnSubmit" class="btn btn-success">Create</button>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="col-sm-4">
+
+                </div>
+
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <table class="table table-bordered" id="stafflogin">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Staffname</th>
+                        <th>Username</th>
+                        <th>Password</th>
+                        <th>Description</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var i = 1;
+                        foreach (var item in ViewBag.StaffLogins as IEnumerable<SchoolManagement.Website.Controllers.StaffLogin>)
+                        {
+                            <tr>
+                                <td>@i</td>
+                                <td>@item.StaffName</td>
+                                <td>@item.Username</td>
+                                <td>@item.Password</td>
+                                <td>@item.Description</td>
+                                <td>
+                                   
+                                   <button type="button" class="btn btn-primary changepass" data-toggle="modal" data-target="#changePasswordModal" id="@item.id">
+                                       Change Password
+                                   </button>
+                            </tr>
+                            i++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+
+    $(document).ready(function () {
+        $("#stafflogin").DataTable();
+        
+    });
+
+
+    $("#BtnSubmit").on('click', function () {
+        var id = $("#Staffid").val();
+        if (id == 0) {
+            return false;
+        }
+        var selectedText = $("#UserRole option:selected").text();
+        var selectedVal = $("#UserRole option:selected").val();
+
+        if (selectedVal == null || selectedVal == 0) {
+            alert("Please Select Role");
+            //window.location.reload();
+            return false;
+        }
+
+        $.ajax({
+            url: "/Account/CreateStaff",
+            data: { id: id, Rolename: selectedText },
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json;charset=utf-8",
+            success: function (result) {
+
+                if (result == "Signout") {
+                    window.location.href = "/Account/Login";
+                }
+                else if (result == "AlreadyThere") {
+                    alert("UserName Already Registered!");
+                    location.reload();
+
+                }
+                else if (result == "Success") {
+                    alert("UserName Created !");
+                    location.reload();
+
+                }
+                else if (result == "Email") {
+                    alert("Email is Not Registered, Please Update Email");
+                    location.reload();
+                }
+                else {
+                    alert("UserName Not Created !");
+                    location.reload();
+                }
+
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+
+    });
+    $('.changepass').on('click', function () {
+        var A = $(this).attr('id');
+        sessionStorage.setItem('clickedButtonId', $(this).attr('id'));
+    $('#staffIdmodel').val($(this).attr('id'));
+    })
+
+
+</script>

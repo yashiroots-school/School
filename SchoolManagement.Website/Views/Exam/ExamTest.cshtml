@@ -1,0 +1,407 @@
+﻿
+@{
+    ViewBag.Title = "TestManagement";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .error {
+        color: red;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 34px !important;
+    }
+
+    .select2-container--default .select2-selection--single {
+        border: 1px solid #ccc !important;
+        border-radius: 0px !important;
+    }
+</style>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <h2>Manage Test</h2>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="row">
+                @*<h4 class="std_head well-sm"> Staff Information Form</h4>*@
+                <div class="tab-content tab_sis">
+                    <div class="tab-pane fade in active" id="add">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <form method="post" id="TestForm" action="/Exam/CreateTest" enctype="multipart/form-data">
+                                    <h4 class="std_head well-sm">Test Details</h4>
+                                    <input type="hidden" id="TestID" name="TestID" />
+                                    <input type="hidden" id="BoardID" name="BoardID" />
+
+                                    <div class="col-sm-6" style="border-right: 1px solid #eee;">
+                                        <div class="form-group">
+                                            <label>Class:</label>
+                                            <select class="form-control select2" id="ClassID" name="ClassID">
+                                                <option>---Select Class---</option>
+                                                @foreach (var item in ViewBag.ClassList as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                                {
+                                                    <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                                }
+                                            </select>
+                                            <span class="error" id="ClassIDError"></span> <!-- Error message will be displayed here -->
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Test Name:</label>
+                                            <input type="text" name="TestName" id="TestName" class="form-control">
+                                            <span class="error" id="TestNameError"></span> <!-- Error message will be displayed here -->
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Test Type:</label>
+                                            <select class="form-control select2" id="TestType" name="TestType">
+                                                <option>---Select Test Type---</option>
+                                                <option value="Theory">Theory</option>
+                                                <option value="Practical">Practical</option>
+                                                <option value="Project">Project</option>
+                                                <option value="SubjectEnrich">Subject-Enrich</option>
+                                            </select>
+                                            <span class="error" id="TestTypeError"></span> <!-- Error message will be displayed here -->
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Subject:</label>
+                                            @*<select class="form-control" id="SubjectID" name="SubjectID">
+                                                    <option>---Select Subject---</option>
+                                                    @foreach (var item in ViewBag.Subject as IEnumerable<SchoolManagement.Website.Models.Tbl_SubjectsSetup>)
+                                                    {
+                                                        <option value="@item.Subject_ID">@item.Subject_Name</option>
+                                                    }
+                                                </select>*@
+
+                                            <select class="form-control select2 " id="SubjectID" name="SubjectID">
+                                                <option>---Select Subject---</option>
+                                            </select>
+                                            <span class="error" id="SubjectIDError"></span> <!-- Error message will be displayed here -->
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Maximum Marks:</label>
+                                            <input type="number" name="MaximumMarks" id="MaximumMarks" class="form-control">
+                                            <span class="error" id="MaximumMarksError"></span> <!-- Error message will be displayed here -->
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Term:</label>
+                                            <select class="form-control select2" id="TermID" name="TermID">
+                                                <option>---Select Term---</option>
+                                                @foreach (var item in ViewBag.Term as IEnumerable<SchoolManagement.Website.Models.Tbl_Term>)
+                                                {
+                                                    <option value="@item.TermID">@item.TermName</option>
+                                                }
+                                            </select>
+                                            <span class="error" id="TermIDError"></span> <!-- Error message will be displayed here -->
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Is Optional Subject Test</label>
+                                        <input id="IsOptional" type="checkbox" value="true" name="IsOptional" />
+                                        <input type="hidden" value="false" name="IsOptional" />
+                                    </div>
+                                    <div class="form-group" style="text-align:right">
+                                        <button type="submit" id="BtnSubmitTest" class="btn btn-success">Submit</button>
+                                        <button type="button" id="CancleBtn" class="btn btn-secondary">Cancel</button>
+                                    </div>
+                                </form>
+
+
+
+                            </div>
+                            <hr />
+                            <div class="col-sm-12" style="margin-top:20px;">
+                                <div>
+                                    <table class="table table-bordered display" id="TestTable" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>S.No</th>
+                                                <th>Class Name</th>
+                                                <th>Test Name</th>
+                                                <th>Test Type</th>
+                                                <th>Subject</th>
+                                                <th>Maximum Marks</th>
+                                                <th>Term</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="TableBody">
+                                            @{
+                                                var i = 1;
+                                                foreach (var item in ViewBag.TestList as IEnumerable<dynamic>)
+                                                {
+                                                    <tr>
+                                                        <td>@i</td>
+                                                        <td>@item.ClassName</td>
+                                                        <td>@item.TestName</td>
+                                                        <td>@item.TestType</td>
+                                                        <td>@item.Subject</td>
+                                                        <td>@item.MaximumMarks</td>
+                                                        <td>@item.Term</td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-info BtnTestEdit" data-val="@item.TestID">Edit</button>
+                                                            <button type="button" class="btn btn-danger BtnTestDelete" data-val="@item.TestID">Delete</button>
+                                                        </td>
+                                                    </tr>
+                                                    i++;
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    //Obtained Marks
+    function getTestData(classId) {
+        // Make an AJAX request to the controller method
+        $.ajax({
+            url: '/Exam/SubjectByClassId', // Replace with the actual URL of your controller method
+            type: 'GET',
+            data: { classId: classId },
+            success: function (data) {
+                // Populate the class select box with the retrieved data
+                var TestIdSelect = $('#SubjectID');
+                TestIdSelect.empty();
+                TestIdSelect.append('<option>---Select Subject---</option>');
+                $.each(data, function (index, item) {
+                    TestIdSelect.append('<option value="' + item.DataListItemId + '">' + item.DataListItemName + '</option>');
+                });
+            },
+            error: function () {
+                // Handle error if any
+            }
+        });
+    }
+    function GetTestById(id) {
+        $.ajax({
+            url: "/Exam/GetTestById?id=" + id,
+            type: "GET",
+            dataType: "json",
+            success: function (result) {
+                if (result != null) {
+                    $("#TestID").val(result.TestID);
+                    /* $("#ClassID").val(result.ClassID);*/
+                    $("#ClassID").val(result.ClassID).trigger('change');
+                    console.log("Result.SubjectID:", result.SubjectID);
+                    //  $("#SubjectID").val(result.SubjectID);
+                    $("#BoardID").val(result.BoardID);
+                    $("#TestName").val(result.TestName);
+                    $("#TestType").val(result.TestType).trigger('change');
+                    $("#MaximumMarks").val(result.MaximumMarks);
+                    $("#TermID").val(result.TermID).trigger('change');
+                    if (result.IsOptional) {
+                        $("#IsOptional").prop("checked", true); // Check the checkbox
+                    }
+                    else {
+                        $("#IsOptional").prop("checked", false); // UnCheck the checkbox
+                    }
+                    // Populate subject dropdown and set its value
+                    geSubjectData(result.ClassID, function () {
+                        $("#SubjectID").val(result.SubjectID);
+                    });
+
+                }
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }
+    function geSubjectData(classId, callback) {
+        $.ajax({
+            url: '/Exam/GetSubjectByClass',
+            type: 'GET',
+            data: { classId: classId },
+            success: function (data) {
+                var classSelect = $('#SubjectID');
+                classSelect.empty();
+                classSelect.append('<option>---Select Subject---</option>');
+                $.each(data, function (index, item) {
+                    classSelect.append('<option value="' + item.SubjectId + '">' + item.SubjectName + '</option>');
+                });
+
+                if (typeof callback === 'function') {
+                    callback(); // Execute the callback function
+                }
+            },
+            error: function () {
+                // Handle error if any
+            }
+        });
+    }
+
+    $(document).ready(function () {
+
+        $('.select2').select2();
+
+        $('#ClassID').change(function () {
+            var selectedOptionId = $(this).val();
+            geSubjectData(selectedOptionId); // Call your function and pass the selected option ID as a parameter
+        });
+
+        $("#TestTable").DataTable();
+        //$('#ClassID').change(function () {
+        //    var selectedOptionId = $(this).val();
+        //    getTestData(selectedOptionId); // Call your function and pass the selected option ID as a parameter
+        //});
+
+        $("#TestForm").on("submit", function (event) {
+            // Prevent form submission until all fields are validated
+            event.preventDefault();
+
+            // Clear previous error messages
+            $(".error").text("");
+
+            // Perform validation for each field
+            var isValid = true;
+
+            // ClassID validation
+            var classID = $("#ClassID").val();
+            if (classID === "---Select Class---") {
+                $("#ClassIDError").text("Please select a class");
+                isValid = false;
+            }
+
+            // TestName validation
+            var testName = $("#TestName").val();
+            if (!testName) {
+                $("#TestNameError").text("Test Name is required");
+                isValid = false;
+            }
+
+            // TestType validation
+            var testType = $("#TestType").val();
+            if (testType === "---Select Test Type---") {
+                $("#TestTypeError").text("Please select a test type");
+                isValid = false;
+            }
+
+            // SubjectID validation
+            var subjectID = $("#SubjectID").val();
+            if (subjectID === "---Select Subject---") {
+                $("#SubjectIDError").text("Please select a subject");
+                isValid = false;
+            }
+
+            // MaximumMarks validation
+            var maximumMarks = $("#MaximumMarks").val();
+            if (!maximumMarks) {
+                $("#MaximumMarksError").text("Maximum Marks is required");
+                isValid = false;
+            }
+
+            // TermID validation
+            var termID = $("#TermID").val();
+            if (termID === "---Select Term---") {
+                $("#TermIDError").text("Please select a term");
+                isValid = false;
+            }
+
+            // If all validations pass, submit the form
+            if (isValid) {
+                this.submit();
+            }
+        });
+
+        $("#CancleBtn").hide();
+        $(document).on('click', '.BtnTestEdit', function () {
+            var id = $(this).data("val");
+            $("#BtnSubmitTest").text("Update");
+            $("#TestForm").attr('action', '/Exam/UpdateTest');
+            GetTestById(id);
+            $("#CancleBtn").show();
+        });
+        $("#CancleBtn").on('click', function () {
+
+            window.location.reload();
+        });
+
+        $(document).on('click', '.BtnTestDelete', function () {
+            var id = $(this).data("val");
+            var cnf = confirm("Are you sure you want to delete the record?");
+            if (cnf) {
+                window.location.href = "/Exam/DeleteTest?id=" + id;
+            }
+        });
+    })
+
+
+
+    $(document).ready(function () {
+        $("#BtnSubmitTest").on('click', function (event) {
+            var classId = $("#ClassID").val();
+            var testName = $("#TestName").val().trim();
+            var testType = $("#TestType").val();
+            var subjectId = $("#SubjectID").val();
+            var maximumMarks = $("#MaximumMarks").val();
+            var termId = $("#TermID").val();
+
+            var isValid = true;
+
+            if (classId === '---Select Class---') {
+                $("#ClassIDError").text("Please select a class.");
+                isValid = false;
+            } else {
+                $("#ClassIDError").text("");
+            }
+
+            if (testName === '') {
+                $("#TestNameError").text("Test Name cannot be empty.");
+                isValid = false;
+            } else {
+                $("#TestNameError").text("");
+            }
+
+            if (testType === '---Select Test Type---') {
+                $("#TestTypeError").text("Please select a test type.");
+                isValid = false;
+            } else {
+                $("#TestTypeError").text("");
+            }
+
+            if (subjectId === '---Select Subject---') {
+                $("#SubjectIDError").text("Please select a subject.");
+                isValid = false;
+            } else {
+                $("#SubjectIDError").text("");
+            }
+
+            if (maximumMarks === '') {
+                $("#MaximumMarksError").text("Maximum Marks cannot be empty.");
+                isValid = false;
+            } else {
+                $("#MaximumMarksError").text("");
+            }
+
+            if (termId === '---Select Term---') {
+                $("#TermIDError").text("Please select a term.");
+                isValid = false;
+            } else {
+                $("#TermIDError").text("");
+            }
+
+            if (isValid === false) {
+                event.preventDefault(); // Prevent the form from submitting
+            }
+        });
+    });
+
+</script>

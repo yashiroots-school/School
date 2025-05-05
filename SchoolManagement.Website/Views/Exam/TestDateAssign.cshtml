@@ -1,0 +1,255 @@
+﻿
+@{
+    ViewBag.Title = "TestDateAssign";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    if (@ViewBag.Msg == "1")
+    {
+        <script>
+            alert("Record created successfully.");
+        </script>
+    }
+    else if (@ViewBag.Msg == "2")
+    {
+        <script>
+            alert("Record updated successfully.");
+        </script>
+    }
+    else if (@ViewBag.Msg == "3")
+    {
+        <script>
+            alert("Record deleted successfully.");
+        </script>
+    }
+    else if (@ViewBag.Msg == "4" || @ViewBag.Msg == "0")
+    {
+        <script>
+            alert("Something went wrong.Please try again.");
+        </script>
+    }
+}
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<div class="right_col" role="main">
+    <div class="row">
+
+        <!-- row started -->
+        <h2>Manage Test Date</h2>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="row">
+                @*<h4 class="std_head well-sm"> Staff Information Form</h4>*@
+                <div class="tab-content tab_sis">
+                    <div class="tab-pane fade in active" id="add">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <form method="post" id="TermForm" action="/Exam/TestDateAssign">
+                                    <h4 class="std_head well-sm">Assgin Test Details</h4>
+                                    @*<div class="col-sm-4 date">
+            <div class="form-group">
+                <label>Test Name:</label>TestAssignList                <select class="form-control select2 " id="TestID" name="TestID">
+                    <option value="0">---Select Test---</option>
+                    @foreach (var item in ViewBag.TestList as IEnumerable<SchoolManagement.Website.Models.Tbl_Tests>)
+                    {
+                        <option value="@item.TestID">@item.TestName</option>
+                    }
+
+                </select>
+            </div>
+        </div>*@
+
+                                    <div class="col-sm-4 date">
+                                        <div class="form-group">
+                                            <label>Select Term :</label>
+
+                                            <select class="form-control select2 " id="TermID" name="TermID">
+                                                <option value="0">---Select Term---</option>
+                                                @*   <option value="All10">All</option>*@
+                                                @foreach (var item in ViewBag.Terms as IEnumerable<SchoolManagement.Website.Models.Tbl_Term>)
+                                                {
+                                                    //string optionValue;
+                                                    //if (item.TermID == 1 || item.TermID == 2)
+                                                    //{
+                                                    //    optionValue = "UT" + item.TermID;
+                                                    //}
+                                                    //else if (item.TermID == 3 || item.TermID == 4)
+                                                    //{
+                                                    //    optionValue = "Term" + item.TermID;
+                                                    //}
+                                                    //else if (item.TermID == 7 || item.TermID == 8)
+                                                    //{
+                                                    //    optionValue = "PreBoard" + item.TermID;
+                                                    //}
+                                                    //else
+                                                    //{
+                                                    //    optionValue = ""; // Replace this with a default value if needed
+                                                    //}
+
+                                                    <option value="@item.TermID">@item.TermName</option>
+                                                }
+
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-4 date">
+                                        <div class="form-group">
+                                            <label>Class Name:</label>
+                                            <select class="form-control select2" id="ClassID" name="ClassID">
+                                                <option value="0">---Select Class---</option>
+                                                @foreach (var item in ViewBag.ClassList as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                                {
+                                                    <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                                }
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 date">
+                                        <div class="form-group">
+                                            <label>Batch Name:</label>
+                                            <select class="form-control select2" id="BatchID" name="BatchID">
+                                                <option value="0">---Select Batch---</option>
+                                                @foreach (var item in ViewBag.SectionList as IEnumerable<SchoolManagement.Website.Models.Tbl_Batches>)
+                                                {
+                                                    <option value="@item.Batch_Id">@item.Batch_Name</option>
+                                                }
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 date">
+                                        <div class="form-group">
+                                            <label>Start Date:</label>
+                                            <div class="input-group input-append date">
+                                                <input type="text" class="form-control datepicker" name="StartDate" id="StartDate" />
+                                                <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 date">
+                                        <div class="form-group">
+                                            <label>To Date:</label>
+                                            <div class="input-group input-append date">
+                                                <input type="text" class="form-control datepicker" name="ToDate" id="ToDate" />
+                                                <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="text-align:right">
+                                        <input type="hidden" id="TestAssignID" name="TestAssignID"/ >
+                                        <button type="submit" id="BtnSubmitAssginTestDate" class="btn btn-success">Submit</button>
+
+                                    </div>
+                                </form>
+                            </div>
+                            <hr />
+                            <div class="col-sm-12" style="margin-top:20px;">
+                                <div>
+                                    <table class="table table-bordered display" id="TermTable" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>S.No</th>
+                                                <th>Test Name</th>
+                                                <th>Class Name</th>
+                                                <th>Batch Name</th>
+                                                <th>Start Date</th>
+                                                <th>End Date</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="TableBody">
+                                            @{
+                                                var i = 1;
+                                                foreach (var item in ViewBag.TestAssignList as IEnumerable<SchoolManagement.Website.Controllers.ExamController.PL_TestAssignData>)
+                                                {
+                                                    <tr>
+                                                        <td>@i</td>
+                                                        <td>@item.TestName</td>
+                                                        <td>@item.ClassName</td>
+                                                        <td>@item.BatchName</td>
+                                                        <td>@Convert.ToDateTime( @item.StartDate).ToString("dd/MM/yyyy")</td>
+                                                        <td>@Convert.ToDateTime( @item.EndDate).ToString("dd/MM/yyyy")</td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-info" onclick="onEdit(@item.TestAssignId)">Edit</button>
+                                                            @*@Html.ActionLink("Edit", "TestAssignDataUpdate", new { id = item.TestAssignId }, new { id = "Edit", @class = "btn btn-info" })*@
+                                                            @Html.ActionLink("Delete", "TestAssignDataDelete", new { id = item.TestAssignId }, new { id = "Delete", @class = "btn btn-danger TestAssign" })
+                                                            @*<button type="button" class="btn btn-danger BtnTermDelete" data-val="@item.TestAssignId">Delete</button>*@
+                                                        </td>
+                                                    </tr>
+                                                    i++;
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        $('.select2').select2();
+    });
+
+</script>
+
+@section scripts{
+    <script src="~/Scripts/DevelopmentJS/Exam.js"></script>
+    <script src="~/Scripts/DevelopmentJS/Report.js"></script>
+}
+
+
+<script>
+
+    $(document).ready(function () {
+        $(".TestAssign").click(function () {
+            if (confirm("Do You want to delete This Record.") == true)
+                return true;
+            else
+                return false;
+        });
+    });
+
+    function onEdit(testId) {
+        try {
+            $.ajax({
+                url: "/Exam/TestAssignDataUpdate?id=" + testId,
+                method: "GET",
+                success: function (res) {
+                    if (res === null) {
+                        alert("Record not found.");
+                    } else {
+                        var st = res.StartDate.replace("AM", "");
+                        var stdate = new Date(st);
+                        var td = res.ToDate.replace("AM", "");
+                        var tddate = new Date(td);
+                        $("#StartDate").val(stdate.toLocaleDateString("fr-FR"));
+                        $("#ToDate").val(tddate.toLocaleDateString("fr-FR"));
+
+                        $('#TermID').val(res.TestID).trigger('change');
+                        $('#TestAssignID').val(res.TestAssignID);
+                        $('#BatchID').val(res.BatchID).trigger('change');
+                        $('#ClassID').val(res.ClassID).trigger('change');
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            })
+        } catch (ex) {
+            console.log(ex);
+        }
+    }
+</script>
+
+

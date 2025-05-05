@@ -1,0 +1,243 @@
+﻿
+@{
+    ViewBag.Title = "View Student";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4> Student Complete Profile  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>                    
+                    </div><!--row x_title closed -->
+                </div><!-- dashboard_graph closed-->
+            </div><!--col-msx-12 closed-->
+
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                    <div class="page-content-wrap">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <div class="col-sm-6 pull-right">
+                                                <button class="btn btn-info pull-right">
+                                                    <asp:HyperLink ClientIDMode="Static" runat="server" ID="AddStudent" href="/UX/AddStudent.aspx" class="button_a">Add New Students</asp:HyperLink>
+                                                </button>
+                                                <button class="btn btn-danger pull-right" id="btnAdd" runat="server">
+                                                    <asp:HyperLink ClientIDMode="Static" runat="server" ID="ManageStudent" href="/UX/Student.aspx" class="button_a">Manage Students</asp:HyperLink>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <!-- row started -->
+                                        <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                                            <div class="col-sm-4  pull-right">
+                                            </div>
+                                            <!-- col-msx-12 started -->
+                                            <div class="col-sm-12 table-responsive" style="border-bottom: 1px solid #E6E9ED;">
+                                                <!-- col-sm-12 started -->
+                                                <h4 class="std_head well-sm jss_form">Student Personal Details</h4>
+                                                <div class="col-sm-12 table-responsive" style="border-right: 1px solid #eee;">
+                                                    <table class="table table-bordered" id="viewstudent"></table>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 table-responsive" style="border-bottom: 1px solid #E6E9ED;">
+                                                <!-- col-sm-12 started -->
+                                                <h4 class="std_head well-sm jss_form">Sibilings</h4>
+                                                <div class="col-sm-12 table-responsive" style="border-right: 1px solid #eee;">                                         
+                                                    <table class="table table-bordered" id="sibilings"></table>
+                                                </div>
+
+                                            </div>
+                                            <!-- col-sm-12 started -->
+
+                                            <div class="col-sm-12 table-responsive" style="border-bottom: 1px solid #E6E9ED;">
+
+                                                
+                                                <h4 class="std_head well-sm jss_form">Academic Details</h4>
+
+                                                <table class="table table-bordered" id="Academic">
+
+                                                    <thead>
+                                                        <tr>
+                                                            <th hidden="hidden">AcademicDetailId</th>
+                                                            <th>Year</th>
+                                                            <th>Qualification</th>
+                                                            <th>Stream</th>
+                                                            <th>School / College</th>
+                                                            <th>University</th>
+                                                            <th>Percentage</th>                     
+                                                        </tr>
+                                                    </thead>
+
+                                                </table>
+                                            </div>
+                                            <div class="col-sm-12 table-responsive" style="border-bottom: 1px solid #E6E9ED;">
+
+
+                                                <h4 class="std_head well-sm jss_form">Semester Details</h4>
+
+                                                <table class="table table-bordered" id="tblSemisterDetails">
+
+                                                    <thead>
+                                                        <tr>
+                                                            <th hidden="hidden">AcademicDetailId</th>
+                                                            <th>Year</th>
+                                                            <th>Semester/Trimester</th>
+                                                            <th>Percentage</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                </table>
+                                            </div>
+
+                                            <div class="col-sm-12 table-responsive" style="border-bottom: 1px solid #E6E9ED;">
+                                                <h4 class="std_head well-sm jss_form">Skillsets</h4>                                             
+                                                <div class="col-sm-6">
+                                                    <table class="table table-bordered" id="mgtskills">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Management Skills</th>
+                                                            </tr>
+                                                        </thead>
+                                                    </table>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <table class="table table-bordered" id="additionalskill">
+
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Additional Skills</th>
+                                                            </tr>
+                                                        </thead>
+
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                            <!-- col-sm-12 started -->
+                                            <div id="declarationdiv" class="col-sm-12 table-responsive" style="border-bottom: 1px solid #E6E9ED;">
+                                                <!-- col-sm-12 started -->
+                                                <h4 class="std_head well-sm jss_form">Declaration</h4>
+                                                <table class="table table-bordered">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="full_h">Are you interested in College Assistance for Final Placement?</td>
+                                                            <td class="full_d" id="interestedtxt"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="full_h">If No, Please Give Reason </td>
+                                                            <td class="full_d" id="reasontxt"></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <!-- col-sm-12 started -->
+                                            <div id="agreementdiv" class="col-sm-12 table-responsive" style="border-bottom: 1px solid #E6E9ED;">
+                                                <!-- col-sm-12 started -->
+                                                <h4 class="std_head well-sm jss_form">Agreement</h4>
+                                                <p>
+                                                     <b><span id="stdname"></span></b>
+                                                    I hereby agree that I have read the Institute's Terms & Conditions to seek Placement Assistance from St. Francis Institute of Management and Research.&nbsp;
+                                                    I shall keep transparency with the placement staff, in terms of my placement through sources other than the placement cell of the college.&nbsp;&nbsp;&nbsp;<br />
+                                                    I shall be honest and keep the college placement staff informed if I am appearing for any interview not arranged by the college during the college placement procedure.
+                                                    <br />
+                                                    I shall submit my offer letter to the college irrespective of my placement through college or by self-effort. In case of any default,
+                                                    <br />
+                                                    I shall abide by the decision taken by the management in the matter.
+                                                </p>
+                                                <p>
+                                                    <input type="checkbox" value="" id="agreechkbox">
+                                                    Agreed
+                                                </p>
+                                            </div>
+
+
+                                            <div id="col-sm-12 table-responsive">
+                                                <div class="col-sm-12 plaf_padding" style="padding-bottom: 10px;">
+
+                                                    <h3 style="text-align: center;" class="bg-info_ra">For Office use only </h3>
+                                                    <div class="form-group">
+                                                        <label>CMC Final Remarks:</label>
+                                                        <label class="checkbox-inline">
+                                                            <input type="radio" ID="checkselected"  name="Selected" class="checkbox-inline"/>
+                                                            Verified
+                                                        </label>
+                                                        <label class="checkbox-inline">
+                                                            @*<asp:RadioButton ID="checknotselected" runat="server" ClientIDMode="Static" GroupName="Selected" class="checkbox-inline" />*@
+                                                            <input type="radio" ID="checknotselected"  name="Selected" class="checkbox-inline" checked/>
+                                                            Not Verified
+                                                        </label>
+                                                    </div>
+                                                    <label>Authorized by: </label>
+                                                    <label id="ddlStdReg_Authorized"></label>
+                                                    <br />
+                                                    <label>Date: </label>
+                                                    <label id="txtdateforoffice"></label>
+                                                    <br />
+                                                    <div style="width: 100%;" runat="server" id="stdntstatusupdate">
+                                                        <input onclick="changeStatus();" type="button" value="Update" class="btn btn-success" style="margin-top: 20px;" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                            <!-- col-sm-12 started -->
+                                        </div>
+                                        <!-- col-msx-12  closed -->
+                                    </div>
+                                    <!-- 1st row closed -->
+                                </div>
+                                <!-- container fluid closed -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- col-msx-12  closed -->
+            </div>
+        </div><!-- 1st row closed -->
+    </div>  <!-- /page content -->
+</div>
+@section Scripts{
+    <script src="~/Scripts/DevelopmentJS/ViewStudentSemister.js"></script>
+    <script type="text/javascript">
+        function changeStatus() {
+            
+            var weburl = "";
+            if (!weburl) weburl = window.location.href
+            var array = weburl.split('=');
+            var no = array[array.length - 1];
+
+            if ($("#checkselected").is(":checked")) {
+                $.ajax({
+                    type: "GET",
+                    contentType: "application/json; charset=utf-8",
+                    url: "/Student/UpdateStatus?RegNo="+no,
+                    dataType: "json",
+                    success: function (data) {
+                        if (data=="1") {
+                             
+                        //$("#ddlStdReg_Authorized").html(data.d.Spare1);
+                        //$("#txtdateforoffice").html(data.d.Spare2);
+                        $("#ContentPlaceHolder1_stdntstatusupdate").hide();
+                        $("#checkselected").attr('disabled', true);
+                            $("#checknotselected").attr('disabled', true);
+                            $("#stdntstatusupdate").css("display", "none");
+                           alert("Student record verified successfully");
+                        } 
+                    }
+                })
+            }
+        }
+    </script>
+}

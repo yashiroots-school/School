@@ -1,0 +1,249 @@
+﻿
+@{
+    ViewBag.Title = "EPFStatement";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="col-sm-12">
+            <form action="" method="post" id="Basicpayform">
+                <div class="col-sm-12" style="border-right:1px solid #eee;">
+                    @*<div class="form-group">
+                            <input type="hidden" id="BasicAmount_Id" name="BasicAmount_Id" />
+                        </div>*@
+                    @*<div class="col-sm-4">
+
+
+                            <div class="form-group">
+                                    <label>Basic Pay</label>
+                                    <select class="form-control" id="BasicPay_Id" name="BasicPay_Id">
+                                        <option>---Select BasicPay---</option>
+                                        @{
+                                            foreach (var item in ViewBag.Basicpay as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                            {
+                                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                            }
+                                        }
+                                    </select>
+                                    <input type="text" id="Basicpay_Name" name="Basicpay_Name" style="display:none" />
+                                </div>
+
+                            <div class="form-group">
+                                <label>Staff Details</label>
+                                <select class="form-control" id="Account_Id">
+                                    <option value="0">---Select Staff---</option>
+                                    @{
+                                        foreach (var item in ViewBag.StaffDetails as IEnumerable<SchoolManagement.Data.Models.StafsDetails>)
+                                        {
+                                            <option value="@item.EmployeeCode">@item.Name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+
+                        </div>*@
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="text" id="Date" readonly class="form-control datepicker" />
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group" style="margin-top:20px">
+
+                            <button type="button" id="BtnFilter" class="btn btn-success">Filter</button>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group" style="margin-top:20px">
+                            <button type="button" id="ExcelDownload" class="btn btn-info">Download</button>
+                        </div>
+                    </div>
+                    @*<div class="col-sm-6">
+                            <label>Amount</label>
+                            <div class="form-group">
+                                <input type="text" id="Basic_Amount" name="Basic_Amount" class="form-control" />
+                            </div>
+                            <div class="form-group" style="text-align:right">
+                                <button type="submit" class="btn btn-success" id="BtnSave">Save</button>
+                            </div>
+                        </div>*@
+                </div>
+            </form>
+            <hr />
+            <div id="PrintTable">
+                <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+                    <table class="table table-bordered" id="TblSalaryStatement" style="margin-top:5px;">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>UAN</th>
+                                <th>Employee Name</th>
+                                <th>Gross Wages</th>
+                                <th>EPF Wages</th>
+                                <th>EPS Wages</th>
+                                <th>EDLI Wages</th>
+                                <th>EPF COntri Remitted</th>
+                                <th>EPS Contri Remitted</th>
+                                <th>EPF EPS DIFF Remitted</th>
+                                <th>NCP Days</th>
+                                <th>Refund of Advances</th>
+                                @*<th>Total</th>*@
+                            </tr>
+                            @*<tr>
+                                    <th>Total</th>
+                                </tr>*@
+                        </thead>
+                        <tbody id="TableBody"></tbody>
+                        @*<tbody>
+                                @{
+                                    int i = 1;
+                                    foreach (var item in ViewBag.BasicPayList as IEnumerable<SchoolManagement.Website.Models.Tbl_BasicPayDetails>)
+                                    {
+                                        <tr>
+                                            <td>@i</td>
+                                            <td>@item.Basicpay_Name</td>
+                                            <td>@item.Basic_Amount</td>
+                                        </tr>
+                                        i++;
+                                    }
+                                }
+                            </tbody>*@
+                    </table>
+
+                    @*<div class="form-group" style="text-align:center">
+                            <label>Total :</label>
+                            <input type="text" id="Totalval" readonly class="form-control"/>
+                        </div>*@
+                </div>
+            </div>
+
+            <div class="form-group" style="text-align:right;margin-top:10px">
+                <button type="button" id="BtnPrint" class="btn btn-success">Print</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="~/Scripts/printThis.js"></script>
+
+
+<script>
+    //$("#TblSalaryStatement").DataTable();
+
+
+    $("#BtnPrint").on('click', function () {
+
+        $("#PrintTable").printThis();
+    });
+
+    $("#BtnFilter").on('click', function () {
+        //var account_Id = $("#Account_Id").val();
+        //alert(account_Id);
+        var Date = $("#Date").val();
+
+        if (Date == "") {
+            alert("Please Select Account and Date");
+        }
+        else {
+            var html = "";
+            $.ajax({
+                url: "/Account/FilterEPFData?Date=" + Date,
+                //data: {  Date: Date },
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json;charset=UTF-8",
+                success: function (result) {
+                    //alert(result.count);
+                    if (result != null && result != "") {
+                        var x = 1;
+                        var TotalGross = 0;
+                        var TotalEpf = 0;
+                        var TotalEps = 0;
+                        var TotalEdli = 0;
+                        var TotalEpfcontri = 0;
+                        var TotalEpscontri = 0;
+                        var epsandepf = 0;
+                        var Ncp = 0;
+                        var refund = 0;
+
+
+                        for (var i = 0; i < result.length; i++) {
+                            html += "<tr>";
+                            html += "<td>" + x + "</td>";
+                            html += "<td>" + result[i].UIN + "</td>";
+                            html += "<td>" + result[i].Employee_Name + "</td>";
+                            html += "<td>" + result[i].Gross_Wages + "</td>";
+                            TotalGross = TotalGross + result[i].Gross_Wages;
+                            html += "<td>" + result[i].Epf_Wages + "</td>";
+                            TotalEpf = TotalEpf + result[i].Epf_Wages;
+                            html += "<td>" + result[i].EPs_Wages + "</td>";
+                            TotalEps = TotalEps + result[i].EPs_Wages;
+                            html += "<td>" + result[i].EDLIWages + "</td>";
+                            TotalEdli = TotalEdli + result[i].EDLIWages;
+                            html += "<td>" + result[i].Employe_Contribution + "</td>";
+                            TotalEpfcontri = TotalEpfcontri + result[i].Employe_Contribution;
+                            html += "<td>" + result[i].EPS_Pension + "</td>";
+                            TotalEpscontri = TotalEpscontri + result[i].EPS_Pension;
+                            html += "<td>" + result[i].Employer_Contribution + "</td>";
+                            epsandepf = epsandepf + result[i].Employer_Contribution;
+                            html += "<td>" + result[i].NCP_Days + "</td>";
+                            Ncp = Ncp + result[i].NCP_Days;
+                            html += "<td>" + result[i].Refund_Advances + "</td>";
+                            refund = refund + result[i].Refund_Advances;
+                            html += "</tr>";
+                            x++;
+                        }
+
+                        html += "<tr>";
+                        html += "<td></td>";
+                        html += "<td></td>";
+                        html += "<td><b style='color:black'>Total</b></td>";
+                        html += "<td><b style='color:black'>" + TotalGross + "</b></td>";
+                        html += "<td><b style='color:black'>" + TotalEpf + "</b></td>";
+                        html += "<td><b style='color:black'>" + TotalEps + "</b></td>";
+                        html += "<td><b style='color:black'>" + TotalEdli + "</b></td>";
+                        html += "<td><b style='color:black'>" + TotalEpfcontri + "</b></td>";
+                        html += "<td><b style='color:black'>" + TotalEpscontri + "</b></td>";
+                        html += "<td><b style='color:black'>" + epsandepf + "</b></td>";
+                        html += "<td><b style='color:black'>" + Ncp + "</b></td>";
+                        html += "<td><b style='color:black'>" + refund + "</b></td>";
+                        html += "</tr>";
+
+
+                        //$("#TblSalaryStatement").DataTable().destroy();
+                        $("#TableBody").empty();
+                        $("#TableBody").html(html);
+
+
+
+
+                        //$("#TblSalaryStatement").DataTable();
+                    } else {
+                        alert("No Record");
+                        window.location.reload();
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+
+    });
+
+    $("#ExcelDownload").on('click', function () {
+        var Date = $("#Date").val();
+
+        if (Date == "") {
+            alert("Please Select the Date");
+        }
+        else {
+            window.location.href = "/Account/ExportEPFStatement?date=" + Date;
+        }
+
+    });
+
+</script>

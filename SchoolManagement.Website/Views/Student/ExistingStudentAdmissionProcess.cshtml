@@ -1,0 +1,393 @@
+﻿
+@{
+    ViewBag.Title = "ExistingStudentAdmissionProcess";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+
+<script>
+    $(document).ready(function () {
+        $('#StudentReportTbl').DataTable();
+    });
+</script>
+
+
+
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4> Student Report &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Select Class</label>
+                                <select class="form-control" id="ClassId">
+                                    <option value="0">---Select Class---</option>
+                                    @foreach (var item in ViewBag.Classes as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                    {
+                                        <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label>Section</label>
+                                <select class="form-control" id="SectionId">
+                                    <option value="0">---Section---</option>
+                                    @{
+                                        foreach (var item in ViewBag.Section as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                        {
+                                            <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div>
+                                <label>From Date</label>
+                                <input type="text" readonly class="form-control datepicker" id="FromDate" />
+                            </div>
+
+                        </div>
+
+                        <div class="col-sm-2">
+                            <label>Select AdmissionProcess</label>
+                            <select class="form-control" id="SelectProcess">
+                                <option value="0">---select Process---</option>
+                                @{
+                                    foreach (var item in ViewBag.Admissionprocess as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                    {
+                                        <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-sm-2" style="margin-top:20px;">
+                            <div class="form-group">
+                                @*<button type="button" id="FilterStudentsReport" cla></button>*@
+                                <input type="button" value=" Filter Student " id="FilterStudentsReport" class=" btn btn-success" onclick="GetAllStudentDetails1()" />
+                            </div>
+
+
+                        </div>
+
+
+
+                        @*<div class="col-sm-2" style="margin-top:20px">
+            <div class="form-group">
+                <button type="button" class="btn btn-info" id="Exportotexcel">Download</button>
+
+            </div>
+        </div>*@
+                    </div>
+
+                </div><!-- dashboard_graph closed-->
+            </div><!--col-msx-12 closed-->
+            <div class="row">
+                <!-- row started -->
+                <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                    <!-- col-msx-12 started -->
+                    <!-- col-sm-12 closed -->
+                    <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                        <!-- col-msx-12 started -->
+                        <div id="loadStudent">
+                            <table class="table table-responsive table-striped" style="width: 100%" id="StudentReportTbl">
+                                <thead id="stdnttblhead">
+                                    <tr>
+                                        <th>Student ID</th>
+                                        <th>Application Number</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th> Class</th>
+                                        <th>DOB</th>
+                                        <th>Current Process</th>
+                                        <th>Admission Process</th>
+                                        <th>Action</th>
+                                        @*<th>Edit</th>*@
+                                    </tr>
+                                </thead>
+                                <tbody id="StudentReportTblBody">
+                                    @{
+                                        foreach (var item in ViewBag.StudentList as IEnumerable<SchoolManagement.Data.Models.StudentsRegistration>)
+                                        {
+                                            <tr>
+                                                <td>@item.StudentRegisterID</td>
+                                                <td>@item.ApplicationNumber</td>
+                                                <td>@item.Name</td>
+                                                <td>@item.Last_Name</td>
+                                                <td>@item.Class</td>
+                                                <td>@item.DOB</td>
+                                                <td>@item.BatchName</td>
+                                                <td class="row-data">@Html.DropDownList("Class", new SelectList(ViewBag.Admissionprocess, "DataListItemId", "DataListItemName"), "select", new { @id = "class", @class = "form-control" })</td>
+                                                <td><input type="button" value="Update" id="BtnUpdate" class="btn btn-success" /></td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                    <!-- col-msx-12  closed -->
+                </div>
+                <!-- col-msx-12  closed -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-success2 {
+        color: #fff;
+        background-color: #22AA8D;
+        border-color: #4cae4c;
+    }
+</style>
+
+<script>
+    //$("#StudentReportTbl").DataTable();
+
+    var objStudentAdmissionModel = {}
+    $(".btn-success").click(function () {
+        //
+        var $item = $(this).closest("tr");   // Finds the closest row <tr>
+        var $tds = $item.find("td");
+        //alert($tds[0].outerText);
+        var StudentID = $tds[0].outerText;
+        var ApplicationNumber = $tds[1].outerText;
+        var StudentName = $tds[2].outerText;
+        var Last_Name = $tds[3].outerText;
+        var Course = $tds[4].outerText;
+        var DOB = $tds[5].outerText;
+        //var admissionfee = $tds[4].outerText;
+        var isapprove = $tds[6].outerText;
+        var selectedindex = $tds[7].lastElementChild.options.selectedIndex;
+        var selectedValue = $tds[7].firstChild[selectedindex].innerHTML;
+        alert(selectedValue);
+
+        if (isapprove != selectedValue && selectedValue != "select") {
+            objStudentAdmissionModel.StudentId = StudentID;
+            objStudentAdmissionModel.StudentName = StudentName;
+            objStudentAdmissionModel.ApplicationNumber = ApplicationNumber;
+            objStudentAdmissionModel.Course = Course;
+            objStudentAdmissionModel.isapprove = isapprove;
+            objStudentAdmissionModel.AdmissionStatusID = selectedValue;
+            objStudentAdmissionModel.Last_Name = Last_Name;
+            objStudentAdmissionModel.DOB = DOB;
+
+            $.ajax({
+                url: "/Student/UpdatedExistingStudentAdmissionStatus",
+                //  url: '/Fee/AddFeeReceipt1',
+                dataType: "json",
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(objStudentAdmissionModel),
+                async: true,
+                processData: false,
+                cache: false,
+                success: function (data) {
+                    alert("Updated Successfully");
+                },
+                error: function (xhr) {
+                    alert("Not Updated");
+                }
+            });
+        }
+        else {
+            if (selectedValue == "select") {
+                alert("Please select any one admission status");
+            }
+            else {
+                alert("Student Already had the same status");
+            }
+        }
+
+    });
+
+    function GetAllStudentDetails1() {
+        //GetProcessList();
+        var StudentRegMasterModel = {};
+
+        var classid = $("#ClassId").val();
+        var fromdate = $("#FromDate").val();
+        var admissionprocessid = $("#SelectProcess").val();
+
+        
+
+        if ( fromdate == "") {
+            alert("Please Select year ");
+            //window.location.reload();
+        }
+        //else if (classid != 0 && fromdate == ""  && admissionprocessid != 0) {
+        //    alert("Please Select Class and Year Or Admission Process");
+        //    //window.location.reload();
+        //}
+        else
+        {
+            //alert(classid);
+            //alert(fromdate);
+            //alert(admissionprocessid);
+            StudentRegMasterModel.Class = $("#ClassId").val();
+            StudentRegMasterModel.Section = $("#SectionId")
+            StudentRegMasterModel.FromDate = $("#FromDate").val();
+            StudentRegMasterModel.AdmissionProcess_Id = $("#SelectProcess").val();
+
+            $.ajax({
+                url: '/Student/FilterExistingStudents',
+                dataType: "json",
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(StudentRegMasterModel),
+                async: true,
+                processData: false,
+                cache: false,
+                success: function (data) {
+                    //
+                    //  window.location.reload();
+                    var stdnttbl = document.getElementById('loadStudent');
+                    html = '';
+                    var cnt = 1;
+                    html = '<table class="table table-responsive table-striped"" style="width:100% " id="StudentReportTbl">';
+                    html = html + '<thead id="stdnttblhead"><tr><th>Student ID</th><th>Application Number</th><th>First Name</th><th>Last Name</th><th>Class</th><th>DOB</th><th>Current Process</th><th>Admission Process</th><th>Action</th></tr></thead>';
+                    html = html + '<tbody id="StudentReportTblBody">';
+                    for (var i = 0; i < data.length; i++) {
+                        html += '<tr>';
+                        html += '<td class="row-data" id="Studid_' + i + '">' + data[i].StudentId + '</td>';
+                        html += '<td class="row-data" id="studadno_' + i + '">' + data[i].AdmissionNumber + '</td>';
+                        html += '<td class="row-data" id="studname_' + i + '">' + data[i].StudentName + '</td>';
+                        html += '<td class="row-data" id="lastname_' + i + '">' + data[i].LastName + '</td>';
+                        html += '<td class="row-data" id="studclass_' + i + '">' + data[i].Class + '</td>';
+                        html += '<td class="row-data" id="studdob_' + i + '">' + data[i].DOB + '</td>';
+                        html += '<td class="row-data" id="studapprove_' + i + '">' + data[i].isapprove + '</td>';
+                        //html += '<td class="row-data">' + data[i].isapprove + '</td>';
+                        html += '<td class="row-data" > <select id = "drp_' + i + '" class="form-control"><option>---select---</option><option value=189>SUBMITTED</option><option value=190>INITIATED</option><option value=191>APPROVED</option> <option value=192>REJECTED</option> <option value=217>ADMITTED</option> </select> </td>';
+                        html += '<td class="row-data"><input type="button" data-id="Main_' + i + '" value="Update"  class="btn-success2 btnupdate1" /> </td>';
+                        html += '</tr>';
+
+                    }
+                    html += '</tbody></html>'
+                    $("#StudentReportTbl").DataTable().destroy();
+                    stdnttbl.innerHTML = html;
+
+                    $(".btnupdate1").on('click', function () {
+                        var Countid = $(this).attr("data-id");
+                        Countid = Countid.replace('Main_', '');
+                        //alert($('#drp_' + Countid).val());
+                        //alert($('#studname_' + Countid).text());
+                        var StudentID = $('#Studid_' + Countid).text();
+                        var StudentName = $('#studname_' + Countid).text();
+                        var ApplicationNumber = $('#studadno_' + Countid).text();
+                        var Course = $('#studclass_' + Countid).text();
+                        //var admissionfee = $tds[4].outerText;
+                        var isapprove = $('#studapprove_' + Countid).text();
+                        var selectedValue = $('#drp_' + Countid).val();
+                        var Last_Name = $('#lastname_' + Countid).text();
+                        var DOB = $('#studdob_' + Countid).text();
+
+                        //alert(selectedValue);
+
+                        if (isapprove != selectedValue && selectedValue != "---select---") {
+
+                            objStudentAdmissionModel.StudentId = StudentID;
+                            objStudentAdmissionModel.StudentName = StudentName;
+                            objStudentAdmissionModel.ApplicationNumber = ApplicationNumber;
+                            objStudentAdmissionModel.Course = Course;
+                            objStudentAdmissionModel.isapprove = isapprove;
+                            objStudentAdmissionModel.AdmissionStatusID = selectedValue;
+                            objStudentAdmissionModel.Last_Name = Last_Name;
+                            objStudentAdmissionModel.DOB = DOB;
+
+                            $.ajax({
+                                url: "/Student/UpdatedExistingStudentAdmissionStatus",
+                                //  url: '/Fee/AddFeeReceipt1',
+                                dataType: "json",
+                                type: "POST",
+                                contentType: 'application/json; charset=utf-8',
+                                data: JSON.stringify(objStudentAdmissionModel),
+                                async: true,
+                                processData: false,
+                                cache: false,
+                                success: function (data) {
+                                    alert("Updated Successfully");
+                                    window.location.reload();
+                                },
+                                error: function (xhr) {
+                                    alert("Not Updated");
+                                }
+                            });
+                        }
+                        else {
+                            if (selectedValue == "---select---") {
+                                alert("Please select any one admission status");
+                            }
+                            else {
+                                alert("Student Already had the same status");
+                            }
+                        }
+                    });
+                    $('#StudentReportTbl').DataTable();
+                    $("#ClassId").val('');
+                    $("#FromDate").val('');
+                    $("#SelectProcess").val('');
+                    //$("#stdnttblbody").empty();
+                    //$("#stdnttblbody").html(html);
+                    //$("#Studenttbl").DataTable();
+                },
+                error: function (xhr) {
+                    alert(xhr.responseText);
+                }
+            });
+        }
+
+        //if (StudentRegMasterModel.BatchName == '') {
+        //    alert("Please Select Any Batch Name");
+        //    return false;
+        //}
+        //if (StudentRegMasterModel.Class == '') {
+        //    alert("Please Select Any Class Name");
+        //    return false;
+        //}
+
+    }
+
+    $("#Exportotexcel").on('click', function () {
+
+        var classid = $("#ClassId").val();
+        var Date = $("#FromDate").val();
+
+        if (classid == 0 || Date == "") {
+            alert("Please Select Class And Date");
+        }
+        else {
+            window.location.href = "/Student/ExportStudentReportToExcel?Classid=" + classid + "&Date=" + Date;
+        }
+
+    });
+
+    //$("#Exportotexcel").on(function () {
+    //    alert("Working");
+    //    var classid = $("#ClassId").val();
+    //    var Date = $("#FromDate").val();
+
+    //    if (classid == 0 || Date == "") {
+    //        alert("Please Select Class And Date");
+    //    }
+    //    else {
+    //        window.location.href = "/Student/ExportStudentReportToExcel?Classid=" + classid + "&Date=" + Date;
+    //    }
+    //});
+
+</script>

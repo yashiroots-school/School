@@ -1,0 +1,150 @@
+﻿@model SchoolManagement.Website.ViewModels.StudentAdmissionViewModel
+    @{
+        ViewBag.Title = "AdmissionRegistration";
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    <style>
+        .myAlert-bottom {
+            position: fixed;
+            bottom: 5px;
+            left: 2%;
+            width: 96%;
+        }
+
+        div.fullscreen {
+            position: absolute;
+            width: 100%;
+            height: 960px;
+            top: 0;
+            left: 0;
+            background-color: lightblue;
+        }
+
+        .alert {
+            display: none;
+        }
+    </style>
+    <!-- page content -->
+    <div class="right_col" role="main">
+        <div class="row">
+            <!-- row started -->
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <!-- col-msx-12 started -->
+                <div class="dashboard_graph">
+                    <div class="row x_title">
+                        <div class="col-sm-12">
+                            <div class="col-sm-6">
+                                <h4 id="HeadingText"> Student Admission  &nbsp;<i class="fa fa-forward"></i></h4>
+                            </div>
+                            <div class="col-sm-6">
+                                <button class="btn btn-info pull-right"><a href="/Student/VewAllStudent" class="button_a">View All Students </a></button>
+                                <button class="btn btn-danger pull-right"><a href="/Student/ManageStudent" class="button_a">Manage Student</a> </button>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- dashboard_graph closed-->
+
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#add" class="sis_tab_a">Student Details</a></li>
+                </ul>
+
+                <form method="post" action="/Student/AdmissionRegistration" enctype="multipart/form-data">
+                    <div class="tab-content tab_sis">
+                        <div id="add" class="tab-pane fade in active">
+                            @Html.Partial("_AdmissionStudentcreateOrUpdate", Model)
+                            <div class="row" style="float:left">
+                                    <input type="submit" class="btn btn-success pull-right" id="submitformBTn" value="Submit Form" style="margin-left: 21px;" />
+                            </div>
+                            </div>
+                        </div>
+                </form>
+            </div><!-- col-msx-12  closed -->
+        </div><!-- 1st row closed -->
+    </div>  <!-- /page content -->
+
+
+   
+
+        @*<script src="~/Scripts/DevelopmentJS/UpdateStudent.js"></script>
+
+        <script>
+            function IsApproveClick() {
+                if ($('#IsApprove').is(":checked") == true)
+                    $('#IsApplyforAdmission').attr("disabled", true).attr("checked", false);
+                else
+                    $('#IsApplyforAdmission').attr("disabled", false);
+            }
+        </script>
+    }
+
+
+
+@*{
+    ViewBag.Title = "AddStudent";
+    Layout = null;
+}
+<link href="~/Content/WebsiteCss/css/custom.css" rel="stylesheet">
+<link href="~/Content/WebsiteCss/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+    .myAlert-bottom {
+        position: fixed;
+        bottom: 5px;
+        left: 2%;
+        width: 96%;
+    }
+
+    div.fullscreen {
+        position: absolute;
+        width: 100%;
+        height: 960px;
+        top: 0;
+        left: 0;
+        background-color: lightblue;
+    }
+
+    .alert {
+        display: none;
+    }
+</style>*@
+<!-- page content -->
+  <!-- /page content -->
+
+
+@*<script src="~/Scripts/WebsiteJs/js/jquery.min.js"></script>
+<script src="~/Scripts/WebsiteJs/js/bootstrap.min.js"></script>
+
+
+<script src="~/Scripts/DevelopmentJS/UpdateStudent.js"></script>*@
+@section Scripts{
+<script>
+
+
+    function IsApproveClick() {
+        if ($('#IsApprove').is(":checked") == true)
+            $('#IsApplyforAdmission').attr("disabled", true).attr("checked", false);
+        else
+            $('#IsApplyforAdmission').attr("disabled", false);
+    }
+</script>
+    }
+
+@*<script>
+        $(document).ready(function () {
+
+            if (@ViewBag.Email != null || @ViewBag.Email != "") {
+                $("#SName").val(@ViewBag.Email);
+            }
+            else {
+                $("#SName").val('');
+
+            }
+            if (@ViewBag.Dob != null || @ViewBag.Dob != "") {
+                $("#DOB").val(@ViewBag.Dob);
+            }
+            else {
+                $("#DOB").val('');
+            }
+
+        });
+</script>*@

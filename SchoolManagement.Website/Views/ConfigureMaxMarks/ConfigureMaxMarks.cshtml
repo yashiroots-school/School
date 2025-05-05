@@ -1,0 +1,84 @@
+
+@{
+    ViewBag.Title = "ConfigureMaxMarks";
+    Layout = "~/Views/Master";
+}
+
+<h2>ConfigureMaxMarks</h2>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    <div class="form-control">
+                        <div class="form-group">
+                        <label class="control-label col-sm-4">Section </label>
+                        <div class="col-sm-6">
+                            <select class="form-control" id="Sectionid" name="  .Section_Id" required>
+                                <option value="0">--Select Section--</option>
+
+                                @*@foreach (var item in ViewBag.Subject_Id as IEnumerable<SchoolManagement.Website.Controllers.Tbl_ConfigureMaxMarks>)
+                                {
+                                    <option value="@item.">@item.</option>
+                                }*@
+
+
+                            </select>
+                            <input type="text" id="Class" name="Class" style="display:none" />
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4">Section </label>
+                            <div class="col-sm-6">
+                                <select class="form-control" id="Sectionid" name="  .Section_Id" required>
+                                    <option value="0">--Select Section--</option>
+
+                                </select>
+                                <input type="text" id="Class" name="Class" style="display:none" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-6">
+                        <div class="form-control">
+                            <div class="form-group">
+                                <label class="control-label col-sm-4">Section </label>
+                                <div class="col-sm-6">
+                                    <select class="form-control" id="Sectionid" name="  .Section_Id" required>
+                                        <option value="0">--Select Section--</option>
+
+                                    </select>
+                                    <input type="text" id="Class" name="Class" style="display:none" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <label class="control-label col-sm-4">Section </label>
+                                    <div class="col-sm-6">
+                                        <select class="form-control" id="Sectionid" name="  .Section_Id" required>
+                                            <option value="0">--Select Section--</option>
+
+                                        </select>
+                                        <input type="text" id="Class" name="Class" style="display:none" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-success pull-right" id="BtnEdit">Edit</button>
+                                <button type="button" class="btn btn-success pull-right" id="BtnUpdate"></button>
+                                <button type="button" class="btn btn-success pull-right" id="Btndelete">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+ </div>
+

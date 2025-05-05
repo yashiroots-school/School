@@ -1,0 +1,179 @@
+﻿@model SchoolManagement.Website.Models.CreatesubjecttestModel
+@{
+    var optionalCount = Model.SubjectTestList.Count(x => x.IsOptional == true);
+    var nonOptionalCount = Model.SubjectTestList.Count(x => x.IsOptional != true);
+}
+
+@{
+    ViewBag.Title = "CreateSubjectTest";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/DropDownSelect2/dist/css/select2.min.css" rel="stylesheet" />
+
+<div class="right_col" role="main">
+    <div class="row">
+        <h2>Teacher Allocation</h2>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="table-responsive fixTableHead">
+                @using (Html.BeginForm("CreateSubjectTest", "Exam", FormMethod.Get))
+                {
+                    <div class="row">
+                        <div class="col-md-3">
+                            @Html.LabelFor(x => x.ClassId, "Class")
+                            @Html.DropDownListFor(
+                                x => x.ClassId,
+                                new SelectList(ViewBag.ClassList, "DataListItemId", "DataListItemName", Model.ClassId),
+                                "Select class",
+                                new { @class = "form-control select2" }
+                            )
+                        </div>
+                        <div class="col-md-3">
+                            @Html.LabelFor(x => x.SectionId, "Section")
+                            @Html.DropDownListFor(
+                                x => x.SectionId,
+                                new SelectList(ViewBag.Section, "DataListItemId", "DataListItemName", Model.SectionId),
+                                "Select section",
+                                new { @class = "form-control select2" }
+                            )
+                        </div>
+                        <div class="col-md-3">
+                            @Html.LabelFor(x => x.BatchId, "Batch")
+                            @Html.DropDownListFor(
+                                x => x.BatchId,
+                                new SelectList(ViewBag.Batch, "Batch_ID", "Batch_Name", Model.BatchId),
+                                "Select batch",
+                                new { @class = "form-control select2" }
+                            )
+                        </div>
+                        <div class="col-md-3">
+                            @Html.LabelFor(x => x.TermId, "Term")
+                            @Html.DropDownListFor(
+                                x => x.TermId,
+                                new SelectList(ViewBag.Term, "TermId", "TermName", Model.TermId),
+                                "Select term",
+                                new { @class = "form-control select2" }
+                            )
+                        </div>
+
+                    </div>
+
+                    <div style="margin-top: 10px; margin-left: 30px; margin-bottom: 10px; ">
+                        <input type="submit" value="Filter" class="btn btn-info" />
+                    </div>
+                }
+                @using (Html.BeginForm("SaveSubjectTestSerial", "Exam", FormMethod.Post))
+                {
+
+                    if (Model.SubjectTestList != null && Model.SubjectTestList.Any())
+                    {
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Subject</th>
+                                    <th>Sereal Number</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    var index = 0;
+                                }
+                                @foreach (var item in Model.SubjectTestList)
+                                {
+                                    var isOptional = item.IsOptional == true;
+                                    var subjectType = isOptional ? "optional" : "nonoptional";
+                                    var maxCount = isOptional ? optionalCount : nonOptionalCount;
+                                    <tr>
+                                        <td>
+                                            @item.SubjectId
+                                            <input type="hidden" name="SubjectTestData[@index].SubjectId" value="@item.SubjectId" />
+                                            <input type="hidden" name="SubjectTestData[@index].SubjectName" value="@item.SubjectName" />
+                                            @*<input type="hidden" name="SubjectTestData[@index].IsOptional" value="@item.IsOptional" />*@
+                                            <input type="hidden" name="SubjectTestData[@index].IsOptional" value="@(item.IsOptional == true ? "1" : "0")" />
+
+                                            <input type="hidden" name="SubjectTestData[@index].ClassId" value="@Model.ClassId" />
+                                            <input type="hidden" name="SubjectTestData[@index].SectionId" value="@Model.SectionId" />
+                                            <input type="hidden" name="SubjectTestData[@index].BatchId" value="@Model.BatchId" />
+                                            <input type="hidden" name="SubjectTestData[@index].TermId" value="@Model.TermId" />
+                                        </td>
+                                        <td>@item.SubjectName @(isOptional ? "(Optional)" : "")</td>
+                                        <td>
+                                            <input type="number"
+                                                   name="SubjectTestData[@index].SerialNumber"
+                                                   class="sr-input"
+                                                   data-type="@subjectType"
+                                                   data-max="@maxCount"
+                                                   min="1"
+                                                   max="@maxCount"
+                                                   required />
+                                            <small class="text-muted">Max: @maxCount</small>
+                                        </td>
+                                    </tr>
+                                    index++;
+                                }
+
+                            </tbody>
+                        </table>
+
+                    }
+                    <div style="margin-top:20px;">
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </div>
+                }
+
+
+            </div>
+            @if (TempData["Message"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["Message"]
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+<script>
+    document.querySelectorAll('.sr-input').forEach(function (input) {
+        input.addEventListener('input', function () {
+            const allInputs = document.querySelectorAll('.sr-input');
+            const type = input.dataset.type;   // optional / nonoptional
+            const max = parseInt(input.dataset.max);
+            const val = parseInt(input.value);
+
+            // Validate max limit
+            if (val > max) {
+                alert("Value cannot be more than " + max);
+                input.value = "";
+                return;
+            }
+            // Validate mMIN limit
+            if (val < 1) {
+                alert("Value cannot be LESS than 1 ");
+                input.value = "";
+                return;
+            }
+            // Check for duplicates within same type
+            let values = [];
+            let duplicateFound = false;
+
+            allInputs.forEach(function (inp) {
+                if (inp.dataset.type === type && inp !== input && inp.value !== "") {
+                    if (parseInt(inp.value) === val) {
+                        duplicateFound = true;
+                    }
+                    values.push(parseInt(inp.value));
+                }
+            });
+
+            if (duplicateFound) {
+                alert("Value " + val + " is already used in another " + type + " subject.");
+                input.value = "";
+                return;
+            }
+        });
+    });
+</script>
+
+<script src="~/Content/DropDownSelect2/dist/js/select2.min.js"></script>

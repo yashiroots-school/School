@@ -1,0 +1,176 @@
+﻿
+@{
+    ViewBag.Title = "ManageSiblings";
+}
+
+
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!--col-msx-12 closed-->
+            <div class="row">
+                <!-- row started -->
+                <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                    <!-- col-msx-12 started -->
+                    <!-- col-sm-12 closed -->
+                    <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                        <!-- col-msx-12 started -->
+                        <!--<table class="table table-responsive table-striped" style="width: 100%" id="StudentReportTbl">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>First Name</th>
+                                <th> Class</th>-->
+                        @*<th> Father's Name</th>
+                            <th> Mother's Name</th>*@
+
+                        <!--<th>Siblings Name</th>
+                        <th>Siblings Class</th>-->
+                        @*<th> Contact Number</th>*@
+                        <!--<th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="StudentReportTblBody">
+                                @*@{
+                                    var i = 1;
+                                    foreach (var item in ViewBag.SiblingsData as IEnumerable<SchoolManagement.Website.ViewModels.SiblingsViewModel>)
+                                    {
+                                        <tr>
+                                            <td>@i</td>
+                                            <td>@item.siblingsstudentname</td>
+                                            <td>@item.Studentclass</td>
+                                            <td>@item.Studentname</td>
+                                            <td>@item.Classname</td>
+
+                                            <td class="row-data">
+                                                @{-->
+                                                    @*<button type="button" class="btn btn-success BtnEdit" data-val="@item.Siblings_Id">Edit</button>*@
+                                                    <!--<button type="button" class="btn btn-success BtnDelete" data-val=>Delete</button>
+                                                }
+                                            </td>
+                                        </tr>
+                                        i++;
+                                    }
+                                }
+                            </tbody>
+                        </table>-->
+
+
+                        @{
+                            var j = 1;
+                            var siblingsDataList = ViewBag.SiblingsData_ as List<SchoolManagement.Website.ViewModels.SiblingsVM>;
+
+                            var maxSiblingsCount = siblingsDataList?.Max(x => x.SiblingsData.Count) ?? 0;
+                        }
+
+                        <table class="table table-responsive table-striped" style="width: 100%" id="StudentReportTbl">
+                            <thead>
+                                <tr>
+                                    <th>#S.no</th>
+                                    <th>Father Name</th>
+                                    <th>Mother Name</th>
+                                    @for (int k = 0; k < maxSiblingsCount; k++)
+                                    {
+                                        <th> @(k +1) Child Name  / Class</th>
+                                    }
+                                    <th>Contact Number</th>
+                                    <th>Address</th>
+                                </tr>
+                            </thead>
+                            <tbody id="StudentReportTblBody">
+                                @foreach (var item in siblingsDataList)
+                                {
+                                    <tr>
+                                        <td>@j</td>
+                                        <td>@item.Fathername</td>
+                                        <td>@item.Mothername</td>
+
+                                        @for (int k = 0; k < maxSiblingsCount; k++)
+                                        {
+                                            if (k < item.SiblingsData.Count)
+                                            {
+                                                <td>@item.SiblingsData[k].SiblingStudentName - @item.SiblingsData[k].siblingsStudentclass</td>
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                            }
+                                        }
+
+                                        <td>@item.ContactNumber</td>
+                                        <td>@item.Address</td>
+                                    </tr>
+                                    j++;
+                                }
+                            </tbody>
+                        </table>
+
+
+                    </div>
+                    <!-- col-msx-12  closed -->
+                </div>
+                <!-- col-msx-12  closed -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/Content/DropDownSelect2/dist/js/select2.min.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+        $("#StudentReportTbl").DataTable();
+
+        //$(".sclassname").select2();
+        //$("#studentname").select2({});
+        //$("#siblingsclass").select2({});
+        //$("#Siblingsname").select2({});
+
+    });
+
+
+
+
+
+    $(".BtnEdit").on('click', function () {
+        var id = $(this).attr("data-val");
+        $("#btnsubmit").text("Update");
+        $("#siblingsform").attr("action", "/Student/UpdateSiblings");
+        GetsiblingsById(id);
+    });
+
+    function GetsiblingsById(id) {
+        $.ajax({
+            url: "/Student/GetsiblingsById?Id=" + id,
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                if (data != null) {
+                    $("#studentclass").val(data.Studentclass);
+                    $("#studentname").val(data.siblingsstudentname);
+                    $("#siblingsclass").val(data.Classname);
+                    $("#Siblingsname").val(data.Studentname);
+                    $("#confirmation").val(data.Confirmation);
+                }
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }
+
+
+    $(".BtnDelete").on("click", function () {
+        var id = $(this).attr("data-val");
+        var cnf = confirm("Are You Sure, You Want to delete this data?");
+        if (cnf == true) {
+            window.location.href = "/Student/DeleteSiblings?id=" + id;
+        }
+    });
+
+</script>
+
+

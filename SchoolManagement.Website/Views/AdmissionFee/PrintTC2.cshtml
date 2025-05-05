@@ -1,0 +1,534 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Transfer Certificate – ST. THOMAS HSS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        /* Page setup */
+        /* ---- PRINT BUTTON (SCREEN ONLY) ---- */
+        .print-btn {
+            position: fixed;
+            top: 12px;
+            right: 12px;
+            padding: 10px 14px;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 10px;
+            border: 1px solid #222;
+            background: #fff;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,.12);
+            z-index: 9999;
+        }
+
+            .print-btn:active {
+                transform: translateY(1px);
+            }
+
+        .no-print {
+            display: inline-block;
+        }
+
+        @@page {
+            size: A4;
+            margin: 14mm;
+        }
+
+        :root {
+            --ink: #111;
+            --muted: #444;
+            --rule: #111;
+            --badge: #222;
+            --accent: #b40000; /* red serial number */
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Times New Roman", Times, serif;
+            color: var(--ink);
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            background: #f7f7f7;
+        }
+
+        .sheet {
+            width: 210mm; /* A4 width */
+            min-height: 297mm; /* A4 height */
+            background: #fff;
+            margin: 0 auto;
+            box-sizing: border-box;
+            padding: 12mm;
+            position: relative;
+            box-shadow: 0 0 0.8mm rgba(0,0,0,.15);
+        }
+
+        /* Double border frame */
+        .frame {
+            position: relative;
+            border: 1.4px solid var(--rule);
+            padding: 7mm;
+        }
+
+            .frame:before {
+                content: "";
+                position: absolute;
+                inset: 4mm;
+                border: none;
+                pointer-events: none;
+            }
+
+        /* Header */
+        .topline {
+            font-size: 11.3px;
+            color: var(--muted);
+        }
+
+        .header {
+            text-align: center;
+            margin-top: 2mm;
+        }
+
+            .header .title {
+                font-size: 23px;
+                font-weight: 700;
+                letter-spacing: 0.6px;
+            }
+
+        .sub {
+            margin-top: 1mm;
+            font-size: 13px;
+        }
+
+        .serial {
+            position: absolute;
+            left: 18mm;
+            top: 18mm;
+            font-size: 13.2px;
+        }
+
+            .serial b {
+                margin-right: 2mm;
+            }
+
+            .serial .no {
+                color: var(--accent);
+                font-weight: 700;
+            }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            border: 1.6px solid var(--badge);
+            color: var(--badge);
+            padding: 2.5mm 6mm;
+            border-radius: 4mm;
+            font-weight: 700;
+            letter-spacing: .3px;
+            margin: 5mm auto 4mm;
+            font-size: 14.5px;
+        }
+
+        /* Body */
+        .body {
+            font-size: 17px;
+            line-height: 2.55;
+            margin-top: 2mm;
+        }
+
+
+        /*.line {
+            display: inline-block;
+            border-bottom: 1px dotted #333;
+            min-width: 28mm;
+            height: 4.2mm;
+            vertical-align: bottom;*/ /* 👈 change: baseline → bottom */
+        /*line-height: 1.4;*/ /* 👈 thoda adjust */
+        /*}*/
+        .line {
+            display: inline-block;
+            border-bottom: 1px dotted #000;
+            min-width: 25mm;
+            height: 1.2em;
+            line-height: 1.2em;
+            vertical-align: baseline; /* same level pe rahe */
+            font-weight: bold; /* jo bhi data aayega bold */
+        }
+
+
+            .line.w20 {
+                min-width: 20mm;
+            }
+
+            .line.w24 {
+                min-width: 24mm;
+            }
+
+            .line.w30 {
+                min-width: 30mm;
+            }
+
+            .line.w36 {
+                min-width: 36mm;
+            }
+
+            .line.w42 {
+                min-width: 42mm;
+            }
+
+            .line.w55 {
+                min-width: 55mm;
+            }
+
+            .line.w62 {
+                min-width: 62mm;
+            }
+
+        .indent {
+            text-indent: 7mm;
+            display: block;
+        }
+
+        /* Two-column details near bottom */
+        .bottom-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.1fr;
+            gap: 10mm;
+            margin-top: 6mm;
+            align-items: flex-start;
+        }
+
+        .hello {
+            margin-top: 20px;
+        }
+
+        .reasons h4 {
+            margin: 0 0 2.5mm 0;
+            font-size: 13.6px;
+        }
+
+        .reasons ol {
+            margin: 0;
+            padding-left: 5.2mm;
+        }
+
+        .reasons li {
+            margin: 1.1mm 0;
+        }
+
+        .sign {
+            text-align: right;
+            margin-top: 40mm;
+            line-height: 1.35;
+            font-size: 13.6px;
+        }
+
+            .sign .principal {
+                font-weight: 700;
+            }
+
+        .meta {
+            display: flex;
+            gap: 22mm;
+            margin-top: 6mm;
+        }
+
+        .field-label {
+            display: inline-block;
+            min-width: 18mm;
+        }
+
+        /* Print tweaks */
+        /* ======================= PRINT ONLY ======================= */
+        @@media print {
+
+            /* A4 hard sizing + margins */
+            @@page {
+                size: A4 portrait;
+                margin: 12mm;
+            }
+
+            html, body {
+                height: auto !important;
+                margin: 0 !important;
+                background: #fff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+                /* Sirf TC page hi print ho — baaki sab hide */
+                body * {
+                    visibility: hidden !important;
+                }
+
+            #page-container, #page-container * {
+                visibility: visible !important;
+            }
+
+            /* Page ko top-left set karo taaki perfect align ho */
+            #page-container {
+                position: absolute !important;
+                inset: 0 auto auto 0 !important;
+                width: 210mm !important; /* A4 width */
+            }
+
+            /* Shadow remove, exact width/height, same paddings */
+            .sheet {
+               padding: 0px !important;
+            }
+
+            /* Borders, colors, badges, dotted lines — sab solid print ke liye */
+            .frame {
+                border: 2px solid #111 !important;
+            }
+
+            .badge {
+                border: 1.6px solid #222 !important;
+                color: #222 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .line {
+                border-bottom: 1px dotted #000 !important;
+                height: 1.2em !important;
+                line-height: 1.2em !important;
+                vertical-align: baseline !important;
+                font-weight: bold !important;
+            }
+
+            .serial .no {
+                color: #b40000 !important; /* accent red */
+                font-weight: 700 !important;
+            }
+
+            /* Typography tweaks so line-height/layout shift na ho */
+            .header .title {
+                font-weight: 700 !important;
+                letter-spacing: .6px !important;
+            }
+
+            .topline {
+                color: #444 !important;
+            }
+
+            .sub {
+                color: #111 !important;
+            }
+
+            /* Exact same spacing */
+            .body {
+                font-size: 22px !important;
+                line-height: 2.55 !important;
+                margin-top: 2mm !important;
+            }
+
+            .bottom-grid {
+                display: grid !important;
+                grid-template-columns: 1fr 1.1fr !important;
+                gap: 10mm !important;
+                margin-top: 6mm !important;
+                align-items: flex-start !important;
+            }
+
+            .sign {
+                text-align: right !important;
+                margin-top: 40mm !important;
+                line-height: 1.35 !important;
+                font-size: 13.6px !important;
+            }
+
+            /* Hamesha ek hi page me aane ki koshish kare, beech me page-break na ho */
+            .sheet,
+            .frame,
+            .header,
+            .body,
+            .bottom-grid,
+            .sign,
+            .hello,
+            .reasons {
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+            }
+
+            /* Links/images/phone/email ka blue underline wagairah disable */
+            a, a:visited {
+                color: inherit !important;
+                text-decoration: none !important;
+            }
+
+            /* Print pe button, debug elements hide */
+            .no-print {
+                display: none !important;
+            }
+        }
+        /* ===================== END PRINT ONLY ===================== */
+
+    </style>
+</head>
+<body> 
+
+    <button id="printBtn" onclick="window.print()">🖨️ Print TC </button>
+
+    <main class="sheet" id="page-container">
+        <div class="frame">
+            <div class="topline"><b>Sl No.</b><span class="no TCSNo"></span></div>
+
+            <header class="header">
+                <div class="title SchoolName"></div>
+                <div class="sub">P.O. – MENDIPATHAR – 794112</div>
+                <div class="sub">Dist. North Garo Hills (Meghalaya)</div>
+                <div class="badge">TRANSFER CERTIFICATE</div>
+            </header>
+
+            <section class="body">
+                <div>Certified that &nbsp;&nbsp;<span class="line w55 StudentName"></span> an inhabitant of &nbsp;&nbsp;<span class="line w42"></span> Son/Daughter of &nbsp;&nbsp; <span class="line w55 FatherName"></span></div>
+                <div>Vill. &nbsp;&nbsp; <span class="line w36 Rvill"></span> P.O. &nbsp;&nbsp;<span class="line w30 Rpost"></span> in the District of &nbsp;&nbsp;<span class="line w42 Rdist"></span></div>
+                <div>left the &nbsp;&nbsp; <span class="line w62 SchoolName"></span> on &nbsp;&nbsp;<span class="line w30 SchoolLeftDate"></span> </div>
+                <div>His/Her date of birth according to Admission Register was &nbsp;&nbsp;<span class="line w30 DOB"></span></div>
+                <div>He/She was reading in class &nbsp;&nbsp;<span class="line w24 LastClassWord"></span> and had/had not passed the Examination for promotion to class &nbsp;&nbsp;<span class="line w36 PromoteClassNameWord"></span></div>
+                <div class="indent">All sums due by him/her have been paid, viz, fees upto &nbsp;&nbsp;<span class="line w42 FeePaidUpto"></span></div>
+                <div class="">
+                    <div>Reason for leaving School: &nbsp;&nbsp;<span class="line w42 ReasonName"></span></div>
+                </div>
+                <div class="bottom-grid">
+
+
+                    <div class="hello">
+
+                        <div class="meta">
+                            <div><span class="field-label">Fines:</span> <span class="line w42"></span></div>
+                        </div>
+                        <div style="margin-top:4mm;"><span class="field-label">Character:</span> <span class="line w55 OtherRemark"></span></div>
+                        <div style="margin-top:10mm;">
+                            <span class="field-label">Date:</span> <span class="line w42 TCApplyDate"></span>
+                        </div>
+                    </div>
+
+                    <div class="reasons">
+
+                        <div class="sign">
+                            <div class="principal">Principal</div>
+                            <div class="SchoolName"></div>
+                            <div>MENDIPATHAR</div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+    </main>
+
+
+    <script>
+
+        function formatDate(dateStr) {
+            if (!dateStr) return "";
+            // Agar ISO format aa raha ho (2020-08-06 ya 2020-08-06T00:00:00)
+            if (dateStr.includes("-") && dateStr.length >= 10) {
+                const parts = dateStr.split("T")[0].split("-");
+                return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+            // Agar old format (06-Aug-2020)
+            const months = {
+                Jan: "01", Feb: "02", Mar: "03", Apr: "04", May: "05", Jun: "06",
+                Jul: "07", Aug: "08", Sep: "09", Oct: "10", Nov: "11", Dec: "12"
+            };
+            const parts2 = dateStr.split("-");
+            if (parts2.length === 3) {
+                return `${parts2[0]}/${months[parts2[1]]}/${parts2[2]}`;
+            }
+            return dateStr; // fallback
+        }
+        // sab dynamic fields ko bold kar do
+        $(".StudentName, .FatherName, .MotherName, .Rvill, .Rpost, .Rdist, .Rstate, .Nationality, .PermanentEducationNumber, .ApparId, .CastCategory, .AdmissionDate, .DOB, .DOBWord, .LastClass, .LastClassWord, .QualifiedForProm, .PromoteClassName, .PromoteClassNameWord, .FeePaidUpto, .Remark, .TotAttendance, .TotWorkingDays, .GeneralConduct, .TCApplyDate, .TCDate, .ReasonName, .OtherRemark, .SchoolLeftDate, .SchoolName, .SchoolWebsite, .SchoolContact, .ApplicationNo, .SNo, .TCSNo, .SSSMIdNumber, .FamilySSSMID, .AdmissionNo")
+            .css("font-weight", "bold");
+
+
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                url: "/Fee/GetStudentTCDetails?StudentId=" + localStorage.getItem("StudentId"),
+                dataType: "json",
+                success: function (data) {
+                    console.log(data)
+                    $(".TCSNo").text("  " + data.TCSNo);
+                    $(".StudentName").text("  " + data.StudentName);
+                    $(".FamilySSSMID").text("  " + data.FamilySSSMID);
+                    $(".SSSMIdNumber").text("  " + data.SSSMIdNumber);
+                    $(".AdmissionNo").text("  " + data.ScholarNo);
+                    $(".FatherName").text(" " + data.FatherName);
+                    $(".MotherName").text(" " + data.MotherName);
+                    $(".Rvill").text(" " + data.Rvill);
+                    $(".Rpost").text(" " + data.Rpost);
+                    $(".Rdist").text(" " + data.Rdist);
+                    $(".Rstate").text(" " + data.Rstate);
+                    $(".Nationality").text(" " + data.Nationality);
+                    $(".PermanentEducationNumber").text(" " + data.PerEduNumber);
+                    $(".ApparId").text(" " + data.ApaarId);
+
+                    $(".CastCategory").text(" " + data.CastCategory);
+                    $(".AdmissionDate").text("" + data.AdmissionDate);
+                    const formattedDate = formatDate(data.DOB);
+                    $(".DOB").text("" + formattedDate);
+                    $(".DOBWord").text("" + data.DOBWord);
+                    $(".LastClass").text(data.LastClass.replace("Class-", " "));
+
+                    /* $(".LastClass").text("" + data.LastClass);*/
+                    /* $(".LastClassWord").text("" + data.LastClassWord);*/
+                    $(".LastClassWord").text(data.LastClassWord.replace("Standard", ""));
+                    $(".QualifiedForProm").text("" + data.QualifiedForPromotion);
+                    $(".PromoteClassName").text("" + data.PromoteClassName);
+                    $(".PromoteClassNameWord").text("" + data.PromoteClassNameWord);
+                    if (data.FeePaidUpto != null) {
+                        $(".FeePaidUpto").text("" + data.FeePaidUpto);
+                    }
+                    $(".Remark").text("" + data.Remark);
+                    $(".TotAttendance").text("" + data.TotAttendance);
+                    $(".TotWorkingDays").text("" + data.TotWorkingDays);
+                    $(".GeneralConduct").text("" + data.Remark);
+                    $(".TCApplyDate").text("" + data.TCApplyDate);
+                    $(".TCDate").text("" + data.TCDate);
+                    $(".ReasonName").text("" + data.Reason);
+                    if (data.OtherRemarks != null) {
+                        $(".OtherRemark").text("" + data.OtherRemarks);
+                    }
+
+                    if (data.SchoolLeftDate != null) {
+                        $(".SchoolLeftDate").html("   " + data.SchoolLeftDate);
+                    }
+                    else {
+                        $(".SchoolLeftDate").text("   -  -  -  -");
+                    }
+                    $(".SchoolName").text(data.SchoolName);
+                    $(".SchoolWebsite").text(data.SchoolWebsite);
+                    $(".SchoolContact").text("Phone No : 6009749674, email : " + data.SchoolEmail);
+                    $(".SchoolLogo").attr("src", "/WebsiteImages/SchoolImage/" + data.SchoolLogo);
+                    $(".TCDate").html(data.TCDate);
+                    $(".ApplicationNo").text("   " + data.ApplicationNo);
+                    $(".SNo").text("   " + data.SNo);
+                },
+                error: function (result) {
+                    alert("Error");
+                }
+            });
+        });
+
+    </script>
+  
+</body>
+</html>
+

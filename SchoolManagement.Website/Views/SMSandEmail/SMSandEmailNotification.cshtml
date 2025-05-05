@@ -1,0 +1,1271 @@
+﻿
+@{
+    ViewBag.Title = "SMSandEmailNotification";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        $('#loadsmsemailtemptbl').DataTable();
+    });
+    $(document).ready(function () {
+        $('#Studenttbl').DataTable();
+    });
+    $(document).ready(function () {
+        $('#usertbl').DataTable();
+    });
+    $(document).ready(function () {
+        $('#loadclasstbl').DataTable();
+    });
+    $(document).on("click", ".click_6", function () {
+        GetAllAbsentStudentDetails();
+    });
+</script>
+<style>
+    .disabled {
+        pointer-events: none;
+    }
+</style>
+
+<div class="right_col" role="main">
+        <div id="overlay">
+            <div class="cv-spinner">
+                <span class="spinner"></span>
+            </div>
+        </div>
+
+        <style>
+            #overlay {
+                position: fixed;
+                top: 0;
+                z-index: 100;
+                width: 100%;
+                height: 100%;
+                display: none;
+                left: 0;
+                background: rgba(0,0,0,0.6);
+            }
+
+            .cv-spinner {
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .spinner {
+                width: 40px;
+                height: 40px;
+                border: 4px #ddd solid;
+                border-top: 4px #2e93e6 solid;
+                border-radius: 50%;
+                animation: sp-anime 0.8s infinite linear;
+            }
+
+            @@keyframes sp-anime {
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+
+            .is-hide {
+                display: none;
+            }
+        </style>
+        <div class="row">
+            <!-- row started -->
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <!-- col-msx-12 started -->
+                <div class="dashboard_graph">
+                    <div class="row x_title">
+                        <!--row x_title started -->
+                        <div class="col-sm-12">
+                            <!-- col-sm-12 started -->
+                            <div class="col-sm-6">
+                                <h4> SMS and Email Notification  &nbsp;<i class="fa fa-forward"></i></h4>
+                            </div>
+                            @*<div class="col-sm-3">
+                                    <button class="btn btn-danger pull-right"><a href="/Student/AddStudent" class="button_a">Create New Student</a></button>
+                                </div>*@
+                            @*<div class="col-sm-3">
+                                    <button class="btn btn-success pull-right"><a href="/Student/VewAllStudent" class="button_a">Vew All Student</a></button>
+                                </div>*@
+
+                        </div>
+                        <ul class="nav nav-tabs">
+                            <li class="active" id="li5"><a id="at5" data-toggle="tab" href="#Mainadd4" class="sis_tab_a">Upload Document</a></li>
+                            <li class="disabled" id="li1"><a id="at1" data-toggle="tab" href="#Mainadd" class="sis_tab_a">Choose Template</a></li>
+                            <li id="li2" class="disabled"><a id="at2" data-toggle="tab" href="#Mainadd1" class="sis_tab_a click">Create Message</a></li>
+                            <li id="li3" class="disabled"><a id="at3" data-toggle="tab" href="#Mainadd2" class="sis_tab_a click_1">Choose Receivers</a></li>
+                            <li id="li4" class="disabled"><a id="at4" data-toggle="tab" href="#Mainadd3" class="sis_tab_a click_1">Schedule and Submit</a></li>
+                            @*<li><a data-toggle="tab" href="#add3" class="sis_tab_a click_2">Additional Info</a></li>
+                                <li><a data-toggle="tab" href="#add4" class="sis_tab_a click_3">Past Schooling Record</a></li>
+                                <li><a data-toggle="tab" href="#add5" class="sis_tab_a click_4">Remote Access</a></li>*@
+                        </ul>
+                        <div class="tab-content tab_sis">
+
+                            <div id="Mainadd4" class="tab-pane fade in active">
+                                <div class="row">
+                                    <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                                        <!-- col-msx-12 started -->
+                                        <!-- col-sm-12 closed -->
+                                        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                                            <button class="btn btn-danger pull-right"><a onclick="Changetab3()" class="button_a">Choose Template</a></button>
+                                        </div>
+                                        <div>
+                                            @*<div class="form-group">
+                                                    <div class="col-sm-12">
+                                                        <form id="form_UploadFile" action="/SMSandEmail/FileUpload" method="post" enctype="multipart/form-data">
+                                                            <div class="col-sm-6">
+                                                                <label>Attach File(s)</label>
+                                                                <input type="file" name="file" id="postfile" />
+                                                                <input type="text" style="display:none" id="BtnUpload"/>
+                                                            </div>
+                                                           <div class="col-sm-6">
+                                                            <input class="btn btn-success" type="submit" name="Upload" value="Upload"/>
+                                                           </div>
+                                                        </form>
+                                                    </div>
+
+                                                </div>*@
+                                            @using (Html.BeginForm("FileUpload", "SMSandEmail", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                            {
+                                                <div>
+                                                    @Html.TextBox("file", "", new { type = "file" }) <br />
+                                                    <input class="btn btn-success" type="submit" value="Upload"
+                                                           name="Upload" />
+                                                    @if (TempData["EmailUploadedFilename"] != null)
+                                                    {
+                                                        <label class="btn btn-info"> @TempData["EmailUploadedFilename"] uploaded successfully !!</label>
+                                                    }
+
+                                                </div>
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="Mainadd" class="tab-pane fade">
+                                <div class="row">
+                                    <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                                        <!-- col-msx-12 started -->
+                                        <!-- col-sm-12 closed -->
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <button class="btn btn-danger pull-right"><a onclick="Changetab()" class="button_a">Create New Templete</a></button>
+                                        </div>
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <!-- col-msx-12 started -->
+                                            <div id="loadsmsemailtemp">
+                                                <table class="table table-responsive table-striped" style="width: 100%" id="loadsmsemailtemptbl">
+                                                    <thead id="loadsmsemailtemphead">
+                                                        <tr>
+                                                            <th>Select</th>
+                                                            <th>Templete ID</th>
+                                                            <th>Type</th>
+                                                            <th>Subject</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="stdnttblbody">
+                                                        @foreach (var item in ViewBag.SMSEMAILTEM as IEnumerable<SchoolManagement.Website.ViewModels.SMSEMAILTEMPLETESUMMARY>)
+                                                        {
+                                                            <tr>
+                                                                <td><input class='TempSelect' type='checkbox' /></td>
+                                                                <td class="row-data">@item.TempleteID</td>
+                                                                <td class="row-data">@item.NOTIFICATIONTYPE </td>
+                                                                <td class="row-data">@item.SUBJECT</td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="Mainadd1" class="tab-pane fade">
+                                <div class="tab-content tab_sis">
+                                    <div id="Mainadd" class="tab-pane fade in active">
+                                        <div class="row">
+                                            <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                                                <button class="btn btn-danger pull-right"><a onclick="Changetab1()" class="button_a">Next Step</a></button>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                                                <div class="col-sm-12">
+                                                    <div class="form-group stright_line">
+                                                        <label>Select Message Type :</label>
+                                                        SMS
+                                                        <input type="radio" id="smsradio" name="type" onclick="Radiocheck()" />
+                                                        EMAIL
+                                                        <input type="radio" id="Emailradio" name="type" onclick="Radiocheck()" />
+                                                        Both
+                                                        <input type="radio" id="bothradio" name="type" onclick="Radiocheck()" checked />
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="form-group stright_line">
+                                                        <label>Subject</label>
+                                                        <input type="text" id="SMSSubject" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12" id="divSMSMessageID">
+                                                    <div class="form-group stright_line">
+                                                        <label>SMS Text*(0 characters)</label>
+                                                        <br />
+                                                        <label>**Message Limit is 160 characters. Messages above 160 chars will be charged more per message.</label>
+                                                        <input type="text" id="SMSText" class="form-control">
+                                                    </div>
+                                                </div>
+                                                @*<div class="col-sm-12" id="divAttachedMessageID">
+                                                                <div class="form-group stright_line">
+                                                                    <label>Attach File(s)</label>
+                                                    <input type="file" id="AttachFile" />
+                                                                    <form id="form_UploadFile" action="/SMSandEmail/FileUpload" method="post" enctype="multipart/form-data">
+                                                                        <label>Attach File(s)</label>
+                                                                        <input type="file" name="file" id="postfile" />
+                                                                        <input class="col-sm-4" type="submit" name="Upload" />
+                                                                    </form>
+                                                                </div>
+
+                                                            </div>*@
+                                                <div class="col-sm-12" id="divEmailMessageID">
+                                                    <div class="form-group stright_line">
+                                                        <label>Email Message</label>
+                                                        @*<input type="text" id="Eamilmessage" class="form-control">*@
+                                                        <textarea id="Eamilmessage" class="ckeditor form-control"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="form-group stright_line">
+                                                        <button class='btn btn-info pull-right'><a href='#' onclick="BtnPayNow()" id="BtnPayNow" class='button_a'>Add</a></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="Mainadd2" class="tab-pane fade">
+                                <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                                    <button class="btn btn-danger pull-right"><a onclick="Changetab2()" class="button_a">Next Step</a></button>
+                                </div>
+                                <ul class="nav nav-tabs">
+                                    <li class="active"><a data-toggle="tab" href="#add" class="sis_tab_a">Class</a></li>
+                                    <li><a data-toggle="tab" href="#add1" class="sis_tab_a click">Student</a></li>
+                                    <li><a data-toggle="tab" href="#add2" class="sis_tab_a click_1">Users</a></li>
+                                    <li><a data-toggle="tab" href="#add6" class="sis_tab_a click_6">Absent Student</a></li>
+                                    @*<li><a data-toggle="tab" href="#add3" class="sis_tab_a click_2">Additional Info</a></li>
+                                        <li><a data-toggle="tab" href="#add4" class="sis_tab_a click_3">Past Schooling Record</a></li>
+                                        <li><a data-toggle="tab" href="#add5" class="sis_tab_a click_4">Remote Access</a></li>*@
+                                </ul>
+                                <div class="tab-content tab_sis">
+                                    <div id="add" class="tab-pane fade in active">
+                                        <div class="col-sm-12" style="margin-top: 15px;">
+                                            @*<form action="/Student/ViewStudent" method="get">*@
+                                            <div class="col-sm-12">
+                                                <div class="col-sm-3">
+                                                    <div class="form-group stright_line">
+                                                        <label>Filter by Class :</label>
+                                                        @*@Html.DropDownList("semester", new SelectList(ViewBag.Classes, "DataListItemName", "DataListItemName"), "select", new { @id = "classDll", @class = "form-control" })*@
+                                                        <select class="form-control" id="classDll">
+                                                            <option>---Select Class---</option>
+                                                            @foreach (var item in ViewBag.Classes as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                                            {
+                                                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                @*<div class="col-sm-3">
+                                                        <div class="form-group stright_line">
+                                                            <label>Filter By Batch :</label>
+                                                            @Html.DropDownList("Batchddl", new SelectList(ViewBag.AllBatchs, "DataListItemName", "DataListItemName"), "select", new { @id = "Batchddl", @class = "form-control" })
+                                                        </div>
+                                                    </div>*@
+                                                <div class="col-sm-3">
+                                                    <div class="form-group stright_line">
+                                                        <label>Search :</label><br />
+                                                        @*<button type="submit" class="btn btn-success"> Filter Records </button>*@
+                                                        <button type="button" onclick="GetAllClassDetails()" class="btn btn-success"> Filter Records </button>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @*</form>*@
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                                                <!-- col-msx-12 started -->
+                                                <!-- col-sm-12 closed -->
+                                                <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                                                    <!-- col-msx-12 started -->
+                                                    <div id="loadclass">
+                                                        <table class="table table-responsive table-striped" style="width: 100%" id="loadclasstbl">
+                                                            <thead id="loadclasshead">
+                                                                <tr>
+                                                                    <th><input Id="Mycheckforall" type="checkbox" /> All</th>
+                                                                    <th>Class</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="stdnttblbody">
+                                                                @*@foreach (var item in ViewBag.studentbatchlist as IEnumerable<SchoolManagement.Website.ViewModels.studentlist>)
+                                                                    {
+                                                                        <tr>
+                                                                            <td><input class='Feeselectbox' type='checkbox' /></td>
+                                                                            <td class="row-data">@item.BatchName</td>
+                                                                        </tr>
+                                                                    }*@
+                                                                @foreach (var item in ViewBag.Classes as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                                                {
+                                                                    <tr>
+                                                                        <td><input class="Feeselectbox" type="checkbox" /></td>
+                                                                        <td class="row-data">@item.DataListItemName</td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="add1" class="tab-pane fade">
+                                        <div class="col-sm-12" style="margin-top: 15px;">
+                                            @*<form action="/Student/ViewStudent" method="get">*@
+                                            <div class="col-sm-12">
+                                                <div class="col-sm-3">
+                                                    <div class="form-group stright_line">
+                                                        <label>Filter by Class :</label>
+                                                        <select class="form-control" id="Class_id">
+                                                            <option value="0">---Select Class---</option>
+                                                            @foreach (var item in ViewBag.Classes as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                                            {
+                                                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                                            }
+                                                        </select>
+                                                        @*@Html.DropDownList("semester", new SelectList(ViewBag.Classes, "DataListItemName", "DataListItemName"), "select", new { @id = "classDll", @class = "form-control" })*@
+
+                                                    </div>
+                                                </div>
+
+                                                @*<div class="col-sm-3">
+                                                        <div class="form-group stright_line">
+                                                            <label>Filter By Batch :</label>
+                                                            @Html.DropDownList("Batchddl", new SelectList(ViewBag.AllBatchs, "DataListItemName", "DataListItemName"), "select", new { @id = "Batchddl", @class = "form-control" })
+                                                        </div>
+                                                    </div>*@
+                                                <div class="col-sm-3">
+                                                    <div class="form-group stright_line">
+                                                        <label>Search :</label><br />
+                                                        @*<button type="submit" class="btn btn-success"> Filter Records </button>*@
+                                                        <button type="button" onclick="GetAllStudentDetails()" class="btn btn-success"> Filter Records </button>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @*</form>*@
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                                                <!-- col-msx-12 started -->
+                                                <!-- col-sm-12 closed -->
+                                                <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                                                    <!-- col-msx-12 started -->
+                                                    <div id="loadStudent">
+                                                        <table class="table table-responsive table-striped" style="width: 100%" id="pastStudenttbl">
+                                                            <thead id="stdnttblhead">
+                                                                <tr>
+                                                                    <th><input Id="Mycheckforallstudent" type="checkbox" /> All</th>
+                                                                    <th>Calss Name</th>
+                                                                    <th>Name</th>
+                                                                    <th>Studentid</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="paststdnttblbody">
+                                                                @foreach (var item in ViewBag.studentlist as IEnumerable<SchoolManagement.Website.ViewModels.studentlist>)
+                                                                {
+                                                                    <tr>
+                                                                        <td><input class='ClasspastStudselectbox' type='checkbox' /></td>
+                                                                        <td class="row-data">@item.ClassName</td>
+                                                                        <td class="row-data">@item.StudentName</td>
+                                                                        <td class="row-data">@item.StudentId</td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="add2" class="tab-pane fade">
+                                        <div class="row">
+                                            <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                                                <!-- col-msx-12 started -->
+                                                <!-- col-sm-12 closed -->
+                                                <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                                                    <!-- col-msx-12 started -->
+                                                    <div id="loaduser">
+                                                        <table class="table table-responsive table-striped" style="width: 100%" id="usertbl">
+                                                            <thead id="userhead">
+                                                                <tr>
+                                                                    <th><input Id="Mycheckforall" type="checkbox" /> All</th>
+                                                                    <th>UserName</th>
+                                                                    <th>Eamil</th>
+                                                                    <th>Phone Number</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="stdnttblbody">
+                                                                @foreach (var item in ViewBag.userlist as IEnumerable<SchoolManagement.Website.ViewModels.Userlist>)
+                                                                {
+                                                                    <tr>
+                                                                        <td><input class='Feeselectbox' type='checkbox' /></td>
+                                                                        <td class="row-data">@item.UserName</td>
+                                                                        <td class="row-data">@item.Email</td>
+                                                                        <td class="row-data">@item.PhoneNumber</td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="add6" class="tab-pane fade">
+                                        <div class="col-sm-12" style="margin-top: 15px;">
+                                            <div class="col-sm-12">
+                                                <div class="col-sm-3">
+                                                    <div class="form-group stright_line">
+                                                        <label>Select Class :</label>
+                                                        <select class="form-control" id="Class__Id">
+                                                            <option value="0">---Select Class---</option>
+                                                            @foreach (var item in ViewBag.Classes as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                                            {
+                                                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="form-group stright_line">
+                                                        <label>Select Section :</label>
+                                                        <select class="form-control" id="Section_Id">
+                                                            <option value="0">---Select Section---</option>
+                                                            @foreach (var item in ViewBag.Section as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                                            {
+                                                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3 date">
+                                                    <div class="form-group stright_line">
+                                                        <label>Date :</label>
+                                                        <div class="input-group input-append date">
+                                                            <input type="text" class="form-control datepicker" name="Day" id="Day" />
+                                                            <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="form-group stright_line">
+                                                        <button type="button" onclick="GetAllAbsentStudentDetails()" class="btn btn-success">Filter Records</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                                                <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                                                    <div id="loadStudent1">
+                                                        <table class="table table-responsive table-striped" style="width: 100%" id="AbsentStudentListTable">
+                                                            <thead id="stdnttblhead1">
+                                                                <tr>
+                                                                    <th><input Id="Mycheckforallstudent1" type="checkbox" /> All</th>
+                                                                    <th>Student Id</th>
+                                                                    <th>Student Name</th>
+                                                                    <th>Class Name</th>
+                                                                    <th>Section Name</th>
+                                                                    <th>
+                                                                        <button id="sendSmsToAll" class="btn btn-primary">Send SMS to All</button>
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="AbsentStudentListTableBody"></tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="Mainadd3" class="tab-pane fade">
+                                <div class="tab-content tab_sis">
+                                    <div id="Mainadd" class="tab-pane fade in active">
+                                        <div class="row">
+                                            @*<div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                                                    <button class="btn btn-danger pull-right"><a onclick="Changetab1()" class="button_a">Next Step</a></button>
+                                                </div>*@
+
+                                            <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                                                <div class="col-sm-12">
+                                                    <div class="form-group stright_line">
+                                                        <label>Select Message Type :</label>
+                                                        SMS
+                                                        <input type="radio" id="smsradio1" name="type" onclick="Radiocheck1()" />
+                                                        EMAIL
+                                                        <input type="radio" id="Emailradio1" name="type" onclick="Radiocheck1()" />
+                                                        Both
+                                                        <input type="radio" id="bothradio1" name="type" onclick="Radiocheck1()" checked />
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="form-group stright_line">
+                                                        <label>Subject</label>
+                                                        <input type="text" id="SMSSubject1" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12" id="divSMSMessageID1">
+                                                    <div class="form-group stright_line">
+                                                        <label>SMS Text*(0 characters)</label>
+                                                        <br />
+                                                        <label>**Message Limit is 160 characters. Messages above 160 chars will be charged more per message.</label>
+                                                        <input type="text" id="SMSText1" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12" id="divAttachedMessageID1">
+                                                    <div class="form-group stright_line">
+                                                        <label>Attach File(s)</label>
+                                                        <label>@TempData["EmailUploadedFilename"]</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12" id="divEmailMessageID1">
+                                                    <div class="form-group stright_line">
+                                                        <label>Email Message</label>
+                                                        @*<input type="text" id="Eamilmessage" class="form-control">*@
+                                                        <textarea id="Eamilmessage1" class="ckeditor form-control"></textarea>
+                                                    </div>
+                                                </div>
+                                                @*<div class="col-sm-12" style="text-align:center">
+                                                        <label>ClassName:</label>
+                                                        <label id="classname"></label>
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <label>StudentName:</label>
+                                                        <label id="Studentname"></label>
+                                                    </div>*@
+                                                <div class="col-sm-12">
+                                                    <div class="form-group stright_line">
+                                                        <button class='btn btn-info pull-right' type="button"><a href='#' id="BtnSendNow" class='button_a'>Send</a></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- 1st row closed -->
+        </div>  <!-- /page content -->
+    </div>
+    @section scripts{
+        <script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
+        <script>
+        $("#pastStudenttbl").DataTable();
+        function Radiocheck() {
+            var smsradio = document.getElementById("smsradio");
+            var Emailradio = document.getElementById("Emailradio");
+            var bothradio = document.getElementById("bothradio");
+            if (smsradio.checked) {
+                document.getElementById("divSMSMessageID").style.display = "block";
+                document.getElementById("divAttachedMessageID").style.display = "none";
+                document.getElementById("divEmailMessageID").style.display = "none";
+            }
+            else if (Emailradio.checked) {
+                document.getElementById("divSMSMessageID").style.display = "none";
+                document.getElementById("divAttachedMessageID").style.display = "block";
+                document.getElementById("divEmailMessageID").style.display = "block";
+            }
+            else if (bothradio.checked) {
+                document.getElementById("divSMSMessageID").style.display = "block";
+                document.getElementById("divAttachedMessageID").style.display = "block";
+                document.getElementById("divEmailMessageID").style.display = "block";
+            }
+        }
+
+        function Radiocheck1() {
+            var smsradio = document.getElementById("smsradio1");
+            var Emailradio = document.getElementById("Emailradio1");
+            var bothradio = document.getElementById("bothradio1");
+            if (smsradio.checked) {
+                document.getElementById("divSMSMessageID1").style.display = "block";
+                document.getElementById("divAttachedMessageID1").style.display = "none";
+                document.getElementById("divEmailMessageID1").style.display = "none";
+            }
+            else if (Emailradio.checked) {
+                document.getElementById("divSMSMessageID1").style.display = "none";
+                document.getElementById("divAttachedMessageID1").style.display = "block";
+                document.getElementById("divEmailMessageID1").style.display = "block";
+            }
+            else if (bothradio.checked) {
+                document.getElementById("divSMSMessageID1").style.display = "block";
+                document.getElementById("divAttachedMessageID1").style.display = "block";
+                document.getElementById("divEmailMessageID1").style.display = "block";
+            }
+        }
+
+        function Changetab() {
+            document.getElementById('at2').click();
+
+            var element = document.getElementById("li1");
+            element.classList.remove("active");
+            //element.classList.add("disabled");
+
+            element = document.getElementById("li2");
+            element.classList.remove("disabled");
+            element.classList.add("active");
+        }
+        function Changetab1() {
+            //var data = [];
+            //$(".row-data").each(function () {
+            //    data.push($(this).text());
+            //});
+            //alert(data);
+
+            document.getElementById('at3').click();
+
+            var element = document.getElementById("li2");
+            element.classList.remove("active");
+            //element.classList.add("disabled");
+
+            element = document.getElementById("li3");
+            element.classList.remove("disabled");
+            element.classList.add("active");
+        }
+        function Changetab2() {
+            //
+            document.getElementById('at4').click();
+
+            var element = document.getElementById("li3");
+            element.classList.remove("active");
+            //element.classList.add("disabled");
+
+            element = document.getElementById("li4");
+            element.classList.remove("disabled");
+            element.classList.add("active");
+
+        }
+
+        function Changetab3() {
+            document.getElementById('at1').click();
+
+            var element = document.getElementById("li5");
+            element.classList.remove("active");
+            //element.classList.add("disabled");
+
+            element = document.getElementById("li1");
+            element.classList.remove("disabled");
+            element.classList.add("active");
+        }
+            function showLoder() {
+                $("#overlay").fadeIn(300);
+            }
+            function hideLoder() {
+                $("#overlay").fadeOut(300);
+            }
+        $(document).on('change', '.TempSelect', function () {
+            //
+            var total = $(this).parent().closest('tr').find("td:eq(1)").html();
+            var AddSMSandEmail = {}
+            AddSMSandEmail.TempleteID = total;
+            if ($(this).prop("checked")) {
+                document.getElementById('at2').click();
+
+                var element = document.getElementById("li1");
+                element.classList.remove("active");
+                element.classList.add("disabled");
+
+                element = document.getElementById("li2");
+                element.classList.remove("disabled");
+                element.classList.add("active");
+            } else {
+                //allfee = allfee - Number(total);
+                //$(this).parent().parent("tr").find(':input[type="number"]').val("0");
+            }
+
+            $.ajax({
+                url: "/SMSandEmail/CheckTempleteData",
+                //  url: '/Fee/AddFeeReceipt1',
+                dataType: "json",
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(AddSMSandEmail),
+                async: true,
+                processData: false,
+                cache: false,
+                success: function (data) {
+                    var NOTIFICATIONTYPE = data.NOTIFICATIONTYPE;
+                    var SMS = data.SMS;
+                    var EMAIL = data.EMAIL;
+                    var SUBJECT = data.SUBJECT;
+                    var smsradio = document.getElementById("smsradio1");
+                    var Emailradio = document.getElementById("Emailradio1");
+                    var bothradio = document.getElementById("bothradio1");
+
+                    //$('#SMSSubject').val = SUBJECT;
+                    //$('#SMSText').val = SMS;
+                    //CKEDITOR.instances["Eamilmessage"] = EMAIL;
+                    document.getElementById("SMSText1").value = SMS;
+                    document.getElementById("SMSSubject1").value = SUBJECT;
+                    //document.getElementById("Eamilmessage").value = EMAIL;
+                    CKEDITOR.instances["Eamilmessage1"].setData(EMAIL);
+
+                    if (NOTIFICATIONTYPE == "S") {
+                        document.getElementById("divSMSMessageID1").style.display = "block";
+                        document.getElementById("divAttachedMessageID1").style.display = "none";
+                        document.getElementById("divEmailMessageID1").style.display = "none";
+                        document.getElementById("smsradio1").checked = true;
+                    }
+                    else if (NOTIFICATIONTYPE == "E") {
+                        document.getElementById("divSMSMessageID1").style.display = "none";
+                        document.getElementById("divAttachedMessageID1").style.display = "block";
+                        document.getElementById("divEmailMessageID1").style.display = "block";
+                        document.getElementById("Emailradio1").checked = true;
+                    }
+                    else if (NOTIFICATIONTYPE == "B") {
+                        document.getElementById("divSMSMessageID1").style.display = "block";
+                        document.getElementById("divAttachedMessageID1").style.display = "block";
+                        document.getElementById("divEmailMessageID1").style.display = "block";
+                        document.getElementById("bothradio1").checked = true;
+                    }
+
+                },
+                error: function (xhr) {
+                    // window.location.reload();
+                }
+            });
+            ToloadData(AddSMSandEmail);
+
+        });
+
+        function ToloadData(AddSMSandEmail) {
+
+            $.ajax({
+                url: "/SMSandEmail/CheckTempleteData",
+                //  url: '/Fee/AddFeeReceipt1',
+                dataType: "json",
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(AddSMSandEmail),
+                async: true,
+                processData: false,
+                cache: false,
+                success: function (data) {
+                    var NOTIFICATIONTYPE = data.NOTIFICATIONTYPE;
+                    var SMS = data.SMS;
+                    var EMAIL = data.EMAIL;
+                    var SUBJECT = data.SUBJECT;
+                    var smsradio = document.getElementById("smsradio");
+                    var Emailradio = document.getElementById("Emailradio");
+                    var bothradio = document.getElementById("bothradio");
+
+                    //$('#SMSSubject').val = SUBJECT;
+                    //$('#SMSText').val = SMS;
+                    //CKEDITOR.instances["Eamilmessage"] = EMAIL;
+                    document.getElementById("SMSText").value = SMS;
+                    document.getElementById("SMSSubject").value = SUBJECT;
+                    //document.getElementById("Eamilmessage").value = EMAIL;
+                    CKEDITOR.instances["Eamilmessage"].setData(EMAIL);
+
+                    if (NOTIFICATIONTYPE == "S") {
+                        document.getElementById("divSMSMessageID").style.display = "block";
+                        document.getElementById("divAttachedMessageID").style.display = "none";
+                        document.getElementById("divEmailMessageID").style.display = "none";
+                        document.getElementById("smsradio").checked = true;
+                    }
+                    else if (NOTIFICATIONTYPE == "E") {
+                        document.getElementById("divSMSMessageID").style.display = "none";
+                        document.getElementById("divAttachedMessageID").style.display = "block";
+                        document.getElementById("divEmailMessageID").style.display = "block";
+                        document.getElementById("Emailradio").checked = true;
+                    }
+                    else if (NOTIFICATIONTYPE == "B") {
+                        document.getElementById("divSMSMessageID").style.display = "block";
+                        document.getElementById("divAttachedMessageID").style.display = "block";
+                        document.getElementById("divEmailMessageID").style.display = "block";
+                        document.getElementById("bothradio").checked = true;
+                    }
+
+                },
+                error: function (xhr) {
+                    // window.location.reload();
+                }
+            });
+        }
+
+        //Filter class
+        function GetAllClassDetails() {
+            var classid = $("#classDll").val();
+            alert(classid);
+            var html = "";
+            $.ajax({
+                url: "/SMSandEmail/GetClassById?id=" + classid,
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json;charset=utf-8",
+                success: function (result) {
+                    alert(result.DataListItemName);
+                    html += "<tr>";
+                    html += "<td>" + result.DataListItemName + "</td>";
+                    html += "</tr>";
+
+                    $("#stdnttblbody").html(html);
+                    loaddatatable();
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+
+            });
+        }
+
+        function loaddatatable() {
+            if ($.fn.DataTable.isDataTable('#loadclasstbl')) {
+                $('#loadclasstbl').DataTable().destroy();
+            }
+
+            $("$loadclasstbl").dataTable({
+                "autoWidth": true,
+                "scrollX": true
+            });
+
+        }
+
+         function BtnPayNow() {
+
+            var AddSMSandEmail = {}
+            var smsradio = document.getElementById("smsradio");
+            var Emailradio = document.getElementById("Emailradio");
+            var bothradio = document.getElementById("bothradio");
+            if (smsradio.checked) {
+                AddSMSandEmail.SMSEmailtype = "S";
+            }
+            else if (Emailradio.checked) {
+                AddSMSandEmail.SMSEmailtype = "E";
+            }
+            else if (bothradio.checked) {
+                AddSMSandEmail.SMSEmailtype = "B";
+            }
+            AddSMSandEmail.Eamilmessage = CKEDITOR.instances["Eamilmessage"].getData();// document.getElementById("Eamilmessage").value;
+            //GetStudentDetailsById1($('#StudentId').val());
+            AddSMSandEmail.SMSSubject = $('#SMSSubject').val();// $("#StudentName option:selected").val();
+            AddSMSandEmail.SMSText = $('#SMSText').val();
+            if (AddSMSandEmail.SMSEmailtype == "B") {
+                if (AddSMSandEmail.SMSSubject == null || AddSMSandEmail.SMSSubject == "") {
+                    $("#SMSSubject").css("border", "1px solid red");
+                    alert("Please Enter Subject Message.");
+                    return;
+                }
+                if (AddSMSandEmail.Eamilmessage == null || AddSMSandEmail.Eamilmessage == "") {
+                    alert("Please Enter Email Message.");
+                    return;
+                }
+                if (AddSMSandEmail.SMSText == null || AddSMSandEmail.SMSText == "") {
+                    $("#SMSText").css("border", "1px solid red");
+                    alert("Please Enter SMS Text Message.");
+                    return;
+                }
+            }
+            else if (AddSMSandEmail.SMSEmailtype == "S") {
+                if (AddSMSandEmail.SMSSubject == null || AddSMSandEmail.SMSSubject == "") {
+                    $("#SMSSubject").css("border", "1px solid red");
+                    alert("Please Enter Subject Message.");
+                    return;
+                }
+                if (AddSMSandEmail.SMSText == null || AddSMSandEmail.SMSText == "") {
+                    $("#SMSText").css("border", "1px solid red");
+                    alert("Please Enter SMS Text Message.");
+                    return;
+                }
+            }
+            else if (AddSMSandEmail.SMSEmailtype == "E") {
+                if (AddSMSandEmail.SMSSubject == null || AddSMSandEmail.SMSSubject == "") {
+                    $("#SMSSubject").css("border", "1px solid red");
+                    alert("Please Enter Subject Message.");
+                    return;
+                }
+                if (AddSMSandEmail.Eamilmessage == null || AddSMSandEmail.Eamilmessage == "") {
+                    alert("Please Enter Email Message.");
+                    return;
+                }
+            }
+
+            $.ajax({
+                url: "/SMSandEmail/AddSMSandEmailTemplete",
+                //  url: '/Fee/AddFeeReceipt1',
+                dataType: "json",
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(AddSMSandEmail),
+                async: true,
+                processData: false,
+                cache: false,
+                success: function (data) {
+                    alert("Templete Saved Successfully.")
+                    //window.location.reload();
+                    //return Json(new { result = "Redirect", url = Url.Action("StudnetPaymentSummary", "FeeConfiguration") });
+                     window.location.href = '@Url.Action("SMSandEmailNotification", "SMSandEmail")';
+                },
+                error: function (xhr) {
+                    // window.location.reload();
+                }
+            });
+
+        }
+
+        var checked = "";
+        var Mycheckforallstudent1checked = "";
+        var classname = "";
+        var firstname = "";
+
+        $("#Mycheckforallstudent").change(function () {
+            //
+             checked = $(this).is(':checked');
+            if (checked) {
+                $(".ClasspastStudselectbox").each(function (a, b) {
+                    $(this).prop("checked", true);
+                    //var classid = $()
+                });
+            } else {
+                $(".ClasspastStudselectbox").each(function () {
+                    $(this).prop("checked", false);
+                });
+            }
+        });
+
+        $("#Mycheckforallstudent1").change(function () {
+            //
+            Mycheckforallstudent1checked = $(this).is(':checked');
+            if (Mycheckforallstudent1checked) {
+                $(".ClasspastStudselectbox1").each(function (a, b) {
+                    $(this).prop("checked", true);
+                    //var classid = $()
+                });
+            } else {
+                $(".ClasspastStudselectbox1").each(function () {
+                    $(this).prop("checked", false);
+                });
+            }
+        });
+        //$(document).on('change', '.ClassStudselectbox', function () {
+        //    var Classname = $(this).parent().closest('tr').find("td:eq(1)").html();
+        //    var Studname = $(this).parent().closest('tr').find("td:eq(2)").html();
+        //    $("#classname").text(Classname);
+        //    $("#Studentname").text(Studname);
+
+        //});
+
+        $("#BtnSendNow").on('click', function () {
+            //
+            var smsemailviewmodel = {};
+            var Classname = [];
+            var Firstname = [];
+            var StudentId = [];
+            var subject = "";
+            var bodymessage = "";
+            //var CheckAll = "False";
+            //var Classid = $("#Class_id").val();
+
+            //var attachfile = "";
+
+            var subject = $("#SMSSubject1").val();
+            var EmailMessage = $("#Eamilmessage1").val();
+            var classname = $("#classname").text();
+            var Studentname = $("#Studentname").text();
+
+            var isAbsentStudentChecked = false;
+
+            $(".ClasspastStudselectbox1").each(function () {
+                if ($(this).is(":checked")) {
+                    isAbsentStudentChecked = true;
+                    return false; // Exit the loop early if a checked checkbox is found
+                }
+            });
+            
+            if (checked) {
+                //CheckAll = "True";
+                var classid = $("#Class_id").val();
+
+                $(".ClasspastStudselectbox").each(function (a, b) {
+                    $(this).prop("checked", true);
+                    var Cname = $(this).parent().closest('tr').find("td:eq(1)").html();
+                    var Sname = $(this).parent().closest('tr').find("td:eq(2)").html();
+                    var Sid = $(this).parent().closest('tr').find("td:eq(3)").html();
+
+                    Classname.push(Cname);
+                    Firstname.push(Sname);
+                    StudentId.push(Sid);
+
+                });
+                smsemailviewmodel.Classid = classid;
+            } else if (isAbsentStudentChecked){
+
+                $(".ClasspastStudselectbox1").each(function (a, b) {
+                    if ($(this).prop("checked")) {
+                        var Cname = $(this).parent().closest('tr').find("td:eq(3)").html();
+                        var Sname = $(this).parent().closest('tr').find("td:eq(4)").html();
+                        var Sid = $(this).parent().closest('tr').find("td:eq(1)").html();
+
+                        Classname.push(Cname);
+                        Firstname.push(Sname);
+                        StudentId.push(Sid);
+                    }
+                });
+            }
+
+            else {
+                //CheckAll = "False";
+
+                $(".ClasspastStudselectbox").each(function (a, b) {
+                    if ($(this).prop("checked")) {
+                        var Cname = $(this).parent().closest('tr').find("td:eq(1)").html();
+                        var Sname = $(this).parent().closest('tr').find("td:eq(2)").html();
+                        var Sid = $(this).parent().closest('tr').find("td:eq(3)").html();
+
+                        Classname.push(Cname);
+                        Firstname.push(Sname);
+                        StudentId.push(Sid);
+
+                    }
+                });
+            }
+
+            smsemailviewmodel.Class_Name = Classname;
+            smsemailviewmodel.First_name = Firstname;
+            smsemailviewmodel.StudentId = StudentId;
+            smsemailviewmodel.EmailSubject = $("#SMSSubject").val();
+            smsemailviewmodel.EmailBody = CKEDITOR.instances["Eamilmessage"].getData();
+            //if (window.FormData == undefined) {
+            //    alert("Formdata is undefined");
+            //}
+            //else {
+
+            //    var fileupload = $("#AttachmentFilename").get(0);
+            //    var files = fileupload.files;
+            //    var fileData = new FormData();
+
+            //    fileData.append(files[0].name, files[0]);
+            //}
+
+            //filedata.append(files[0].name)
+            //var path = $("#AttachFile").val();
+            //var x = $('#form_UploadFile').serialize();
+            //alert(x);
+            //smsemailviewmodel.AttachedFile = path.replace(/^.*\\/, "");
+            //smsemailviewmodel.AttachementFile = path;
+            //alert(smsemailviewmodel.AttachedFile);
+            //smsemailviewmodel.AttachedFile = document.getElementById("AttachFile").files[0].name;
+            //alert(smsemailviewmodel.AttachedFile);
+            showLoder();
+            $.ajax({
+                url: "/SMSandEmail/SendBulkEmail",
+                //data: { subject: subject, EmailMessage: EmailMessage, classname: classname, Studentname: Studentname },
+                data: JSON.stringify(smsemailviewmodel),
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                success: function (result) {
+                    hideLoder();
+                    if (result != null) {
+                        if (result == "Success") {
+                            alert("Email Send Successfully");
+                            window.location.reload();
+                        } else {
+                            alert("Email is not Send");
+                            window.location.reload();
+                        }
+                    } else {
+                        alert("Something Went Wrong");
+                        window.location.reload();
+                    }
+                }
+            });
+
+        });
+
+
+
+
+        function GetAllStudentDetails() {
+            //alert("Working");
+            var classid = $("#Class_id").val();
+            if (classid == 0) {
+                $("#Class_id").val("---select class---");
+            } else {
+                var html = "";
+                $.ajax({
+                    url: "/SMSandEmail/GetClasslistById?id=" + classid,
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "aookucation/json;charset=utf-8",
+                    success: function (result) {
+                        //alert(result.ClassName);
+                        for (var i = 0; i < result.length; i++) {
+                            //
+                            //alert(result[i].Class);
+                            html += "<tr>";
+                            html += "<td><input class='ClasspastStudselectbox' type='checkbox'/></td>";
+                            html += "<td>" + result[i].ClassName + "</td>";
+                            html += "<td>" + result[i].StudentName + "</td>";
+                            html += "<td>" + result[i].StudentId + "</td>";
+                            html += "</tr>";
+                        }
+                        $("#pastStudenttbl").DataTable().destroy();
+                        $("#paststdnttblbody").empty();
+                        $("#paststdnttblbody").html(html);
+                        $("#pastStudenttbl").DataTable();
+                        //loadstudentdatatable();
+
+
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+                });
+            }
+        }
+
+        function loadstudentdatatable() {
+            if ($.fn.DataTable.isDataTable('#Studenttbl')) {
+                $('#Studenttbl').DataTable().destroy();
+            }
+
+            $("#Studenttbl").dataTable({
+                "autoWidth": true,
+                "scrollX": true
+            });
+        }
+
+            function GetAllAbsentStudentDetails() {
+                var classid = $("#Class__Id").val();
+                var sectionId = $("#Section_Id").val();
+                var date = $("#Day").val();
+
+                var html = "";
+                $.ajax({
+                    url: "/Student/GetAllAbsentStudent",
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json;charset=UTF-8",
+                    data: { classId: classid, sectionId: sectionId, date: date },
+                    success: function (result) {
+                        for (var i = 0; i < result.length; i++) {
+                            html += "<tr>";
+                            html +=
+                                "<td><input class='ClasspastStudselectbox1' type='checkbox' data-studentid='" +
+                                result[i].StudentRegisterID +
+                                "'/></td>";
+                            html += "<td>" + result[i].StudentRegisterID + "</td>";
+                            html += "<td>" + result[i].Student_Name + "</td>";
+                            html += "<td>" + result[i].Class_Name + "</td>";
+                            html += "<td>" + result[i].Section_Name + "</td>";
+                            html += "<td>";
+                            html += "<button class='btn btn-primary send-sms-btn' data-studentId='" + result[i].StudentRegisterID + "'>";
+                            html += "Send SMS</button>";
+                            html += "</td>";
+                            html += "</tr>";
+                        }
+                        $("#AbsentStudentListTable").DataTable().destroy();
+                        $("#AbsentStudentListTableBody").empty();
+                        $("#AbsentStudentListTableBody").html(html);
+                        $("#AbsentStudentListTable").DataTable();
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+                });
+            }
+
+            $(document).on("click", ".send-sms-btn", function () {
+
+                
+                var studentId = $(this).attr("data-studentId");
+                if (!studentId) {
+                    alert("Student ID is not available.");
+                    return;
+                }
+
+                // Fetch the family phone number using the GetFamilyPhoneNumber API
+                $.ajax({
+                    url: "/SMSandEmail/SendAbsentStudentEmail",
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json;charset=UTF-8",
+                    data: { studentId: studentId },
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response);
+                            return;
+                        } else {
+                            alert("Error: " + response.message);
+                        }
+                    },
+                    error: function (error) {
+                        alert("Error fetching phone number: " + (error.responseText || "Unknown error."));
+                    }
+                });
+            });
+            $(document).on("click", "#sendSmsToAll", function () {
+                var selectedStudentIds = [];
+
+                $("#AbsentStudentListTableBody tr").each(function () {
+                    var checkbox = $(this).find(".ClasspastStudselectbox1");
+                    if (checkbox.is(":checked")) {
+                      
+                        var studentId = checkbox.data("studentid");
+                        if (studentId) {
+                            selectedStudentIds.push(studentId);
+                        }
+                    }
+                });
+
+                if (selectedStudentIds.length === 0) {
+                    alert("Please select at least one student to send SMS.");
+                    return;
+                }
+
+                if (!confirm("Are you sure you want to send SMS to the selected students?")) {
+                    return;
+                }
+
+ 
+                $.ajax({
+                    url: "/SMSandEmail/SendAbsentStudentsBulk", // Bulk SMS API
+                    type: "POST",
+                    dataType: "json",
+                    contentType: "application/json;charset=UTF-8",
+                    data: JSON.stringify({ studentIds: selectedStudentIds }),
+                    success: function (response) {
+                        if (response.success) {
+                            alert("SMS sent successfully to selected students.");
+                        } else {
+                            alert("Error: " + response.message);
+                        }
+                    },
+                    error: function (error) {
+                        alert("Error sending SMS: " + (error.responseText || "Unknown error."));
+                    }
+                });
+            });
+
+
+        </script>
+    }
+

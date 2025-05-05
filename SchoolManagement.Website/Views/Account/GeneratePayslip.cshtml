@@ -1,0 +1,208 @@
+﻿@using SchoolManagement.Website.Controllers;
+
+@{
+    ViewBag.Title = "GeneratePayslip";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="col-md-1 col-sm-1 col-xs-12 table-responsive"><!-- col-msx-1 started --></div>
+
+        <div class="col-md-9 col-sm-9 col-xs-12 table-responsive">
+            <!-- col-msx-12 started -->
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Name</th>
+                        <th>Designation</th>
+                        <th>Emp ID</th>
+                        <th>Net Pay</th>
+                        <th>Pay Slip</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @*<tr>
+                            <td>1</td>
+                            <td>Ravi</td>
+                            <td>Science</td>
+                            <td>SIS5400</td>
+                            <td>18,000</td>
+                            <td><a href="#" class="button_a btn btn-info pull-right" data-toggle="modal" data-target="#myModal">Generate</a></td>
+                        </tr>*@
+                    @{
+                        int i = 1;
+                        foreach (var item in ViewBag.stafdetails as IEnumerable<SchoolManagement.Website.ViewModels.StaffDetailsVM>)
+                        {
+                            <tr>
+                                <td>@i</td>
+                                <td>@item.Name</td>
+                                @if (item.Designation != null)
+                                {
+
+                                    <td>@item.Designation</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                                <td>@item.EmployeeCode</td>
+                                <td>@item.NetPay</td>
+                                <td><a href="#" class="button_a btn btn-info pull-right" data-toggle="modal" data-target="#@item.StafId">Generate</a></td>
+                                @*<td>
+                                        <button type="button" class="button_a btn btn-info pull-right" onclick="Generatepayslip(@item.EmployeeCode)">Generate</button>
+                                    </td>*@
+                            </tr>
+                            i++;
+
+                        }
+                    }
+
+
+                </tbody>
+            </table>
+            <div id="payslipdata">
+                @*class="modal fade" role="dialog">*@
+
+        </div>
+        <!-- Modal -->
+        @{
+            foreach (var item in ViewBag.stafdetails as IEnumerable<SchoolManagement.Website.ViewModels.StaffDetailsVM>)
+            {
+                <div id="@item.StafId" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Payment Details</h4>
+                            </div>
+
+
+                            <div class="modal-body" style="height:530px;overflow-y:scroll;">
+                                @{
+                                    foreach (var items in ViewBag.AccountSummary as IEnumerable<SchoolManagement.Website.Models.Tbl_AccountSummary>)
+                                    {
+                                        if (Convert.ToInt32(item.StafId) == items.Staff_Id)
+                                        {
+                                            var totaldeductions = items.Gross - items.Net_Pay;
+                                            <h2 class="well-sm">Date of Payment : @items.Added_Date</h2>
+                                            <p style="font-size: 15px;padding-left:10px;padding-right:10px;text-align:left;">Name : <span>@item.Name</span></p>
+                                            <p style="font-size: 15px;padding-left:10px;padding-right:10px;text-align:left;">How much Paid : <span>RS @items.Net_Pay/-</span></p>
+                                            <p style="font-size: 15px;padding-left:10px;padding-right:10px;text-align:left;">Atendance Percentage : <span>@items.TotalPercentage %</span></p>
+                                            <p style="font-size: 15px;padding-left:10px;padding-right:10px;text-align:left;">Designation : <span> @item.Designation </span></p>
+                                            <table class="table table-bordered" style="margin-top:10px;">
+                                                <tr style="background-color: #1ABB9C;color: #fff;">
+                                                    <td>Gross Earnings</td>
+                                                    <td>Deductions</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <p>Basic Salary:<span style="margin-left:70px;">RS @items.Basic_Salary/-</span> </p>
+                                                    </td>
+                                                    <td>
+                                                        <p>EPF:<span style="margin-left:70px;">RS @items.PF/-</span> </p>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <p>DA: <span style="margin-left:120px">RS @items.DA/-</span> </p>
+                                                    </td>
+                                                    <td>
+                                                        <p>ESI: <span style="margin-left:70px">RS @items.ESI/-</span></p>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <p>HRA: <span style="margin-left:110px">RS @items.HRA/-</span> </p>
+                                                    </td>
+                                                    <td>
+                                                        <p>Professional Tax: <span style="margin-left:70px"></span> </p>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <p>CCA: <span style="margin-left:110px">RS @items.CCA/-</span> </p>
+                                                    </td>
+                                                    <td>Others:</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <p>Other Allowance: <span style="margin-left:45px">RS @items.OtherALlowance/-</span> </p>
+                                                    </td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <p>Total Salary: <span style="margin-left:70px">RS @items.Gross/-</span> </p>
+                                                    </td>
+                                                    <td>
+                                                        <p>Total Deductions: <span style="margin-left:10px">RS @totaldeductions/-</span></p>
+
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="4" style="text-align:left">
+                                                        <p>Net Pay:<span style="margin-left:95px">RS @items.Net_Pay/-</span></p>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="4" style="text-align:left;">Amount in Rupees :@{@AccountController.NumberToWords(items.Net_Pay);}</td>
+
+                                                </tr>
+                                            </table>
+                                        }
+
+                                    }
+                                }
+
+
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-success btnprint" data-id="@item.StafId">Preview</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            }
+        }
+
+    </div>
+
+</div>
+</div>
+
+
+<script>
+
+    function Generatepayslip(employeecode) {
+        //alert(employeecode);
+        $.ajax({
+            url: "/Account/PaySlipById?Id=" + employeecode,
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json;charset=utf-8",
+            success: function (result) {
+                if (result != null) {
+                    $("#payslipdata").append(result);
+                }
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }
+
+
+    $(".btnprint").on('click', function () {
+        var id = $(this).attr("data-id");
+        //alert(id);
+        window.location.href = "/Account/PrintPaySlip?emploeeid=" + id;
+
+    });
+
+</script>

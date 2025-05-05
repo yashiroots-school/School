@@ -1,0 +1,226 @@
+﻿@using  SchoolManagement.Data.Models;
+@using SchoolManagement.Website.Models;
+@{
+    ViewBag.Title = "TransportFeeConfiguration";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4>Configure Student Regstration  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6" style="display:none;">
+                            <button class="btn btn-info pull-right"><a href="sis_manage_student.html" class="button_a">Manage</a></button>
+                            <button class="btn btn-danger pull-right"><a href="sis_add_new_student.html" class="button_a">Add New</a></button>
+                        </div>
+                    </div><!--row x_title closed -->
+
+                </div><!-- dashboard_graph closed-->
+            </div><!--col-msx-12 closed-->
+        </div>
+        <div class="col-sm-12">
+            <!-- col-sm-12 started -->
+            <h4 class="std_head well-sm">Configure Student Regstration</h4>
+            <div class="col-sm-6" style="border-right: 1px solid #eee; ">
+
+                <input type="hidden" id="EditRowId" />
+                <div class="form-group">
+                    <label>Select Batch :</label>
+
+                    <select class="form-control" id="Batchid">
+                        <option>---select Batch---</option>
+                        @foreach (var item in ViewBag.BatcheNames as IEnumerable<Tbl_DataListItem>)
+                        {
+                            <option value="@item.DataListItemId">@item.DataListItemName</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Select Class :</label>
+
+                    <select class="form-control" id="ClassId">
+                        <option>---select Class---</option>
+                        @foreach (var item in ViewBag.Classes as IEnumerable<Tbl_DataListItem>)
+                        {
+                            <option value="@item.DataListItemId">@item.DataListItemName</option>
+                        }
+                    </select>
+                </div>
+            </div><!-- col-sm-6 closed -->
+            <div class="col-sm-6">
+
+                <div class="form-group">
+                    <label>From KM :</label>
+                    <input type="number" id="FromKM" class="form-control">
+
+
+                </div>
+                <div class="form-group">
+                    <label>To KM :</label>
+                    <input type="number" id="ToKM" class="form-control">
+
+
+                </div>
+                <div class="form-group">
+                    <label>Trans Fee Amount (per month):</label>
+                    <input type="number" id="AmountCal" class="form-control">
+
+
+                </div>
+
+            </div><!-- col-sm-6 closed -->
+        </div>
+
+        <div class="col-sm-12" style="border-bottom: 2px solid #b4b4b4;">
+            <button id="btnSubmit" class="btn btn-success pull-right">Save</button>
+        </div>
+
+        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+            <!-- col-msx-12 started -->
+            <table class="table table-bordered" id="TblFeePlanes" style="margin-top:5px;">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Batch</th>
+                        <th>Class</th>
+                        <th>From KM</th>
+                        <th>To KM</th>
+                        <th>Trans Fee Amount</th>
+                        <th>Action</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int i = 1;}
+                    @foreach (var item in ViewBag.StudentReg as IEnumerable<SchoolManagement.Website.ViewModels.TransportFeeConfigurationView>)
+                    {
+                        <tr rowId=@item.Id>
+
+                            <td>@i</td>
+                            <td id="rowBatchId" rowBatchId=@item.Batch_Id>@item.BatchName</td>
+                            <td id="rowClassId" rowClassId=@item.Class_Id>@item.Class </td>
+                            <td id="rowFromKM">@item.FromKM</td>
+                            <td id="rowToKM">@item.ToKM</td>
+                            <td id="rowAmount">@item.Amount</td>
+
+                            <td><input type="button" class="btn btn-primary rowEdit" value="Edit" /></td>
+
+
+                        </tr>
+                        i++;
+                    }
+                </tbody>
+            </table>
+        </div><!-- col-msx-12  closed -->
+    </div>
+</div>
+
+@section scripts{
+    <script>
+
+        var inputs = {};
+
+        function validation() {
+
+            inputs.Id = parseInt($("#EditRowId").val());
+            inputs.Batch_Id = parseInt($("#Batchid").val());
+            inputs.Class_Id = parseInt($("#ClassId").val());
+            inputs.FromKM = parseInt($("#FromKM").val());
+            inputs.ToKM = parseInt($("#ToKM").val());
+            inputs.Amount = parseInt($("#AmountCal").val());
+
+            var errorClass = "border-danger";
+
+            if (isNaN(inputs.Batch_Id))
+                $("#Batchid").addClass(errorClass);
+            else
+                $("#Batchid").removeClass(errorClass);
+
+            if (isNaN(inputs.Class_Id))
+                $("#ClassId").addClass(errorClass);
+            else
+                $("#ClassId").removeClass(errorClass);
+
+            if (isNaN(inputs.FromKM))
+                $("#FromKM").addClass(errorClass);
+            else
+                $("#FromKM").removeClass(errorClass);
+
+            if (isNaN(inputs.ToKM))
+                $("#ToKM").addClass(errorClass);
+            else
+                $("#ToKM").removeClass(errorClass);
+
+            if (isNaN(inputs.Amount))
+                $("#AmountCal").addClass(errorClass);
+            else
+                $("#AmountCal").removeClass(errorClass);
+
+            return $(".border-danger").length == 0;
+        }
+
+
+        $("#btnSubmit").on("click", function () {
+
+            if (!validation()) {
+                alert("Please check inputs");
+
+                return;
+            }
+
+
+            $.ajax({
+                url: '/TransportFee/ConfigureTransportFee',
+                dataType: "json",
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(inputs),
+                async: true,
+                processData: false,
+                cache: false,
+                success: function (data) {
+                    if (data.includes("Failed:")) {
+                        alert(data);
+                        return;
+                    }
+                    window.location.reload();
+                },
+                error: function (xhr) {
+                }
+            });
+        });
+
+        $(".rowEdit").on("click", function () {
+
+            var parent = $(this).closest("tr");
+
+            var rowId = parent.attr('rowId');
+            var Batch_Id = parent.find("#rowBatchId").attr("rowBatchId");
+            var ClassId = parent.find("#rowClassId").attr("rowClassId");
+            var FromKM = parent.find("#rowFromKM").text();
+            var ToKM = parent.find("#rowToKM").text();
+            var Amount = parent.find("#rowAmount").text();
+
+
+
+            $("#EditRowId").val(rowId);
+            $("#FromKM").val(FromKM);
+            $("#ToKM").val(ToKM);
+            $("#AmountCal").val(Amount);
+            $("#Batchid").val(Batch_Id);
+            $("#ClassId").val(ClassId);
+        });
+
+
+
+    </script>
+}

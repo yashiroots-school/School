@@ -1,0 +1,158 @@
+﻿
+@{
+    ViewBag.Title = "PaymentProcessResultSummary";
+    Layout = "~/Views/Shared/_Layout.cshtml";}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#Studenttbl').DataTable();
+    });
+</script>
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4> Payment Process Summary  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                    </div>
+                    <div class="col-sm-12" style="margin-top: 15px;">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                @*<div class="col-sm-3">
+                        <div class="form-group stright_line">
+                            <label>Filter by Course :</label>
+                            @Html.DropDownList("course", new SelectList(ViewBag.AllCourses, "DataListItemName", "DataListItemName"), "select", new { @id = "courseDll", @class = "form-control" })
+
+                        </div>
+                    </div>*@
+                <div class="col-sm-2">
+                    <div class="form-group stright_line">
+                        <label>Date From:</label>
+                        <input type="text" name="DateFrom" id="DateFrom" class="form-control datepicker" readonly>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group stright_line">
+                        <label>Date To:</label>
+                        <input type="text" name="DateTo" id="DateTo" class="form-control datepicker" readonly>
+                    </div>
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="form-group stright_line">
+                        <label>Search :</label><br />
+                        <button type="button" onclick="GetAllpaymentDetails()" class="btn btn-success"> Filter Records </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                    <!-- col-msx-12 started -->
+                    <!-- col-sm-12 closed -->
+                    <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                        <!-- col-msx-12 started -->
+                        <div id="loadStudent">
+                            <table class="table table-responsive table-striped" style="width: 100%" id="Studenttbl">
+                                <thead id="stdnttblhead">
+                                    <tr>
+                                        <th>Student ID</th>
+                                        <th>Name</th>
+                                        <th>Last Name</th>
+                                        <th>Catogory</th>
+                                        <th>Class</th>
+                                        <th>Payment Status</th>
+                                        <th>Transaction ID</th>
+                                        <th>Payment Mode</th>
+                                        <th>Transaction Amount</th>
+                                        <th>Transaction Date</th>
+                                        <th>Reference Number</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="stdnttblbody">
+                                    @foreach (var item in ViewBag.StudentSummaryDetails as IEnumerable<SchoolManagement.Website.Models.PaymentResultSummary>)
+                                    {
+                                        <tr>
+                                            <td class="row-data">@item.StudentId</td>
+                                            <td class="row-data">@item.StudentName</td>
+                                            <td class="row-data">@item.Last_Name</td>
+                                            <td class="row-data">@item.Category</td>
+                                            <td class="row-data">@item.Course</td>
+                                            <td class="row-data">@item.PaymentStatus</td>
+                                            <td class="row-data">@item.TransactionID</td>
+                                            <td class="row-data">@item.PaymentMode</td>
+                                            <td class="row-data">@item.TransactionAmount</td>
+                                            <td class="row-data">@item.TransactionDate</td>
+                                            <td class="row-data">@item.ReferenceNumber</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- 1st row closed -->
+    </div>  <!-- /page content -->
+</div>
+<script>
+
+    var ii = 0;
+    function GetAllpaymentDetails() {
+        ii++;
+        var fromDt = $('#DateFrom').val();
+        var toDt = $('#DateTo').val();
+
+        var html = "";
+        $.ajax({
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            url: "/Payment/GetAllpaymentDetails",
+            data: { DateFrom: fromDt, DateTo: toDt },
+            dataType: "json",
+            success: function (data) {
+                //$("#stdnttblbody").empty();
+                //$("#Studenttbl > stdnttblbody").html("");
+                //$("#Studenttbl").html("");
+
+                var stdnttbl = document.getElementById('loadStudent');
+                html = '';
+                var cnt = 1;
+                html = '<table class="table table-responsive table-striped" style="width:100% " id="Studenttbl">';
+                html = html + '<thead id="stdnttblhead"><tr><th>Student ID</th><th>Name</th><th>Last Name</th><th>Category</th><th>Class</th><th>Payment Status</th><th>Transaction ID</th><th>Payment Mode</th><th>Transaction Amount</th><th>Transaction Date</th><th>Reference Number</th></tr></thead>';
+                html = html + '<tbody id="stdnttblbody">';
+                for (var i = 0; i < data.length; i++) {
+                    html += '<tr>';
+                    html += '<td>' + data[i].StudentId + '</td>';
+                    html += '<td>' + data[i].StudentName + '</td>';
+                    html += '<td>' + data[i].Last_Name + '</td>';
+                    html += '<td>' + data[i].Category + '</td>';
+                    html += '<td>' + data[i].Course + '</td>';
+                    html += '<td>' + data[i].PaymentStatus + '</td>';
+                    html += '<td>' + data[i].TransactionID + '</td>';
+                    html += '<td>' + data[i].PaymentMode + '</td>';
+                    html += '<td>' + data[i].TransactionAmount + '</td>';
+                    html += '<td>' + data[i].TransactionDate + '</td>';
+                    html += '<td>' + data[i].ReferenceNumber + '</td>';
+                    html += '</tr>';
+                    cnt++;
+                }
+                html += '</tbody></html>'
+                stdnttbl.innerHTML = html;
+                $('#Studenttbl').DataTable();
+            },
+            error: function (result) {
+                alert("Error");
+            }
+        });
+    }
+</script>

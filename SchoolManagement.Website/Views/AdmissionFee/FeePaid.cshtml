@@ -1,0 +1,1126 @@
+﻿@model SchoolManagement.Data.Models.StudentsRegistration
+@using SchoolManagement.Data.Models;
+@{
+    ViewBag.Title = "FeePaid";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*script type="text/javascript">
+    if ('@ViewBag.message' != '') {
+    alert('@ViewBag.message');
+    }*@
+@*</script>*@
+<!-- page content -->
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-8">
+                            <h4> View Individual Account of Student  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-4">
+                            <button class="btn btn-info pull-right"><a href="/Dashboard/Dashboard" class="button_a">Back</a></button>
+                        </div>
+                        <div class="col-sm-12 well-sm" style="margin-top: 15px;">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2">Name &nbsp; :</label>
+                                    <div class="col-sm-6">
+                                        <label class="control-label col-sm-9">@Model.Name</label>
+                                        <input type="hidden" id="StudentName" value="@Model.Name" />
+                                        <input type="hidden" id="StudentId" value="@Session["StudentId"]" />
+                                        <input type="hidden" id="hdnStudentID" value="@Session["StudentId"]" />
+
+                                        <input type="hidden" id="ApplicationId" value="@Model.ApplicationNumber" />
+                                    </div>
+                                </div><br />
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2">Class &nbsp; :</label>
+                                    <div class="col-sm-6">
+                                        <label class="control-label col-sm-9">@Model.Class</label>
+                                        <input type="hidden" id="StudentClass" value="@Model.Class" />
+                                    </div>
+                                </div><br />
+                                <div class="form-group" id="ClassGroup" style="display:none">
+                                    <label>Class :</label>
+
+                                    <select class="form-control" id="Class" name="SchoolName">
+                                        <option value="0">---Select---</option>
+                                        @{
+                                            foreach (var item in ViewBag.Classes as IEnumerable<Tbl_DataListItem>)
+                                            {
+                                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                            }
+                                        }
+                                    </select>
+
+                                </div>
+
+                                <div class="form-group">
+                                    @{
+                                        if (Model.Category == "NoCast")
+                                        {
+                                            <label class="control-label col-sm-2" style="display:none">Category &nbsp; :</label>
+                                            <div class="col-sm-6">
+
+                                                <label class="control-label col-sm-9" style="display:none">@Model.Category</label>
+                                                <input type="hidden" id="StudentCategory" value="@Model.Category" />
+                                                <input type="hidden" id="StudentCategoryID" value="@Model.Category_Id" />
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <label class="control-label col-sm-2">Category &nbsp; :</label>
+                                            <div class="col-sm-6">
+
+                                                <label class="control-label col-sm-9">@Model.Category</label>
+                                                <input type="hidden" id="StudentCategory" value="@Model.Category" />
+                                                <input type="hidden" id="StudentCategoryID" value="@Model.Category_Id" />
+                                            </div>
+                                        }
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12" style="border-bottom: 2px solid #b4b4b4;">
+                            <button id="CheckFee" class="btn btn-success pull-right">Check</button>
+                        </div>
+                    </div><!-- col-sm-12 closed -->
+
+                </div><!-- row x_title closed-->
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+
+        <div class="btn btn-success" id="AllFee" style="display:none">
+            <label>All Fee(s) Paid!!, No Pending Dues</label>
+        </div>
+        <div class="col-sm-12 table-responsive" id="FeeTb">
+            <!-- col-msx-12 started -->
+            <div class="col-sm-3 table-responsive">
+                <!-- col-msx-3 started -->
+            </div><!-- col-msx-3 closed -->
+            <div class="col-sm-6 table-responsive">
+                <!-- col-msx-6 started -->
+                @*<table id="FeePaidTable" class="table table-bordered ">
+            <tr>
+
+                <th><input Id="Mycheckforall" type="checkbox" /> All</th>
+
+                <th>Fees Types</th>
+
+                <th>Amount</th>
+
+            </tr>
+            <tbody id="paidfeebody"></tbody>
+
+        </table>*@
+                <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+                    <!-- col-msx-12 started -->
+                    <table class="table " id="mytable" style="margin-top:5px;">
+                        <thead>
+                            <tr>
+                                <th>Fees Types</th>
+                                <th><label><input type="checkbox" id="selectAll" name="selectAll" />Select All</label></th>
+                                <th>Total</th>
+
+                            </tr>
+                        </thead>
+                        <tbody id="tbody"></tbody>
+                    </table>
+                </div>
+                @*<div style="text-align:right">
+            <label id="LabelDis">Discount Amount(3000) :</label>
+            <label id="disamount"></label>
+        </div>*@
+
+            <button id="btnSaveReceipt"  class="btn btn-success pull-right btnSaveReceipt">Pay Now</button>
+                @*<button class='btn btn-info pull-right'><a href='#' onclick="BtnPayNow()" id="BtnPayNow" class='button_a'>Pay Now</a></button>*@
+
+            </div><!-- col-msx-6 closed -->
+        </div>
+
+
+        @*<button class='btn btn-info pull-right'><a href='#' onclick="BtnPayNow()" id="BtnPayNow" class='button_a'>Pay Now</a></button>*@
+
+    </div><!-- col-msx-6 closed -->
+    <!--</div>--><!-- col-msx-12  closed -->
+</div><!-- 1st row closed -->
+  <!-- /page content -->
+<!-- Modal -->
+<!--<div id="myModalPayment" class="modal fade" role="dialog">
+    <div class="modal-dialog">-->
+
+        <!-- Modal content-->
+        <!--<div class="modal-content">
+
+
+        </div>
+
+    </div>
+</div>-->
+@section scripts{
+    <script>
+        
+        var Branchdetails = '@ViewBag.TblBranch';
+       
+        var discount = "";
+        var duefee = "";
+        var feeheading = [];
+        //$(document).ready(function () {
+        //    $("#AllFee").hide();
+        //});
+        getStudentdetailsfees();
+       
+        //GetStudentLoginForFeesPaid();
+        //function GetStudentLoginForFeesPaid() {
+        //    
+        //    var transportrange = 0;
+        //    $.ajax({
+        //        url: "/Fee/GetStudentLoginForFeesPaid?Fee_id=1" + '&transportrange=' + transportrange,
+        //        type: "GET",
+        //        contentType: "application/json;charset=utf-8",
+        //        dataType: "json",
+        //        success: function (result) {
+        //            
+        //            if (result.length > 0) {
+        //                //$("#AllFee").hide();
+        //                $("#FeeTb").show();
+        //                var row = "";
+        //                $.each(result, function (key, value) {
+        //                    if (value.FeeHeading == "Due Fees") {
+        //                        duefee = value.Ammount;
+        //                    }
+        //                    row = row + "<tr>";
+        //                    row = row + " <td><input class='Feeselectbox' type='checkbox'/></td>";
+        //                    row = row + " <td>" + value.FeeHeading + "</td>";
+        //                    //row = row + "<td>" + value.Months +"</td>";
+        //                    row = row + "<td>" + value.Ammount + "</td>";
+        //                    //row = row + "<td><button class='btn btn-info pull-right'><a href='#' class='button_a'>Pay Now</a></button></td>";
+        //                    row = row + "</tr>";
+        //                });
+        //                $("#paidfeebody").html(row);
+
+        //                row = "";
+        //                row = row + "<tr>";
+        //                row = row + " <td></td>";
+        //                row = row + " <td>Total : </td>";
+        //                //row = row + "<td>" + value.Months +"</td>";
+        //                //row = row + "<td>Discount :</td>";
+        //                row = row + "<td><span id='allTotal'></span></td>";
+        //                // row = row + "<td><button class='btn btn-info pull-right'><a href='#' class='button_a'>Pay Now</a></button></td>";
+        //                row = row + "</tr>";
+
+        //                $("#paidfeebody").append(row);
+        //            }
+        //            else {
+        //                console.log(result);
+        //                $("#AllFee").show();
+        //                $("#FeeTb").hide();
+        //                alert(result);
+        //            }
+
+        //        },
+        //        error: function (errormessage) {
+        //            alert(result,"Hi");
+        //            alert(errormessage.responseText);
+        //        }
+        //    });
+        //}
+
+        $("#Mycheckforall").change(function () {
+            //
+            allfee = 0;
+            //feeheading = [];
+            var checked = $(this).is(':checked');
+            if (checked) {
+                $(".Feeselectbox").each(function (a, b) {
+                    $(this).prop("checked", true);
+                });
+
+
+                var total = 0;
+                discount = 3000;
+                //var totaldisamount = "";
+                $("#FeePaidTable tbody tr:not() ").not(':first').not(':last').each(function () {
+                    total = $(this).find("td:nth-last-child(1)").html();
+                    allfee = Number(allfee) + Number(total);
+                    //totaldisamount = allfee - discount;
+                });
+                //alert(totaldisamount);
+                $("#allTotal").html(allfee);
+                //$("#LabelDis").show();
+                //$("#disamount").show();
+                //$("#disamount").text(totaldisamount);
+
+
+
+            } else {
+                $(".Feeselectbox").each(function () {
+                    $(this).prop("checked", false);
+                });
+                $("#LabelDis").hide();
+                $("#disamount").empty();
+                $("#disamount").hide();
+                allfee = 0;
+                $("#allTotal").html(0);
+            }
+
+        });
+
+        var allfee = 0;
+        var admissionfee = "";
+        var IstInstall = "";
+        var IIndInstall = "";
+        var IIIrdInstall = "";
+        var checked;
+        $(document).on('change', '.Feeselectbox', function () {
+            //discount = 3000;
+            $("#Mycheckforall").prop("checked", false);
+            //$("#LabelDis").hide();
+            //$("#disamount").empty();
+            //$("#disamount").hide();
+            var total = $(this).parent().closest('tr').find("td:nth-last-child(1)").html();
+            var feeheadingname = $(this).parent().closest('tr').find("td:eq(1)").html();
+            feeheading.push(feeheadingname);
+            //alert(feeheading);
+            checked = $(this).prop('checked');
+            //if (checked == false) {
+
+            //    if (feeheadingname == "Ist Installment") {
+            //        IstInstall = "";
+            //    }
+            //    else if (feeheadingname == "2nd Installment") {
+            //        IIndInstall = "";
+            //    }
+            //    else if (feeheadingname == "3rd Installment") {
+            //        IIIrdInstall = "";
+            //    }
+            //   else if (feeheadingname == "Admission Fee") {
+            //        admissionfee = "";
+            //    }
+
+            //}
+
+
+
+            if (checked == true) {
+                //alert(IIndInstall);
+
+                //var feeheadingname = $(this).parent().closest('tr').find("td:eq(1)").html();
+                //alert(feeheadingname);
+                //var Cname = $(this).parent().closest('tr').find("td:eq(1)").html();
+
+                allfee = allfee + Number(total);
+                //for (j = 0; j < feeheading.length; j++){
+                //    if (feeheading[j] == "Ist Installment") {
+                //        IstInstall = feeheading[j];
+                //    } else if (feeheading[j] == "2nd Installment") {
+                //        IIndInstall = feeheading[j];
+                //    } else if (feeheading[j] == "3rd Installment") {
+                //        IIIrdInstall = feeheading[j];
+                //    }
+                //    else if (feeheading[j] == "Admission Fee") {
+                //        admissionfee = feeheading[j];
+                //    }
+                //}
+                //alert(IstInstall);
+                //alert(IIndInstall);
+                //alert(IIIrdInstall);
+                //for (l = 0; l < feeheading.length; l++) {
+                //    alert(feeheading[l]);
+                //}
+                //if (IstInstall == "Ist Installment" && IIndInstall == "2nd Installment" && IIIrdInstall == "3rd Installment" && admissionfee == "Admission Fee") {
+                //    $("#disamount").hide();
+                //    $("#LabelDis").hide();
+                //    $("#disamount").hide();
+                //    $("#allTotal").html(allfee);
+
+                //}
+                //else if (IstInstall == "Ist Installment" && IIndInstall == "2nd Installment" && IIIrdInstall == "3rd Installment") {
+                //    var totaldiscount = allfee - discount;
+                //    $("#disamount").text(totaldiscount);
+                //    $("#LabelDis").show();
+                //    $("#disamount").show();
+                //    $("#allTotal").html(allfee);
+
+                //}
+                //else if (IstInstall == "Ist Installment" && IIndInstall == "2nd Installment" && IIIrdInstall == "3rd Installment" && IIIrdInstall == "3rd Installment" && admissionfee == "Admission Fee" || admissionfee == "") {
+                //    $("#LabelDis").hide();
+                //    $("#disamount").hide();
+                //    $("#disamount").empty();
+                //}
+                //else
+                {
+                    $("#allTotal").html(allfee);
+                    //$("#LabelDis").hide();
+                    //$("#disamount").hide();
+                }
+
+            }
+            else
+            {
+
+                //if (checked == false && admissionfee == "" && IstInstall == "Ist Installment" && IIndInstall == "2nd Installment" && IIIrdInstall == "3rd Installment") {
+                //    //alert("working");
+                //    var totaldiscount = allfee - Number(total) - discount;
+                //    $("#disamount").text(totaldiscount);
+                //    $("#LabelDis").show();
+                //    $("#disamount").show();
+                //    $("#allTotal").html(allfee);
+                //}
+
+                allfee = allfee - Number(total);
+                $("#allTotal").html(allfee);
+
+                $(this).parent().parent("tr").find(':input[type="number"]').val("0");
+            }
+            //$("#allTotal").html(allfee);
+            ////alert(allfee);
+            ////$("#LabelDis").show();
+            //$("#disamount").show();
+
+
+
+        });
+
+        $(document).ready(function () {
+           // $("#mytable").hide();
+            var datetime = new Date();
+            $("#DateFrom").val(datetime.toLocaleString())
+        });
+        function BtnPayNowOld() {
+            //  $('#myModalPayment').modal('show');
+            //$("#allTotal").text();
+            //alert($('#StudentName').val() + " - " + $("#allTotal").text());
+
+            var PaymentGatewayModel = [];
+            PaymentGatewayModel.StudentId = $("#allTotal").text();
+            PaymentGatewayModel.Amount = $('#StudentName').val();
+            var viewModel = { StudentId: $('#StudentName').val(), Amount: $("#allTotal").text() };
+
+            $.ajax({
+                url: "/Fee/AmountTransferGateway",
+                type: "POST",
+                dataType: "json",
+                data: { StudentId: $('#StudentId').val(), Amount: $("#allTotal").text() },
+                success: function (data) {
+                    //alert(data);
+                    window.location.href = data;
+                }
+            });
+        }
+        @*function BtnPayNow() {
+
+            var feeReceiptViewModel = {}
+            var FeeHeadings = [];
+            var FeeHeadingAmt = [];
+            var Selectedmonths = [];
+            var collectFees = [];
+            //var oldAmount = $("#OldBalance1").val();
+
+            //GetStudentDetailsById1($('#StudentId').val());
+            feeReceiptViewModel.StudentId = $('#StudentId').val();// $("#StudentName option:selected").val();
+            feeReceiptViewModel.CourseSpecialization = _CourseSpecialization;
+            feeReceiptViewModel.ClassName = $('#StudentClass').val();
+            feeReceiptViewModel.CategoryName = $('#StudnetCategory').val();
+            feeReceiptViewModel.StudentName = $('#Studentname').val();
+            feeReceiptViewModel.BatchName = _Batch;
+
+            //$.each($("input[name='category']:checked"), function () {
+            //    Selectedmonths.push($(this).val());
+            //});
+            //feeReceiptViewModel.Selectedmonths = Selectedmonths;
+            //
+            $("#FeePaidTable tbody tr:not() ").not(':first').not(':last').each(function () {
+
+                var checkBox = $(this).find('input[type="checkbox"]').is(':checked');
+                if (checkBox == true) {
+                    var FeeHeading = $(this).find("td:eq(1)").html();;
+                    var total = $(this).find("td:nth-last-child(1)").html();
+                    var collectFee = $(this).find(':input[type="number"]').val();
+                    FeeHeadings.push(FeeHeading);
+                    FeeHeadingAmt.push(total);
+                    collectFees.push(total);
+                    // collectFees.push(collectFee);
+                }
+            });
+            if (FeeHeadings.length <= 0) {
+                alert("Please select Fee Headings.")
+                return;
+            }
+
+            feeReceiptViewModel.DueAmountYesNo = "no";
+            feeReceiptViewModel.FeeHeadings = FeeHeadings;
+            feeReceiptViewModel.FeeHeadingAmt = FeeHeadingAmt;
+            feeReceiptViewModel.collectFees = collectFees;
+            feeReceiptViewModel.OldBalance = 0;
+            feeReceiptViewModel.LateFee = 0;
+            //feeReceiptViewModel.Concession = 0;
+            //feeReceiptViewModel.ConcessionAmt = 0;
+            feeReceiptViewModel.BalanceAmt = 0;
+            feeReceiptViewModel.PaymentMode = "Online";
+            feeReceiptViewModel.BankName = "";
+            feeReceiptViewModel.CheckId = "";
+            feeReceiptViewModel.Remark = "";
+            feeReceiptViewModel.Course = _cource;
+            //var checked = "";
+            //feeReceiptViewModel.TotalFee = $("#allTotal").text();
+            //feeReceiptViewModel.NetFee = $("#allTotal").text();
+            //feeReceiptViewModel.ReceiptAmt = $("#allTotal").text();
+            //feeReceiptViewModel.Concession = 0;
+            //feeReceiptViewModel.ConcessionAmt = 0;
+
+            //alert($("#disamount").text());
+            //if ($("#disamount").text() == null || $("#disamount").text() == "")
+            {
+
+                feeReceiptViewModel.TotalFee = $("#allTotal").text();
+                feeReceiptViewModel.NetFee = $("#allTotal").text();
+                feeReceiptViewModel.ReceiptAmt = $("#allTotal").text();
+                feeReceiptViewModel.Concession = 0;
+                feeReceiptViewModel.ConcessionAmt = 0;
+
+
+                //alert($("#allTotal").text());
+
+            }
+            //else {
+
+            //    feeReceiptViewModel.TotalFee = $("#disamount").text();
+            //    feeReceiptViewModel.NetFee = $("#disamount").text();
+            //    feeReceiptViewModel.ReceiptAmt = $("#disamount").text();
+            //    feeReceiptViewModel.Concession = 0;
+            //    feeReceiptViewModel.ConcessionAmt = discount;
+
+
+            //}
+
+            $.ajax({
+                url: "/Fee/AmountTransferGateway?isStudent=true",
+                //  url: '/Fee/AddFeeReceipt1',
+                dataType: "json",
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(feeReceiptViewModel),
+                async: true,
+                processData: false,
+                cache: false,
+                success: function (data) {
+
+                    if (branchdata == "Worldline") {
+
+                        window.location.href = '@Url.Action("PaymentProcess", "Payment")';
+                    }
+                    else if (branchdata == "Razorpay ") {
+                            window.location.href = '@Url.Action("RazorpayPaymentprocess", "Payment")';
+                    }
+
+                    //alert("Fee Saved Successfully.")
+                    //window.location.reload();
+                    //return Json(new { result = "Redirect", url = Url.Action("StudnetPaymentSummary", "FeeConfiguration") });
+                },
+                error: function (xhr) {
+                    // window.location.reload();
+                }
+            });
+
+        }*@
+
+        var _cource = "";
+        var _CourseSpecialization = "";
+        var _Class = "";
+        var _Category = "";
+        var _Name = "";
+        var _Batch = "";
+        function GetStudentDetailsById1(studentId) {
+            if (studentId == "") {
+                return;
+            }
+            // alert(studentId);
+            $.ajax({
+                url: '/Student/GetStudentDetailsById?studentId=' + studentId,
+                dataType: "json",
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                //data: {'id': Frequency},
+                async: false,
+                processData: false,
+                cache: false,
+                success: function (data) {
+                    //_cource = data.Course;
+                    //_CourseSpecialization = data.CourseSpecialization;
+                    //_Class = data.Class;
+                    //_Category = data.Category;
+                    //_Name = data.StudentName;
+                    //_Batch = data.Batch;
+                    //$("#Name").val(data.StudentName);
+                    //$("#FatherName").val(data.FatherName);
+
+                    //$("#Course").val(data.Course);
+                    //$("#Class").val(data.Class);
+                    //$("#Category").val(data.Category);
+                    //$("#OldBalance1").val(data.OldBalance);
+                    //$("#roleNumber").val(data.RoleNumber);
+                    //$("#ContNum").val(data.Contact);
+                    //$("#Batch").val(data.Batch);
+                    //$("#CourseSpecialization").val(data.CourseSpecialization);
+                },
+                error: function (xhr) {
+                    alert("Some Error Occure");
+                }
+            });
+        }
+        $("#mytable").show();
+        $("#verifyBtn").hide();
+        //Yatin Code start
+        // $("#CheckFee").on("click", function () {
+        function getStudentdetailsfees() {
+        
+            var Months = [];
+            var Feetype_id = $("#Feetype").val();
+            console.log("Feetypeid", Feetype_id);
+            var ApplicationId = $("#ApplicationId").val();//$("#StudentName option:selected").val();
+            console.log(ApplicationId);
+            $.each($("input[name='category']:checked"), function () {
+                Months.push($(this).val());
+            });
+
+            if (ApplicationId == "") {
+                return;
+            }
+            
+
+            {
+
+                $.ajax({
+                    url: '/Fee/GetStudentFees?ApplicationNumber=' + ApplicationId,
+                    dataType: "json",
+                    type: "GET",
+                    contentType: 'application/json; charset=utf-8',
+                    //data: {'id': Frequency},
+                    async: true,
+                    processData: false,
+                    cache: false,
+                    success: function (data) {
+                        //
+                        $("#tbody").html(data.ConfigureFeeData);
+
+                        $("#allTotal").html(0);
+                        $("#TotalFee").val(0);
+                        $("#NetFee").val(0);
+                        $("#ConcessionAmt").val(0);
+                        $("#LateFee").val(0);
+                        $("#Concession").val(0);
+                        $("#BalanceAmt").val(0);
+                        $("#ReceiptAmt").val(0);
+                        $("#BalanceAmt").val(0);
+                        AddDueFee();
+                    },
+                    error: function (xhr) {
+                        alert("Some Error Occure");
+                    }
+                });
+            }
+
+
+
+        };
+
+        function AddDueFee() {
+    var feeReceiptViewModel = {}
+    var FeeHeadings = [];
+    var FeeHeadingAmt = [];
+    var Selectedmonths = [];
+    var collectFees = [];
+    var Jan = [];
+    var Feb = [];
+    var Mar = [];
+    var Apr = [];
+    var May = [];
+    var Jun = [];
+    var Jul = [];
+    var Aug = [];
+    var Sep = [];
+    var Oct = [];
+    var Nov = [];
+    var Dec = [];
+
+
+    feeReceiptViewModel.StudentId = $('#hdnStudentID').val();//$("#StudentName option:selected").val();  //x-rnik
+    feeReceiptViewModel.CourseSpecialization = $("#CourseSpecialization").val();
+    feeReceiptViewModel.ClassName = $("#Class option:selected").val();
+    feeReceiptViewModel.CategoryName = $("#Category").val();
+    feeReceiptViewModel.StudentName = $("#Name").val();
+    feeReceiptViewModel.BatchName = $("#Batch").val();
+
+    $.each($("input[name='category']:checked"), function () {
+        Selectedmonths.push($(this).val());
+    });
+
+    feeReceiptViewModel.Selectedmonths = Selectedmonths;
+            $("tr").each(function () {
+                $(this).children("td:eq(0)").remove();
+            });
+           
+    $("#mytable tbody tr:not() ").not(':first').not(':last').each(function () {
+
+        //var checkBox = $(this).find('input[type="checkbox"]').is(':checked');
+        // if (checkBox == true) {
+        var FeeHeading = $(this).find("td:eq(1)").html();
+        var total = $(this).find("td:nth-last-child(2)").html();
+        var fee = $(this).find(':input[type="number"]').val();
+        FeeHeadings.push(FeeHeading);
+        FeeHeadingAmt.push(total);
+        collectFees.push(total);
+        Jan.push($(this).find("td:eq(3)").html());
+        Feb.push($(this).find("td:eq(4)").html());
+        Mar.push($(this).find("td:eq(5)").html());
+        Apr.push($(this).find("td:eq(6)").html());
+        May.push($(this).find("td:eq(7)").html());
+        Jun.push($(this).find("td:eq(8)").html());
+        Jul.push($(this).find("td:eq(9)").html());
+        Aug.push($(this).find("td:eq(10)").html());
+        Sep.push($(this).find("td:eq(11)").html());
+        Oct.push($(this).find("td:eq(12)").html());
+        Nov.push($(this).find("td:eq(13)").html());
+        Dec.push($(this).find("td:eq(14)").html());
+    });
+
+    feeReceiptViewModel.Jan = Jan;
+    feeReceiptViewModel.Feb = Feb;
+    feeReceiptViewModel.Mar = Mar;
+    feeReceiptViewModel.Apr = Apr;
+    feeReceiptViewModel.May = May;
+    feeReceiptViewModel.Jun = Jun;
+    feeReceiptViewModel.Jul = Jul;
+    feeReceiptViewModel.Aug = Aug;
+    feeReceiptViewModel.Sep = Sep;
+    feeReceiptViewModel.Oct = Oct;
+    feeReceiptViewModel.Nov = Nov;
+    feeReceiptViewModel.Dec = Dec;
+    feeReceiptViewModel.FeeHeadings = FeeHeadings;
+    feeReceiptViewModel.FeeHeadingAmt = collectFees;
+    feeReceiptViewModel.collectFees = collectFees;
+    feeReceiptViewModel.TotalFee = $("#TotalFee").val();
+        //    feeReceiptViewModel.Course = $("#Course").val();
+            
+            feeReceiptViewModel.ApplicationId = $("#ApplicationId").val();
+            feeReceiptViewModel.ClassName = $("#StudentClass").val();
+            feeReceiptViewModel.CategoryID = $("#StudentCategoryID").val();
+            $("tr").each(function () {
+                $(this).children("td:eq(3)").remove();
+            });
+            $("#verifyBtn").remove()
+    if (FeeHeadingAmt.length == 0) {
+        return;
+    }
+    $.ajax({
+        url: '/Fee/AddDueFee',
+        dataType: "json",
+        type: "POST",
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify(feeReceiptViewModel),
+        async: true,
+        processData: false,
+        cache: false,
+        success: function (data) {
+            //console.log("Due Fees updated");
+           //  alert(data);
+        },
+        error: function (xhr) {
+            
+           // window.location.reload();
+        }
+    });
+}
+
+        $(document).on('change', '.selectbox', function () {
+            
+    //var email = $(this).parent().closest('tr').find('td:nth-child(3)').text();
+    var total = $(this).parent().closest('tr').find("td:nth-last-child(1)").html();
+    if ($(this).prop("checked")) {
+
+        allfee = allfee + Number(total);
+    } else {
+        allfee = allfee - Number(total);
+    }
+    $("#allTotal").html(allfee);
+    $("#TotalFee").val(allfee);
+    $("#OldBalance2").val($("#OldBalance1").val());
+
+   // $("#NetFee").val(Number(allfee) + Number($("#OldBalance1").val()));
+    $("#NetFee").val(Number(allfee) );
+});
+
+$("#selectallmonths").on("change", function () {
+
+});
+$("#selectAll").on("change", function () {
+    allfee = 0;
+    
+    if ($(this).prop("checked")) {
+
+        $("input[name='selectbox']").prop('checked', true);
+
+        //---x-rnik
+        $("#mytable tbody tr:not()").not(':last').each(function () {
+            
+            var total = $(this).children("td:eq(1)").html();
+            //var total = $(this).find("td:nth-last-child(2)").html();
+            allfee = Number(allfee) + Number(total);
+            //alert($(this).find("td:nth-last-child(5)").html());
+
+        });
+        //---
+        //$("#mytable tbody tr:not() ").not(':first').not(':last').each(function () {
+
+        //    var total = $(this).find("td:nth-last-child(2)").html();
+        //    allfee = Number(allfee) + Number(total);
+        //    alert($(this).find("td:nth-last-child(5)").html());
+        //});
+
+        $("#allTotal").html(allfee);
+
+        $("#TotalFee").val(allfee);
+        $("#OldBalance2").val($("#OldBalance1").val());
+        $("#NetFee").val(Number(allfee) + Number($("#OldBalance1").val()));
+
+       // $("#NetFee").val(Number(allfee));
+
+    } else {
+        $("input[name='selectbox']").prop('checked', false);
+        allfee = 0;
+        $("#OldBalance2").val($("#OldBalance1").val());
+
+        $("#allTotal").html(0);
+        $("#TotalFee").val(0);
+        $("#NetFee").val(0);
+        $("#ConcessionAmt").val(0);
+        $("#LateFee").val(0);
+        $("#Concession").val(0);
+        $("#BalanceAmt").val(0);
+        $("#ReceiptAmt").val(0);
+        $("#BalanceAmt").val(0);
+    }
+});
+
+$("#LateFee").on("change", function () {
+    var data = Number($("#NetFee").val()) + Number($("#LateFee").val());
+
+    $("#NetFee").val(data);
+    $("#ReceiptAmt").val(0);
+    $("#BalanceAmt").val(0);
+    $("#Concession").val("");
+    $("#ConcessionAmt").val("");
+});
+
+$("#Concession").on("change", function () {
+    //
+    var Concession = $("#Concession").val();
+    if (Number(Concession) == 0) {
+        return;
+    }
+    if (Number(Concession) < 0) {
+        alert("Concession should greater then  0");
+        $("#Concession").val("")
+        return;
+    }
+    var totalfee = $("#TotalFee").val();
+    var lateFee = $("#LateFee").val();
+
+
+    var NetFee = Number(totalfee) + Number(lateFee);
+
+
+    //var ConcessionAmt = Number(totalfee) - Number(Concession);
+    var afterConcession = Number(totalfee) - Number(Concession);
+
+    $("#NetFee").val(Number(afterConcession) + Number(lateFee));
+    $("#ConcessionAmt").val(Concession);
+    $("#ReceiptAmt").val(0);
+    $("#BalanceAmt").val(0);
+});
+
+$(document).on('change', '#ReceiptAmt', function () {
+    var netFee = $("#NetFee").val();
+    var ReceiptAmt = $(this).val();
+    var BalanceAmt = $("#BalanceAmt").val();
+
+    if (Number(ReceiptAmt) + Number(BalanceAmt) > Number(netFee)) {
+        alert("Receipt Amt can't greater then Net Balance");
+        $(this).val(0);
+        $("#BalanceAmt").val(0);
+        return;
+    }
+    //  alert(netFee + " - " + ReceiptAmt)
+    $("#BalanceAmt").val(Number(netFee) - Number(ReceiptAmt));
+});
+
+//$(document).on("click", "#verifyBtn", function () {
+//    var collectFeeAmt = 0;
+//    $("#mytable tbody tr:not()").not(':last').each(function () {
+//        var checkBox = $(this).find('input[type="checkbox"]').is(':checked');
+//        //console.log("checkbox", checkBox);
+//        //alert(checkBox);
+//        $("#verifyBtn").hide();
+//        if (checkBox == true) {
+//            var fee = $(this).find(':input[type="number"]').val();
+//            collectFeeAmt = collectFeeAmt + Number(fee);
+
+//        }
+//    });
+//    //console.log("receitamt", collectFeeAmt);
+
+//    $("#TotalCollectFee").val(collectFeeAmt);
+//    $("#OldBalance2").val(Number($("#OldBalance1").val()));
+
+//    $("#ReceiptAmt").val(collectFeeAmt);
+//    $("#allTotal").text(collectFeeAmt);
+//    //$("#TotalFee").val($("#allTotal").html());
+//    //var netFee = Number($("#TotalCollectFee").html()) + Number($("#LateFee").val()) + Number($("#OldBalance1").val()) - Number($("#ConcessionAmt").val());
+//    var netFee = Number($("#TotalCollectFee").val()) + Number($("#LateFee").val()) - Number($("#ConcessionAmt").val());
+//    $("#NetFee").val(netFee);
+//    //console.log("netfee", netFee);
+//    $("#ReceiptAmt").val(netFee);
+//    //$("#BalanceAmt").val(Number($("#allTotal").html()) - collectFeeAmt);
+//    var balanceamt1 = $("#TotalFee").val();
+//    $("#BalanceAmt").val(balanceamt1 - collectFeeAmt);
+//    $("#btnSaveReceipt").removeAttr('disabled');
+//});
+
+$("#PaymentMode").on('click', function () {
+    var paymentmode = $(this).val();
+    if (paymentmode == "Cheque") {
+        document.getElementById("BankName").placeholder = "Check Number";
+        $("#banklabel").text("Check Number");
+    }
+    else {
+        document.getElementById("BankName").placeholder = "Bank Name";
+
+        $("#banklabel").text("Bank Name");
+
+    }
+});
+
+$("#btnSaveReceipt").on("click", function () {
+    var paymentmode = "Online";//$("#PaymentMode").val();
+    
+   // if (paymentmode == "Online") {
+        var feeReceiptViewModel = {}
+        var FeeHeadings = [];
+        var FeeHeadingAmt = [];
+        var Selectedmonths = [];
+        var collectedFeeAmount = [];
+        feeReceiptViewModel.StudentId = $('#hdnStudentID').val();// $("#StudentName option:selected").val(); //---xrnik
+        feeReceiptViewModel.ClassName = $("#StudentClass").val();
+        feeReceiptViewModel.CategoryName = $("#StudentCategory").val();
+        feeReceiptViewModel.StudentName = $("#Name").val();
+
+        $.each($("input[name='category']:checked"), function () {
+            Selectedmonths.push($(this).val());
+        });
+
+        feeReceiptViewModel.Selectedmonths = Selectedmonths;
+
+        $("#mytable tbody tr:not() ").not(':last').each(function () {
+
+            var FeeHeading = $(this).find("td:nth-child(2)").html();
+            //var total = $(this).find("td:nth-last-child(2)").html();
+            var total = $(this).find("td:eq(4)").val();
+            var fee = $(this).find(':input[type="number"]').val();
+            var checkBox = $(this).find('input[type="checkbox"]').is(':checked');
+            
+            if (checkBox == true) {
+                FeeHeadings.push(FeeHeading);
+                FeeHeadingAmt.push(total);
+                collectedFeeAmount.push(fee);
+            }
+        });
+        if (FeeHeadings.length <= 0) {
+            alert("Please select Fee Headings.")
+            return;
+        }
+        if (Number($("#TotalFee").val()) <= 0) {
+            alert("Total Fee can't 0")
+            return;
+        }
+        //if (Number($("#ReceiptAmt").val()) <= 0) {
+        //    alert("Receipt Amt can't be 0.")
+        //    return;
+        //}
+
+        if ($("#PaymentMode").val() == null) {
+            if ($("#ConcessionAmt").val() != $("#TotalFee").val()) {
+                alert("Please select the payment mode");
+
+                return false;
+            }
+        }
+        feeReceiptViewModel.FeeHeadings = FeeHeadings;
+        feeReceiptViewModel.FeeHeadingAmt = collectedFeeAmount;
+        feeReceiptViewModel.TotalFee = $("#TotalFee").val();
+        feeReceiptViewModel.OldBalance = $("#OldBalance").val();
+        feeReceiptViewModel.LateFee = $("#LateFee").val();
+        feeReceiptViewModel.Concession = $("#Concession").val();
+        feeReceiptViewModel.ConcessionAmt = $("#ConcessionAmt").val();
+        feeReceiptViewModel.NetFee = $("#NetFee").val();
+        feeReceiptViewModel.ReceiptAmt = $("#ReceiptAmt").val();
+        feeReceiptViewModel.BalanceAmt = $("#BalanceAmt").val();
+        feeReceiptViewModel.PaymentMode = $("#PaymentMode").val();
+        feeReceiptViewModel.BankName = $("#BankName").val();
+        feeReceiptViewModel.CheckId = $("#CheckId").val();
+        feeReceiptViewModel.Remark = $("#Remark").val();
+        feeReceiptViewModel.Course = $("#Course").val();
+        feeReceiptViewModel.DateTimeVal = $("#DateFrom").val();
+        feeReceiptViewModel.collectedFeeAmt = collectedFeeAmount;
+
+        $.ajax({
+        url: "/Fee/AmountTransferGateway?isStudent=true",
+        //  url: '/Fee/AddFeeReceipt1',
+        dataType: "json",
+        type: "POST",
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify(feeReceiptViewModel),
+        async: true,
+        processData: false,
+        cache: false,
+            success: function (data) {
+                
+                 if(Branchdetails == "Worldline") {
+                 window.location.href = '@Url.Action("PaymentProcess", "Payment")';
+                    }
+                else if (Branchdetails == "Razorpay ") {
+                 window.location.href = '@Url.Action("RazorpayPaymentprocess", "Payment")';
+                    }
+                else if (Branchdetails == "AUTUM")
+                 {
+                    window.location.href = '@Url.Action("CommonPaymentprocess", "Payment", new { paymentgatewayName = "Atomic" })';
+                  }
+
+        },
+        error: function (xhr) {
+            // window.location.reload();
+        }
+    });
+
+    //}
+    //else {
+    //    var feeReceiptViewModel = {}
+    //    var FeeHeadings = [];
+    //    var FeeHeadingAmt = [];
+    //    var Selectedmonths = [];
+    //    var collectedFeeAmount = [];
+    //    var Feeids = [];
+    //    feeReceiptViewModel.StudentId = $('#hdnStudentRegID').val();//$("#StudentName option:selected").val();//---x-rnik---
+    //    feeReceiptViewModel.ClassName = $("#Class option:selected").val();
+    //    feeReceiptViewModel.CategoryName = $("#Category").val();
+    //    feeReceiptViewModel.StudentName = $("#Name").val();
+
+    //    $.each($("input[name='category']:checked"), function () {
+    //        Selectedmonths.push($(this).val());
+    //    });
+
+    //    feeReceiptViewModel.Selectedmonths = Selectedmonths;
+
+    //    $("#mytable tbody tr:not() ").not(':last').each(function () {
+
+    //        var FeeHeading = $(this).find("td:nth-child(2)").html();
+    //        var total = $(this).find("td:nth-last-child(2)").html();
+    //        var fee = $(this).find(':input[type="number"]').val();
+    //        var checkBox = $(this).find('input[type="checkbox"]').is(':checked');
+    //        //
+    //        if (checkBox == true) {
+    //            FeeHeadings.push(FeeHeading);
+    //            FeeHeadingAmt.push(total);
+    //            collectedFeeAmount.push(fee);
+    //        }
+    //    });
+    //    if (FeeHeadings.length <= 0) {
+    //        alert("Please select Fee Headings.")
+    //        return;
+    //    }
+    //    if (Number($("#TotalFee").val()) <= 0) {
+    //        alert("Total Fee can't 0")
+    //        return;
+    //    }
+    //    //if (Number($("#ReceiptAmt").val()) <= 0) {
+    //    //    alert("Receipt Amt can't be 0.")
+    //    //    return;
+    //    //}
+
+    //    if ($("#PaymentMode").val() == null) {
+    //        if ($("#ConcessionAmt").val() != $("#TotalFee").val()) {
+    //            alert("Please select the payment mode");
+    //            $("#btnSaveReceipt").removeAttr('disabled');
+    //            return false;
+    //        }
+    //    }
+    //    feeReceiptViewModel.FeeHeadings = FeeHeadings;
+    //    feeReceiptViewModel.FeeHeadingAmt = collectedFeeAmount;
+    //    feeReceiptViewModel.TotalFee = $("#TotalFee").val();
+    //    feeReceiptViewModel.OldBalance = $("#OldBalance").val();
+    //    feeReceiptViewModel.LateFee = $("#LateFee").val();
+    //    feeReceiptViewModel.Concession = $("#Concession").val();
+    //    feeReceiptViewModel.ConcessionAmt = $("#ConcessionAmt").val();
+    //    feeReceiptViewModel.NetFee = $("#NetFee").val();
+    //    feeReceiptViewModel.ReceiptAmt = $("#ReceiptAmt").val();
+    //    feeReceiptViewModel.BalanceAmt = $("#BalanceAmt").val();
+    //    feeReceiptViewModel.PaymentMode = $("#PaymentMode").val();
+    //    feeReceiptViewModel.BankName = $("#BankName").val();
+    //    feeReceiptViewModel.CheckId = $("#CheckId").val();
+    //    feeReceiptViewModel.Remark = $("#Remark").val();
+    //    feeReceiptViewModel.Course = $("#Course").val();
+    //    feeReceiptViewModel.DateTimeVal = $("#DateFrom").val();
+    //    feeReceiptViewModel.collectedFeeAmt = collectedFeeAmount;
+
+
+    //    //console.log("feeReceiptViewModel", feeReceiptViewModel);
+    //    $.ajax({
+    //        url: '/Fee/AddFeeReceipt',
+    //        dataType: "json",
+    //        type: "POST",
+    //        contentType: 'application/json; charset=utf-8',
+    //        data: JSON.stringify(feeReceiptViewModel),
+    //        async: true,
+    //        processData: false,
+    //        cache: false,
+    //        success: function (data) {
+    //            //alert(data.FeeReceiptId);
+    //            alert("Fee Saved Successfully.");
+    //            if (data != null) {
+    //                window.open("/AdmissionFee/PrintReceiptusingrotativa?id=" + data.FeeReceiptId + "&ReceiptId=2", "_blank");
+
+    //                //window.location.href = "/AdmissionFee/PrintReceiptusingrotativa?id=" + data.FeeReceiptId +"&ReceiptId=2";
+    //            }
+    //            window.location.reload();
+    //        },
+    //        error: function (xhr) {
+    //            window.location.reload();
+    //        }
+    //    });
+    //}
+
+    //
+
+});
+
+
+$("#selectAllMonth").on("change", function () {
+    if ($(this).prop("checked")) {
+        $("input[name='category']").prop('checked', true);
+    } else {
+        $("input[name='category']").prop('checked', false);
+
+    }
+});
+        //yatin code end
+    </script>
+}
+

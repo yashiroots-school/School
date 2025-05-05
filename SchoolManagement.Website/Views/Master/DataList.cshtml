@@ -1,0 +1,134 @@
+﻿@model IEnumerable<SchoolManagement.Website.ViewModels.TblDataListViewModel>
+@{
+    ViewBag.Title = "Data  List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="col-sm-12">
+            <h4 class="std_head well-sm">Data List</h4>
+            <form action="/Master/AddDataList" method="post" id="dataListform">
+                <div class="col-sm-12" style="border-right: 1px solid #eee;">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label>Data List :</label>
+                            <input type="text" id="DataListId" name="DataListId" class="form-control" style="display:none;" />
+                            <input type="text" id="DataListName" name="DataListName" class="form-control" required /><br />
+                            @{
+                                var data = ViewBag.Permission;
+                                if (data != null)
+                                {
+                                    if (data == "true")
+                                    {
+
+                                        <input id="btnSubmit" class="btn btn-success form-control" type="submit" value="Save" />
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                </div><!-- col-sm-6 closed -->
+            </form>
+        </div>
+
+        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+            <!-- col-msx-12 started -->
+            <table class="table table-bordered" id="TblDataList" style="margin-top:5px;">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Data List</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int i = 1;}
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@i</td>
+                            <td>@item.DataListName</td>
+                            <td>
+                                @{
+                                    if (item.Editpermission == "true")
+                                    {
+                                        <button id="@item.DataListId" class="btn btn-success btn-sm EditBtn" data-val="@item.DataListId" role="button">Edit</button>
+                                    }
+
+                                    if (item.DeletePermission == "true")
+                                    {
+                                        <button id="@item.DataListId" class="btn btn-danger btn-sm deleteBtn" data-val="@item.DataListId" role="button">Delete</button>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                        i++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        $('#TblDataList').DataTable();
+    </script>
+    <script type="text/javascript">
+        //update records
+        $(".EditBtn").on('click', function () {
+            var dataListId = $(this).attr("data-val");
+            GetDataListItemById(dataListId);
+        });
+        function GetDataListItemById(dataListId) {
+            $.ajax({
+                url: "/Master/GetDataListItemById?id=" + dataListId,
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    
+                    $('#dataListform').attr('action', '/Master/UpdateDataList');
+                    $("#btnSubmit").val("Update");
+                    if (result != null) {
+                        $("#DataListId").val(result.DataListId);
+                        $("#DataListName").val(result.DataListName);
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+        $(".deleteBtn").on('click', function () {
+             var dataListId = $(this).attr("data-val");
+            $.ajax({
+                url: "/Master/DeleteDataList?id=" + dataListId,
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    
+                    alert(result);
+                    window.location.reload();
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+
+        });
+
+        //$(".deleteBtn").on('click', function () {
+
+        //    var DataID = $(this).attr("data-val");
+        //    if (confirm("Do you want to delete ?")) {
+        //        window.location.href = "/Master/DeleteDataList?id=" + DataID;
+        //    }
+        //});
+
+    </script>
+   
+}

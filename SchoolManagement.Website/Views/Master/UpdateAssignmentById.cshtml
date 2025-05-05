@@ -1,0 +1,148 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6">
+                            <h4> Assignments &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6">
+                            <button class="btn btn-info pull-right"><a href="" class="button_a">Set Assignment </a></button>
+                            <button class="btn btn-danger pull-right"><a href="sis_manage_assignment.html" class="button_a">View List </a> </button>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+
+
+        <div class="col-sm-12" style="border-bottom: 1px solid #E6E9ED;">
+            <!-- col-sm-12 started -->
+            <h4 class="std_head well-sm"> Add New Assignment</h4>
+            <form action="/Master/UpdateAssignment" id="AssignmentForm" method="POST" enctype="multipart/form-data">
+
+                <div class="col-sm-3">
+                    <!-- col-sm-3 started -->
+                </div><!-- col-sm-3 closed -->
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <input type="hidden" id="Assignment_Id" name="Assignment_Id" class="form-control" value="@ViewBag.AssignmentDetails.Assignment_Id" />
+                    </div>
+                    <!-- col-sm-6 started -->
+                    <div class="form-group">
+                        <label>Select Class :</label>
+                        <select class="form-control" id="Class_Id" name="Class_Id">
+                            <option>---select class---</option>
+                            @foreach (var item in ViewBag.ClassList as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                            {
+                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                            }
+                        </select>
+                        <input type="text" id="Class_Name" name="Class_Name" style="display:none" />
+                    </div>
+                    <div class="form-group">
+                        <label>Select Section :</label>
+                        <select class="form-control" id="Section_Id" name="Section_Id">
+                            <option>---select section---</option>
+                            @foreach (var item in ViewBag.SectionList as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                            {
+                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                            }
+                        </select>
+                        <input type="text" id="Section_Name" name="Section_Name" style="display:none" />
+                    </div>
+                    <div class="form-group">
+                        <label>Select Subject :</label>
+                        <select class="form-control" id="Subject_ID" name="Subject_ID">
+                            <option>---select Subject---</option>
+                            @foreach (var item in ViewBag.SubjectList as IEnumerable<SchoolManagement.Website.Models.Tbl_SubjectsSetup>)
+                            {
+                                <option value="@item.Subject_ID">@item.Subject_Name</option>
+                            }
+                        </select>
+                        <input type="text" id="Subject_Name" name="Subject_Name" style="display:none" />
+                    </div>
+                    <div class="form-group">
+                        <label>Set New Assignment  : </label>
+                        <textarea type="text" class="form-control" id="New_Assignment" name="New_Assignment"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Assignment Date : </label>
+
+                        <div class="input-group input-append date" id="datePicker">
+                            <input type="text" class="form-control datepicker" id="Assignment_Date" name="Assignment_Date" />
+                            <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label>Submit By Date : </label>
+
+                        <div class="input-group input-append date" id="datePicker">
+                            <input type="text" class="form-control datepicker" name="Submitted_Date" id="Submitted_Date" />
+                            <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+
+                    </div>
+
+                </div><!-- col-sm-6 closed -->
+                <div class="col-sm-6">
+                    <!-- col-sm-6 started -->
+                    <button type="submit" id="BtnAssignmentsave" class="btn btn-success pull-right">Update</button>
+                    @*<button class="btn btn-success pull-right">Review >></button>*@
+                </div> <!-- col-sm-6 closed -->
+            </form>
+
+        </div><!-- col-sm-12 closed -->
+
+
+    </div><!-- col-msx-12  closed -->
+</div>
+
+
+
+@section scripts{
+    <script src="~/Scripts/WebsiteJs/js/jquery.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var id = $("#Assignment_Id").val();
+
+            $.ajax({
+
+                url: "/Master/GetAssignmentById?id=" + id,
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json;charset=UTF-8",
+                success: function (result) {
+                    if (result != null) {
+                        $("#Class_Id").val(result.Class_Id);
+                        $("#Class_Name").val(result.Class_Name);
+                        $("#Section_Id").val(result.Section_Id);
+                        $("#Section_Name").val(result.Section_Name);
+                        $("#Subject_ID").val(result.Subject_ID);
+                        $("#Subject_Name").val(result.Subject_Name);
+                        $("#New_Assignment").val(result.New_Assignment);
+                        $("#Assignment_Date").val(result.Assignment_Date);
+                        $("#Submitted_Date").val(result.Submitted_Date);
+                    }
+                }
+
+            })
+
+        });
+    </script>
+
+}

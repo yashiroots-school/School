@@ -1,0 +1,214 @@
+﻿
+@{
+    ViewBag.Title = "ViewIdcard1";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .id-container-2 {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .id-card-2 {
+        width: 260px;
+        height: 470px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        background: #fff;
+        position: relative;
+        page-break-inside: avoid;
+        border: 2px solid #0d1b3e;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .header-2 {
+        background: linear-gradient(135deg, #0d1b3e 60%, #007bff 100%);
+        color: white;
+        text-align: center;
+        padding: 5px;
+    }
+
+        .header-2 img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .header-2 h2 {
+            font-size: 14px;
+            margin: 5px 0 0 0;
+        }
+
+        .header-2 p {
+            font-size: 11px;
+            margin: 0;
+        }
+
+    .photo-2 {
+        text-align: center;
+        margin-top: -30px;
+    }
+
+        .photo-2 img {
+            margin-top: 35px;
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 3px solid #0d1b3e;
+            object-fit: cover;
+            background: #fff;
+            margin-bottom: 0px;
+        }
+
+    .details-2 {
+        margin-top: 0px;
+        padding-top: 5px;
+        margin-left: 15px;
+        font-size: 13px;
+    }
+
+        .details-2 p {
+            margin: 4px 0;
+        }
+
+        .details-2 span {
+            font-weight: bold;
+            color: #0d1b3e;
+        }
+
+    .footer-2 {
+        background: #0d1b3e;
+        color: white;
+        font-size: 11px;
+        text-align: center;
+        padding: 8px;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+    }
+
+    /* PRINT */
+    @@media print {
+        body {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        header, footer, .nav_menu, .top_nav, .left_col, .sidebar, #printBtn2, #sigma {
+            display: none !important;
+        }
+
+        .id-container-2 {
+            display: flex !important;
+            justify-content: center !important;
+            flex-wrap: wrap !important;
+            gap: 20px !important;
+        }
+
+        .header-2 {
+            background: linear-gradient(135deg, #0d1b3e 60%, #007bff 100%) !important;
+            color: white !important;
+            text-align: center !important;
+            padding: 5px !important;
+        }
+
+            .header-2 p, .header-2 h2 {
+                color: white !important;
+            }
+
+        .footer-2 {
+            background: #0d1b3e !important;
+            color: white !important;
+            font-size: 11px !important;
+            text-align: center !important;
+            padding: 8px !important;
+            position: absolute !important;
+            bottom: 0 !important;
+            width: 100% !important;
+        }
+
+        .id-card-2 {
+            width: 260px !important;
+            height: 470px !important;
+            border-radius: 12px !important;
+            background: #fff !important;
+            page-break-inside: avoid !important;
+        }
+    }
+
+    #printBtn2 {
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        background-color: #0d1b3e;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-bottom: 20px;
+    }
+
+        #printBtn2:hover {
+            background: #0b1440;
+        }
+</style>
+
+<div class="right_col" role="main">
+    <div class="row">
+        <button id="printBtn2" onclick="window.print()">🖨️ Print ID Card</button>
+        <div class="id-container-2">
+            @foreach (var student in ViewBag.allStudentData as IEnumerable<SchoolManagement.Data.Models.Student>)
+            {
+                <div class="id-card-2">
+                    <!-- Header -->
+                    <div class="header-2">
+                        <img src="~/WebsiteImages/SchoolImage/@Session["SchoolImage"]" alt="Logo" />
+                        <h2 color="white">@Session["SchoolName"]</h2>
+                        <p color="white">@Session["SchoolAddress"]</p>
+                    </div>
+
+                    <!-- Student Photo -->
+                    <div class="photo-2">
+                        @{
+                            if (!string.IsNullOrWhiteSpace(student.ProfileAvatar))
+                            {
+                                <img src="~/WebsiteImages/StudentPhoto/@student.ProfileAvatar" />
+                            }
+                            else
+                            {
+                                <img src="~/WebsiteImages/images/user.png" />
+                            }
+                        }
+                    </div>
+
+                    <!-- Details -->
+                    <div class="details-2">
+                        <p><span>Name:</span> @student.Name @student.Last_Name</p>
+                        <p><span>Class:</span> @student.Class</p>
+                        <p><span>DOB:</span> @student.DOB</p>
+                        <p><span>Gender:</span> @student.Gender</p>
+
+                        @{
+                            var firstData1 = (ViewBag.allData as IEnumerable<SchoolManagement.Data.Models.FamilyDetail>)?.FirstOrDefault();
+                            if (firstData1 != null)
+                            {
+                                <p><span>Father:</span> @firstData1.FatherName (Mob: @firstData1.FMobile)</p>
+                                <p><span>Mother:</span> @firstData1.MotherName</p>
+                                <p><span>Address:</span> @firstData1.MPermanentAddress</p>
+                            }
+                        }
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="footer-2">
+                        stmarysschool.lumensof.in
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

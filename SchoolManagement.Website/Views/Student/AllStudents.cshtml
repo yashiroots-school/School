@@ -1,0 +1,163 @@
+﻿@*@model IEnumerable<SchoolManagement.Website.Models.Student>*@
+@{
+                /**/
+
+                ViewBag.Title = "AllStudents";
+}
+
+<!-- page content -->
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4> All Students List  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6">
+                            <button class="btn btn-info pull-right"><a href="sis_manage_student.html" class="button_a">Manage</a></button>
+                            <button class="btn btn-danger pull-right"><a href="sis_add_new_student.html" class="button_a">Add New</a></button>
+                        </div>
+                        <div class="col-sm-12" style="margin-top: 15px;">
+                            <div class="col-sm-12">
+                                <form class="form-inline">
+
+                                    @*<div class="form-group stright_line">
+                                        <label>Select Class :</label>
+                                        <select class="form-control" id="sel1">
+                                            <option>select class</option>
+                                            <option>I</option>
+                                            <option>II</option>
+                                            <option>III</option>
+                                            <option>IV</option>
+                                            <option>V</option>
+                                            <option>VI</option>
+                                        </select>
+                                    </div>*@
+
+                                    <div class="form-group stright_line">
+                                        <label>Select Section :</label>
+
+                                        <select class="form-control" id="sel1">
+                                            <option>select section</option>
+                                            <option>A</option>
+                                            <option>B</option>
+                                            <option>C</option>
+                                            <option>D</option>
+                                        </select>
+
+                                    </div>
+                                    <div class="form-group stright_line">
+                                        <label>Filter by :</label>
+
+                                        <select class="form-control" id="sel1">
+                                            <option>Student ID</option>
+                                            <option>II</option>
+                                            <option>III</option>
+                                            <option>IV</option>
+                                            <option>V</option>
+                                            <option>VI</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12" style="margin-top: 15px;">
+
+                            <div class="col-sm-6">
+                                <div id="custom-search-input">
+                                    <div class="input-group col-md-12">
+                                        <input type="text" class="form-control input-sm" placeholder="Search" />
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-info btn-sm" type="button">
+                                                <i class="glyphicon glyphicon-search"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <h5> Total No Of Students : @ViewBag.allStudents </h5>
+                            </div>
+                        </div><!-- col-sm-12 closed -->
+                    </div><!--row x_title closed -->
+                </div><!-- dashboard_graph closed-->
+            </div><!--col-msx-12 closed-->
+
+            <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                <!-- col-msx-12 started -->
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Name of the Student</th>
+                            <th>Class</th>
+                            <th>Section</th>
+                            <th>Gender</th>
+                            <th>Attendance</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ int i = 1;}
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@i</td>
+                                @*<td><a href="/Student/StudentDetails?studentId=@item.StudentId">@item.Name</a></td>*@
+                                <td>@item.Class</td>
+                                <td>@item.Section</td>
+                                <td>@item.Gender</td>
+                                <td>96%</td>
+                                <td><a href="/Student/EditStudent?studentId=@item.StudentId" class="btn btn-success btn-sm" role="button">Edit</a> <a href="#" class="btn btn-danger btn-sm" role="button">Delete</a></td>
+                            </tr>
+                            i++;
+                        }
+
+                    </tbody>
+                </table>
+            </div><!-- col-msx-12  closed -->
+            <div class="col-sm-12">
+                <!--pagination started-->
+                <nav>
+                    <ul class="pagination">
+                        <li>
+                            <a href="#" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li><a href="#">1</a></li>
+                        <li><a href="#">2</a></li>
+                        <li><a href="#">3</a></li>
+                        <li><a href="#">4</a></li>
+                        <li><a href="#">5</a></li>
+                        <li><a href="#">6</a></li>
+                        <li><a href="#">7</a></li>
+                        <li><a href="#">8</a></li>
+                        <li><a href="#">9</a></li>
+                        <li><a href="#">10</a></li>
+                        <li><a href="#">11</a></li>
+                        <li>
+                            <a href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div> <!--pagination closed-->
+        </div><!-- 1st row closed -->
+
+
+
+
+
+    </div>  <!-- /page content -->
+
+</div>

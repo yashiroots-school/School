@@ -1,0 +1,162 @@
+﻿
+@{
+    ViewBag.Title = "ViewStaffAttendence";
+    var rolename = ViewBag.Rolename;
+
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4> View All Staff Attendence  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6">
+                            <button class="btn btn-info pull-right"><a href="/Staf/StaffAttendance" class="button_a">Mark Attendence</a></button>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="col-sm-3" style="margin-top: 15px;">
+
+                                <div class="form-group">
+                                    @*<label class="control-label col-sm-4">Filter by :</label>*@
+
+                                    <div>
+                                        <label>Select Staff:</label>
+                                        <select class="form-control" id="Staff_ID">
+                                            @{
+                                                if (rolename == "Administrator")
+                                                {
+
+                                                    <option value="0">---Select Staff---</option>
+                                                }
+                                            }
+                                            @{
+                                                foreach (var item in ViewBag.Staff_List as IEnumerable<SchoolManagement.Data.Models.StafsDetails>)
+                                                {
+                                                    <option value="@item.StafId">@item.Name</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="col-sm-3" style="margin-top: 15px;">
+                                @*<label class="control-label col-sm-4">Select Day :</label>*@
+                                <label>From Date :</label>
+                                <input type="text" class="form-control datepicker" id="FromDate">
+                                @{
+                                    if (rolename == "Administrator")
+                                    {
+                                        <h5> Total No Of Staff : @ViewBag.TotalCount </h5>
+                                    }
+                                }
+                            </div>
+
+                            <div class="col-sm-3" style="margin-top:15px">
+                                <label>To Date:</label>
+                                <input type="text" class="form-control datepicker" id="Todate" />
+                            </div>
+
+                            <div class="col-sm-3" style="margin-top: 35px;">
+                                <div>
+                                    <button type="button" id="BtnAttendenceFilter" class="btn btn-success">Filter</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div><!-- col-sm-12 closed -->
+
+                </div><!-- row x_title closed-->
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+
+
+        <div class="col-sm-12 table-responsive">
+            <!-- col-msx-12 started -->
+            <table class="table table-bordered " id="AttendanceBody"></table>
+        </div><!-- col-msx-12  closed -->
+
+
+
+    </div><!-- 1st row closed -->
+
+
+
+
+</div>
+
+
+<style>
+    .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+        padding: 5px;
+        line-height: 1.42857143;
+        vertical-align: top;
+        border-top: 1px solid #ddd;
+    }
+</style>
+
+<script>
+
+    $("#BtnAttendenceFilter").on('click', function () {
+
+        var stafid = $("#Staff_ID").val();
+        var fromdate = $("#FromDate").val();
+        var todate = $("#Todate").val();
+
+
+
+        if (stafid != 0 && fromdate != "" && todate != "") {
+            $.ajax({
+                url: "/Account/FilterStaffAttendence",
+                data: { stafid: stafid, fromdate: fromdate, todate: todate },
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json;charset=UTF-8",
+                success: function (result) {
+                    //alert(result.staffdata.Employee_Code);
+                    if (result != null) {
+                        $("#AttendanceBody").empty();
+                        $("#AttendanceBody").append(result);
+                    }
+
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+        else {
+            $.ajax({
+                url: "/Account/ViewFullStaffaAttendance",
+                data: { fromdate: fromdate, todate: todate },
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json;charset=UTF-8",
+                success: function (result) {
+                    //alert(result.staffdata.Employee_Code);
+                    if (result != null) {
+                        $("#AttendanceBody").empty();
+                        $("#AttendanceBody").append(result);
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+
+    });
+
+
+
+
+</script>

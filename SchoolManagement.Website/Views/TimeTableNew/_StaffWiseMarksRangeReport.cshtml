@@ -1,0 +1,25 @@
+﻿@model List<SchoolManagement.Website.ViewModels.SubjectMarksRangeViewModel>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Range</th>
+            @foreach (var subj in Model.First().SubjectCounts.Keys)
+            {
+                <th>@subj</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var row in Model)
+        {
+            <tr>
+                <td>@row.MarksRange</td>
+                @foreach (var count in row.SubjectCounts.Values)
+                {
+                    <td>@count</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

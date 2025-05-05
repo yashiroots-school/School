@@ -1,0 +1,105 @@
+﻿@{
+    ViewBag.Title = "ViewStaffAttendence";
+}
+<div class="right_col" role="main">
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4> View All Staff Attendence  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6">
+                            <button class="btn btn-info pull-right"><a href="/Account/StaffAttendance" class="button_a">Mark Attendence</a></button>
+                        </div>
+                        <div class="col-sm-6" style="margin-top: 15px;">
+                            <div class="col-sm-7">
+
+                                <div class="form-group">
+                                    <label class="control-label col-sm-4">Filter by :</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control select2" id="StaffId">
+                                            <option>---Select Staff---</option>
+                                            @{
+                                                foreach (var item in ViewBag.Staff_List as IEnumerable<SchoolManagement.Data.Models.StafsDetails>)
+                                                {
+                                                    <option value="@item.StafId">@item.Name</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                           
+                        </div>
+                        <div class="col-sm-5" style="margin-top: 15px;">
+                            Select Day : <input type="text" class="datepicker" id="FromDate" style="margin-top: 15px;">
+                            From Day : <input type="text" class="datepicker" id="ToDate" style="margin-top: 15px;">
+                            <h5> Total No Of Staff : @ViewBag.TotalCount </h5>
+                        </div>
+                        <div class="col-sm-1" style="margin-top: 15px;">
+                            <button type="button" class="btn btn-success" id="BtnShowAttendance">Show</button>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div id="attendanceResult"></div>
+    </div>
+
+
+
+
+</div>
+
+<style>
+    
+    .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+        padding: 5px;
+        line-height: 1.42857143;
+        vertical-align: top;
+        border-top: 1px solid #ddd;
+    }
+
+    
+
+</style>
+<script>
+    $(document).ready(function () {
+        $('.select2').select2();
+        $('#BtnShowAttendance').click(function () {
+            debugger
+            var staffId = $('#StaffId').val();
+            var fromDate = $('#FromDate').val();
+            var toDate = $('#ToDate').val();
+
+            $.ajax({
+                url: '@Url.Action("PartialShowStaffAttendance", "Account")',
+                type: 'GET',
+                data: {
+                    staffId: staffId,
+                    fromDate: fromDate,
+                    toDate: toDate
+                },
+                success: function (result) {
+                    debugger
+                    $('#attendanceResult').html(result);
+                },
+                error: function () {
+                    alert('Something went wrong while fetching data.');
+                }
+            });
+        });
+    });
+</script>

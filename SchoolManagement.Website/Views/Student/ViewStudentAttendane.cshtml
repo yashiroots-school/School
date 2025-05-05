@@ -1,0 +1,517 @@
+﻿
+@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="right_col" role="main">
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4> View All Students Attendence  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <button class="btn btn-info pull-right"><a href="~/Student/StudentAtendance" class="button_a">Mark Attendence</a></button>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Select Class :</label>
+                                @*<select class="form-control" id="ClassId">
+                    <option value="0">---Select Class---</option>
+                    @foreach (var item in ViewBag.Class as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                    {
+                        <option value="@item.DataListItemId">@item.DataListItemName</option>
+                    }
+                </select>*@
+
+                                <select class="form-control select2" id="ClassId">
+                                    <option value="0">---Select Class---</option>
+                                    @foreach (var item in ViewBag.Class as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                    {
+                                        <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Select Section :</label>
+                                <select class="form-control select2" id="SectionId">
+                                    <option value="0">---Select Section---</option>
+                                    @foreach (var item in ViewBag.Section as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                    {
+                                        <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Select Student :</label>
+                                <select class="form-control select2" id="Studentdrp" name="Studentdrp" data-live-search="true">
+                                    <option value="0" selected>---Select All Student---</option>
+                                </select>
+
+                            </div>
+                        </div>
+                        <br />
+                        <div class="col-sm-4 date">
+                            <div class="form-group">
+                                <label>From Date :</label>
+                                <div class="input-group input-append date">
+                                    <input type="text" class="form-control datepicker" name="FromDay" id="FromDay" />
+                                    <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4 date">
+                            <div class="form-group">
+                                <label>To Date :</label>
+                                <div class="input-group input-append date">
+                                    <input type="text" class="form-control datepicker" name="ToDay" id="ToDay" />
+                                    <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Select Batch :</label>
+
+                                <select class="form-control select2 " id="BatchID" name="BatchID">
+                                    <option value="0">---Select Batch---</option>
+                                    @foreach (var item in ViewBag.Batch as IEnumerable<SchoolManagement.Website.Models.Tbl_Batches>)
+                                    {
+                                        <option value="@item.Batch_Id">@item.Batch_Name</option>
+                                    }
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-4 pt-3">
+                            
+                        </div>
+                        <div class="col-sm-6 pt-3">
+                            
+                        </div>
+                        <div class="col-sm-2 pt-3" style="text-align:right;">
+                            <div>
+                                <button type="button" class="btn btn-success" id="BtnShowAttendance">Show</button>
+
+                            </div>
+                        </div>
+                        <br />
+                    </div>
+                    <div class="col-md-12" style="display: flex;justify-content: space-between;align-items: flex-end;">
+                        <div>
+                            <h5> Full Day Present :<span style="color:green">✔</span>   </h5><h5> Half Day Present : ½  </h5><h5> Absent : <span style="color:#f00">✖</span></h5><h5> Other : 0 </h5>
+                        </div>
+                        <div>
+                            <h5> Total No Of Students : <span class="font-weight-bold" id="StudentCount"></span>  </h5>
+                        </div>
+                        <div>
+                            <h5>No of Present day  : <span class="font-weight-bold" id="PresentCount"></span>  </h5>
+                        </div>
+                    </div>
+                </div><!-- col-sm-12 closed -->
+
+            </div><!-- row x_title closed-->
+        </div><!-- dashboard_graph closed-->
+    </div><!--col-msx-12 closed-->
+    &nbsp;&nbsp;&nbsp;&nbsp;<button id="exportButton" class="btn btn-primary" style="display: none;">Export to Excel</button>
+
+    <div class="col-sm-12 table-responsive">
+        <!-- col-msx-12 started -->
+        <table class="table table-bordered " id="TableStudentAttendance">
+            <thead>
+                <tr>
+                    <th>S.NO</th>
+                    <th>Student Name</th>
+                    <th>Class</th>
+                    <th>Section</th>
+                </tr>
+            </thead>
+            <tbody id="studenceList"></tbody>
+        </table>
+    </div><!-- col-msx-12  closed -->
+    <h4 style="text-align:center;">Average attendence of the Class - 92% (compulsary)</h4>
+
+    <div class="col-sm-12">
+        <!--pagination started-->
+        <nav>
+            <ul class="pagination">
+                <li>
+                    <a href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+
+            </ul>
+        </nav>
+    </div> <!--pagination closed-->
+
+</div><!-- 1st row closed -->
+
+<style>
+    .select2-container .select2-selection--single {
+        height: 34px !important;
+    }
+
+    .select2-container--default .select2-selection--single {
+        border: 1px solid #ccc !important;
+        border-radius: 0px !important;
+    }
+</style>
+<script>
+    $('.select2').select2();
+    function formatDate(dateStr) {
+        var parts = dateStr.split("/");
+        var day = parts[0];
+        var month = parts[1];
+        var year = parts[2];
+
+        return month + "/" + day + "/" + year;
+    }
+
+    function createTableColumns(fromDate, toDate) {
+        var table = $("#TableStudentAttendance");
+        var headerRow = table.find("thead tr");
+
+        // Remove existing date columns (excluding the first two default columns)
+        headerRow.find("th:gt(3)").remove();
+
+        // Format the "from" and "to" dates
+        var fromFormatted = formatDate(fromDate);
+        var toFormatted = formatDate(toDate);
+
+        // Generate new date columns
+        var currentDate = new Date(fromFormatted);
+        var endDate = new Date(toFormatted);
+
+        while (currentDate <= endDate) {
+            var dateString = currentDate.toLocaleDateString("en-US", { day: "2-digit", month: "2-digit", year: "numeric" });
+            var parts = dateString.split("/"); // Split the date string by "/"
+            var day = parts[1]; // Get the day component (12)
+            var month = parts[0]; // Get the month component (06)
+            var year = parts[2]; 
+            var newDateString = day + "/" + month + "/" + year;
+
+            var th = $("<th>").text(day);
+            th.attr("id", newDateString);
+            headerRow.append(th);
+
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+        var th1 = $("<th>").text("Present");
+        headerRow.append(th1);
+        var th = $("<th>").text("Attendance %");
+        headerRow.append(th);
+
+        
+    }
+    function getStudentData(classId, sectionId) {
+        // Make an AJAX request to the controller method
+        $.ajax({
+            url: '/Student/GetStudentForDrpdwn', // Replace with the actual URL of your controller method
+            type: 'GET',
+            data: { classId: classId, sectionId: sectionId},
+            success: function (data) {
+                // Populate the class select box with the retrieved data
+                
+                var StudentSelect = $('#Studentdrp');
+                StudentSelect.empty();
+                StudentSelect.append('<option value="0" selected>---Select All Student---</option>');
+
+                $.each(data, function (index, item) {
+                    StudentSelect.append('<option value="' + item.StudentId + '">' + item.Name + '</option>');
+                });
+
+                // Initialize Bootstrap Select plugin
+                StudentSelect.selectpicker();
+
+            },
+            error: function () {
+                // Handle error if any
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $('#SectionId').change(function () {
+            var selectedOptionId = $(this).val();
+            var selectedClassId = $('#ClassId').val();
+            getStudentData(selectedClassId, selectedOptionId); // Call your function and pass the selected option ID as a parameter
+        });
+        $('#ClassId').change(function () {
+            var selectedOptionId = $(this).val();
+            var selectedClassId = $('#SectionId').val();
+            getStudentData(selectedOptionId, selectedClassId); // Call your function and pass the selected option ID as a parameter
+        });
+
+        function parseDate(dateString) {
+            var parts = dateString.split("/");
+            var day = parseInt(parts[0], 10);
+            var month = parseInt(parts[1], 10) - 1; // Month is zero-based
+            var year = parseInt(parts[2], 10);
+
+            return new Date(year, month, day);
+        }
+        $("#BtnShowAttendance").on('click', function () {
+          
+            var classid = $("#ClassId").val();
+            var batchid = $("#BatchID").val();
+            var sectionid = $("#SectionId").val();
+            var StudentId = $("#Studentdrp").val();
+            var fromDate = $("#FromDay").val();
+            var toDate = $("#ToDay").val();
+            // Convert date strings to Date objects
+            var startDate =parseDate(fromDate);
+            var endDate = parseDate(toDate);
+
+            if (!classid || !sectionid || !fromDate || !toDate || !batchid || fromDate.trim() === "" || toDate.trim() === "") {
+                // Display validation alert
+                alert("Please select all the required fields.");
+            }
+            // Check if end date is not less than start date
+            else if (new Date(endDate) < new Date(startDate)) {
+                alert("End date cannot be less than the start date.");
+            }
+            else {
+
+                var selectedClassText = $("#ClassId option:selected").text();
+                var selectedSectionText = $("#SectionId option:selected").text();
+
+                // Example usage
+                var from_Date = fromDate;
+                var to_Date = toDate;
+               
+                createTableColumns(from_Date, to_Date);
+                $("#exportButton").show();
+                $.ajax({
+                    url: "/Student/StudentAttendanceView",
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json;charset=UTF-8",
+                    data: { classId: classid, sectionId: sectionid, fromDate: fromDate, toDate: toDate, studentId: StudentId, BatchId: batchid }, // Replace with your actual parameter values
+                    success: function (data) {
+                        console.log(data)
+                        // Get a reference to the table body element
+                        var tableBody = $("#studenceList");
+                        $("#StudentCount").text(data.length);
+                        // Clear existing rows from the table body
+                        tableBody.empty();
+
+                        // Create a map to store the attendance records grouped by student ID
+                        var recordsByStudent = {};
+                        var studentIdOrder = []; // Array to store the order of student IDs
+
+                        // Group the attendance records by student ID
+                        for (var i = 0; i < data.length; i++) {
+                            var record = data[i];
+                            if (!recordsByStudent[record.StudentId]) {
+                                recordsByStudent[record.StudentId] = {
+                                    id: record.StudentId,
+                                    name: record.StudentName,
+                                    class: selectedClassText,
+                                    section: selectedSectionText,
+                                    attendance: record.Attendance,
+                                    attendancePer: record.AttendancePer
+                                };
+
+                                // Store the student ID in the order array
+                                studentIdOrder.push(record.StudentId);
+                            }
+                        }
+
+                        // Get the list of header dates from the table headers
+                        var headerDates = [];
+                        $("#TableStudentAttendance thead th").each(function (index) {
+                            if (index >= 4 && index < $("#TableStudentAttendance thead th").length - 2) {
+                                var headerId = $(this).attr("id");
+                                var headerText = headerId; // Extract the header text from the id
+                                headerDates.push(headerText);
+                            }
+                        });
+                        // Create table rows for each student
+                        var serialNumber = 1;
+                        var maxMarkedDays = 0;
+                        for (var j = 0; j < studentIdOrder.length; j++) {
+                            var studentId = studentIdOrder[j];
+                            var student = recordsByStudent[studentId];
+
+                                // Create a new table row
+                                var row = $("<tr>");
+
+                                // Create table cells and populate them with data
+                                var idCell = $("<td>").text(serialNumber);
+                                var nameCell = $("<td>").text(student.name);
+                                var classCell = $("<td>").text(student.class);
+                                var sectionCell = $("<td>").text(student.section);
+
+                                row.append(idCell, nameCell,classCell,sectionCell);
+                                // Create attendance cells for each date
+                                // Sort the array in descending order based on "Created_Date"
+                                (student.attendance).sort(function (a, b) {
+                                    var dateA = new Date(a.Created_Date.split("/").reverse().join("/"));
+                                    var dateB = new Date(b.Created_Date.split("/").reverse().join("/"));
+                                    return dateB - dateA;
+                                });
+                                var reversedRecords = (student.attendance).reverse();
+                            let count = 0;
+                            let countMarked = 0;
+                                // Iterate over the header dates
+                                for (var i = 0; i < headerDates.length; i++) {
+                                    var headerDate = headerDates[i];
+
+                                    var matchingValue = reversedRecords.find(item => item.Created_Date === headerDate);
+
+
+                                    // Create a table data cell
+                                    //var tableData = document.createElement("td");
+                                    let AttendanceIcon = "";
+                                    if (matchingValue) {
+                                        countMarked++;
+                                        var trueKeys = Object.entries(matchingValue)
+                                            .filter(([key, value]) => value === "True")
+                                            .map(([key]) => key);
+
+                                        if (trueKeys.length === 0) {
+                                            AttendanceIcon = '✖';
+                                        } else {
+                                            //$("#PresentCount").text("");
+                                            //if (trueKeys[0] === "Mark_FullDayAbsent") { AttendanceIcon = '✔'; count = count + 1; }
+                                            //if (trueKeys[0] === "Mark_HalfDayAbsent") { AttendanceIcon = '½' ; count = count + .5; }
+                                            //if (trueKeys[0] === "Others") { AttendanceIcon = '0' }
+                                            $("#PresentCount").text("");
+                                            trueKeys.forEach(function (key) {
+                                                switch (key) {
+                                                    case "Mark_FullDayAbsent":
+                                                        AttendanceIcon += '✔ ';
+                                                        count += 1;
+                                                        break;
+                                                    case "Mark_HalfDayAbsent":
+                                                        AttendanceIcon += '½ ';
+                                                        count += 0.5;
+                                                        break;
+                                                    case "Others":
+                                                        AttendanceIcon += '0 ';
+                                                        break;
+                                                }
+                                            });
+                                            AttendanceIcon = AttendanceIcon.trim();
+                                            //if (serialNumber == 1) { $("#PresentCount").text(count); }
+                                        }
+                                    }
+                                    var tableData_textContent = matchingValue ? AttendanceIcon : "";
+                                    // Append the table data cell to the table row
+                                    var attendanceCell = $("<td>").text(tableData_textContent);
+                                    row.append(attendanceCell);
+                                    matchingValue = false;
+                                   
+                                   
+                            }
+                            if (countMarked > maxMarkedDays) {
+                                maxMarkedDays = countMarked;
+                            }
+                                var presentcell = $("<td>").text(count);
+                                row.append(presentcell);
+                                var attendancePerCell = $("<td>").text(student.attendancePer);
+                                row.append(attendancePerCell);
+
+                                // Append the row to the table body
+                                tableBody.append(row);
+                            
+                            serialNumber++;
+                            $("#PresentCount").text(maxMarkedDays);
+                        }
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+                });
+
+            }
+
+            $("#exportButton").off("click").on("click", function () {
+                // Select the table element
+                var table = $("#TableStudentAttendance")[0];
+
+                // Convert the table data to a worksheet
+                var worksheet = XLSX.utils.table_to_sheet(table);
+
+                // Create a workbook and add the worksheet
+                var workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+                // Export the workbook to an Excel file
+                var selectedClassText = $("#ClassId option:selected").text();
+                var selectedSectionText = $("#SectionId option:selected").text();
+                // Get the current date and time
+                var currentDateTime = new Date().toISOString().replace(/[-:.]/g, "");
+
+                // Set the file name with the current date and time
+                var fileName = selectedClassText+"_" +selectedSectionText+"_"+ currentDateTime;
+                var excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+                saveExcelFile(excelBuffer, fileName+".xlsx");
+            });
+
+            // Function to save the Excel file
+            function saveExcelFile(buffer, fileName) {
+                var blob = new Blob([buffer], { type: "application/octet-stream" });
+                var url = URL.createObjectURL(blob);
+                var link = document.createElement("a");
+                link.href = url;
+                link.download = fileName;
+                link.click();
+                URL.revokeObjectURL(url);
+            }
+
+        });
+
+
+
+            //$.ajax({
+            //    url: "/Account/StudentAttendanceList",
+            //    type: "GET",
+            //    dataType: "json",
+            //    contentType: "application/json;charset=UTF-8",
+            //    success: function (result) {
+            //        //alert(result[1].StafId);
+            //        var row = "";
+            //        $.each(result, function (key, data) {
+            //            row = row + "<tr>";
+            //            row = row + "<td>" + data.StudentId + "</td>";
+            //            row = row + "<td>" + data.Name + "</td>";
+            //            row = row + "<td>A</td>";
+            //            row = row + "<td><input type='checkbox' id='Fulldayabsent'/></td>"
+            //            row = row + "<td>H</td>";
+            //            row = row + "<td><input type='checkbox' id='Halfdayabsent'/></td>";
+            //            row = row + "</tr>";
+            //        }
+            //        );
+            //        $("#TableBody").append(row);
+            //        $("#TableStudentAttendance").DataTable();
+
+            //    },
+            //    error: function (errormessage) {
+            //        alert(errormessage.responseText);
+            //    }
+            //});
+
+        });
+
+
+</script>
+

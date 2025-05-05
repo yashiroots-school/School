@@ -1,0 +1,85 @@
+﻿@model IEnumerable<SchoolManagement.Website.ViewModels.PromotionReportList>
+@{
+    ViewBag.Title = "Promotion Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="right_col" role="main">
+
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-4">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-4">
+                            <h4> Promotions Report  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                    </div>
+                </div><!-- dashboard_graph closed-->
+            </div><!--col-msx-12 closed-->
+            <div class="col-sm-12">
+                @*<div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Academic Year :</label>
+                        <select class="form-control" id="ClassId">
+                            <option value="0">---Select Academic Year ---</option>
+                            @foreach (var item in ViewBag.AllBatchs as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                            {
+                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                            }
+                        </select>
+                    </div>
+                </div>*@
+            </div>
+
+                <div class="row">
+                    <!-- row started -->
+                    <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                        <!-- col-msx-12 started -->
+                        <!-- col-sm-12 closed -->
+                        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                            <!-- col-msx-12 started -->
+
+                            <table class="table table-responsive table-striped" style="width: 100%" id="PromotionReportTbl">
+                                <thead>
+                                    <tr>
+                                        <th>S.No.</th>
+                                        <th>Class</th>
+                                        <th> Student Count</th>
+                                        <th>Promoted</th>
+                                        <th>Not Promoted</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@item.SNO</td>
+                                            <td>@item.ClassName</td>
+                                            <td>@item.AllStudents</td>
+                                            <td>@item.Promoted</td>
+                                            <td>@item.NotPromoted</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- col-msx-12  closed -->
+                    </div>
+                    <!-- col-msx-12  closed -->
+                </div>
+            </div><!-- 1st row closed -->
+        </div>  <!-- /page content -->
+</div>
+
+@section Scripts{
+    <script>
+            $('#PromotionReportTbl').dataTable({});
+    </script>
+}
+
+

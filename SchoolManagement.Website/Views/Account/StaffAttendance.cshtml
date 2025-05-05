@@ -1,0 +1,413 @@
+﻿
+@{
+    ViewBag.Title = "StaffAttendance";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4> Mark Students Attendence  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6">
+                            <button class="btn btn-info pull-right"><a href="/Staf/ViewStaffAttendence" class="button_a">View Attendence</a></button>
+                        </div>
+                        @*<div class="col-sm-6" style="margin-top: 15px;">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-7">Student Class :</label>
+                                        <div class="col-sm-5">
+                                            <select class="form-control" id="Class_Id" name="Class_Id">
+                                                <option>---Select Class---</option>
+                                                @foreach (var item in ViewBag.Class as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                                {
+                                                    <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                                }
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-6">Section :</label>
+                                        <div class="col-sm-6">
+                                            <select class="form-control" id="Section_Id" name="Section_Id">
+                                                <option>---select section---</option>
+                                                @foreach (var item in ViewBag.sectionlist as IEnumerable<SchoolManagement.Website.Models.Tbl_SectionSetup>)
+                                                {
+                                                    <option value="@item.Section_Id">@item.Section</option>
+                                                }
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>*@
+                        <div class="col-sm-6" style="margin-top: 15px;">
+                            <!-- <div class="form-group">
+                                <label class="col-xs-2 control-label">Day : </label>
+                                <div class="col-xs-5 date">
+                                    <div class="input-group input-append date" id="datePicker">
+                                        <input type="text" class="form-control" name="date" />
+                                        <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+                                    </div>
+                                </div>
+                            </div>-->
+                            <div class="col-sm-6">
+                                <div class="control-group">
+                                    <label class="col-xs-2 control-label">Day  </label>
+                                    <div class="col-xs-5 date">
+                                        <div class="input-group input-append date">
+                                            <input type="text" class="form-control datepicker" name="Day" id="Day" />
+                                            <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div>
+                                    <button type="button" class="btn btn-success" id="BtnShowAttendance">Show</button>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="button" value="Upload" class="btn btn-success" id="UploadStaffBtn" />
+                            <div class="col-sm-6">
+                                <input type="file" accept=".xlsx" id="UploadStafffile" />
+                            </div>
+                        </div>
+
+                    </div><!-- col-sm-12 closed -->
+
+                </div><!-- row x_title closed-->
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+
+
+        <div class="col-sm-12 table-responsive">
+            <!-- col-msx-12 started -->
+            <table class="table table-bordered " id="TableStaffAttendance">
+                <thead>
+                    <tr>
+                        <th>Staff Id</th>
+                        <th>Staff Name</th>
+                        <th>Mark full day absent</th>
+                        <th><input type="checkbox" id="Fullday" /></th>
+                        <th>Mark half day absent</th>
+                        <th><input type="checkbox" id="Halfday" /></th>
+                        <th>Other</th>
+                        <th><input type="checkbox" id="other" /></th>
+                        <th>Casual Leave</th>
+                        <th><input type="checkbox" id="CL" /></th>
+                        <th>Medical Leave</th>
+                        <th><input type="checkbox" id="ML" /></th>
+                        <th>Leave</th>
+                        <th><input type="checkbox" id="L" /></th>
+                    </tr>
+                </thead>
+                <tbody id="TableBody"></tbody>
+
+
+
+
+            </table>
+
+            <button type="button" id="BtnSaveStaffAttendance" class="btn btn-success pull-right">Save</button>
+
+        </div><!-- col-msx-12  closed -->
+    </div><!-- 1st row closed -->
+
+
+
+
+</div>
+<script src="~/Scripts/WebsiteJs/js/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+
+<script>
+        $(document).ready(function () {
+            $.ajax({
+                url: "/Account/StaffAttendanceList",
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json;charset=UTF-8",
+                success: function (result) {
+                    //alert(result[1].StafId);
+                   
+                    var row = "";
+                    $.each(result, function (key, data) {
+                        row = row + "<tr>";
+                        row = row + "<td class='sno'>" + data.StafId + "</td>";
+                        row = row + "<td class='staffName'>" + data.Name + "</td>";
+                        row = row + "<td>A</td>";
+                        row = row + "<td><input type='checkbox' id='Fulldayabsent' class='RowFulldayabsent'/></td>"
+                        row = row + "<td>H</td>";
+                        row = row + "<td><input type='checkbox' id='Halfdayabsent' class='RowHalfdayabsent'/></td>";
+                        row = row + "<td>O</td>";
+                        row = row + "<td><input type='checkbox' id='O' class='RowOtherdayabsent'/></td>";
+                        row = row + "<td>CL</td>";
+                        row = row + "<td><input type='checkbox' id='CL' class='RowCL'/></td>";
+                        row = row + "<td>ML</td>";
+                        row = row + "<td><input type='checkbox' id='ML' class='RowML'/></td>";
+                        row = row + "<td>L</td>";
+                        row = row + "<td><input type='checkbox' id='L' class='RowL'/></td>";
+                        row = row + "</tr>";
+                    }
+                    );
+                    $("#TableBody").append(row);
+                    $("#TableStaffAttendance").DataTable();
+
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+
+        });
+    $("#Fullday").click(function () {
+        var checkbox = $('#Fullday');
+        if (checkbox.is(':checked')) {
+            var checkboxes = $('.RowFulldayabsent');
+            checkboxes.prop('checked', true);
+        }
+        else {
+            var checkboxes = $('.RowFulldayabsent');
+            checkboxes.prop('checked', false);
+        }
+    });
+    $("#Halfday").click(function () {
+        var checkbox = $('#Halfday');
+        if (checkbox.is(':checked')) {
+            var checkboxes = $('.RowHalfdayabsent');
+            checkboxes.prop('checked', true);
+        }
+        else {
+            var checkboxes = $('.RowHalfdayabsent');
+            checkboxes.prop('checked', false);
+        }
+    });
+    $("#other").click(function () {
+        var checkbox = $('#other');
+        if (checkbox.is(':checked')) {
+            var checkboxes = $('.RowOtherdayabsent');
+            checkboxes.prop('checked', true);
+        }
+        else {
+            var checkboxes = $('.RowOtherdayabsent');
+            checkboxes.prop('checked', false);
+        }
+    });
+    $("#CL").click(function () {
+        var checkbox = $('#CL');
+        if (checkbox.is(':checked')) {
+            var checkboxes = $('.RowCL');
+            checkboxes.prop('checked', true);
+        }
+        else {
+            var checkboxes = $('.RowCL');
+            checkboxes.prop('checked', false);
+        }
+    });
+    $("#ML").click(function () {
+        var checkbox = $('#ML');
+        if (checkbox.is(':checked')) {
+            var checkboxes = $('.RowML');
+            checkboxes.prop('checked', true);
+        }
+        else {
+            var checkboxes = $('.RowML');
+            checkboxes.prop('checked', false);
+        }
+    });
+    $("#L").click(function () {
+        var checkbox = $('#L');
+        if (checkbox.is(':checked')) {
+            var checkboxes = $('.RowL');
+            checkboxes.prop('checked', true);
+        }
+        else {
+            var checkboxes = $('.RowL');
+            checkboxes.prop('checked', false);
+        }
+    });
+        $("#UploadStaffBtn").on('click', function () {
+            if (window.FormData !== undefined) {
+                var fileupload = $("#UploadStafffile").get(0);
+                var files = fileupload.files;
+
+                var fileData = new FormData();
+
+                for (var i = 0; i < files.length; i++) {
+                    fileData.append(files[i].Name, files[i]);
+                }
+                $("#UploadStaffBtn").attr('disabled');
+                $.ajax({
+                    url: "/ExcelWork/UploadStaffExcelFile",
+                    type: "POST",
+                    contentType: false,
+                    processData: false,
+                    data: fileData,
+                    success: function (result) {
+                        $("#UploadStaffBtn").removeAttr('disabled');
+                        if (result == "1") {
+                            alert("Excel Upload Successfully");
+                            window.location.reload();
+                        }
+                        else if (result == "2") {
+                            alert("No File is Selected");
+                            window.location.reload();
+                        }
+                        else if (result == "3") {
+                            alert("Columns Cannot be Blank");
+                            window.location.reload();
+                        }
+                        else if (result == "4") {
+                            alert("Upload the Correct Excel Sheet Format");
+                            window.location.reload();
+                        }
+                        else {
+                            alert("Please Check the Excel Sheet");
+                            window.location.reload();
+                        }
+                    },
+                    error: function (err) {
+                        alert(err.statusText);
+                    }
+                });
+
+            } else {
+                alert("FormData is not supported.");
+            }
+        });
+    $("#BtnSaveStaffAttendance").on('click', function () {
+        var rowData = [];
+        var date = $("#Day").val();
+        if (date === '') {
+            alert('Please select a date!');
+        } else {
+
+            var dateComponents = date.split('/'); 
+            var month = parseInt(dateComponents[1], 10); 
+            var day = parseInt(dateComponents[0], 10);
+            var year = parseInt(dateComponents[2], 10);
+            var dateStr = day + '/' + month + '/' + year;
+            var dateNew = new Date(dateStr);
+            var dayName = dateNew.toLocaleDateString("en-US", { weekday: "long" });
+            $('#TableStaffAttendance tr').each(function (index, row) {
+                var staffId = $(row).find('.sno').text().trim();
+                var staffName = $(row).find('.staffName').text().trim();
+
+                if (staffId !== "" && staffName !== "") {
+                    var rowDataItem = {
+                        Staff_Id: parseInt(staffId),
+                        Staff_Name: staffName,
+                        Mark_FullDayAbsent: $(row).find('.RowFulldayabsent').is(':checked') ? "true" : "false",
+                        Mark_HalfDayAbsent: $(row).find('.RowHalfdayabsent').is(':checked') ? "true" : "false",
+                        Attendence_Date: dateStr,
+                        Attendence_Month: dayName,
+                        Mark_Other: $(row).find('.RowOtherdayabsent').is(':checked') ? "true" : "false", 
+                        Mark_CL: $(row).find('.RowCL').is(':checked') ? "true" : "false", 
+                        Mark_ML: $(row).find('.RowML').is(':checked') ? "true" : "false", 
+                        Mark_L: $(row).find('.RowL').is(':checked') ? "true" : "false", 
+                    };
+                    rowData.push(rowDataItem);
+                }
+            });
+            $.ajax({
+                url: '/Account/AddStaffAttendence',
+                type: 'POST',
+                data: JSON.stringify(rowData),
+                contentType: 'application/json; charset=utf-8',
+                success: function (response) {
+                    if (response.success == false) {
+                        alert(response.errormsg)
+                    }
+                    else {
+                        alert("Attendance Recorded");
+                        window.location.reload();
+                    }
+                },
+                error: function () {
+                }
+            });
+        }
+    });
+    $("#BtnShowAttendance").on('click', function () {
+        var date = $("#Day").val();
+        if (date === '') {
+            alert('Please select a date!');
+        }
+
+        else {
+            var dateComponents = date.split('/');
+            var month = parseInt(dateComponents[1], 10);
+            var day = parseInt(dateComponents[0], 10);
+            var year = parseInt(dateComponents[2], 10);
+            var dateStr = day + '/' + month + '/' + year;
+            $.ajax({
+                url: '/Account/getAttendace',
+                type: 'POST',
+                data: JSON.stringify({ fromDate: dateStr }), 
+                contentType: 'application/json; charset=utf-8',
+                success: function (response) {
+                    console.log(response)
+                    if (response.success == false) {
+                        alert(response.errormsg)
+                    }
+                    else {
+                       
+                        $("#TableBody").empty();
+                        var row = "";
+                        $.each(response.staffAttendanceList, function (key, data) {
+                            row = row + "<tr>";
+                            row = row + "<td class='sno'>" + data.Staff_Id + "</td>";
+                            row = row + "<td class='staffName'>" + data.Staff_Name + "</td>";
+                            row = row + "<td>A</td>";
+                            row = row + "<td><input type='checkbox' id='Fulldayabsent' class='RowFulldayabsent' " + (data.Mark_FullDayAbsent == "true" ? "checked" : "") +"/></td>"
+                            row = row + "<td>H</td>";
+                            row = row + "<td><input type='checkbox' id='Halfdayabsent' class='RowHalfdayabsent'" + (data.Mark_HalfDayAbsent == "true" ? "checked" : "") + "/></td>";
+                            row = row + "<td>O</td>";
+                            row = row + "<td><input type='checkbox' id='O' class='RowOtherdayabsent'" + (data.Mark_Other == "true" ? "checked" : "") + "/></td>";
+                            row = row + "<td>CL</td>";
+                            row = row + "<td><input type='checkbox' id='CL' class='RowCL'" + (data.Mark_CL == "true" ? "checked" : "") + "/></td>";
+                            row = row + "<td>ML</td>";
+                            row = row + "<td><input type='checkbox' id='ML' class='RowML' " + (data.Mark_ML == "true" ? "checked" : "") + "/></td>";
+                            row = row + "<td>L</td>";
+                            row = row + "<td><input type='checkbox' id='L' class='RowL'" + (data.Mark_L == "true" ? "checked" : "") + "/></td>";
+                            row = row + "</tr>";
+                        }
+                        );
+                        $("#TableBody").append(row);
+                     
+                    }
+                },
+                error: function () {
+                }
+            });
+
+        }
+    });
+</script>
+<script>
+    $('#BtnSaveStaffAttendance').click(function () {
+        $('#TableStaffAttendance tbody tr').each(function (index) {
+            let leaveTypes = [];
+            $(this).find('.leaveTypeCheckbox:checked').each(function () {
+                leaveTypes.push($(this).val());
+            });
+            $('#LeaveType_' + index).val(leaveTypes.join(','));
+        });
+
+        $(this).closest("form").submit();
+    });
+</script>

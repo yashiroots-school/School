@@ -1,0 +1,116 @@
+﻿
+@{
+    ViewBag.Title = "VewAllStudent";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4> All Students List  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6">
+                            <button class="btn btn-info pull-right"><a href="/Student/ManageStudent" class="button_a">Manage</a></button>
+                            <button class="btn btn-danger pull-right"><a href="/Student/AddStudent" class="button_a">Add New</a></button>
+                        </div>
+                        <div class="col-sm-12" style="margin-top: 15px;">
+                            <div class="col-sm-12">
+                                <form class="form-inline">
+
+                                    <div class="form-group stright_line">
+                                        <label>Select Class :</label>
+                                        @Html.DropDownList("Student.Class", new SelectList(ViewBag.Class, "DataListItemName", "DataListItemName"), "select", new { @id = "Class", @class = "form-control" })
+                                    </div>
+
+                                    <div class="form-group stright_line">
+                                        <label>Select Section :</label>
+
+                                        @Html.DropDownList("Student.Section", new SelectList(ViewBag.Section, "DataListItemName", "DataListItemName"), "select", new { @id = "Section", @class = "form-control" })
+
+                                    </div>
+                                    <div class="form-group stright_line">
+                                        <input type="button" value=" Filter Student " id="FilterStudents" class=" pull-right btn btn-success" />
+
+                                    </div>
+                                </form>
+                            </div>
+                           
+
+                        </div>
+                     
+                        <div class="col-sm-12" style="margin-top: 15px;">
+
+                            <div class="col-sm-6">
+                                <div id="custom-search-input">
+                                    <div class="input-group col-md-12">
+                                        <input type="text" class="form-control input-sm" placeholder="Search" />
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-info btn-sm" type="button">
+                                                <i class="glyphicon glyphicon-search"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <h5> Total No Of Students : @ViewBag.totalStudent</h5>
+                            </div>
+                        </div><!-- col-sm-12 closed -->
+                    </div><!--row x_title closed -->
+                </div><!-- dashboard_graph closed-->
+            </div><!--col-msx-12 closed-->
+
+            <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                <!-- col-msx-12 started -->
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Name of the Student</th>
+                            <th>Class</th>
+                            <th>Section</th>
+                            <th>Gender</th>
+                            <th>Date Of Birth</th>
+                        </tr>
+                    </thead>
+                   
+                    <tbody class="tbody">
+            @{
+                int j = 1;
+             
+                foreach (var item in ViewBag.allStudent as IEnumerable<SchoolManagement.Data.Models.Student>)
+                {
+                        <tr>
+                            <td>@j</td>
+
+                            <td><a href="/Student/FullStudentView?Type=Student&id=@item.StudentId">@item.Name</a></td>
+                            <td>@item.Class</td>
+                            <td>@item.Section</td>
+                            <td>@item.Gender</td>
+                            <td>@item.DOB</td>
+
+                        </tr>
+                    j++;
+                }
+            }
+               </tbody>
+                </table>
+            </div><!-- col-msx-12  closed -->
+
+        </div><!-- 1st row closed -->
+    </div>  <!-- /page content -->
+</div><!--main container-->
+
+@section Scripts{
+  
+}
+

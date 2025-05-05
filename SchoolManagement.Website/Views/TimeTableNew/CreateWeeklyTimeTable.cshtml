@@ -1,0 +1,79 @@
+﻿
+@{
+    ViewBag.Title = "CreateWeeklyTimeTable";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/DropDownSelect2/dist/css/select2.min.css" rel="stylesheet" />
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <h2>New Time Table</h2>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+
+            <div class="row">
+                @*<h4 class="std_head well-sm"> Staff Information Form</h4>*@
+                <div class="tab-content tab_sis">
+                    <div class="tab-pane fade in active" id="add">
+                        <div class="row">
+                            @using (Html.BeginForm("WeeklyTimeTable", "TimeTableNew", FormMethod.Post))
+                            {
+                                <div class="row">
+                                    @*<div class="col-md-2 col-sm-3 col-xs-4">
+                                        @Html.DropDownList("ClassId", new SelectList(ViewBag.ClassList, "DataListItemId", "DataListItemName"), "Select Class", new { @class = "form-control select2", @Id = "Classss" })
+
+                                    </div>*@
+                                    @*<div class="col-md-2 col-sm-3 col-xs-4">
+                                        @Html.DropDownList("Section", new SelectList(ViewBag.Section, "DataListItemId", "DataListItemName"), "Select Section", new { @class = "form-control select2" })
+
+                                    </div>*@
+                                     @Html.TextBox("actionType", "Create", new { @class = "form-control", @placeHolder = "Enter Name", @style = "display :None;" })
+                                    <div class="col-md-2 col-sm-3 col-xs-4">
+                                        @Html.DropDownList("BatchId", new SelectList(ViewBag.Batch, "Batch_Id", "Batch_Name"), "Select Batch", new { @class = "form-control select2", @required = "required" })
+
+                                    </div>
+                                    @*<div class="col-md-2 col-sm-3 col-xs-4">
+                                        @Html.DropDownList("timeTableId", new SelectList(ViewBag.TimeTableList, "TimeTableId", "TimeTableName"), "Select TimeTable", new { @class = "form-control select2" })
+
+                                    </div>*@
+                                    <div class="col-md-2 col-sm-3 col-xs-4">
+                                        @Html.TextBox("DaysPerWeek", null, new { @class = "form-control", @placeHolder = "Enter No Of Days", @required = "required" })
+
+                                    </div>
+                                    <div class="col-md-2 col-sm-3 col-xs-4">
+                                        @Html.TextBox("PeriodsPerDay", null, new { @class = "form-control", @placeHolder = "Enter No Of Period Per Days", @required = "required" })
+
+                                    </div>
+                                    <div class="col-md-2 col-sm-3 col-xs-4">
+                                        @Html.TextBox("timeTableName", null, new { @class = "form-control", @placeHolder = "Enter Name",@required="required" })
+
+                                    </div>
+                                    <div class="col-md-2 col-sm-2 col-xs-2">
+                                        <input type="submit" value="create" class="btn btn-info" />
+
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Content/DropDownSelect2/dist/js/select2.min.js"></script>
+
+<script>
+    $('.select2').select2({
+    });
+    //function setFilterAction() {
+
+    //    const ClassId = $('#Classss').val();
+    //    const sectionId = $('#SectionId').val();
+    //    const batchId = $('#BatchId').val();
+    //    console.log(ClassId)
+    //    window.location.href = '/TimeTableNew/Create?ClassId=' + ClassId + '&sectionId=' + sectionId + '&batchId=' + batchId;
+    //    return false;
+    //}
+</script>
+

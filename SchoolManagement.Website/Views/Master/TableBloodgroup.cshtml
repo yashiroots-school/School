@@ -1,0 +1,216 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4>  BloodGroup  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <!--<div class="col-sm-6">
+                        <button class="btn btn-info pull-right"><a href="sis_add_new_teacher.html" class="button_a">Add New</a></button>
+                         <button class="btn btn-danger pull-right"><a href="sis_manage_teacher.html" class="button_a">Manage</a></button>
+                          </div>-->
+
+
+                    </div><!-- col-sm-12 closed -->
+                </div><!--row x_title closed -->
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+        <div class="col-sm-12" style="margin-top: 15px;">
+            <h4 class="std_head well-sm">BloodGroup Setup </h4>
+            <form action="/Master/AddBloodGroup" method="post" id="BloodGroupForm" enctype="multipart/form-data">
+
+                <div class="col-sm-3"></div>
+                <div class="col-sm-7">
+                    <div class="form-group">
+                        <input type="hidden" id="BloodGroup_Id" name="BloodGroup_Id" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">BloodGroup :</label>
+
+                        <input type="text" id="Blood_Group" name="Blood_Group" class="form-control" />
+                    </div>
+
+                    <div class="col-sm-8" style="margin-top:20px;">
+                        <button type="button" class="btn btn-success pull-right" id="BtnClear" onclick="ClearData()">Clear</button>
+                        <button type="submit" class="btn btn-success pull-right" id="BtnSaveBloodgroup">Save</button>
+                    </div>
+                </div>
+
+            </form>
+
+            <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+                <!-- col-msx-12 started -->
+                <table class="table table-bordered" id="TblBloodGroup" style="margin-top:5px;">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Blood Group</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            foreach (var item in ViewBag.BloodGroupList as IEnumerable<SchoolManagement.Website.Models.Tbl_BloodGroup>)
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@item.Blood_Group</td>
+
+                                    <td>
+                                        <button type="button" class="btn btn-info BloodGroupEdit" data-val="@item.BloodGroup_Id">Edit</button>
+                                        <button type="button" class="btn btn-success BloodGroupDelete" data-val="@item.BloodGroup_Id">Delete</button>
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+
+    </div><!-- 1st row closed -->
+
+
+
+
+
+</div>
+@section Scripts{
+
+    <script>
+        $("#TblBloodGroup").DataTable();
+
+        $(".BloodGroupEdit").on("click", function () {
+            
+            $("#BatchForm").attr('action', "/Master/UpdateBloodgroup");
+            var id = $(this).attr("data-val");
+
+            $("#BtnSaveBloodgroup").text("Update");
+            GetBloodGroupById(id);
+
+        });
+
+        function GetBloodGroupById(id) {
+            $.ajax({
+                url: "/Master/GetBloodGroupById?id=" + id,
+                type: "GET",
+                datatype: "json",
+                contentType: "application/json;charset=UTF-8",
+                success: function (result) {
+                    
+                    if (result != null) {
+                        $("#BloodGroup_Id").val(result.BloodGroup_Id);
+                        $("#Blood_Group").val(result.Blood_Group);
+
+
+
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+
+
+        $(".BloodGroupDelete").on("click", function () {
+            var id = $(this).attr("data-val");
+            if (confirm("Do You Want to Delete?")) {
+                window.location.href = "DeleteBloodGroup?id=" + id;
+            }
+        });
+
+        function ClearData() {
+            
+            var cnf = confirm('Are you sure, you want to clear all the data?');
+
+            if (cnf == true) {
+                $("#BloodGroup_Id").vals('');
+                $("#Blood_Group").val('');
+
+                $("#BloodGroupForm").attr('/Master/AddBloodGroup');
+                $("#BtnSaveBloodgroup").text("save");
+            }
+
+        }
+
+        //function InitDatatable() {
+        //    $("#TblSubjectsetup").DataTable().destroy();
+        //    
+
+        //    datatable = $("#TblSubjectsetup")
+        //        .DataTable({
+        //            "sAjaxSource": "/Master/GetAllSubjectDetails",
+        //            "retrieve": true,
+        //            "bServerSide": true,
+        //            "bProcessing": true,
+        //            "bSearchable": false,
+        //            "order": [[1, 'asc']],
+        //            "autoWidth": false,
+        //            "columns":
+        //                [
+        //                    {
+        //                        "data": "Teacher",
+        //                        "autoWidth": false,
+        //                        "width": "200px",
+        //                        "searchable": true
+        //                    },
+        //                    {
+        //                        "data": "Class",
+        //                        "autoWidth": false,
+        //                        "width": "200px",
+        //                        "searchable": true
+        //                    },
+        //                    {
+        //                        "data": "Subject",
+        //                        "autoWidth": false,
+        //                        "width": "200px",
+        //                        "searchable": true
+        //                    },
+        //                    {
+        //                        "data": "Id",
+        //                        "searchable": true,
+        //                        "render": function (data, type, row) {
+        //                            if (data != null && data != '') {
+        //                                return '<button type="button"><i style = "font-size:12px; color:#39b2e1; cursor:pointer;"data-val="' + data + '" class="fa fa-edit SubjectEdit"onclick=updatesubject(' + data + ')></i></button><button><i style="font-size:12px; color:#29b2e1; cursor:pointer;"data-val="' + data + '"class = "fa fa-trash-o SubjectDelete" onclick = DeleteSubject(' + data + ')></i></button>';
+        //                            }
+        //                        }
+        //                    }
+        //                ]
+        //        });
+
+        //}
+
+        //function updatesubject(id) {
+        //    $("#Subsetupform").attr('action', "/Master/UpdateSubject");
+
+        //    $("#Btnsavesubject").text("Update");
+        //    GetSubjectById(id);
+        //}
+        //function DeleteSubject(id) {
+        //    if (confirm("Do You Want to delete?")) {
+        //        window.location.href = "/Master/DeleteSubject?id=" + id;
+        //    }
+        //}
+
+    </script>
+
+
+
+}

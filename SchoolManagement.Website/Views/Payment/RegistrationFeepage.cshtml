@@ -1,0 +1,163 @@
+﻿@model SchoolManagement.Website.ViewModels.StudentDetailVM
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/WebsiteCss/css/fontawesome/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/DatePicker2/css/jquery.datepick.css" rel="stylesheet" />
+</head>
+<body>
+    <div>
+        <div class="container-fluid">
+            <div class="navbar navbar-fixed-top navbar-default org-titlebar">
+                <div class="container">
+                    <h3 style="padding-left:150px">
+                        Carmel Teresa
+                        <small style="font-size:60%">Admission Portal</small>
+                        <span class="pull-right" style="float:right; padding-right:150px">Hi Guest!</span>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="container" style="margin-top:100px;">
+            <div class="row">
+                <div class="col-sm-12" style="border-style:solid">
+                    <h2 style="text-align:center">Student Details</h2>
+                    <hr style="border-color:black"/>
+                    <span style="display:none" id="studentid">@Model.Studentid</span>
+                    <span style="display:none" id="classid">@Model.Class_Id</span>
+                    <div class="col-sm-6">
+                        <div>
+                            <label>Application No:</label>
+                            <span id="applicationno">@Model.ApplicationNo </span>
+                        </div>
+                        <div>
+                            <label>Student Name:</label>
+                            <span id="name">@Model.Name</span>
+                        </div>
+                        <div>
+                            <label>Email:</label>
+                            <span id="email">@Model.EmailId</span>
+                        </div>
+                        <div>
+                            <label>Father Name</label>
+                            <span id="fathername">@Model.FatherName</span>
+                        </div>
+                        <div>
+                            <label>Mother Name</label>
+                            <span id="mothername">@Model.MotherName</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div>
+                            <label>Class:</label>
+                            <span id="clasid">@Model.Class</span>
+                        </div>
+
+                        <div>
+                            <label>Contact No:</label>
+                            <span id="mobileno">@Model.FatherMobileNo</span>
+                        </div>
+                        <div>
+                            <label>Address:</label>
+                            <span id="address">@Model.ResidenceLocation</span>
+                        </div>
+                        <div>
+                            <label>Registration Fee:</label>
+                            <span id="admissionfee">@Model.AmissionFee</span>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-success" style="margin-top:10px;margin-bottom:10px;" id="BtnPayFee">Click on Pay</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script src="~/Scripts/WebsiteJs/js/jquery.js"></script>
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>*@
+
+<script src="~/Content/DatePicker2/js/jquery.plugin.min.js"></script>
+
+<script>
+     $("#BtnPayFee").on('click', function () {
+        //
+        var feeReceiptViewModel = {}
+        var FeeHeadings = [];
+        var FeeHeadingAmt = [];
+        var Selectedmonths = [];
+        var collectFees = [];
+        var _cource = "";
+        var _CourseSpecialization = "";
+        var _Class = "";
+        var _Category = "";
+        var _Name = "";
+        var _Batch = "";
+        //alert($('#admissionfee').val());
+        //
+        //feeReceiptViewModel.StudentId = $('#studentid').val();// $("#StudentName option:selected").val();
+        //feeReceiptViewModel.CourseSpecialization = _CourseSpecialization;
+        feeReceiptViewModel.ClassName = $('#classid').text();
+        //feeReceiptViewModel.CategoryName = $('#categoryname').val();
+        feeReceiptViewModel.StudentName = $('#name').text();
+        //feeReceiptViewModel.BatchName = _Batch;
+
+        feeReceiptViewModel.DueAmountYesNo = "no";
+        feeReceiptViewModel.FeeHeadings = "Admission Fee";
+        feeReceiptViewModel.FeeHeadingAmt = $("#admissionfee").text();
+        feeReceiptViewModel.collectFees = $("#admissionfee").text();
+        feeReceiptViewModel.TotalFee = $("#admissionfee").text();
+        feeReceiptViewModel.OldBalance = 0;
+        feeReceiptViewModel.LateFee = 0;
+        feeReceiptViewModel.Concession = 0;
+        feeReceiptViewModel.ConcessionAmt = 0;
+        feeReceiptViewModel.NetFee = $("#admissionfee").text();
+        feeReceiptViewModel.ReceiptAmt = $("#admissionfee").text();
+        feeReceiptViewModel.BalanceAmt = 0;
+        feeReceiptViewModel.PaymentMode = "Online";
+        feeReceiptViewModel.BankName = "";
+        feeReceiptViewModel.CheckId = "";
+        feeReceiptViewModel.Remark = "";
+        feeReceiptViewModel.Course = _cource;
+        feeReceiptViewModel.ApplicationNumber = $("#applicationno").text();
+        feeReceiptViewModel.StudentId = $("#studentid").text();
+        $.ajax({
+            url: "/Payment/AdmissionAmountTransferGateway?isStudent=false",
+            //  url: '/Fee/AddFeeReceipt1',
+            dataType: "json",
+            type: "POST",
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(feeReceiptViewModel),
+            async: true,
+            processData: false,
+            cache: false,
+            success: function (data) {
+                //alert("Fee Saved Successfully.")
+                //window.location.reload();
+                //return Json(new { result = "Redirect", url = Url.Action("StudnetPaymentSummary", "FeeConfiguration") });
+                window.location.href = '@Url.Action("RegistrationFeePaymentProcess", "Payment")';
+                
+            },
+            error: function (xhr) {
+                // window.location.reload();
+                if (xhr.getResponseHeader("X-Responded-JSON") != null
+                    && JSON.parse(xhr.getResponseHeader("X-Responded-JSON")).status == "401") {
+                    //some message here
+                    return;
+                }
+            }
+        });
+    });
+
+</script>

@@ -1,0 +1,874 @@
+﻿@*@model SchoolManagement.Data.Models.Student*@
+
+@{
+    ViewBag.Title = "FullStudentView";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .myAlert-bottom {
+        position: fixed;
+        bottom: 5px;
+        left: 2%;
+        width: 96%;
+    }
+
+    div.fullscreen {
+        position: absolute;
+        width: 100%;
+        height: 960px;
+        top: 0;
+        left: 0;
+        background-color: lightblue;
+    }
+
+    .alert {
+        display: none;
+    }
+</style>
+
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6">
+                            <h4> Full View of Student  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        @*<div class="col-sm-6">
+                            <button hidden class="btn btn-info pull-right"><a href="/Student/VewAllStudent" class="button_a">View All Students </a></button>
+                            <button class="btn btn-danger pull-right"><a href="/Student/ManageStudent" class="button_a">Manage Student</a> </button>
+                        </div>*@
+                    </div>
+                </div>
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <h4 class="std_head well-sm"> Student Information</h4>
+            <div class="col-sm-12" style="border-bottom: 1px solid #E6E9ED;">
+                @{
+                    foreach (var item in ViewBag.allStudentData as IEnumerable<SchoolManagement.Data.Models.Student>)
+                    {
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-sm-5">Name :</label>
+                                <div class="col-sm-3">
+                                    <p style="font-weight:bold;">@item.Name @item.Last_Name</p>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-5">Admission No :</label>
+                                <div class="col-sm-3">
+                                    <p style="font-weight:bold;">@item.ApplicationNumber</p>
+                                </div>
+                            </div>
+                            @*<div class="form-group">
+                            <label class="control-label col-sm-5">Date :</label>
+                            <div class="col-sm-3">
+                                <p style="font-weight:bold;">@item.Date</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-5">Batch No :</label>
+                            <div class="col-sm-3">
+                                <p style="font-weight:bold;">@item.BatchName</p>
+                            </div>
+                        </div>*@
+                        </div>
+
+                        <div class="col-sm-3"></div>
+                        @*<div class="col-sm-2">
+                        <div class="form-group">
+                            <label class="control-label col-sm-12" style="padding: 0;">EMIS (Education Management Information System) :@item.UIN</label>
+                            @*<div class="col-sm-9" style="padding: 0;margin:0;">
+                            <p style="padding: 0;margin:0;"></p>
+                            @*</div>
+                        </div>
+                        <img src="@ViewBag.ImageName" alt="Affix recent passport size <br/> photograph of student." style="width:100%;margin-bottom:10px;" class="img-thumbnail" />
+
+                    </div>*@
+                    }
+                }
+            </div><!-- col-sm-12 closed -->
+            <div class="col-sm-12 table-responsive" style="border-bottom: 1px solid #E6E9ED;">
+                <!-- col-sm-12 started -->
+                <h4 class="std_head well-sm"> Student Details</h4>
+                <div class="col-sm-6 table-responsive" style="border-right: 1px solid #eee;">
+                    <!-- col-sm-6 started -->
+
+                    <table class="table table-bordered">
+                        @{
+
+                            foreach (var item in ViewBag.allStudentData as IEnumerable<SchoolManagement.Data.Models.Student>)
+                            {
+                                <tr>
+                                    <td class="full_h">Name </td>
+                                    <td class="full_d">@item.Name @item.Last_Name</td>
+                                </tr>
+                                <tr>
+                                    <td class="full_h">Class </td>
+                                    <td class="full_d">@item.Class</td>
+                                </tr>
+                                @*<tr>
+                                <td class="full_h">Section </td>
+                                <td class="full_d">@item.Section</td>
+                            </tr>*@
+                                <tr>
+                                    <td class="full_h">Gender </td>
+                                    <td class="full_d">@item.Gender</td>
+                                </tr>
+
+                                <tr>
+                                    <td class="full_h"> Date of Birth </td>
+                                    <td class="full_d">@item.DOB</td>
+                                </tr>
+                                <tr>
+                                    <td class="full_h">Place of Birth </td>
+                                    <td class="full_d">@item.POB</td>
+                                </tr>
+                                <tr>
+                                    <td class="full_h">Nationality   </td>
+                                    <td class="full_d">@item.Nationality</td>
+                                </tr>
+                                <tr>
+                                    <td class="full_h">Religion  </td>
+                                    <td class="full_d">@item.Religion</td>
+                                </tr>
+                                <tr>
+                                    <td class="full_h">Medium  </td>
+                                    <td class="full_d">@item.Medium</td>
+                                </tr>
+                                <tr>
+                                    <td class="full_h">Mother tongue</td>
+                                    <td class="full_d">@item.MotherTongue</td>
+                                </tr>
+                                <tr>
+                                    <td class="full_h">Student Image</td>
+                                    <td class="full_d">
+                                        @{
+                                            if (!string.IsNullOrWhiteSpace(@item.ProfileAvatar))
+                                            {
+                                                <a target="_blank" href="~/WebsiteImages/StudentPhoto/@item.ProfileAvatar">View</a>
+
+                                            }
+                                            else
+                                            {
+                                                <a target="_blank" href="~/WebsiteImages/images/user.png">View</a>
+
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+
+                            }
+                        }
+                    </table>
+
+                </div><!-- col-sm-6 closed -->
+                <div class="col-sm-6 table-responsive">
+                    <!-- col-sm-6 started -->
+                    <table class="table table-bordered">
+                        @{
+                            foreach (var item in ViewBag.allStudentData as IEnumerable<SchoolManagement.Data.Models.Student>)
+                            {
+                                <tr>
+                                    <td class="full_h">Community </td>
+                                    <td class="full_d">@item.Category</td>
+                                </tr>
+                                <tr>
+                                    <td class="full_h">Caste </td>
+                                    <td class="full_d">@item.Caste</td>
+                                </tr>
+                                <tr>
+                                    <td class="full_h">Blood Group  </td>
+                                    <td class="full_d">@item.BloodGroup</td>
+                                </tr>
+
+                                <tr>
+                                    <td class="full_h">Hobbies  </td>
+                                    <td class="full_d">@item.Hobbies</td>
+                                </tr>
+                                @*<tr>
+                    <td class="full_h">Sports </td>
+                    <td class="full_d">@item.Sports</td>
+                </tr>*@
+                                <tr>
+                                    <td class="full_h">Any other details </td>
+                                    <td class="full_d">@item.OtherLanguages</td>
+                                </tr>
+                                <tr>
+                                    <td class="full_h">Personal Marks</td>
+                                    <td class="full_d">@item.MarkForIdentity</td>
+                                </tr>
+                                <tr>
+                                    <td class="full_h">Adhar No.</td>
+                                    <td class="full_d">@item.AdharNo</td>
+                                </tr>
+                                <tr>
+                                    <td class="full_h">Adhar Document.</td>
+                                    <td class="full_d">
+                                        @{
+                                            if (!string.IsNullOrWhiteSpace(@item.AdharFile))
+                                            {
+                                                <a target="_blank" href="~/WebsiteImages/StudentAdhar/@item.AdharFile">View</a>
+
+                                            }
+                                            else
+                                            {
+                                                <a target="_blank" href="~/WebsiteImages/images/user.png">View</a>
+
+                                            }
+                                        }
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td class="full_h">Parent's Email</td>
+                                    <td class="full_d">@item.ParentEmail</td>
+                                </tr>
+                                <tr>
+                                    <td class="full_h">ViewIdCard</td>
+                                    <td> <a href="/Student/ViewIdcard?id=@item.StudentId">View Id Card</a> 
+                                     <a href="/Student/ViewIdcard1?id=@item.StudentId">View Id Card</a> 
+                                     <a href="/Student/ViewIdcard2?id=@item.StudentId">View Id Card</a> </td>
+                                </tr>
+                           
+                            }
+                        }
+
+                    </table>
+                </div><!-- col-sm-6 closed -->
+            </div><!-- col-sm-12 closed -->
+            @{
+                if (ViewBag.allData.Count > 0 && ViewBag.allData.Count != null)
+                {
+                    <div class="col-sm-12 table-responsive" style="border-bottom: 1px solid #E6E9ED;">
+                        <!-- col-sm-12 started -->
+                        <h4 class="std_head well-sm"> Family Details</h4>
+
+                        <div class="col-sm-6 table-responsive" style="border-right: 1px solid #eee;">
+                            <!-- col-sm-6 started -->
+                            <h5 style="color: #1ABB9C;">Father's Details </h5>
+                            <table class="table table-bordered">
+                                @{
+                                    {
+                                        foreach (var item in ViewBag.allData as IEnumerable<SchoolManagement.Data.Models.FamilyDetail>)
+                                        {
+                                            <tr>
+                                                <td class="full_h">Father’s Name </td>
+                                                <td class="full_d">@item.FatherName</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="full_h">Qualifications   </td>
+                                                <td class="full_d">@item.FQualifications</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="full_h">Occupation  </td>
+                                                <td class="full_d">@item.FOccupation</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="full_h">Organization  </td>
+                                                <td class="full_d">@item.FOrganization</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="full_h">Phone </td>
+                                                <td class="full_d">@item.FMobile</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="full_h">Email  </td>
+                                                <td class="full_d">@item.FEMail</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="full_h">Annual Income  </td>
+                                                <td class="full_d">@item.FAnnualIncome</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="full_h">No.Of Brothers</td>
+                                                <td class="full_d">@item.NoOfBrothers</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="full_h">Residential Address</td>
+                                                <td class="full_d">@item.FResidentialAddress</td>
+                                            </tr>
+                                        }
+                                    }
+
+
+                                }
+                            </table>
+                        </div><!-- col-sm-6 closed -->
+
+                        <div class="col-sm-6 table-responsive">
+                            <!-- col-sm-6 started -->
+                            <h5 style="color: #1ABB9C;">Mother's Details </h5>
+                            <table class="table table-bordered">
+                                @{
+                                    foreach (var item in ViewBag.allData as IEnumerable<SchoolManagement.Data.Models.FamilyDetail>)
+                                    {
+                                        <tr>
+                                            <td class="full_h">Mother’s Name </td>
+                                            <td class="full_d">@item.MotherName</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="full_h">Qualifications   </td>
+                                            <td class="full_d">@item.MQualifications</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="full_h">Occupation  </td>
+                                            <td class="full_d">@item.MOccupation</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="full_h">Organization  </td>
+                                            <td class="full_d">@item.MOrganization</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="full_h">Phone </td>
+                                            <td class="full_d">@item.MPhone</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="full_h">Email  </td>
+                                            <td class="full_d">@item.MEMail</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="full_h">Annual Income  </td>
+                                            <td class="full_d">@item.MAnnualIncome</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="full_h">No.Of Sisters</td>
+                                            <td class="full_d">@item.NoOfSisters</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="full_h">Permanent Address</td>
+                                            <td class="full_d">@item.MPermanentAddress</td>
+                                        </tr>
+                                    }
+                                }
+                            </table>
+
+                        </div><!-- col-sm-6 closed -->
+                    </div>
+                }
+
+            }
+
+            @{
+
+            }
+
+            <!-- col-sm-12 closed -->
+            @{
+                if (ViewBag.allGardianData.Count > 0 && ViewBag.allGardianData != null)
+                {
+
+                    foreach (var item in ViewBag.allGardianData as IEnumerable<SchoolManagement.Data.Models.GuardianDetails>)
+                    {
+                        if (item.GuardianName != null)
+                        {
+                            <div class="col-sm-12 table-responsive" style="border-bottom: 1px solid #E6E9ED;">
+                                <!-- col-sm-12 started -->
+                                <h4 class="std_head well-sm"> Guardian’s Details</h4>
+                                <div class="col-sm-6">
+                                    <!-- col-sm-6 started -->
+                                    <table class="table table-bordered">
+                                        @{
+                                            {
+                                                <tr>
+                                                    <td class="full_h">Guardian’s Name </td>
+                                                    <td class="full_d">@item.GuardianName</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="full_h">Qualifications   </td>
+                                                    <td class="full_d">@item.Qualifications</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="full_h">Occupation  </td>
+                                                    <td class="full_d">@item.Occupation</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="full_h">Organization  </td>
+                                                    <td class="full_d">@item.Organization</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="full_h">Phone </td>
+                                                    <td class="full_d">@item.Phone</td>
+                                                </tr>
+                                            }
+                                        }
+                                    </table>
+                                </div><!-- col-sm-6 closed -->
+                                <div class="col-sm-6">
+                                    <!-- col-sm-6 started -->
+                                    <table class="table table-bordered">
+                                        @{
+                                            foreach (var item1 in ViewBag.allGardianData as IEnumerable<SchoolManagement.Data.Models.GuardianDetails>)
+                                            {
+                                                <tr>
+                                                    <td class="full_h">Email  </td>
+                                                    <td class="full_d">@item1.EMail</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="full_h">Annual Income  </td>
+                                                    <td class="full_d">@item1.AnnualIncome</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="full_h">Residential Address </td>
+                                                    <td class="full_d">@item1.ResidentialAddress</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="full_h">Permanent Address  </td>
+                                                    <td class="full_d">@item1.PermanentAddress</td>
+
+                                                </tr>
+                                            }
+                                        }
+                                    </table>
+
+                                </div><!-- col-sm-6 closed -->
+                            </div>
+                        }
+
+                    }
+
+
+                }
+            }
+            <!-- col-sm-12 closed -->
+
+            @{
+                if (ViewBag.allAdditionalData.Count > 0 && ViewBag.allAdditionalData != null)
+                {
+                    <div class="col-sm-12 table-responsive" style="border-bottom: 1px solid #E6E9ED;">
+
+                        <h4 class="std_head well-sm">Additional information</h4>
+                        <div class="col-sm-6">
+
+                            <table class="table table-bordered">
+                                @{
+                                    foreach (var item in ViewBag.allAdditionalData as IEnumerable<SchoolManagement.Data.Models.AdditionalInformation>)
+                                    {
+                                        @*<tr>
+
+                                        <td class="full_h">Assign Class </td>
+                                        <td class="full_d">@item.AssignClass</td>
+                                    </tr>
+                                    <tr>
+
+                                        <td class="full_h">Group</td>
+                                        <td class="full_d">@item.Group</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="full_h">Assign Section</td>
+                                        <td class="full_d">@item.AssignSection</td>
+                                    </tr>*@
+                                        <tr>
+                                            <td class="full_h">Distance from School (in Kms)</td>
+                                            <td class="full_d">@item.DistancefromSchool</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="full_h">Transport Facility: Yes / No </td>
+                                            <td class="full_d"> @item.TransportFacility</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="full_h">Physically Chalanged</td>
+                                            <td class="full_d"> @item.Physicallychalanged</td>
+                                        </tr>
+                                        @*<tr>
+                                        <td class="full_h">Come Through RTE 25% </td>
+                                        <td class="full_d"> @item.grade</td>
+                                    </tr>*@
+
+                                    }
+                                }
+                            </table>
+
+
+                        </div>
+
+                        <div class="col-sm-6 table-responsive">
+                            @*<h5 style="color: #1ABB9C;">For office use only</h5>
+                        <table class="table table-bordered">
+                            @{
+                                foreach (var item in ViewBag.allAdditionalData as IEnumerable<SchoolManagement.Data.Models.AdditionalInformation>)
+                                {
+                                    <tr>
+                                        <td class="full_h">Fee Structure Applicable </td>
+                                        <td class="full_d">@item.FeeStructureApplicable</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="full_h">Remarks</td>
+                                        <td class="full_d">@item.Remarks</td>
+                                    </tr>
+
+                                }
+                            }
+                        </table>*@
+
+                            @*<h5 style="color: #1ABB9C;">Documents Enclosed </h5>*@
+                            <table class="table table-bordered">
+                                @{
+                                    foreach (var item in ViewBag.allAdditionalData as IEnumerable<SchoolManagement.Data.Models.AdditionalInformation>)
+                                    {
+                                        <tr>
+                                            <td class="full_h">Birth certificate (photo copy)</td>
+                                            <td class="full_d">
+                                                @{
+                                                    if (!string.IsNullOrWhiteSpace(@item.BirthCertificateAvatar))
+                                                    {
+                                                        <a target="_blank" href="~/WebsiteImages/StudentAdhar/@item.BirthCertificateAvatar">View</a>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <a target="_blank" href="~/WebsiteImages/images/user.png">View</a>
+
+                                                    }
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="full_h">Three passport size photographs </td>
+                                            <td class="full_d">
+                                                @{
+                                                    if (!string.IsNullOrWhiteSpace(@item.ThreePassportSizePhotographs))
+                                                    {
+                                                        <a target="_blank" href="~/WebsiteImages/StudentAdhar/@item.ThreePassportSizePhotographs">View</a>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <a target="_blank" href="~/WebsiteImages/images/user.png">View</a>
+
+                                                    }
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="full_h">Progress Report (photo copy)</td>
+                                            <td class="full_d">
+                                                @{
+                                                    if (!string.IsNullOrWhiteSpace(@item.ProgressReport))
+                                                    {
+                                                        <a target="_blank" href="~/WebsiteImages/StudentAdhar/@item.ProgressReport">View</a>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <a target="_blank" href="~/WebsiteImages/images/user.png">View</a>
+
+                                                    }
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="full_h">Migration Certificate (original)</td>
+                                            <td class="full_d">
+                                                @{
+                                                    if (!string.IsNullOrWhiteSpace(@item.MigrationCertificate))
+                                                    {
+                                                        <a target="_blank" href="~/WebsiteImages/StudentAdhar/@item.MigrationCertificate">View</a>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <a target="_blank" href="~/WebsiteImages/images/user.png">View</a>
+
+                                                    }
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </table>
+
+                        </div><!-- col-sm-6 closed -->
+                    </div>
+                }
+            }
+            <!-- col-sm-6 closed -->
+
+            @{
+                if (ViewBag.allPastData.Count > 0 && ViewBag.allPastData != null)
+                {
+                    foreach (var item in ViewBag.allPastData as IEnumerable<SchoolManagement.Data.Models.PastSchoolingReport>)
+                    {
+                        //if (item.NameOfSchoolLastAttended != null)
+                        {
+                            <div class="col-sm-12 table-responsive" style="border-bottom: 1px solid #E6E9ED;">
+                                <!-- col-sm-12 started -->
+                                <h4 class="std_head well-sm"> Past Schooling Record</h4>
+                                <div class="col-sm-6 table-responsive">
+                                    <!-- col-sm-6 started -->
+                                    @*<br /><br />*@
+
+                                    <table class="table table-bordered">
+                                        @{
+                                            {
+                                                <tr>
+                                                    <td class="full_h">Name of school last attended</td>
+                                                    <td class="full_d">@item.NameOfSchoolLastAttended</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="full_h">Class Passed </td>
+                                                    <td class="full_d"> @item.ClassPassed</td>
+                                                </tr>
+                                                <tr>
+
+                                                    <td class="full_h">Reason for leaving</td>
+                                                    <td class="full_d"> @item.ReasonForLeaving</td>
+                                                </tr>
+                                                @*<tr>
+
+                                                <td class="full_h">Promotion</td>
+                                                <td class="full_d"> @item.Promotion</td>
+                                            </tr>*@
+
+                                            }
+                                        }
+
+                                    </table>
+                                </div><!-- col-sm-6 closed -->
+                                <div class="col-sm-6 table-responsive">
+                                    <!-- col-sm-6 started -->
+                                    <table class="table table-bordered">
+                                        @{
+                                            foreach (var item1 in ViewBag.allPastData as IEnumerable<SchoolManagement.Data.Models.PastSchoolingReport>)
+                                            {
+                                                @*<h5 style="color: #1ABB9C;">Transfer documents attached :</h5>*@
+                                                <tr>
+                                                    <td class="full_h">TC</td>
+                                                    <td class="full_d">
+                                                        @{
+                                                            if (!string.IsNullOrWhiteSpace(@item1.TCAvatar))
+                                                            {
+                                                                <a target="_blank" href="~/WebsiteImages/StudentAdhar/@item1.TCAvatar">View</a>
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <a target="_blank" href="~/WebsiteImages/images/user.png">View</a>
+
+                                                            }
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="full_h">Marks Card</td>
+                                                    <td class="full_d">
+                                                        @{
+                                                            if (!string.IsNullOrWhiteSpace(@item1.MarksCardAvatar))
+                                                            {
+                                                                <a target="_blank" href="~/WebsiteImages/StudentAdhar/@item1.MarksCardAvatar">View</a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a target="_blank" href="~/WebsiteImages/images/user.png">View</a>
+                                                            }
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="full_h">Character/Conduct Certificate</td>
+                                                    <td class="full_d">
+                                                        @{
+                                                            if (!string.IsNullOrWhiteSpace(@item1.CharacterConductCertificateAvatar))
+                                                            {
+                                                                <a target="_blank" href="~/WebsiteImages/StudentAdhar/@item1.CharacterConductCertificateAvatar">View</a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a target="_blank" href="~/WebsiteImages/images/user.png">View</a>
+                                                            }
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </table>
+
+                                </div><!-- col-sm-6 closed -->
+                            </div>
+                        }
+
+                    }
+
+
+                }
+            }
+            <div class="col-sm-12 table-responsive" style="border-bottom: 1px solid #E6E9ED;">
+                <!-- Attendance Year-Wise Section -->
+                <h4 class="std_head well-sm">Attendance Year-Wise</h4>
+
+                <!-- Parent Table for Attendance Year-Wise -->
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Batch Name</th>
+                            @*@foreach (var batch in ViewBag.GroupedData as List<SchoolManagement.Website.ViewModels.BatchAttendance>)
+                            {
+                                <!-- Row for Batch Name and Summary -->
+                                <th colspan="4" class="text-center"><strong>@batch.BatchName</strong></th>
+                            }
+                        </tr>
+                        <tr>*@
+
+                            @*@foreach (var batch in ViewBag.GroupedData as List<SchoolManagement.Website.ViewModels.BatchAttendance>)
+                        {*@
+                            <!-- Columns for Class Details -->
+                            <th>Class Name</th>
+                            <th>Section</th>
+                            <th>Total Days</th>
+                            <th>Attendance Percentage</th>
+                            @*}*@
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var detail in ViewBag.studentAttendanceData as List<SchoolManagement.Website.ViewModels.StudentAttendance>)
+                        {
+                            <tr>
+                                <td>@detail.BatchName</td>
+                                <td>@detail.ClassName</td>
+                                <td>@detail.Section</td>
+                                <td>@detail.TotalDays</td>
+                                <td>@string.Format("{0:0.00}%", detail.AttendancePercentage)</td>
+                            </tr>
+                        }
+                    </tbody>
+
+                    @*<tbody>
+                    @foreach (var batch in ViewBag.GroupedData as List<SchoolManagement.Website.ViewModels.BatchAttendance>)
+                    {
+                        bool isFirstRow = true;
+                        foreach (var detail in batch.AttendanceDetails)
+                        {
+                            <tr>
+                                @if (isFirstRow)
+                                {
+                                    <td rowspan="@batch.AttendanceDetails.Count">@batch.BatchName</td>
+                                    isFirstRow = false;
+                                }
+                                <td>@detail.ClassName</td>
+                                <td>@detail.Section</td>
+                                <td>@detail.TotalDays</td>
+                                <td>@string.Format("{0:0.00}%", detail.AttendancePercentage)</td>
+                            </tr>
+                        }
+                    }
+                </tbody>*@
+
+
+                    @*<tbody>
+
+                    @foreach (var batch in ViewBag.GroupedData as List<SchoolManagement.Website.ViewModels.BatchAttendance>)
+                    {
+
+                        foreach (var detail in batch.AttendanceDetails)
+                        {
+                            <tr>
+                                <td>@batch.BatchName</td>
+                                <td>@detail.ClassName</td>
+                                <td>@detail.Section</td>
+                                <td>@detail.TotalDays</td>
+                                <td>@string.Format("{0:0.00}%", detail.AttendancePercentage)</td>
+                            </tr>
+                        }
+
+                    }
+                </tbody>*@
+                </table>
+            </div>
+            <div class="col-sm-12 table-responsive" style="border-bottom: 1px solid #E6E9ED;">
+                <!-- Attendance Year-Wise Section -->
+                <h4 class="std_head well-sm">Marks Year-Wise</h4>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Batch </th>
+                            <th>Class </th>
+                            <th>Section</th>
+                            <th>Term</th>
+                            <th>Total Obtain Marks</th>
+                            @*}*@
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var detail in ViewBag.BatchResult as List<SchoolManagement.Website.ViewModels.StudentMarkBatchWise>)
+                        {
+                            <tr>
+                                <td>@detail.BatchName</td>
+                                <td>@detail.ClassName</td>
+                                <td>@detail.Section</td>
+                                <td>@detail.TermName</td>
+                                <td>@string.Format("{0:0.00}", detail.TotalObtainedMarks)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div><!-- col-sm-12 closed -->
+            <div class="col-sm-12 table-responsive" style="border-bottom: 1px solid #E6E9ED;">
+                <!-- Co-Scholastic Report Section -->
+                <h4 class="std_head well-sm">Co-Scholastic Area Year-Wise</h4>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Batch </th>
+                            <th>Class </th>
+                            <th>Section</th>
+                            <th>Term</th>
+                            <th>Coscholastic Grades</th>
+                            <th>Average Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (ViewBag.CoScholastic_Result != null)
+                        {
+                            foreach (var detail in ViewBag.CoScholastic_Result as List<SchoolManagement.Website.ViewModels.CoScholasticReportViewModel>)
+                            {
+                                if (detail != null)
+                                {
+                                    <tr>
+                                        <td>@detail.BatchName</td>
+                                        <td>@detail.ClassName</td>
+                                        <td>@detail.SectionName</td>
+                                        <td>@detail.TermName</td>
+                                        
+                                        <td>
+                                            @{
+                                                var grades = detail.CoscholasticGrades?.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries) ?? new string[0];
+                                                for (int i = 0; i < grades.Length; i++)
+                                                {
+                                                    @grades[i]
+                                                    if ((i + 1) % 3 == 0 || i == grades.Length - 1)
+                                                    {
+                                                        <br />
+                                                    }
+                                                    else
+                                                    {
+                                                        @:<b>,</b> &nbsp;&nbsp; <!-- Optional spacing between items -->
+                                                    }
+                                                }
+                                            }
+                                        </td>
+
+                                        
+                                        <td>@detail.AvgGrade</td>
+                                    </tr>
+                                }
+                            }
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div><!-- col-msx-12  closed -->
+    </div>
+</div><!-- 1st row closed -->
+
+

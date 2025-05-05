@@ -1,0 +1,105 @@
+﻿@model IEnumerable<SchoolManagement.Website.ViewModels.Tbl_UserManagementViewModel>
+@{
+    ViewBag.Title = "Manage User List";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        @*<div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6">
+                            <h4>User Management  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6">
+                            <button class="btn btn-success pull-right"><a href="#" class="button_a">Add New</a></button>
+                        </div>
+                    </div> 
+                </div> 
+            </div> 
+        </div>*@
+        <div class="col-sm-12">
+            <h4 class="std_head well-sm">User Management Details</h4>
+            <form action="/UserCredentials/CreateUser" method="post">
+                <div class="col-sm-6" style="border-right: 1px solid #eee;">
+                    <div class="form-group">
+                        <label>User Name :</label>
+                        <input type="text" id="UserId" name="UserId" class="form-control" style="display:none;" />
+                        <input type="text" id="username" name="UserName" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Password :</label>
+                        <input type="text" id="password" name="Password" class="form-control" required />
+                        @*@Html.DropDownList("FeeHeadingGroup", @ViewBag.FeeHeadingGroups as SelectList, "Select", new { @class = "form-control" })*@
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm Password :</label>
+                        <input type="text" id="confpassword" class="form-control" required />
+                        @*@Html.DropDownList("FeeHeadingGroup", @ViewBag.FeeHeadingGroups as SelectList, "Select", new { @class = "form-control" })*@
+                    </div>
+                </div><!-- col-sm-6 closed -->
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Email :</label>
+                        <input type="text" id="email" name="Email" class="form-control" required />
+                        @*@Html.DropDownList("Account", @ViewBag.Accounts as SelectList, "Select", new { @class = "form-control" })*@
+                    </div>
+                    <div class="form-group">
+                        <label>User Role :</label>
+                        @Html.DropDownList("UserRole", new SelectList(ViewBag.Roles, "Text", "Text"),new { @class = "form-control" })
+                        @*@Html.DropDownList("Type", @ViewBag.roles as SelectList, "Select", new { @class = "form-control" })*@
+                    </div>
+                    <div class="form-group">
+                        <label>Description :</label>
+                        <textarea class="form-control" id="Description" name="Description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <input id="btnSubmit" class="btn btn-success form-control" type="submit" value="Save" />
+                    </div>
+                </div>
+                
+            </form>
+        </div>
+
+       
+
+        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+            <!-- col-msx-12 started -->
+            <table class="table table-bordered" id="TblUserManagement" style="margin-top:5px;">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>User Name</th>
+                        <th>Email</th>
+                        <th>User Role</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int i = 1;}
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@i</td>
+                            <td>@item.UserName</td>
+                            <td>@item.Email</td>
+                            <td>@item.UserRole</td>
+                            <td>@item.Description</td>
+                            <td><a href="#" class="btn btn-success btn-sm" role="button">Edit</a> <button id="@item.UserId" class="btn btn-danger btn-sm" role="button">Delete</button></td>
+                        </tr>
+                        i++;
+                    }
+                </tbody>
+            </table>
+        </div> 
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $('#TblUserManagement').DataTable();
+    </script>
+}

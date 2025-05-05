@@ -1,0 +1,220 @@
+﻿@model SchoolManagement.Data.Models.TblFeeReceipts
+@{
+    ViewBag.Title = "Receipt Bill";
+    var sessionlist = ViewBag.session;
+    var receiptid = ViewBag.Receiptid;
+    //Layout= null;
+}
+<style>
+
+    .invoice-title h2, .invoice-title h3 {
+        display: inline-block;
+    }
+
+    .table > tbody > tr > .no-line {
+        border-top: none;
+    }
+
+    .table > thead > tr > .no-line {
+        border-bottom: none;    
+    }
+
+    .table > tbody > tr > .thick-line {
+        border-top: 2px solid;
+    }
+
+    .table > thead > tr {
+        background-color: #7186ff;
+        color: black;
+    }
+</style>
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-sm-12">
+            <div class="invoice-title">
+                <h2>Invoice</h2>
+                @{
+                    if (sessionlist == "Student")
+                    {
+                        <button class="btn btn-sm btn-success pull-right" type="button">
+                            <a href="/Dashboard/Dahboard" style="color:white">Back</a>
+                        </button>
+                    }
+                    else
+                    {
+                        if (receiptid == 1)
+                        {
+                            <button class="btn btn-success pull-right" type="button">
+                                <a href="/AdmissionFee/AllReceipts" style="color:white">Back</a>
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-success pull-right" type="button">
+                                <a href="/AdmissionFee/FeeReceipts" style="color:white">Back</a>
+                            </button>
+                        }
+
+                    }
+                }
+
+                @*<input type="button" id="btn_Print" class="btn btn-success btn-sm pull-right" value="Back" />*@
+            </div>
+            <div class="container-fluid" id="PrintBox">
+
+                <div class="row">
+                    <div class="col-xs-12">
+
+                        <hr>
+
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-xs-2" style="margin-left:10px;">
+                                    <img src="~/WebsiteImages/img/logo.png" alt="logo icon" width="100px;" style="display:inline-block;padding-top: 25px;">
+                                </div>
+                                <div class="col-xs-8" style="text-align:center">
+                                    <h3 class="title-of-labprintHead">CARMEL TERESA SCHOOL</h3>
+                                    <h5 class="title-of-labprint" style="text-transform:uppercase">Carmel Teresa School, Hagadur Main Road,</h5>
+                                    <h5> Whitefield, Bangalore-560066</h5>
+                                    <h6 class="title-of-labprint">Ph No: 91-(810)588-4917</h6>
+                                    @*<h4 class="title-of-labprint" style="text-transform:uppercase">Pathology Report</h4>*@
+                                </div>
+                                <div class="col-xs-2">
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <hr />
+                        <div class="row" style="margin-top:20px;">
+                            <div class="col-xs-4">
+                                <strong>ScholarNumber: </strong>@ViewBag.ScollarNumber<br>
+                                <strong>Name: </strong> @Model.StudentName<br>
+
+                            </div>
+                            <div class="col-xs-4">
+                                @* <strong>Course: </strong> @Model.Course<br>*@
+
+                                <strong>Class Name: </strong> @Model.ClassName<br>
+                                <strong>Mobile Number: </strong> @ViewBag.ContactNo<br>
+                            </div>
+                            <div class="col-xs-4">
+                                <strong>Bill Date: </strong> @ViewBag.Date<br>
+                                <strong>Invoice Number: </strong> @Model.FeeReceiptId<br>
+                            </div>
+                        </div><br />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="panel panel-default">
+                            @*<div class="panel-heading">
+                            <h3 class="panel-title"><strong>Order summary</strong></h3>
+                        </div>*@
+                            <div class="panel-body">
+                                <div class="table-responsive">
+                                    <table class="table table-condensed">
+                                        <thead>
+                                            <tr style="color: black;background-color: #e1e1ff;">
+                                                <td><strong>S.No.</strong></td>
+                                                <td><strong>Fee Types</strong></td>
+                                                @*<td class="text-center"><strong>Selected Months</strong></td>*@
+                                                <td class="text-center"><strong>Fee Ammounts</strong></td>
+                                                @* <td class="text-center"><strong>Total</strong></td>*@
+                                                @*<td class="text-right"><strong>Created Date</strong></td>*@
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @{
+                                                int i = 1;
+
+                                            }
+                                            @foreach (var item in ViewBag.FeeReceiptsTbl as List<SchoolManagement.Website.ViewModels.PreviewFeeReceiptViewModel>)
+                                            {
+                                                <tr style="border-bottom: 2px solid #808080;">
+                                                    <td>@i</td>
+                                                    <td>@item.HeadingNames</td>
+                                                    @*<td class="text-center">@item.SelectedMonths</td>*@
+                                                    <td class="text-center">@item.FeePaid</td>
+                                                    @*<td class="text-center">@Model.TotalFee (rupees)</td>*@
+                                                    @*<td class="text-right">@item.CreatedDate</td>*@
+                                                </tr>
+                                                i++;
+                                            }
+
+
+                                                <tr>
+                                                    <td class="highrow"></td>
+                                                    @*<td class="highrow"></td>*@
+                                                    @*<td class="highrow"></td>*@
+                                                    <td class="highrow text-center"><strong>Sub Total:</strong></td>
+                                                    @*<td class="highrow text-right">@Model.TotalFee</td>*@
+                                                    <td class="highrow text-right">@ViewBag.Total</td>
+                                                </tr>
+                                            @*<tr>
+                                            <td class="emptyrow"></td>
+                                            <td class="emptyrow text-center"><strong>Concession %:</strong></td>
+                                            <td class="emptyrow text-right">@Model.Concession</td>
+                                        </tr>*@
+                                            <tr>
+                                                <td class="emptyrow"></td>
+                                                @*<td class="emptyrow"></td>*@
+                                                @*<td class="emptyrow"></td>*@
+                                                @{ 
+                                                    if(Model.ConcessionAmt > 0)
+                                                    {
+                                                         <td class="emptyrow text-center"><strong>Concession Amt:</strong></td>
+                                                <td class="emptyrow text-right">@Model.ConcessionAmt</td>
+                                                    }
+                                                }
+                                               
+                                            </tr>
+                                            <tr style="display:none">
+                                                <td class="emptyrow"> </td>
+                                                @*<td class="emptyrow"></td>*@
+                                                @*<td class="emptyrow"></td>*@
+                                                <td class="emptyrow text-center"><strong>Due Amt:</strong></td>
+                                                <td class="emptyrow text-right">@Model.DueAmount</td>
+                                            </tr>
+                                            <tr style="display:none">
+                                                <td class="emptyrow"></td>
+                                                @*<td class="emptyrow"> </td>*@
+                                                @*<td class="emptyrow"></td>*@
+                                                <td class="emptyrow text-center"><strong>Late Fee:</strong></td>
+                                                <td class="emptyrow text-right">@Model.LateFee</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="emptyrow"></td>
+                                                @*<td class="emptyrow"> </td>*@
+                                                @*<td class="emptyrow"></td>*@
+                                                <td class="emptyrow text-center"><strong>Paid Total:</strong></td>
+                                                <td class="emptyrow text-right">@ViewBag.Total</td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="display:none">
+                
+                <input type="button" id="btn_Print" class="btn btn-success btn-sm pull-right" value="Print" />
+            </div>
+        </div>
+    </div>
+
+</div> <!--pagination closed-->
+@section scripts{
+    <script src="~/Scripts/printThis.js"></script>
+    <script>
+        $('#btn_Print').on("click", function () {
+            $('#PrintBox').printThis();
+        });
+    </script>
+}

@@ -1,0 +1,158 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    @*<title>AdmissionFeeReceiptPreview</title>*@
+
+    <link rel="icon" type="image/png" sizes="32x32" href="~/WebsiteImages/images/icons.png">
+    <link href="~/Content/WebsiteCss/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+    <div class="right_col" role="main">
+        <div class="row">
+            <!-- row started -->
+            <div class="col-sm-12">
+                <div class="invoice-title">
+                    <h2>Invoice</h2>
+
+                </div>
+                <div class="container-fluid" id="PrintBox">
+
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+
+                            <div class="container">
+                                <div class="row">
+                                    @{
+                                        var data = ViewBag.Schoolsetup;
+                                        if (data != null)
+                                        {
+                                            <div class="col-md-2 col-sm-2 col-xs-2" style="margin-left:10px;">
+                                                <img src="~/WebsiteImages/SchoolImage/@data.Upload_Image" alt="logo icon" width="100px;" style="display:inline-block;padding-top: 25px;" />
+                                            </div>
+                                            <div class="col-md-8 col-sm-8  col-xs-8" style="text-align:center">
+                                                <h3 class="title-of-labprintHead">@data.School_Name</h3>
+                                                @*<h5 class="title-of-labprint" style="text-transform:uppercase">Carmel Teresa School, Hagadur Main Road,</h5>*@
+                                                <h5> @data.Address</h5>
+                                                <h6 class="title-of-labprint">Ph No: 91-(810)588-4917</h6>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="col-md-2 col-sm-2 col-xs-2" style="margin-left:10px;">
+                                                <img src="~/WebsiteImages/img/logo.png" alt="logo icon" width="100px;" style="display:inline-block;padding-top: 25px;" />
+
+                                            </div>
+                                            <div class="col-md-8 col-sm-8  col-xs-8" style="text-align:center">
+                                                <h3 class="title-of-labprintHead">CARMEL TERESA SCHOOL</h3>
+                                                <h5 class="title-of-labprint" style="text-transform:uppercase">Carmel Teresa School, Hagadur Main Road,</h5>
+                                                <h5> Whitefield, Bangalore-560066</h5>
+                                                <h6 class="title-of-labprint">Ph No: 91-(810)588-4917</h6>
+                                            </div>
+                                        }
+                                    }
+
+                                    <div class="col-xs-2">
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row" style="margin-top:50px;">
+                                <div class="col-xs-4">
+                                    <strong>ScholarNumber: </strong>@ViewBag.ScollarNumber<br />
+                                    @*<strong>Name: </strong> @Model.StudentName<br>*@
+                                    <strong>Name: </strong>@ViewBag.studentname<br />
+
+                                </div>
+                                <div class="col-xs-4">
+                                    <strong>Class Name: </strong> @ViewBag.classname<br />
+                                    <strong>Mobile Number: </strong> @ViewBag.ContactNo<br />
+                                </div>
+                                <div class="col-xs-4">
+                                    <strong>Bill Date: </strong> @ViewBag.Date<br />
+                                    <strong>Invoice Number: </strong> @ViewBag.receiptid<br />
+                                </div>
+                            </div><br />
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top:50px;">
+                        <div class="col-xs-12">
+                            <div class="panel panel-default">
+
+                                <div class="panel-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-condensed">
+                                            <thead>
+                                                <tr style="color: black;background-color: #e1e1ff;">
+                                                    <td><strong>S.No.</strong></td>
+                                                    <td><strong>Fee Types</strong></td>
+                                                    <td class="text-center"><strong>Fee Ammounts</strong></td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{
+                                                    int i = 1;
+                                                }
+                                                @foreach (var item in ViewBag.FeeReceiptsTbl as List<SchoolManagement.Website.ViewModels.PreviewFeeReceiptViewModel>)
+                                                {
+                                                    <tr style="border-bottom: 2px solid #808080;">
+                                                        <td>@i</td>
+                                                        <td>@item.HeadingNames</td>
+                                                        <td class="text-center">@item.FeePaid</td>
+                                                    </tr>
+                                                    i++;
+                                                }
+                                                <tr style="display:none">
+                                                    <td class="highrow"></td>
+                                                    <td><strong>Sub Total:</strong></td>
+                                                    <td class="text-center">@ViewBag.Total</td>
+                                                </tr>
+                                                @*<tr>
+                                                        <td class="emptyrow"></td>
+                                                        @{
+                                                            if (ViewBag.concessionamt > 0)
+                                                            {
+                                                                <td class="emptyrow text-center"><strong>Concession Amt:</strong></td>
+                                                                <td class="emptyrow text-right">@ViewBag.concessionamt</td>
+                                                            }
+                                                        }
+                                                    </tr>*@
+                                                @{
+                                                    if (ViewBag.balanceamt > 0)
+                                                    {
+                                                        <tr>
+                                                            <td class="emptyrow"></td>
+                                                            <td><strong>Due Total:</strong></td>
+                                                            <td class="text-center">@ViewBag.balanceamt</td>
+                                                        </tr>
+                                                    }
+                                                }
+
+                                                <tr>
+                                                    <td class="emptyrow"></td>
+                                                    <td><strong>Paid:</strong></td>
+                                                    <td class="text-center">@ViewBag.Total</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

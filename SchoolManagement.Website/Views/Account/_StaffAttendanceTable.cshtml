@@ -1,0 +1,79 @@
+﻿@model List<SchoolManagement.Website.Models.Tbl_StaffAttendance>
+@using System.Globalization;
+@{
+    var groupedStaff = Model
+        .Where(x => !string.IsNullOrEmpty(x.Attendence_Date))
+        .GroupBy(x => new { x.Staff_Id, x.Staff_Name, x.Employee_Code })
+        .ToList();
+
+    // Unique list of attendance dates for the header
+    var headerDates = Model
+        .Select(x => x.Attendence_Date)
+        .Distinct()
+        .OrderBy(d => DateTime.ParseExact(d, "d/M/yyyy", CultureInfo.InvariantCulture))
+        .ToList();
+}
+
+<table class="table table-bordered table-striped table-sm" id="TableStaffAttendance">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Staff Name</th>
+            @foreach (var date in headerDates)
+            {
+                <th id="@date">@DateTime.ParseExact(date, "d/M/yyyy", CultureInfo.InvariantCulture).ToString("dd/MM")</th>
+            }
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody id="staffAttendanceList">
+        @if (groupedStaff.Any())
+        {
+            int serial = 1;
+            foreach (var group in groupedStaff)
+            {
+                var attendanceRecords = group.ToList();
+
+                // Use GroupBy to handle duplicate dates
+                var attendanceMap = attendanceRecords
+                    .GroupBy(r => r.Attendence_Date)
+                    .ToDictionary(g => g.Key, g => g.First());
+
+                double totalCount = 0;
+                double totalLeaveCount = 0;
+                <tr>
+                    <td>@serial</td>
+                    <td>@group.Key.Staff_Name</td>
+
+                    @foreach (var date in headerDates)
+                    {
+                        string icon = "✖"; // Default absent
+                        if (attendanceMap.ContainsKey(date))
+                        {
+                            var rec = attendanceMap[date];
+                            if (rec.Mark_FullDayAbsent == "true") { icon = "✔"; totalCount += 1; }
+                            else if (rec.Mark_HalfDayAbsent == "true") { icon = "½"; totalCount += 0.5; }
+                            else if (rec.Mark_Other == "true") { icon = "0"; totalCount += 1; }
+                            else if (rec.Mark_CL == "true") { icon = "CL"; totalLeaveCount += 1; }
+                            else if (rec.Mark_ML == "true") { icon = "ML"; totalLeaveCount += 1; }
+                            else if (rec.Mark_L == "true") { icon = "L"; }
+                        }
+                        <td>@icon</td>
+                    }
+
+                    <td>P - @totalCount L - @totalLeaveCount</td>
+                </tr>
+                serial++;
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="@(3 + headerDates.Count)" class="text-center">No records found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script>
+    $("#TableStaffAttendance").DataTable();
+</script>

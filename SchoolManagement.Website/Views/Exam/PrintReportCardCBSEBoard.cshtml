@@ -1,0 +1,456 @@
+﻿@{
+    Layout = null;
+}
+
+@*<!DOCTYPE html>*@
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Neuton:wght@300;400;700&display=swap"
+          rel="stylesheet" />
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Content/WebsiteCss/css/style.css" />
+    <style>
+
+        #printT {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 20px;
+            width: 7.5in; /* Adjusted width to fit within A4 width */
+            height: 10.7in; /* Adjusted height to fit within A4 height */
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            /*page-break-after: always;*/ /* Force a new page after each card */
+        }
+        /* Styles for the loader overlay */
+        #loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Make sure the overlay is on top */
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+        }
+
+        @@keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @@media print {
+            #printT {
+                page-break-after: auto; /* or avoid specifying page-break-after */
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <div id="loader-overlay">
+        <div class="loader"></div>
+    </div>
+    <button id="printButton">Print</button>
+    <button id="ModifyData" onclick="DeleteExtraGradeRow();">Modify Data</button>
+    @*&nbsp;&nbsp;<button id="downloadButton">Download</button>*@
+
+    <div class="d-flex justify-content-center align-items-center h-100" id="JsonPrint">
+        <div class="d-flex flex-column" id="printColumns">
+            <div class="border border-dark mt-3" id="printT">
+                <!-- Header section  -->
+                <div class="col-md-12">
+                    <div class="report_card table-responsive" style="box-shadow: 0rem 0.9375rem 1.875rem 0rem rgba(0, 0, 0, 0.02); background-color: #fff; padding: 5px;">
+                        <table style="width: 100%; border: 2px solid #417fbf;">
+                            <tr>
+                                <td style="padding: 5px;">
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        <div class="schoollogo1" style="width: 25%">
+                                            <img src="data:image/jpeg;base64,@ViewBag.School_logo"
+                                                 alt="notfound"
+                                                 style="width: 120px; height: 115px; margin-bottom: 11px;" />
+                                            <span class="ft15">CISCE Affiliation No. : 1731144</span>
+                                        </div>
+                                        <div class="header_content d-flex align-items-center flex-column" style="width: 70%;">
+                                            <h2 style="margin-bottom: 5px; font-size: 24px;">@ViewBag.SchoolNewName</h2>
+                                            <p style="margin-bottom: 5px;">  @ViewBag.newAddress</p>
+                                            <p>Mob. 9460383712</p>
+                                        </div>
+                                        <div class="schoollogo1" style="width:21%">
+                                            <img id="studentlogo" src=""
+                                                 alt="notfound"
+                                                 style="width: 120px; height: 103px;margin-left: 10px;" />
+                                            @*<img src="~/Content/Images/logo3.png"
+        alt="notfound"
+        style="width: 100px; height: 103px;margin-left: 10px;" />*@
+                                           
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="border: 2px solid #417fbf; padding: 1px; text-align: center; background-color: #fdf6d8;">
+                                    <h2 style="margin-bottom: 0; font-size: 18px;">PROGRESS REPORT - SESSION (@ViewBag.current_Year)</h2>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="padding: 1px;">
+                                    <table style="width: 100%; border: none; box-sizing: 0;" class="ft15">
+                                        <tr>
+                                            <td><b>Name:</b></td>
+                                            <td id="StudentName"></td>
+                                            <td><b>Class & Section :</b></td>
+                                            <td id="ClassSection"></td>
+                                            <th><b>Roll No.:<b></th>
+                                            <td id="RollNo"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Father’s Name:</th>
+                                            <td id="FatherName"></td>
+                                            <th>D.O.B:</th>
+                                            <td id="DateOfBirth"></td>
+                                            <th>SR No.:</th>
+                                            <td>107</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Mother’s Name:</th>
+                                            <td id="MotherName"></td>
+                                            <th>Attendance :</th>
+                                            <td id="Attendance"></td>
+                                            <th></th>
+                                            <td></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="border: 2px solid #417fbf; padding: 1px; text-align: center; background-color: #fdf6d8;">
+                                    <h2 style="margin-bottom: 0; font-size: 18px;">PART 1: ACADEMIC PERFORMANCE - SCHOLASTIC AREAS</h2>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="padding: 1px;">
+                                    <!-- marks section  -->
+                                    <table class="text-center ft15" id="MarksTable">
+                                        <tr>
+                                            <th style="width: 100px;">Scholastic Areas:</th>
+                                            @*<th colspan="3" scope="colgroup">Unit Test</th>*@
+                                            <th colspan="5" scope="colgroup">TERM-I</th>
+                                            <th colspan="5" scope="colgroup">TERM-II</th>
+                                            <th colspan="4" class="preBoardResult" scope="colgroup">PreBoard-I</th>
+                                            <th colspan="4" class="preBoardResult" scope="colgroup">PreBoard-II</th>
+                                            <th colspan="4" class="preBoardResult" scope="colgroup">Selection</th>
+                                            <th colspan="4" class="preBoardResult" scope="colgroup">Promotion</th>
+
+                                            <th colspan="2" scope="colgroup">Total</th>
+                                        </tr>
+                                        <tr>
+                                            <th scope="col">Subjects</th>
+
+                                            <th scope="col"><span id="Ut1Name"></span><span id="UT1MaxMarkTotal"></span></th>
+                                            @*<th scope="col">UT II <span id="UT2MaxMarkTotal"></span></th>*@
+                                            @*<th scope="col">Marks Obt.  <span id="UTTotalMaxMarkTotal"></span></th>*@
+
+                                            <th scope="col">Theory <span class="Term1TheoryMaxMarkTotal"></span></th>
+                                            <th scope="col">Practical <span id="Term1PracticalMaxMarkTotal"></span></th>
+                                            @*<th scope="col"  style="display:none;">Project <span id="Term1ProjectMaxMarkTotal"></span></th>
+                                            <th scope="col"  style="display:none;">Subject Enrich <span id="Term1SubjectEnrichMaxMarkTotal"></span></th>*@
+                                            <th scope="col">Marks Obt. <span id="Term1TotalMaxMarkTotal"></span></th>
+                                            <th scope="col">Grade</th>
+
+                                            <th scope="col"><span id="Ut2Name"></span><span id="UT2MaxMarkTotal"></span></th>
+                                            <th scope="col">Theory<span id="Term2TheoryMaxMarkTotal"></span></th>
+                                            <th scope="col">Practical <span id="Term2PracticalMaxMarkTotal"></span></th>
+                                            @*<th scope="col"  style="display:none;">Project <span id="Term2ProjectMaxMarkTotal"></span></th>
+                                            <th scope="col"  style="display:none;">Subject Enrich <span id="Term2SubjectEnrichMaxMarkTotal"></span></th>*@
+                                            <th scope="col">Marks Obt. <span id="Term2TotalMaxMarkTotal"></span></th>
+                                            <th scope="col">Grade</th>
+
+
+                                            <th scope="col">Marks</th>
+                                            <th scope="col">Grade</th>
+                                        </tr>
+                                    </table>
+
+                                    <!-- UT marks section  -->
+                                    <table class="text-center my-2 ft15" id="UnitRecord">
+                                        <tr>
+                                            <th style="width: 180px;">Scholastic Areas:</th>
+                                            <th colspan="2" scope="colgroup">Unit Test</th>
+                                        </tr>
+                                        <tr>
+                                            <th scope="col">Subjects</th>
+                                            <th scope="col">UT <span id="UnitName"></span> <span id="UTMaxMarkTotal"></span> </th>
+                                            <th scope="col">Grade</th>
+                                        </tr>
+                                    </table>
+                                    <!-- Terms marks section  -->
+                                    <table class="text-center my-2 ft15" id="TermRecord">
+                                        <tr>
+                                            <th style="width: 180px;">Scholastic Areas:</th>
+                                            <th colspan="4" scope="colgroup">TERM-<span id="TermName"></span></th>
+                                        </tr>
+                                        <tr>
+                                            <th scope="col">Subjects</th>
+                                            <th scope="col">Theory <span class="Term1TheoryMaxMarkTotal"></span></th>
+                                            <th scope="col">Practical <span id="Term1TPracticalMaxMarkTotal"></span></th>
+                                            <th scope="col">Marks Obt. <span id="Term1TAllTotalMaxMarkTotal"></span></th>
+                                            <th scope="col">Grade</th>
+
+
+                                        </tr>
+                                    </table>
+                                    <!-- Pre Board marks section  -->
+                                    <table class="text-center my-2 ft15" id="PreBoardRecord">
+                                        <tr>
+                                            <th style="width: 180px;">Scholastic Areas:</th>
+                                            <th colspan="4" scope="colgroup">Pre Board-<span id="PreBoardTermName"></span></th>
+                                        </tr>
+                                        <tr>
+                                            <th scope="col">Subjects</th>
+                                            <th scope="col">Theory <span class="PreBoardTheoryMaxMarkTotal"></span></th>
+                                            <th scope="col">Practical <span id="PreBoardTPracticalMaxMarkTotal"></span></th>
+                                            <th scope="col">Marks Obt. <span id="PreBoardTAllTotalMaxMarkTotal"></span></th>
+                                            <th scope="col">Grade</th>
+
+
+                                        </tr>
+                                    </table>
+                                    <!-- Selection marks section  -->
+                                    <table class="text-center my-2 ft15" id="SelectionRecords">
+
+                                        <tr>
+                                            <th style="width: 180px;">Scholastic Areas:</th>
+                                            <th colspan="2" scope="colgroup">Selection Test</th>
+                                        </tr>
+                                        <tr>
+                                            <th scope="col">Subjects</th>
+                                            <th scope="col">Theory <span class="SelectionNameTheoryMaxMarkTotal"></span></th>
+                                            <th scope="col">Practical <span id="SelectionNameTPracticalMaxMarkTotal"></span></th>
+                                            <th scope="col">Marks Obt. <span id="SelectionTAllTotalMaxMarkTotal"></span></th>
+                                            <th scope="col">Grade</th>
+                                        </tr>
+
+                                    </table>
+                                    <!--Promotion marks section  -->
+                                    <table class="text-center my-2 ft15" id="PromotionRecords">
+                                        <tr>
+                                            <th style="width: 180px;">Scholastic Areas:</th>
+                                            <th colspan="4" scope="colgroup">Promotion<span id="PromotionName"></span></th>
+                                        </tr>
+                                        <tr>
+                                            <th scope="col">Subjects</th>
+                                            <th scope="col">Theory <span class="PromotionNameTheoryMaxMarkTotal"></span></th>
+                                            <th scope="col">Practical <span id="PromotionNameTPracticalMaxMarkTotal"></span></th>
+                                            <th scope="col">Marks Obt. <span id="PromotionTAllTotalMaxMarkTotal"></span></th>
+                                            <th scope="col">Grade</th>
+
+
+                                        </tr>
+                                    </table>
+
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="border: 2px solid #417fbf; padding: 1px; text-align: center; background-color: #fdf6d8;">
+                                    <h2 style="margin-bottom: 0; font-size: 18px;">PART 2: GRADING SUBJECTS</h2>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="padding: 1px;">
+                                    <table class="text-center ft15" id="OptionalGrade">
+                                        <thead>
+                                            <tr>
+                                                <th>Subject</th>
+                                                <th>Term 1</th>
+                                                <th>Description</th>
+                                                <th>Term 2</th>
+                                                <th>Description</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="OptionalGradeTB"></tbody>
+                                    </table>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="border: 2px solid #417fbf; padding: 1px; text-align: center; background-color: #fdf6d8;">
+                                    <h2 style="margin-bottom: 0; font-size: 18px;">PART 3: CO-SCHOLASTIC AREAS</h2>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:1px;">
+                                    <!-- Grading scale  -->
+                                    <table class="text-center ft15" id="coScholasticTable">
+                                        <tr>
+                                            <th colspan="6" scope="colgroup">
+                                                Co-Scholastic Areas [on a 4-point (A-NA) grading scale]
+                                            </th>
+                                        </tr>
+
+                                        <tr>
+                                            <th style="width: 300px;">Co-Scholastic Areas</th>
+                                            <th class="headerTermColumn headerUT1Column" style="width: 65px;">UT-I</th>
+                                            <th class="headerTermColumn headerUT2Column" style="width:65px;">UT-II</th>
+                                            <th class="headerTermColumn headerTerm1Column" style="width: 65px;">TERM-I</th>
+                                            <th class="headerTermColumn headerTerm2Column" style="width:65px;">TERM-II</th>
+                                            <th class="headerTermColumn headerPreBoard1Column preBoardResult" style="width:65px;">Pre Board-I</th>
+                                            <th class="headerTermColumn headerPreBoard2Column preBoardResult" style="width:65px;">Pre Board-II</th>
+
+
+                                            <th style="width: 300px;">Co-Scholastic Areas</th>
+                                            <th class="headerTermColumn headerUT1Column" style="width: 65px;">UT-I</th>
+                                            <th class="headerTermColumn headerUT2Column" style="width:65px;">UT-II</th>
+                                            <th class="headerTermColumn headerTerm1Column" style="width:65px;">TERM-I</th>
+                                            <th class="headerTermColumn headerTerm2Column" style="width:65px;">TERM-II</th>
+                                            <th class="headerTermColumn headerPreBoard1Column preBoardResult" style="width:65px;">Pre Board-I</th>
+                                            <th class="headerTermColumn headerPreBoard2Column preBoardResult" style="width:65px;">Pre Board-II</th>
+
+                                        </tr>
+
+
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <table class="table px-1" style="width: 100%; border: 2px solid #417fbf;">
+
+                                    <tr>
+                                        <td class="ft15" style="border:none;"><b>Result :</b></td>
+                                        <td class="ft15" style="border:none;" id="result"></td>
+                                        <td style="border:none;"></td>
+                                        <td style="border:none;"></td>
+                                        <td style="border:none;"></td>
+                                        <td style="border:none;"></td>
+                                        <td style="border:none;"></td>
+                                        <td style="border:none;"></td>
+                                        <td style="border:none;"></td>
+                                        <td style="border:none;"></td>
+                                        <td class="ft15" style="border:none;"><b>Overall Grade :</b></td>
+                                        <td class="ft15" style="border:none;" id="overallGrade"></td>
+                                        @*<td style="border:none;"></td>
+                                        <td style="border:none;"></td>
+                                        <td style="border:none;"></td>
+                                        <td style="border:none;"></td>
+                                        <td style="border:none;"></td>
+                                        <td style="border:none;"></td>
+                                        <td style="border:none;"></td>
+                                        <td style="border:none;"></td>*@
+                                    </tr>
+                                    <tr>
+                                        <td class="ft15" style="border:none;"><b>Teacher's Remarks :</b></td>
+                                        <td class="ft15" colspan="2" style="border:none;">
+                                            <span id="teacherRemarkText"></span>
+                                            <span id="promotedClass"></span>
+                                        </td>
+                                        <td style="border:none;"></td>
+                                        <td style="border:none;"></td>
+                                        <td style="border:none;"></td>
+                                        <td style="border:none;"></td>
+                                        <td style="border:none;"></td>
+                                        
+                                    </tr>
+
+                                    <tr class="text-right">
+                                        <td class="ft15" style="border:none;padding-top:0px;">
+                                            <br />
+                                            <br />
+                                            <br />
+                                            <br />
+                                            <br />
+                                            <br />
+                                            Parent / Guardian
+                                        </td>
+                                        <td style="border:none;"></td>
+                                        <td class="ft15" style="border:none;">
+                                            <br />
+                                            <br />
+                                            <br />
+                                            <br />
+                                            <br />
+                                            @*<br />*@
+                                            @*<img src="" id="teachersignature" style="width:50px; height:60px;" alt="" /><br>*@
+                                            Class Teacher
+                                        </td>
+                                        <td style="border:none;"></td>
+                                        <td style="border:none;"></td>
+                                        <td style="border:none;"></td>
+                                        <td style="border:none;"></td>
+                                        <td style="border:none;"></td>
+                                        <td style="border:none;"></td>
+                                        <td style="border:none;"></td>
+                                        <td class="text-right ft15" style="border:none;">
+                                            <img src="~/Content/Images/principle.png" style="width:50px;  height:60px;" alt="" /><br>
+                                            Principal
+                                        </td>
+                                    </tr>
+                                </table>
+                            </tr>
+                            
+                        </table>
+                    </div>
+                </div>
+                <!-- End  -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.slim.js" integrity="sha256-7GO+jepT9gJe9LB4XFf8snVOjX3iYNb0FHYr5LI1N5c=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    @*<script src="~/Scripts/DevelopmentJS/PrintReport.js"></script>*@
+    <script src="~/Scripts/DevelopmentJS/PrintReportCBSEBoard.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        // Function to handle the printing
+        function printDiv() {
+            const printContent = document.getElementById("JsonPrint");
+            const originalContent = document.body.innerHTML;
+
+            document.body.innerHTML = printContent.outerHTML;
+            window.print();
+
+            document.body.innerHTML = originalContent;
+        }
+
+        // Attach click event to the 'Print' button
+        const printButton = document.getElementById("printButton");
+        printButton.addEventListener("click", printDiv);
+
+    </script>
+</body>
+
+<!-- Add the 'Print' button -->
+
+
+
+</html>

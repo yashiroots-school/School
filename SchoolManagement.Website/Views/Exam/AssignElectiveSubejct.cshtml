@@ -1,0 +1,302 @@
+﻿
+@{
+    ViewBag.Title = "AssignElectiveSubejct";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* Sticky headers */
+    .fixTableHead thead th {
+        position: sticky;
+        top: 0;
+        background-color: #f0f0f0;
+        z-index: 2;
+    }
+
+    /* Sticky second column */
+    .sticky-column {
+        position: sticky;
+        left: 0;
+        background-color: #fff; /* Change to your desired background color */
+        z-index: 1;
+    }
+
+    /* Other CSS remains unchanged */
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        /* Add a specific height to the table container */
+        height: 500px;
+    }
+
+    th,
+    td {
+        padding: 8px 15px;
+        border: 2px solid #529432;
+    }
+
+    th {
+        background: #f0f0f0;
+    }
+
+    /* Add a specific height to the container for sticky scrolling */
+    .fixTableHead {
+        overflow-y: scroll;
+        height: 500px;
+    }
+</style>
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <h2>Assign Elective Subejct</h2>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="row">
+                @*<h4 class="std_head well-sm"> Staff Information Form</h4>*@
+                <div class="tab-content tab_sis">
+                    <div class="tab-pane fade in active" id="add">
+                        <div class="row"> 
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label>Class :</label>
+                                    <select class="form-control  " id="ClassID" name="ClassID">
+                                        <option>---Select Class---</option>
+
+                                        @foreach (var item in ViewBag.ClassList as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                        {
+                                            <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                        }
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label>Section :</label>
+                                    <select class="form-control  " id="SectionId" name="SectionId">
+                                        <option>---Select Section---</option>
+                                        @foreach (var item in ViewBag.SectionList as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                        {
+                                            <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                        }
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group" style="text-align:center;margin-top: 22px;">
+                                    <button type="button" class=" btn btn-success " id="BtnShowCoScholastic" style="width:100%">Show</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr />
+
+                        <div class="table-responsive fixTableHead">
+                            <table class="table table-bordered " id="TableCoScholastic">
+                                <thead>
+                                    <tr id="headerRow">
+                                        <th>S.No</th>
+                                        <th style="z-index:100">Student Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="TableBody"></tbody>
+                            </table>
+
+                            <button class="btn btn-success pull-right" id="SaveButton">Save</button>
+
+
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    
+    //Obtained Marks
+    function getTestData(classId,termId) {
+        // Make an AJAX request to the controller method
+        $.ajax({
+            url: '/Exam/CoScholasticByClassId', // Replace with the actual URL of your controller method
+            type: 'GET',
+            data: { classId: classId, termId: termId },
+            success: function (data) {
+                // Populate the class select box with the retrieved data
+                var TestIdSelect = $('#CoScholasticID');
+                TestIdSelect.empty();
+                TestIdSelect.append('<option>---Select CoScholastic---</option>');
+                $.each(data, function (index, item) {
+                    TestIdSelect.append('<option value="' + item.Id + '">' + item.Title + '</option>');
+                });
+            },
+            error: function () {
+                // Handle error if any
+            }
+        });
+    }
+    
+    $(document).ready(function () {
+        var dataTable;
+    
+
+        $("#BtnShowCoScholastic").on('click', function () {
+            var classid = $("#ClassID").val();
+            var sectionid = $("#SectionId").val();
+            if (classid === '0' || sectionid === '0') {
+                alert("Please Select Class, Section.");
+                return false; // Prevent form submission
+            }
+            else {
+                $.ajax({
+                    url: "/Exam/GetStuentByClassSectionElectiveSubject",
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json;charset=UTF-8",
+                    data: { classId: classid, sectionId: sectionid}, //
+                    success: function (result) {
+                        $("#TableBody").empty();
+                        var row = "";
+
+                        var headerRow = $("#headerRow");
+                        // Remove previously added dynamic headers (if any)
+                        $("#TableCoScholastic .dynamic-header").remove();
+
+                        $.each(result.HeaderData, function (index, header) {
+                            var th = $("<th>").text(header.Subject_Name).addClass("dynamic-header");
+                            headerRow.append(th);
+                        });
+                        var tableBody = $("#TableBody");
+                        $.each(result.data, function (index, student) {
+                            var row = $("<tr>");
+                            row.append($("<td>").text(index + 1)); // Add serial number
+                           // row.append($("<td>").text(student.StudentName));
+                            row.append($("<td>").text(student.StudentName).attr("name", student.StudentId));
+
+                            // Create dynamic radio buttons for each grade
+                            $.each(student.ElectiveSubjectId, function (index, header) {
+                                var td = $("<td>");
+                                td.addClass('TbHeade');
+                                var checkBox = $("<input>").attr({
+                                    type: "checkbox",
+                                    name: "grade-" + header.Subject_Name + "-" + header.Subject_ID + "-" + student.StudentId,
+                                });
+                                if (header.IsSelected) {
+                                    checkBox.attr('checked', 'checked');
+                                }
+
+                                var label = $("<label>").prepend(checkBox);
+                                label.css("margin-right", "8px");
+                                td.append(label);
+                                
+                                row.append(td);
+                            });
+
+                            tableBody.append(row);
+                        });
+                        if (result.IsUpdate) {
+                            $("#SaveButton").text("Update")
+                        }
+                       // $("#TableCoScholastic").DataTable().destroy();
+
+                        if ($.fn.dataTable.isDataTable('#TableCoScholastic')) {
+                            dataTable = $('#TableCoScholastic').DataTable();
+                        }
+                        else {
+                            dataTable = $('#TableCoScholastic').DataTable({
+                                paging: false
+                            });
+                        }
+                        dataTable.clear().rows.add(tableBody.find("tr")).draw();
+
+                       // window.location.reload();
+                        //dataTable.search('').columns().search('').draw();
+                        const table = document.getElementById('TableCoScholastic');
+                        const secondColumnCells = table.querySelectorAll('tr > :nth-child(2)');
+                        secondColumnCells.forEach((cell) => {
+                            cell.classList.add('sticky-column');
+                        });
+
+
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+                });
+
+            }
+
+        });
+
+        // Save button click event handler
+        $('#SaveButton').click(function () {
+
+            var selectedClassId = $('#ClassID').val();// Get the selected class ID
+            var selectedSectionId = $('#SectionId').val();// Get the selected class ID
+
+            let tableData = [];
+
+            $("#TableCoScholastic tbody tr").each(function () {
+                let rowData = {
+                    StudentId: $(this).find("td:eq(1)").attr("name"),
+                    StudentName: $(this).find("td:eq(1)").text(),
+                    ElectiveSubjectId: []
+                };
+
+                $(this).find(":checkbox:checked").each(function () {
+                    var nameParts = $(this).attr("name").split("-");
+                    if (nameParts.length >= 3) {
+                        rowData.StudentId = nameParts[nameParts.length - 1];
+                        rowData.ElectiveSubjectId.push(nameParts[nameParts.length - 2]);
+                    }
+                });
+
+                tableData.push(rowData);
+            });
+
+            // Make an AJAX request to the controller method
+            $.ajax({
+                url: '/exam/InsertUpdateElectiveSubject', // Replace with the actual URL of your controller method
+                type: 'post',
+                data: JSON.stringify({
+                    rowData: tableData
+                }),
+                contentType: 'application/json',
+                success: function (response) {
+                    // Handle success response
+                    if (response.success == false) {
+                        alert(response.errormsg);
+                    } else {
+                        alert("Marks recorded successfully.");
+                        window.location.reload();
+                    }
+                },
+                error: function () {
+                    // Handle error if any
+                    alert("An error occurred while submitting data.");
+                }
+            });
+        });
+
+        // Helper function to get the selected grades for a row
+        function getGradesForRow(row) {
+            let grades = {};
+            row.find("td.TbHeade").each(function () {
+                let subject = $(this).prevAll("th").length; // Get the index of the column header
+                let selectedGrade = $(this).find("input[type=radio]:checked").val();
+                grades["Subject" + subject] = selectedGrade ? selectedGrade : "D";
+            });
+            return grades;
+        }
+        });
+
+
+</script>
+

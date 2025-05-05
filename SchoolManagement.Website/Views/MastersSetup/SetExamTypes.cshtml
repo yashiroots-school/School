@@ -1,0 +1,121 @@
+﻿@model IEnumerable<SchoolManagement.Data.Models.ExamTypes>
+@{
+    ViewBag.Title = "SetExamTypes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6">
+                            <h4> Set Exam Types  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6">
+                        </div>
+                    </div>
+                </div>
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+
+        <div class="col-sm-12" style="border-bottom: 1px solid #E6E9ED;">
+            <h4 class="std_head well-sm">Set Exam Types</h4>
+            <div class="col-sm-3">
+            </div><!-- col-sm-3 closed -->
+            <form method="post" action="/MastersSetup/SetExamTypes" id="SetExamTypes" enctype="multipart/form-data">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Add Exam Type : </label>
+                        <input type="hidden" name="Id" id="Id" class="form-control" />
+                        <input type="text" id="ExamType" name="ExamType" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-sm-8" style="margin-top:20px;">
+                    <button type="submit" class="btn btn-success pull-right" value="Submit Form" id="btnsave">Save</button>
+                </div>
+            </form>
+        </div><!-- col-sm-12 closed -->
+        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+            <!-- col-msx-12 started -->
+            <table class="table table-bordered" id="tblexamTypes" style="margin-top:5px;">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Exam Type</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int i = 1; }
+                    @foreach (var item in ViewBag.ExamTypes as IEnumerable<SchoolManagement.Data.Models.ExamTypes>)
+                    {
+                        <tr>
+                            <td>@i</td>
+                            <td>@item.ExamType</td>
+
+                            <td><button class="btn btn-success btn-sm EditBtn" data-val="@item.Id" role="button">Edit</button> <button id="@item.Id" class="btn btn-danger btn-sm deleteBtn" data-val="@item.Id" role="button">Delete</button></td>
+                        </tr>
+                        i++;
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div><!-- col-msx-12  closed -->
+</div><!-- 1st row closed -->
+
+@section scripts{
+    <script type="text/javascript">
+        $('#tblexamTypes').DataTable();
+    </script>
+
+    <script type="text/javascript">
+
+        $(".EditBtn").on('click', function () {
+            var Id = $(this).attr("data-val");
+            GetSetExamTypesById(Id);
+
+        });
+        function GetSetExamTypesById(Id) {
+            $.ajax({
+                url: "/MastersSetup/GetSetExamTypesById?id=" + Id,
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    
+                    $('#SetExamTypes').attr('action', '/MastersSetup/UpdateSetExamTypes');
+                    $("#btnsave").val("Update");
+                    if (result != null) {
+                        $("#Id").val(result.Id);
+                        $("#ExamType").val(result.ExamType);
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+        $(".deleteBtn").on('click', function () {
+            var dataListId = $(this).attr("data-val");
+            $.ajax({
+                url: "/MastersSetup/DeleteSetExamTypes?id=" + dataListId,
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    
+                    alert(result);
+                    window.location.reload();
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        });
+    </script>
+}
+

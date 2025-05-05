@@ -1,0 +1,592 @@
+﻿
+@{
+    ViewBag.Title = "StudentProfile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+  
+        .hello {
+            max-width: 1000px;
+            margin: 0 auto;
+         
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+           
+        }
+
+        .profile-header {
+            background: linear-gradient(to right, #2563eb, #3b82f6);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .profile-pic {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            margin: 0 auto 15px;
+            overflow: hidden;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-pic i {
+            font-size: 60px;
+            color: #3b82f6;
+        }
+
+        .profile-header h1 {
+            font-size: 32px;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .profile-header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 18px;
+            text-align: center;
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-button.active {
+            color: #2563eb;
+            border-bottom: 3px solid #2563eb;
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .tab-button:hover {
+            background: rgba(37, 99, 235, 0.08);
+        }
+
+        .tab-content {
+            padding: 30px;
+        }
+
+        .tab-section {
+            display: none;
+        }
+
+        .tab-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 22px;
+            color: #2563eb;
+            margin-bottom: 25px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .info-card {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-card h3 {
+            font-size: 18px;
+            color: #334155;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .info-item {
+            margin-bottom: 12px;
+            display: flex;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #475569;
+            min-width: 140px;
+        }
+
+        .info-value {
+            color: #64748b;
+        }
+
+        .filter-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-option {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-option.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: #2563eb;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .attendance-percent {
+            font-weight: 600;
+            color: #16a34a;
+        }
+
+        .marks-total {
+            font-weight: 600;
+            color: #2563eb;
+        }
+
+        @@media (max-width: 768px) {
+            .profile-header {
+                padding: 20px;
+            }
+
+            .profile-pic {
+                width: 120px;
+                height: 120px;
+            }
+
+            .profile-header h1 {
+                font-size: 26px;
+            }
+
+            .tab-button {
+                padding: 14px 8px;
+                font-size: 14px;
+            }
+
+            .tab-content {
+                padding: 20px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            th, td {
+                padding: 10px;
+                font-size: 14px;
+            }
+        }
+
+        @@media (max-width: 480px) {
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab-button {
+                text-align: left;
+                padding: 14px 20px;
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+            .tab-button.active {
+                border-bottom: 3px solid #2563eb;
+                border-left: 3px solid #2563eb;
+                border-right: none;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .info-item {
+                flex-direction: column;
+            }
+
+            .info-label {
+                min-width: auto;
+                margin-bottom: 4px;
+            }
+        }
+</style>
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="hello">
+            <div class="profile-header">
+                <div class="profile-pic">
+                  
+                    <img src="~/assets/images/image23.jpg" alt="student photo" />
+                </div>
+                <h1>BETELBIRTH M MARAK</h1>
+                <p>Class-X • Section YELLOW</p>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-button active" data-tab="basic">Basic Details</button>
+                <button class="tab-button" data-tab="academic">Academic Info</button>
+                <button class="tab-button" data-tab="accounts">Accounts</button>
+            </div>
+
+            <div class="tab-content">
+                <!-- Basic Details Tab -->
+                <div class="tab-section active" id="basic-details">
+                    <h2 class="section-title">Basic Details</h2>
+
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <h3>Personal Information</h3>
+                            <div class="info-item">
+                                <span class="info-label">Full Name:</span>
+                                <span class="info-value">BETELBIRTH M MARAK</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Date of Birth:</span>
+                                <span class="info-value">15 March 2018</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Gender:</span>
+                                <span class="info-value">Male</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Blood Group:</span>
+                                <span class="info-value">B+</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Nationality:</span>
+                                <span class="info-value">Indian</span>
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <h3>Contact Information</h3>
+                            <div class="info-item">
+                                <span class="info-label">Address:</span>
+                                <span class="info-value">123 Main Street, New Delhi</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Phone:</span>
+                                <span class="info-value">+91 98765 43210</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Email:</span>
+                                <span class="info-value">aarav.sharma@example.com</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Emergency Contact:</span>
+                                <span class="info-value">Mrs. Sharma (+91 91234 56789)</span>
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <h3>Academic Information</h3>
+                            <div class="info-item">
+                                <span class="info-label">Student ID:</span>
+                                <span class="info-value">STU-2023-045</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Class:</span>
+                                <span class="info-value">KG-II</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Section:</span>
+                                <span class="info-value">YELLOW</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Roll Number:</span>
+                                <span class="info-value">12</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Academic Year:</span>
+                                <span class="info-value">2023-2024</span>
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <h3>Family Information</h3>
+                            <div class="info-item">
+                                <span class="info-label">Father's Name:</span>
+                                <span class="info-value">Rajesh Sharma</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Occupation:</span>
+                                <span class="info-value">Business</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Mother's Name:</span>
+                                <span class="info-value">Priya Sharma</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Occupation:</span>
+                                <span class="info-value">Teacher</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Academic Info Tab -->
+                <div class="tab-section" id="academic-details">
+                    <h2 class="section-title">Academic Information</h2>
+
+                    <div class="filter-options">
+                        <div class="filter-option active">All</div>
+                        <div class="filter-option">2020</div>
+                        <div class="filter-option">2021</div>
+                        <div class="filter-option">2022</div>
+                        <div class="filter-option">2023</div>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Batch</th>
+                                <th>Class</th>
+                                <th>Section</th>
+                                <th>Days</th>
+                                <th>%</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2020</td>
+                                <td>Nursery</td>
+                                <td>RED</td>
+                                <td>177</td>
+                                <td class="attendance-percent">88.50%</td>
+                            </tr>
+                            <tr>
+                                <td>2021</td>
+                                <td>KG-I</td>
+                                <td>BLUE</td>
+                                <td>182</td>
+                                <td class="attendance-percent">91.00%</td>
+                            </tr>
+                            <tr>
+                                <td>2022</td>
+                                <td>KG-II</td>
+                                <td>YELLOW</td>
+                                <td>165</td>
+                                <td class="attendance-percent">82.50%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 style="margin-top: 30px; color: #2563eb;">Performance Overview</h3>
+                    <div class="info-grid" style="margin-top: 15px;">
+                        <div class="info-card">
+                            <h3>Term I Results</h3>
+                            <div class="info-item">
+                                <span class="info-label">Mathematics:</span>
+                                <span class="info-value">A+</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">English:</span>
+                                <span class="info-value">A</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Hindi:</span>
+                                <span class="info-value">A</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">GK:</span>
+                                <span class="info-value">A+</span>
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <h3>Term II Results</h3>
+                            <div class="info-item">
+                                <span class="info-label">Mathematics:</span>
+                                <span class="info-value">A+</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">English:</span>
+                                <span class="info-value">A+</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Hindi:</span>
+                                <span class="info-value">A</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">GK:</span>
+                                <span class="info-value">A</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accounts Tab -->
+                <div class="tab-section" id="accounts-details">
+                    <h2 class="section-title">Accounts</h2>
+
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <h3>Fee Details</h3>
+                            <div class="info-item">
+                                <span class="info-label">Total Fees:</span>
+                                <span class="info-value">₹45,000/year</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Paid Fees:</span>
+                                <span class="info-value">₹40,500</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Pending Fees:</span>
+                                <span class="info-value">₹4,500</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Due Date:</span>
+                                <span class="info-value">15 Dec 2023</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Last Payment:</span>
+                                <span class="info-value">15 Aug 2023</span>
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <h3>Bank Details</h3>
+                            <div class="info-item">
+                                <span class="info-label">APAAR ID:</span>
+                                <span class="info-value">APAAR123456</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Bank Account:</span>
+                                <span class="info-value">123456789012</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Bank Name:</span>
+                                <span class="info-value">State Bank of India</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Account Holder:</span>
+                                <span class="info-value">BETELBIRTH M MARAK</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">IFSC Code:</span>
+                                <span class="info-value">SBIN0001234</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: 30px; color: #2563eb;">Transaction History</h3>
+                    <table style="margin-top: 15px;">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>15 Aug 2023</td>
+                                <td>Term I Fees</td>
+                                <td>₹22,500</td>
+                                <td>Paid</td>
+                            </tr>
+                            <tr>
+                                <td>15 Apr 2023</td>
+                                <td>Admission Fees</td>
+                                <td>₹18,000</td>
+                                <td>Paid</td>
+                            </tr>
+                            <tr>
+                                <td>15 Dec 2023</td>
+                                <td>Term II Fees</td>
+                                <td>₹22,500</td>
+                                <td>Pending</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Tab switching functionality
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabSections = document.querySelectorAll('.tab-section');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.getAttribute('data-tab');
+
+                // Update active tab button
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                // Show active tab section
+                tabSections.forEach(section => section.classList.remove('active'));
+                document.getElementById(`${tabId}-details`).classList.add('active');
+            });
+        });
+
+        // Filter option functionality
+        const filterOptions = document.querySelectorAll('.filter-option');
+
+        filterOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const parent = option.parentElement;
+                const siblings = parent.querySelectorAll('.filter-option');
+
+                siblings.forEach(sib => sib.classList.remove('active'));
+                option.classList.add('active');
+
+                // Here you would typically filter the table data
+                // For this example, we're just updating the UI state
+            });
+        });
+    });
+</script>
+

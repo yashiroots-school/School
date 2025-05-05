@@ -1,0 +1,186 @@
+﻿@model SchoolManagement.Data.Models.TblFeeReceipts
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/Content/WebsiteCss/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Content/WebsiteCss/css/animate.min.css" rel="stylesheet">
+    <link href="~/Content/WebsiteCss/css/custom.css" rel="stylesheet">
+    <link href="~/Content/WebsiteCss/css/floatexamples.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body style="background-color:white;">
+    @*<div class="page-header">
+            <h1>Student Fee <small> Invoice</small></h1>
+        </div>*@
+    <!-- Simple Invoice - START -->
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="text-center">
+                    <h2><b>Student Fee Invoice (@Model.FeeReceiptId)</b></h2>
+                </div>
+            </div>
+            <hr /><br />
+        </div>
+
+        <div style="padding-left:180px;">
+            <div class="row">
+                <div class="col-xs-12">
+
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="panel panel-success height">
+                                <div class="panel-heading"><b>Student Detail</b></div>
+                                <div class="panel-body">
+                                    <strong>Name: </strong> @Model.StudentName<br>
+                                    <strong>Class: </strong> @Model.ClassName<br>
+                                    <strong>Category: </strong> @Model.CategoryName<br>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="panel panel-success height">
+                                <div class="panel-heading"><b>Payment Detail</b></div>
+                                <div class="panel-body">
+                                    <strong>Gift:</strong> No<br>
+                                    <strong>Express Delivery:</strong> Yes<br>
+                                    <strong>Insurance:</strong> No<br>
+                                    <strong>Coupon:</strong> No<br>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="panel panel-success height">
+                                <div class="panel-heading"><b>Fee Headings</b></div>
+                                <div class="panel-body">
+                                    <strong>David Peere:</strong><br>
+                                    1111 Army Navy Drive<br>
+                                    Arlington<br>
+                                    VA<br>
+                                    <strong>22 203</strong><br>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h3 class="text-center"><strong>Order summary</strong></h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-condensed">
+                                    <thead>
+                                        <tr style="color: black;background-color: #e1e1ff;">
+                                            <td><strong>Heading Names</strong></td>
+                                            <td class="text-center"><strong>Selected Months</strong></td>
+                                            <td class="text-center"><strong>Fee Paids</strong></td>
+                                            @* <td class="text-center"><strong>Total</strong></td>*@
+                                            <td class="text-right"><strong>Created Date</strong></td>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in ViewBag.FeeReceiptsTbl as List<SchoolManagement.Website.ViewModels.PreviewFeeReceiptViewModel>)
+                                        {
+                                            <tr>
+                                                <td>@item.HeadingNames</td>
+                                                <td class="text-center">@item.SelectedMonths</td>
+                                                <td class="text-center">@item.FeePaid (rupees)</td>
+                                                @*<td class="text-center">@Model.TotalFee (rupees)</td>*@
+                                                <td class="text-right">@item.CreatedDate</td>
+                                            </tr>
+                                        }
+
+
+                                        <tr>
+                                            <td class="highrow"></td>
+                                            <td class="highrow"></td>
+                                            <td class="highrow text-center"><strong>Total:</strong></td>
+                                            <td class="highrow text-right">@Model.TotalFee</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="emptyrow"></td>
+                                            <td class="emptyrow"></td>
+                                            <td class="emptyrow text-center"><strong>Concession %:</strong></td>
+                                            <td class="emptyrow text-right">@Model.Concession</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="emptyrow"></td>
+                                            <td class="emptyrow"></td>
+                                            <td class="emptyrow text-center"><strong>Concession Amt:</strong></td>
+                                            <td class="emptyrow text-right">@Model.ConcessionAmt</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="emptyrow"> </td>
+                                            <td class="emptyrow"></td>
+                                            <td class="emptyrow text-center"><strong>Old Amt:</strong></td>
+                                            <td class="emptyrow text-right">@Model.OldBalance</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="emptyrow"> </td>
+                                            <td class="emptyrow"></td>
+                                            <td class="emptyrow text-center"><strong>Late Fee:</strong></td>
+                                            <td class="emptyrow text-right">@Model.LateFee</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="emptyrow"> </td>
+                                            <td class="emptyrow"></td>
+                                            <td class="emptyrow text-center"><strong>Total:</strong></td>
+                                            <td class="emptyrow text-right">@ViewBag.Total</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+    <style>
+
+        .height {
+            min-height: 200px;
+        }
+
+        .icon {
+            font-size: 47px;
+            color: #5CB85C;
+        }
+
+        .iconbig {
+            font-size: 77px;
+            color: #5CB85C;
+        }
+
+        .table > tbody > tr > .emptyrow {
+            border-top: none;
+        }
+
+        .table > thead > tr > .emptyrow {
+            border-bottom: none;
+        }
+
+        .table > tbody > tr > .highrow {
+            border-top: 3px solid;
+        }
+    </style>
+    <!-- Simple Invoice - END -->
+
+
+</body>
+</html>

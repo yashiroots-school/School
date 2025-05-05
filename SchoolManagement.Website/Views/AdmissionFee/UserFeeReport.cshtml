@@ -1,0 +1,113 @@
+﻿
+@{
+    ViewBag.Title = "UserFeeReport";
+}
+
+<link href="~/Content/DropDownSelect2/dist/css/select2.min.css" rel="stylesheet" />
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-sm-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-12">
+                            <h4> Fee Report  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+
+                        <div class="col-sm-12" style="margin-top: 15px;">
+                            <div class="col-sm-3">
+                                @*<div class="form-group">*@
+                                <div class="form-group stright_line">
+                                    <label>Batch:</label>
+                                    @*@Html.DropDownList("Semester", ViewBag.Classes as SelectList, "Select", new { @class = "form-control" })*@
+                                    <select id="Semester" class="form-control">
+                                        @{
+                                            foreach (var item in ViewBag.Batches as IEnumerable<SchoolManagement.Website.Models.Tbl_Batches>)
+                                            {
+                                                <option value="@item.Batch_Id">@item.Batch_Name</option>
+                                            }
+                                        }
+                                    </select>
+
+                                    @*@Html.DropDownList("Semester",ViewBag.Classes as SelectList,"Select",new { @class="form-control"})*@
+
+                                    @*<select id='Semester' class="form-control"></select>*@
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                @*<div class="form-group">*@
+                                <div class="form-group stright_line">
+                                    <label>Fee Type:</label>
+                                    @*@Html.DropDownList("Semester", ViewBag.Classes as SelectList, "Select", new { @class = "form-control" })*@
+                                    <select id="Semester" class="form-control">
+                                        @{
+                                            foreach (var item in ViewBag.Feetype as IEnumerable<SchoolManagement.Data.Models.FeeHeadings>)
+                                            {
+                                                <option value="@item.FeeId">@item.FeeName</option>
+                                            }
+                                        }
+                                    </select>
+
+                                    
+                                </div>
+                            </div>
+                           
+                            <div class="col-sm-2">
+                                <div class="form-group stright_line">
+                                    <label>Date From:</label>
+                                    <input type="text" name="DateFrom" id="DateFrom" class="form-control datepicker" readonly>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group stright_line">
+                                    <label>Date To:</label>
+                                    <input type="text" name="DateTo" id="DateTo" class="form-control datepicker" readonly>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <button type="button" id="SearchBtn" class="btn btn-success ">Search</button>
+                                    @*<input type="button" id="SearchBtn" value="Search" class="btn btn-success form-control" />*@
+                                </div>
+                            </div>
+                        </div>
+
+                    </div> <!-- dashboard_graph closed-->
+                </div> <!--col-msx-12 closed-->
+                <div class="col-sm-12">
+                    <!-- col-msx-12 started -->
+                    <button class="btn btn-warning pull-right" id="printBtn">Print Report</button>
+                </div> <!-- col-msx-12  closed -->
+                <div class="col-md-12 col-sm-12 col-xs-12 table-responsive" id="PrintTbl">
+                    <!-- col-msx-12 started -->
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Reg No</th>
+                                <th>Admission No</th>
+                                <th>Name</th>
+                                <th>Class</th>
+                                <th>Period</th>
+                                <th>Mode</th>
+                                <th>Fee Type</th>
+                                <th>Paid Amount</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="StudentPaidDetails"></tbody>
+                    </table>
+                </div><!-- col-msx-12  closed -->
+
+            </div><!-- 1st row closed -->
+        </div>  <!-- /page content -->
+    </div>
+</div>
+

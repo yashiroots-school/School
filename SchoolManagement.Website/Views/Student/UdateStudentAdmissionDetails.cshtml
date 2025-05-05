@@ -1,0 +1,1191 @@
+﻿
+@{
+    ViewBag.Title = "UdateStudentAdmissionDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+
+
+<style>
+    .myAlert-bottom {
+        position: fixed;
+        bottom: 5px;
+        left: 2%;
+        width: 96%;
+    }
+
+    div.fullscreen {
+        position: absolute;
+        width: 100%;
+        height: 960px;
+        top: 0;
+        left: 0;
+        background-color: lightblue;
+    }
+
+    .alert {
+        display: none;
+    }
+</style>
+<!-- page content -->
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6">
+                            <h4 id="HeadingText"> Update Student  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        @*<div class="col-sm-6">
+                                <button class="btn btn-info pull-right"><a href="/Student/VewAllStudent" class="button_a">View All Students </a></button>
+                                <button class="btn btn-danger pull-right"><a href="/Student/ManageStudent" class="button_a">Manage Student</a> </button>
+                            </div>*@
+                    </div>
+                </div>
+            </div><!-- dashboard_graph closed-->
+
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#add" class="sis_tab_a">Student Details</a></li>
+                <li><a data-toggle="tab" href="#add1" class="sis_tab_a click" id="familiylink">FamilyDetails</a></li>
+                <li><a data-toggle="tab" href="#add2" class="sis_tab_a click_1" id="guardianlink">Guardian Details</a></li>
+                <li><a data-toggle="tab" href="#add3" class="sis_tab_a click_2" id="additionallink">Additional Info</a></li>
+                <li><a data-toggle="tab" href="#add4" class="sis_tab_a click_3" id="pastschoollink">Past Schooling Record</a></li>
+                @*<li><a data-toggle="tab" href="#add5" class="sis_tab_a click_4">Remote Access</a></li>*@
+            </ul>
+            <form method="post" action="/Student/UpdateStudentsDetails" id="Studentform" enctype="multipart/form-data">
+                <div class="tab-content tab_sis">
+                    <div id="add" class="tab-pane fade in active">
+
+                        <div class="row">
+
+                            <div class="col-sm-12" style="border-top: 1px solid #E6E9ED;">
+                                <!-- col-sm-12 started -->
+                                <h4 class="std_head well-sm"> Student Details</h4>
+                                <div class="col-sm-6" style="border-right: 1px solid #eee;">
+                                    <!-- col-sm-6 started -->
+                                    <div>
+                                        <input type="hidden" id="routingid" name="RoutingId" value="@ViewBag.Routingid" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>First Name :</label>
+                                        <input type="text" name="StudentRegistration.Name" id="SName" required class="form-control" style="border-color:red">
+                                        <input type="hidden" name="StudentRegistration.StudentRegisterID" id="StudentId">
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label>Last Name :</label>
+                                        <input type="text" name="StudentRegistration.Last_Name" id="LName" required class="form-control" style="border-color:red">
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Parent Email</label>
+                                        <input type="text" id="parentemail" name="StudentRegistration.Parents_Email" class="form-control" style="border-color:red">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Class :</label>
+
+                                        <select class="form-control" id="Class_Id" name="StudentRegistration.Class_Id" style="border-color:red">
+                                            <option>---Select Class---</option>
+                                            @foreach (var item in ViewBag.Class as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                            {
+                                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                            }
+                                        </select>
+                                        <input type="text" id="Class_Name" name="StudentRegistration.Class_Name" style="display:none" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Select Section :</label>
+                                        <select class="form-control" id="Section_Id" name="StudentRegistration.Section_Id">
+                                            <option value="0">---Select Section---</option>
+                                            @foreach (var item in ViewBag.Section as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                            {
+                                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                            }
+                                        </select>
+                                        <input type="text" id="Section_Name" name="StudentRegistration.Section_Name" style="display:none" />
+                                    </div>
+                                  
+                                    <div class="form-group">
+                                        <label>Batch :</label>
+                                        @Html.DropDownList("StudentRegistration.Batch_Id", ViewBag.BatcheNames as SelectList, "---Select Year---", new { @id = "Batch_Id", @class = "form-control" })
+                                    </div>
+                                    @*<input type="text" id="FromDate" readonly class="form-control datepicker"/>*@
+
+                                    @*<div class="form-group">
+            <label>Bactch:</label>
+            <select class="form-control" id="Sectionid" name="StudentRegistration.Section_Id">
+                <option value="0">---Select Batch---</option>
+                @{
+                    foreach (var item in ViewBag.BatchName as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                    {
+                        <option value="@item.DataListItemId">@item.DataListItemName</option>
+                    }
+                }
+            </select>
+        </div>*@
+                                    <div class="form-group">
+                                        <label>Community : </label>
+                                        <br />
+                                        @*@Html.DropDownList("StudentRegistration.Category", new SelectList(ViewBag.Category, "DataListItemName", "DataListItemName"), "select", new { @id = "Category", @class = "form-control" })*@
+                                        @*@Html.DropDownList("Student.Category", ViewBag.Category as SelectList, "Select", new { @class = "form-control" })*@
+                                        <select class="form-control" id="Category_Id" name="StudentRegistration.Category_Id">
+                                            <option>---Select Community---</option>
+                                            @foreach (var itme in ViewBag.Category as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                            {
+                                                <option value="@itme.DataListItemId">@itme.DataListItemName</option>
+                                            }
+                                        </select>
+                                        <input type="text" id="Category" name="StudentRegistration.Category" style="display:none" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Place of Birth : </label>
+                                        <input type="text" name="StudentRegistration.POB" id="POB" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Nationality  : </label>
+                                        <input type="text" name="StudentRegistration.Nationality" id="Nationality" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Religion  : </label>
+                                        @*@Html.DropDownList("StudentRegistration.Religion", new SelectList(ViewBag.Religion, "DataListItemName", "DataListItemName"), "select", new { @id = "Religion", @class = "form-control" })*@
+                                        <select class="form-control" id="Religion_Id" name="StudentRegistration.Religion_Id">
+                                            <option>---Select Religion---</option>
+                                            @foreach (var item in ViewBag.Religion as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                            {
+                                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                            }
+                                        </select>
+                                        <input type="text" id="Religion" name="StudentRegistration.Religion" style="display:none" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Mother tongue  : </label>
+                                        <input type="text" name="StudentRegistration.MotherTongue" id="MotherTongue" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Medium  : </label>
+                                        @Html.DropDownList("StudentRegistration.Medium", new SelectList(ViewBag.Medium, "DataListItemName", "DataListItemName"), "select", new { @id = "Medium", @class = "form-control" })
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Profile Avatar</label>
+                                        @*<img src="~/WebsiteImages/images/user.png" alt="Affix recent passport size <br/> photograph of student." style="width:100%;margin-bottom:10px;" class="img-thumbnail" />*@
+                                        <input type="file" id="File" name="ProfileAvatar" style="margin-bottom:20px;" accept=".jpg,.png" />
+                                        <label type="text" id="FileLbl" name="ProfileAvatar"></label>
+                                    </div>
+
+
+
+                                </div><!-- col-sm-6 closed -->
+                                <div class="col-sm-6">
+                                    <!-- col-sm-6 started -->
+
+                                    <div class="form-group">
+                                        <label>Date of Birth :</label>
+                                        <input type="text" name="StudentRegistration.DOB" id="DOB" class="form-control datepicker" readonly style="border-color:red">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Caste  : </label>
+                                        @*@Html.DropDownList("StudentRegistration.Caste", new SelectList(ViewBag.Caste, "DataListItemName", "DataListItemName"), "select", new { @id = "Caste", @class = "form-control" })*@
+                                        @*@Html.DropDownList("Student.Caste", ViewBag.Caste as SelectList, "Select", new { @class = "form-control" })*@
+                                        <select class="form-control" id="Cast_Id" name="StudentRegistration.Cast_Id">
+                                            <option>---select Cast---</option>
+                                            @foreach (var item in ViewBag.Caste as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                            {
+                                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                            }
+                                        </select>
+                                        <input type="text" id="Caste" name="StudentRegistration.Caste" style="display:none" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Blood Group  : </label>
+                                        @*@Html.DropDownList("StudentRegistration.BloodGroup", new SelectList(ViewBag.BloodGroup, "DataListItemName", "DataListItemName"), "select", new { @id = "BloodGroup", @class = "form-control" })*@
+                                        <select class="form-control" id="BloodGroup_Id" name="StudentRegistration.BloodGroup_Id">
+                                            <option>---select Bloodgroup---</option>
+                                            @foreach (var item in ViewBag.BloodGroup as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                            {
+                                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                            }
+                                        </select>
+                                        <input type="text" id="BloodGroup" name="StudentRegistration.BloodGroup" style="display:none" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Adhar No.  : </label>
+                                        <input name="StudentRegistration.AdharNo" type="text" id="AdharNo" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Adhar Document.  : </label>
+                                        <input type="file" name="StudentRegistration.AdharFile" style="padding:0px;" id="AdharFile" class="form-control" accept=".jpg,.png,.jpeg">
+                                        <label type="text" id="Adhardocs" name="AdharFile"></label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Hobbies  : </label>
+                                        <input type="text" name="StudentRegistration.Hobbies" id="Hobbies" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Gender:</label>
+
+                                        <label class="radio-inline"><input id="Gender1" name="StudentRegistration.Gender" type="radio" value="Male" checked>Male</label>
+                                        <label class="radio-inline"><input id="Gender2" type="radio" name="StudentRegistration.Gender" value="Female" checked>Female</label>
+
+
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label>Any other Languages  : </label>
+                                        <input type="text" name="StudentRegistration.OtherLanguages" id="OtherLanguages" class="form-control">
+                                    </div>
+                                    <div class="form-group" id="ScholarNo" style="display:none">
+                                        <label>ScholarNo</label>
+                                        <input type="text" name="StudentRegistration.ScholarNo" id="ScholarNoVal" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Personal Marks of Identification  : </label>
+                                        <input type="text" name="StudentRegistration.MarkForIdentity" id="MarkForIdentity" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Transport Facility: Yes / No </label>
+                                        <select class="form-control" id="TransportFacility" name="AdditionalInformation.TransportFacility" style="border-color:red">
+                                            <option value="yes">yes</option>
+                                            <option value="no">no</option>
+                                        </select>
+                                        @*<input type="text" name="AdditionalInformation.TransportFacility" id="TransportFacility" class="form-control" style="border-color:red">*@
+                                    </div>
+                                    <div class="form-group" id="transportoptions" style="display:none">
+                                        <label>Transport Option </label>
+                                        <select class="form-control" id="selecttransportoption" name="AdditionalInformation.TransportOptions">
+                                            <option value="NA">---select option---</option>
+                                            <option value="pickup">Pickup</option>
+                                            <option value="drop">Drop</option>
+                                            <option value="both">Both</option>
+                                        </select>
+                                        @*<input type="text" name="AdditionalInformation.TransportFacility" id="TransportFacility" class="form-control">*@
+                                        <input type="text" id="TRansportOption" style="display:none" />
+                                    </div>
+                                    <div class="form-group" id="distance" style="display:none">
+                                        <label>Distance From School </label>
+                                        <input type="text" name="AdditionalInformation.DistancefromSchool" id="DistancefromSchool" class="form-control">
+                                    </div>
+                                    <div class="form-group" id="busnumber" style="display:none">
+                                        <label>Select Bus Number  : </label>
+                                        @Html.DropDownList("StudentRegistration.TransportVehicleNo", new SelectList(ViewBag.TransportVehicleNo, "DataListItemName", "DataListItemName"), "---select---", new { @id = "TransportVehicleNo", @class = "form-control" })
+
+                                    </div>
+                                    <button type="button" id="btnverify" class="button_a btn btn-success pull-right">Next</button>
+
+                                    @*<a data-toggle="tab" href="#add1" class="button_a outsidelink btn btn-success pull-right">Next</a>*@
+                                </div><!-- col-sm-6 closed -->
+                            </div><!-- col-sm-12 closed -->
+                        </div>
+
+
+                        <!-- row closed -->
+                    </div><!-- tab-pane fade in active closed -->
+                    <div id="add1" class="tab-pane fade">
+                        <!-- tab-pane fade started -->
+                        <div class="row">
+                            <!-- col-sm-12 started -->
+                            <div class="col-sm-12" style="border-bottom: 1px solid #E6E9ED;">
+                                <!-- col-sm-12 started -->
+                                <h4 class="std_head well-sm"> Family Details</h4>
+
+                                <div class="col-sm-6" style="border-right: 1px solid #eee;">
+                                    <!-- col-sm-6 started -->
+                                    <h5 style="color: #1ABB9C;">Father's Details </h5>
+                                    <div class="form-group">
+                                        <label>Father’s Name :</label>
+                                        <input type="text" name="FamilyDetail.FatherName" id="FatherName" class="form-control" style="border-color:red">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>E Mail  : </label>
+                                        <input type="text" name="FamilyDetail.FEMail" id="FEMail" class="form-control" style="border-color:red">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Occupation :</label>
+                                        <input type="text" name="FamilyDetail.FOccupation" id="FOccupation" class="form-control" style="border-color:red">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Mobile  : </label>
+                                        <input type="text" name="FamilyDetail.FMobile" id="FMobile" class="form-control" style="border-color:red">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Phone : </label>
+                                        <input type="text" name="FamilyDetail.FPhone" id="FPhone" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Qualifications :</label>
+                                        <input type="text" name="FamilyDetail.FQualifications" id="FQualifications" class="form-control">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Organization :</label>
+                                        <input type="text" name="FamilyDetail.FOrganization" id="FOrganization" class="form-control">
+                                    </div>
+
+
+
+                                    <div class="form-group">
+                                        <label>Annual Income </label>
+                                        <input type="text" name="FamilyDetail.FAnnualIncome" id="FAnnualIncome" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>No.Of Brothers </label>
+                                        <input type="text" name="FamilyDetail.NoOfBrothers" id="NoOfBrothers" class="form-control">
+                                    </div>
+                                    <div id="divforsiblings">
+
+                                    </div>
+                                    <div class="row" id="siblingsdiv">
+                                        <div class="col-sm-4">
+                                            <label>Sibling:</label>
+                                            <input type="text" class="form-control" id="Student_name" placeholder="StudentName" name="Student_name" />
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label>Select:</label>
+                                            <select class="form-control" @*id="Confirmation"*@ name="Confirmation">
+                                                <option value="0">--select--</option>
+                                                <option value="yes">Yes</option>
+                                                <option value="no">No</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label>Class:</label>
+                                            <select class="form-control" @*id="Class_id"*@ name="Class_id">
+                                                <option value="0">---Select Class---</option>
+                                                @foreach (var item in ViewBag.Class as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                                {
+                                                    <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                                }
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                    <div class="row" id="divSibling_1" style="display:none">
+                                        <div class="col-sm-4">
+                                            <label>Sibling:</label>
+                                            <input type="text" class="form-control" id="Sibiling" placeholder="StudentName" name="Student_name" />
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label>Select:</label>
+                                            <select class="form-control" @*id="Confirmation"*@ name="Confirmation">
+                                                <option value="0">--select--</option>
+                                                <option value="yes">Yes</option>
+                                                <option value="no">No</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label>Class:</label>
+                                            <select class="form-control" @*id="Class_Id"*@ name="Class_id">
+                                                <option value="0">---Select Class---</option>
+                                                @foreach (var item in ViewBag.Class as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                                {
+                                                    <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                                }
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                    <div class="row" id="divSibling_2" style="display:none">
+                                        <div class="col-sm-4">
+                                            <label>Sibling:</label>
+                                            <input type="text" class="form-control" id="Sibiling1" placeholder="StudentName" name="Student_name" />
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label>Select:</label>
+                                            <select class="form-control" @*id="Confirmation"*@ name="Confirmation">
+                                                <option value="0">--select--</option>
+                                                <option value="yes">Yes</option>
+                                                <option value="no">No</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label>Class:</label>
+                                            <select class="form-control" @*id="Class_Id"*@ name="Class_id">
+                                                <option value="0">---Select Class---</option>
+                                                @foreach (var item in ViewBag.Class as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                                {
+                                                    <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row" id="divSibling_3" style="display:none">
+                                        <div class="col-sm-4">
+                                            <label>Sibling:</label>
+                                            <input type="text" class="form-control" id="Sibiling2" placeholder="StudentName" name="Student_name" />
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label>Select:</label>
+                                            <select class="form-control" @*id="Confirmation"*@ name="Confirmation">
+                                                <option value="0">--select--</option>
+                                                <option value="yes">Yes</option>
+                                                <option value="no">No</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label>Class:</label>
+                                            <select class="form-control" @*id="Class_Id"*@ name="Class_id">
+                                                <option value="0">---Select Class---</option>
+                                                @foreach (var item in ViewBag.Class as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                                {
+                                                    <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row" id="divSibling_4" style="display:none">
+                                        <div class="col-sm-4">
+                                            <label>Sibling:</label>
+                                            <input type="text" class="form-control" id="Sibiling3" placeholder="StudentName" name="Student_name" />
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label>Select:</label>
+                                            <select class="form-control" @*id="Confirmation"*@ name="Confirmation">
+                                                <option value="0">--select--</option>
+                                                <option value="yes">Yes</option>
+                                                <option value="no">No</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label>Class:</label>
+                                            <select class="form-control" @*id="Class_Id"*@ name="Class_id">
+                                                <option value="0">---Select Class---</option>
+                                                @foreach (var item in ViewBag.Class as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                                {
+                                                    <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <input type="hidden" id="siblingsVisible" value="0" />
+                                    <input type="button" value="Add" onclick="ShowSiblings();" />
+
+                                    <input style="display: none;" id="btnHideSibling" type="button" value="Remove" onclick="HideSiblings();" />
+                                </div><!-- col-sm-6 closed -->
+                                <div class="col-sm-6">
+                                    <!-- col-sm-6 started -->
+                                    <h5 style="color: #1ABB9C;">Mother's Details </h5>
+                                    <div class="form-group">
+                                        <label>Mother’s Name  : </label>
+                                        <input type="text" name="FamilyDetail.MotherName" id="MotherName" class="form-control" style="border-color:red">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>E Mail : </label>
+                                        <input type="text" name="FamilyDetail.MEMail" id="MEMail" class="form-control" style="border-color:red">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Occupation  : </label>
+                                        <input type="text" name="FamilyDetail.MOccupation" id="MOccupation" class="form-control" style="border-color:red">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Mobile : </label>
+                                        <input type="text" name="FamilyDetail.MMobile" id="MMobile" class="form-control" style="border-color:red">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Phone : </label>
+                                        <input type="text" name="FamilyDetail.MPhone" id="MPhone" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Qualifications  : </label>
+                                        <input type="text" name="FamilyDetail.MQualifications" id="MQualifications" class="form-control">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Organization  : </label>
+                                        <input type="text" name="FamilyDetail.MOrganization" id="MOrganization" class="form-control">
+                                    </div>
+
+
+
+                                    <div class="form-group">
+                                        <label>Annual Income : </label>
+                                        <input type="text" name="FamilyDetail.MAnnualIncome" id="MAnnualIncome" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>No.Of Sisters </label>
+                                        <input type="text" name="FamilyDetail.NoOfSisters" id="NoOfSisters" class="form-control">
+                                    </div>
+
+
+
+                                </div><!-- col-sm-6 closed -->
+
+                            </div><!-- col-sm-12 closed -->
+                            <div class="col-sm-12" style="border-bottom: 1px solid #E6E9ED;">
+                                <!-- col-sm-12 started -->
+                                <h4 class="std_head well-sm">Address</h4>
+                                <div class="col-sm-6">
+                                    <!-- col-sm-6 started -->
+                                    <div class="form-group">
+                                        <label>Residential Address  : </label>
+                                        <textarea type="text" name="FamilyDetail.FResidentialAddress" id="FResidentialAddress" class="form-control"></textarea>
+                                    </div>
+
+                                </div><!-- col-sm-6 closed -->
+                                <div class="col-sm-6">
+                                    <!-- col-sm-6 started -->
+                                    <div class="form-group">
+                                        <label>Permanent Address : </label>
+                                        <textarea type="text" name="FamilyDetail.MPermanentAddress" id="MPermanentAddress" class="form-control"></textarea>
+                                    </div>
+
+                                </div><!-- col-sm-6 closed -->
+                                <button type="button" id="btnverifyfamily" class="btn btn-success pull-right">Next</button>
+                                @*<a data-toggle="tab" href="#add2" class="button_a outsidelink_1 btn btn-success pull-right">Next</a>*@
+                            </div><!-- col-sm-12 closed -->
+                        </div><!-- row closed -->
+
+                    </div><!-- tab-pane fade closed -->
+                    <div id="add2" class="tab-pane fade">
+                        <!-- tab-pane fade started -->
+                        <div class="row">
+                            <!-- col-sm-12 started -->
+                            <div class="col-sm-12">
+                                <!-- col-sm-12 started -->
+                                <h4 class="std_head well-sm"> Guardian’s Details</h4>
+                                <div class="col-sm-6">
+                                    <!-- col-sm-6 started -->
+                                    <div class="form-group">
+                                        <label>Guardian’s Name :</label>
+                                        <input type="text" name="GuardianDetails.GuardianName" id="GGuardianName" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Qualifications :</label>
+                                        <input type="text" name="GuardianDetails.Qualifications" id="GQualifications" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Occupation :</label>
+                                        <input type="text" name="GuardianDetails.Occupation" id="GOccupation" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Organization :</label>
+                                        <input type="text" name="GuardianDetails.Organization" id="GOrganization" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Phone : </label>
+                                        <input type="text" name="GuardianDetails.Phone" id="GPhone" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Mobile  : </label>
+                                        <input type="text" name="GuardianDetails.Mobile" id="GMobile" class="form-control">
+                                    </div>
+
+                                </div><!-- col-sm-6 closed -->
+                                <div class="col-sm-6">
+                                    <!-- col-sm-6 started -->
+                                    <div class="form-group">
+                                        <label>E Mail  : </label>
+                                        <input type="text" name="GuardianDetails.EMail" id="GEMail" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Annual Income </label>
+                                        <input type="text" name="GuardianDetails.AnnualIncome" id="GAnnualIncome" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Residential Address  : </label>
+                                        <textarea class="form-control" name="GuardianDetails.ResidentialAddress" id="GResidentialAddress"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Permanent Address : </label>
+                                        <textarea class="form-control" name="GuardianDetails.PermanentAddress" id="GPermanentAddress"></textarea>
+                                    </div>
+
+                                </div><!-- col-sm-6 closed -->
+                                <button type="button" id="btnverifyguardian" class="btn btn-success pull-right">Next</button>
+                                @*<a data-toggle="tab" href="#add3" class="button_a outsidelink_2 btn btn-success pull-right">Next</a>*@
+                            </div><!-- col-sm-12 closed -->
+                        </div><!-- row closed -->
+                    </div><!-- tab-pane fade closed -->
+
+                    <div id="add3" class="tab-pane fade">
+                        <!-- tab-pane fade started -->
+                        <div class="row">
+                            <!-- row started -->
+                            <div class="col-sm-12 table-responsive">
+                                <!-- col-sm-12 started -->
+                                <h4 class="std_head well-sm">Additional information</h4>
+                                <div class="col-sm-6">
+                                    <!-- col-sm-6 started -->
+
+                                    <h5 style="color: #1ABB9C;">Assign Class & Section</h5>
+
+
+                                    <h5 style="color: #1ABB9C;">Additional information</h5>
+                                    <div class="form-group">
+                                        <label>Phisically Chalanged :</label><br />
+                                        <label class="radio-inline"><input checked type="radio" id="Phisically1" name="AdditionalInformation.Phisicallychalanged" value="Yes">Yes</label>
+                                        <label class="radio-inline"><input type="radio" id="Phisically2" name="AdditionalInformation.Phisicallychalanged" value="No">No</label>
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label>SSSMId Number :</label>
+                                        <input type="text" name="StudentRegistration.SSSMIdNumber" id="SSSMIdNumber" class="form-control">
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label>Family SSSMId Number :</label>
+                                        <input type="text" name="StudentRegistration.FamilySSSMID" id="FamilySSSMID" class="form-control">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Bank Account :</label>
+                                        <input type="text" name="StudentRegistration.BankAccount" id="BankAccount" class="form-control">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Bank Name :</label>
+                                        <input type="text" name="StudentRegistration.BankName" id="BankName" class="form-control">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Bank Acc Holder :</label>
+                                        <input type="text" name="StudentRegistration.BankACHolder" id="BankACHolder" class="form-control">
+                                    </div>
+                                      <div class="form-group">
+                                        <label>Bank IFSC No :</label>
+                                        <input type="text" name="StudentRegistration.BankIFSC" id="BankIFSC" class="form-control">
+                                    </div>
+
+
+
+                                </div><!-- col-sm-6 closed -->
+                                <div class="col-sm-6 table-responsive">
+                                    <!-- col-sm-6 started -->
+                                    @*<h5 style="color: #1ABB9C;">For office use only</h5>*@
+
+
+                                    @*<div class="form-group">
+                                            <label>Fee Structure Applicable :</label><br />
+                                            <input type="radio" name="AdditionalInformation.FeeStructureApplicable" id="FeeStructureApplicable1" value="Standard Fee" checked> Standard Fee<br />
+                                            <input type="radio" name="AdditionalInformation.FeeStructureApplicable" id="FeeStructureApplicable2" value="Special Fee (20% Discount)"> Special Fee (20% Discount)<br />
+                                            <input type="radio" name="AdditionalInformation.FeeStructureApplicable" id="FeeStructureApplicable3" value="Staff Fee (50% Discount)"> Staff Fee (50% Discount)
+                                        </div>*@
+
+                                    <h5 style="color: #1ABB9C;">Documents Enclosed </h5>
+                                    <table class="table">
+                                        <tr><td>Birth certificate (photo copy) </td> <td><input type="file" name="BirthCertificateAvatar" accept=".jpg,.png,.jpeg" /></td></tr>
+                                        <tr><td>Three passport size photographs </td> <td><input type="file" name="ThreePassportSizePhotographs" accept=".jpg,.png,.jpeg" /></td></tr>
+                                        <tr><td>Progress Report (photo copy) </td> <td><input type="file" name="ProgressReport" accept=".jpg,.png,.jpeg" /></td></tr>
+                                        <tr><td> Migration Certificate (original) </td> <td><input type="file" name="MigrationCertificate" accept=".jpg,.png,.jpeg" /></td></tr>
+                                        <tr><td> Income Certificate </td> <td><input type="file" name="IncomeCertificate" accept=".jpg,.png,.jpeg" /></td></tr>
+                                        <tr><td> Cast Certificate </td> <td><input type="file" name="CastCertificate" accept=".jpg,.png,.jpeg" /></td></tr>
+                                        <tr><td> Father Aadhar </td> <td><input type="file" name="FatherAdhar" accept=".jpg,.png,.jpeg" /></td></tr>
+                                        <tr><td> Mother Aadhar </td> <td><input type="file" name="MotherAdhar" accept=".jpg,.png,.jpeg" /></td></tr>
+                                        <tr><td> Bank Passbook </td> <td><input type="file" name="BankBook" accept=".jpg,.png,.jpeg" /></td></tr>
+                                        <tr><td> SSMID</td> <td><input type="file" name="Ssmid" accept=".jpg,.png,.jpeg" /></td></tr>
+
+                                    </table>
+                                    <div class="form-group">
+                                        <label> Remarks</label>
+                                        <textarea type="text" name="AdditionalInformation.Remarks" id="ARemarks" class="form-control"></textarea>
+                                    </div>
+                                </div><!-- col-sm-6 closed -->
+                            </div><!-- col-sm-12 closed -->
+                            <button type="button" id="btnverifyadditional" class="btn btn-success pull-right">Next</button>
+                            @*<a data-toggle="tab" href="#add4" class="button_a outsidelink_3 btn btn-success pull-right">Next</a>*@
+                        </div><!-- row closed -->
+                    </div><!-- tab-pane fade closed -->
+                    <div id="add4" class="tab-pane fade">
+                        <!-- tab-pane fade started -->
+                        <div class="row">
+                            <!-- row started -->
+                            <div class="col-sm-12">
+                                <!-- col-sm-12 started -->
+                                <h4 class="std_head well-sm"> Past Schooling Record</h4>
+                                <div class="col-sm-6">
+                                    <!-- col-sm-6 started -->
+
+                                    <div class="form-group">
+                                        <label>Name of school last attended : </label>
+                                        <input type="text" name="PastSchoolingReport.NameOfSchoolLastAttended" id="NameOfSchoolLastAttended" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Class Passed : </label>
+                                        <input type="text" name="PastSchoolingReport.ClassPassed" id="ClassPassed" class="form-control">
+                                    </div>
+                                    @*<div class="form-group">
+                                            <label>Promotion:</label><br />
+                                            <label class="radio-inline"><input type="radio" name="PastSchoolingReport.Promotion" id="Promotion1" value="Pass" checked> Pass</label>
+                                            <label class="radio-inline"><input type="radio" name="PastSchoolingReport.Promotion" id="Promotion2" value="Fail"> Fail</label>
+                                        </div>*@
+                                </div><!-- col-sm-6 closed -->
+                                <div class="col-sm-6">
+                                    <!-- col-sm-6 started -->
+                                    <div class="form-group">
+                                        <label>Reason for leaving : </label>
+                                        <input type="text" name="PastSchoolingReport.ReasonForLeaving" id="ReasonForLeaving" class="form-control">
+                                    </div>
+
+                                    <h5 style="color: #1ABB9C;">Transfer documents attached : </h5>
+
+                                    <table class="table">
+                                        <tr><td>Transfer/School Leaving </td> <td><input type="file" name="TCAvatar" accept=".jpg,.png,.jpeg" /></td></tr>
+                                        <tr><td>Marks Card</td> <td><input type="file" name="MarksCardAvatar" accept=".jpg,.png,.jpeg" /></td></tr>
+                                        <tr><td>Character/Conduct Certificate</td> <td><input type="file" name="CharacterConductCertificateAvatar" accept=".jpg,.png,.jpeg" /></td></tr>
+                                    </table>
+                                </div><!-- col-sm-6 closed -->
+                                <div class="col-sm-6">
+                                    <!-- col-sm-6 started -->
+                                    <input type="submit" class="btn btn-success pull-right" id="submitformBTn" value="Update" />
+                                </div>
+                            </div><!-- col-sm-12 closed -->
+                        </div><!-- row closed -->
+
+                    </div><!-- tab-pane fade closed -->
+
+                </div><!-- tab-pane fade closed -->
+            </form>
+        </div><!-- col-msx-12  closed -->
+    </div><!-- 1st row closed -->
+</div>  <!-- /page content -->
+
+
+@section scripts{
+
+    @*<script src="~/Scripts/DevelopmentJS/UpdateStudent.js"></script>*@
+    <script src="~/Scripts/WebsiteJs/js/jquery.min.js"></script>
+    <script src="~/Scripts/WebsiteJs/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/DevelopmentJS/UpdateStudent.js"></script>
+    <script src="~/Content/DatePicker2/js/jquery.plugin.min.js"></script>
+
+    <script src="~/Content/DatePicker2/js/jquery.datepick.js"></script>
+    <script src="~/Scripts/RegistrationJs/StudentAcadamicDetails.js"></script>
+    <script src="~/Scripts/RegistrationJs/StudentWorkExperienceWr.js"></script>
+    <script src="~/Scripts/RegistrationJs/RegistrationJS.js"></script>
+    <script src="~/Scripts/RegistrationJs/StudentRegistration.js"></script>
+    <script src="~/Scripts/RegistrationJs/RegMethods.js"></script>
+    <script src="~/Scripts/DevelopmentJS/leftMenuBinderJS.js"></script>
+
+    <script>
+        $("#TransportFacility").on('click', function () {
+            var id = $(this).val();
+            if (id == 0)
+                return false;
+            if (id == "yes")
+                $("#busnumber").show(),
+                    $("#transportavailability").show();
+
+            else
+                $("#transportavailability").hide();
+
+        });
+
+
+        function IsApproveClick() {
+            if ($('#IsApprove').is(":checked") == true)
+                $('#IsApplyforAdmission').attr("disabled", true).attr("checked", false);
+            else
+                $('#IsApplyforAdmission').attr("disabled", false);
+        }
+
+        $("#btnverify").on('click', function () {
+            validatestudentform();
+
+        });
+
+        $("#btnverifyfamily").on('click', function () {
+            validateFamilydetailsform();
+
+        });
+
+        $("#btnverifyguardian").on('click', function () {
+            $("#additionallink").tab('show');
+        });
+
+        $("#btnverifyadditional").on('click', function () {
+            $("#pastschoollink").tab('show');
+        });
+
+        function validatestudentform() {
+            var msg = "";
+            var sname = $("#SName").val();
+            var nationality = $("#Nationality").val();
+            var sDOB = $("#DOB").val();
+            var parentemail = $("#parentemail").val();
+            var classid = $("#Class_Id").val();
+            var transport = $("#TransportFacility").val();
+
+            if (sname == "") {
+                msg += "Name Cannot be Blank\r";
+            }
+            if (nationality == "") {
+                msg += "Nationality Cannot be blank\r";
+            }
+            if (sDOB == "") {
+                msg += "DOB Cannot be blank\r";
+            }
+
+            if (parentemail == "") {
+                msg += "Email Cannot be blank\r";
+            }
+            if (classid == "" || classid == null) {
+                msg += "Class Cannot be blank\r";
+            }
+
+            if (transport == "" || transport == null) {
+                msg += "Tansport Option Cannot be blank\r";
+            }
+
+            if (msg != "") {
+                alert("Please refer to the following error(s) :\r " + msg);
+            } else {
+                $("#familiylink").tab('show');
+            };
+
+        }
+        function validateFamilydetailsform() {
+            var msg = "";
+            var fathername = $("#FatherName").val();
+            var femail = $("#FEMail").val();
+            var fatheroccupation = $("#FOccupation").val();
+            var fathermobile = $("#FMobile").val();
+            var mothername = $("#MotherName").val();
+            var motheremail = $("#MEMail").val();
+            var motheroccupation = $("#MOccupation").val();
+            var mothermobile = $("#MMobile").val();
+
+            if (fathername == "") {
+                msg += "FatherName Cannot be blank\r";
+            }
+
+            if (femail == "") {
+                msg += "Father Email Cannot be Blank\r";
+            }
+
+            if (fatheroccupation == "") {
+                msg += "Father Occupation Cannot be Blank\r";
+            }
+
+            if (fathermobile == "") {
+                msg += "Father Mobile Cannot be Blank\r";
+            }
+
+            if (mothername == "") {
+                msg += "Mother Name Cannot be Blank\r";
+            }
+
+            if (motheremail == "") {
+                msg += "Mother Email Cannot be Blank\r";
+            }
+
+            if (motheroccupation == "") {
+                msg += "Mother Occupation Cannot be Blank\r";
+            }
+
+            if (mothermobile == "") {
+                msg += "Mother Mobile Cannot be Blank\r";
+            }
+
+            if (msg != "") {
+
+                alert("Please refer to the following error(s) :\r" + msg);
+
+            } else {
+                $("#guardianlink").tab('show');
+            };
+
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            var id = @ViewBag.StudentId.StudentId;
+            //alert(id);
+            GetStudentDetailsById(id);
+            function GetStudentDetailsById(id) {
+                $.ajax({
+                    url: "/Student/UpdateStudentAdmissionDetailsById?id=" + id,
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json;charset=UTF-8",
+                    success: function (result) {
+                        console.log(result)
+                        if (result != null) {
+                            //
+                            //alert(result.studentdetail.Name);
+                            //alert(result.additionalinfo.Class_Id);
+                            $("#SName").val(result.studentdetail.Name);
+                            $("#LName").val(result.studentdetail.Last_Name);
+                            $("#StudentId").val(result.studentdetail.StudentRegisterID);
+                            $("#parentemail").val(result.studentdetail.Parents_Email);
+                            //$("#Class").val(result.studentdetail.Class);
+                            $("#BatchName").val(result.studentdetail.BatchName);
+                            $("#Section").val(result.studentdetail.Section);
+                            //$("#Category").val(result.studentdetail.Category);
+                            $("#POB").val(result.studentdetail.POB);
+                            $("#Nationality").val(result.studentdetail.Nationality);
+                            //$("#Religion").val(result.studentdetail.Religion);
+                            $("#Religion_Id").val(result.studentdetail.Religion_Id);
+                            $("#MotherTongue").val(result.studentdetail.MotherTongue);
+                            $("#Medium").val(result.studentdetail.Medium);
+                            $("#AdharFile").val(result.studentdetail.AdharFile);
+                            if (result.studentdetail.ProfileAvatar != null) {
+                                $("#FileLbl").text(result.studentdetail.ProfileAvatar)
+                            } else {
+                                $("#FileLbl").text("No Image");
+                            }
+                            //$("#FileLbl").text(result.studentdetail.ProfileAvatar);
+                            $("#DOB").val(result.studentdetail.DOB);
+                            //$("#Caste").val(result.studentdetail.Caste);
+                            //$("#BloodGroup").val(result.studentdetail.BloodGroup);
+                            $("#AdharNo").val(result.studentdetail.AdharNo);
+                            if (result.studentdetail.AdharFile != null) {
+                                $("#Adhardocs").text(result.studentdetail.AdharFile);
+                            } else {
+                                $("#Adhardocs").text("No Image");
+                            }
+                            //$("#Adhardocs").val(result.studentdetail.AdharFile);
+                            $("#Hobbies").val(result.studentdetail.Hobbies);
+                            if (result.studentdetail.Gender == "Male") {
+                                $("#Gender1").prop('checked', true);
+                            }
+                            else {
+                                $("#Gender2").prop('checked', true);
+                            }
+
+                            $("#Sports").val(result.studentdetail.Sports);
+                            $("#OtherLanguages").val(result.studentdetail.OtherLanguages);
+                            $("#MarkForIdentity").val(result.studentdetail.MarkForIdentity);
+                            if (result.studentdetail.Class_Id != 0) {
+                                $("#Class_Id").val(result.studentdetail.Class_Id);
+                                $("#Class_Name").val(result.studentdetail.Class_Name);
+                            }
+                            else {
+                                $("#Class_Id").val("---Select Class---");
+                            }
+
+                            if (result.studentdetail.Section_Id != 0) {
+                                $("#Section_Id").val(result.studentdetail.Section_Id);
+                                $("#Section_Name").val(result.studentdetail.Section_Name);
+                            } else {
+                                $("#Section_Id").val("---Select Section---");
+                            }
+
+                            if (result.studentdetail.BatchName != 0) {
+                                $("#Batch_Id").val(result.studentdetail.Batch_Id);
+                                $("#Batch_Name").val(result.studentdetail.Batch_Name);
+                            } else {
+                                $("#Batch_Id").val("---Batch---");
+                            }
+
+
+                            if (result.studentdetail.Category_Id != 0) {
+                                $("#Category_Id").val(result.studentdetail.Category_Id);
+                                $("#Category").val(result.studentdetail.Category);
+                            } else {
+                                $("#Category_Id").val("---Select Community---");
+                            }
+
+
+
+                            if (result.studentdetail.BloodGroup_Id != 0) {
+                                $("#BloodGroup_Id").val(result.studentdetail.BloodGroup_Id);
+                                $("#BloodGroup").val(result.studentdetail.BloodGroup);
+                            } else {
+                                $("#BloodGroup_Id").val("---select BloogGroup---");
+                            }
+                            $("#TransportFacility").val(result.additionalinfo.TransportFacility);
+
+                            if (result.additionalinfo.TransportFacility == "yes") {
+                                $("#transportoptions").show();
+                                $("#selecttransportoption").val(result.additionalinfo.TransportOptions);
+                            }
+
+                            if (result.additionalinfo.TransportOptions != "NA") {
+                                $("#distance").show();
+                                $("#DistancefromSchool").val(result.additionalinfo.DistancefromSchool);
+                            }
+
+
+                            $("#Cast_Id").val(result.studentdetail.Cast_Id);
+                            //$("#selecttransportoption option[" + result.additionalinfo.TransportOptions + "]").attr('selected', 'selected');
+
+
+
+
+
+                            $("#FatherName").val(result.familydetails.FatherName);
+                            $("#FEMail").val(result.familydetails.FEMail);
+                            $("#FOccupation").val(result.familydetails.FOccupation);
+                            $("#FMobile").val(result.familydetails.FMobile);
+                            $("#FPhone").val(result.familydetails.FPhone);
+                            $("#FQualifications").val(result.familydetails.FQualifications);
+                            $("#FOrganization").val(result.familydetails.FOrganization);
+                            $("#FAnnualIncome").val(result.familydetails.FAnnualIncome);
+                            $("#NoOfBrothers").val(result.familydetails.NoOfBrothers);
+                            $("#MotherName").val(result.familydetails.MotherName);
+                            $("#MEMail").val(result.familydetails.MEMail);
+                            $("#MOccupation").val(result.familydetails.MOccupation);
+                            $("#MMobile").val(result.familydetails.MMobile);
+                            $("#MPhone").val(result.familydetails.MPhone);
+                            $("#MQualifications").val(result.familydetails.MQualifications);
+                            $("#MOrganization").val(result.familydetails.MOrganization);
+                            $("#MAnnualIncome").val(result.familydetails.MAnnualIncome);
+                            $("#NoOfSisters").val(result.familydetails.NoOfSisters);
+                            $("#FResidentialAddress").val(result.familydetails.FResidentialAddress);
+                            $("#MPermanentAddress").val(result.familydetails.MPermanentAddress);
+
+
+                            $("#GGuardianName").val(result.guardiandetails.GuardianName);
+                            $("#GQualifications").val(result.guardiandetails.Qualifications);
+                            $("#GOccupation").val(result.guardiandetails.Occupation);
+                            $("#GOrganization").val(result.guardiandetails.Organization);
+                            $("#GPhone").val(result.guardiandetails.Phone);
+                            $("#GMobile").val(result.guardiandetails.Mobile);
+                            $("#GEMail").val(result.guardiandetails.EMail);
+                            $("#GAnnualIncome").val(result.guardiandetails.AnnualIncome);
+                            $("#GResidentialAddress").val(result.guardiandetails.ResidentialAddress);
+                            $("#GPermanentAddress").val(result.guardiandetails.PermanentAddress);
+
+
+
+                            //if (result.additionalinfo.Phisicallychalanged == "No") {
+                            //    $("#Phisically2").attr('checked', true);
+                            //} else {
+                            //    $("#Phisically1").attr('checked', true);
+                            //}
+
+                            if (result.Physicallychalanged == "No") {
+                                $("#Phisically1").prop("checked", true);
+                            } else {
+                                $("#Phisically2").prop("checked", true);
+                            }
+
+
+                            $("#SSSMIdNumber").val(result.studentdetail.SSSMIdNumber);
+                            $("#FamilySSSMID").val(result.studentdetail.FamilySSSMID);
+                            $("#BankName").val(result.studentdetail.BankName);
+                            $("#BankAccount").val(result.studentdetail.BankAccount);
+                            $("#BankACHolder").val(result.studentdetail.BankACHolder);
+                            $("#BankIFSC").val(result.studentdetail.BankIFSC);
+
+
+
+                            //$("#DistancefromSchool").val(result.additionalinfo.DistancefromSNameOfSchoolLastAttendedchool);
+                            //$("#TransportFacility").val(result.additionalinfo.TransportFacility);
+                            $("#ARemarks").val(result.additionalinfo.Remarks);
+
+                            if (result.additionalinfo.BirthCertificateAvatar != null) {
+                                $("#BirthCertificateAvatar").text(result.additionalinfo.BirthCertificateAvatar);
+                            } else {
+                                $("#BirthCertificateAvatar").text("No Image");
+                            }
+                            if (result.additionalinfo.ThreePassportSizePhotographs != null) {
+                                $("#passportsize").text(result.additionalinfo.ThreePassportSizePhotographs);
+                            } else {
+                                $("#passportsize").text("No Image");
+                            }
+                            if (result.additionalinfo.ProgressReport != null) {
+                                $("#progressreport").text(result.additionalinfo.ProgressReport);
+                            } else {
+                                $("#progressreport").text("No Image");
+                            }
+                            if (result.additionalinfo.MigrationCertificate != null) {
+                                $("#migrationcertificate").text(result.additionalinfo.MigrationCertificate);
+                            } else {
+                                $("#migrationcertificate").text("No Image");
+                            }
+                            if (result.additionalinfo.BirthCertificateAvatar != null) {
+                                $("#BirthCertificateAvatar").text(result.additionalinfo.BirthCertificateAvatar);
+                            } else {
+                                $("#BirthCertificateAvatar").text("No Image");
+                            }
+                            if (result.additionalinfo.IncomeCertificate != null) {
+                                $("#IncomeCertificate").text(result.additionalinfo.IncomeCertificate);
+                            } else {
+                                $("#IncomeCertificate").text("No Image");
+                            }
+                            if (result.additionalinfo.CastCertificate != null) {
+                                $("#CastCertificate").text(result.additionalinfo.CastCertificate);
+                            } else {
+                                $("#CastCertificate").text("No Image");
+                            }
+                            if (result.additionalinfo.FatherAdhar != null) {
+                                $("#FatherAdhar").text(result.additionalinfo.FatherAdhar);
+                            } else {
+                                $("#FatherAdhar").text("No Image");
+                            }
+                            if (result.additionalinfo.MotherAdhar != null) {
+                                $("#MotherAdhar").text(result.additionalinfo.MotherAdhar);
+                            } else {
+                                $("#MotherAdhar").text("No Image");
+                            }
+                            if (result.additionalinfo.BankBook != null) {
+                                $("#BankBook").text(result.additionalinfo.BankBook);
+                            } else {
+                                $("#BankBook").text("No Image");
+                            }
+                            if (result.additionalinfo.Ssmid != null) {
+                                $("#Ssmid").text(result.additionalinfo.Ssmid);
+                            } else {
+                                $("#Ssmid").text("No Image");
+                            }
+
+
+                            $("#NameOfSchoolLastAttended").val(result.pastschoolingrecord.NameOfSchoolLastAttended);
+                            $("#ClassPassed").val(result.pastschoolingrecord.ClassPassed);
+                            $("#ReasonForLeaving").val(result.pastschoolingrecord.ReasonForLeaving);
+                            if (result.pastschoolingrecord.Promotion == "Pass") {
+                                $("#Promotion1").attr('checked', true);
+                            } else {
+                                $("#Promotion2").attr('checked', true);
+                            }
+                            $("#ReasonForLeaving").val(result.pastschoolingrecord.ReasonForLeaving);
+                            if (result.pastschoolingrecord.TCAvatar != null) {
+                                $("#trasfercertificate").text(result.pastschoolingrecord.TCAvatar);
+                            } else {
+                                $("#trasfercertificate").text("No Image");
+                            }
+                            if (result.pastschoolingrecord.MarksCardAvatar != null) {
+                                $("#markscertificate").text(result.pastschoolingrecord.MarksCardAvatar);
+                            } else {
+                                $("#markscertificate").text("No Image");
+                            }
+                            if (result.pastschoolingrecord.CharacterConductCertificateAvatar != null) {
+                                $("#conductcertificate").text(result.pastschoolingrecord.CharacterConductCertificateAvatar);
+                            } else {
+                                $("#conductcertificate").text("No Image");
+                            }
+
+
+                            if (result.html != "") {
+                                $("#siblingsdiv").hide();
+
+                                $("#divforsiblings").append(result.html);
+                            }
+
+
+
+                        }
+
+                    }
+
+                });
+            }
+        });
+
+
+        $("#TransportFacility").on('click', function () {
+            var id = $(this).val();
+            if (id == "yes")
+                $("#transportoptions").show();
+            else
+                $("#transportoptions").hide();
+
+        });
+
+    </script>    
+
+   
+}
+

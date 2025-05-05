@@ -1,0 +1,448 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4>  Class & Sections  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <!--<div class="col-sm-6">
+                        <button class="btn btn-info pull-right"><a href="sis_add_new_teacher.html" class="button_a">Add New</a></button>
+                         <button class="btn btn-danger pull-right"><a href="sis_manage_teacher.html" class="button_a">Manage</a></button>
+                          </div>-->
+
+
+                    </div><!-- col-sm-12 closed -->
+                </div><!--row x_title closed -->
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+        <div class="col-sm-12" style="margin-top: 15px;">
+            <h4 class="std_head well-sm">Class Setup</h4>
+            <form action="/Master/AddClassSetup" id="ClassForm" enctype="multipart/form-data" method="post">
+
+                <div class="col-sm-3"></div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <input type="hidden" id="Class_Id" name="Class_Id"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Setup Class  :</label>
+                        <div class="col-sm-6">
+                            <input type="text" id="Class_Name" class="form-control" name="Class_Name" maxlength="100"/>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-8" style="margin-top:20px;">
+                        <button type="submit" class="btn btn-success pull-right" id="BtnSaveClass">Save</button>
+                    </div>
+                </div>
+            </form>
+
+
+        </div>
+        <div class="col-sm-12" style="margin-top: 15px;">
+            <h4 class="std_head well-sm">Section Setup</h4>
+            <form action="/Master/AddSection" method="post" id="SectionForm" enctype="multipart/form-data">
+
+                <div class="col-sm-3"></div>
+                <div class="col-sm-6">
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Select Class :</label>
+                        <div class="col-sm-6">
+
+                            <select class="form-control" id="Class_Id" name="Class_Id">
+                                <option>---Select Class---</option>
+                                @foreach (var item in ViewBag.ClassList as IEnumerable<SchoolManagement.Website.Models.Tbl_Class>)
+                                {
+                                    <option value="@item.Class_Id">@item.Class_Name</option>
+                                }
+                            </select>
+                            <input type="text" id="Class" name="Class" style="display:none" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Section  :</label>
+                        <div class="col-sm-6">
+                            <input type="text" id="Section" class="form-control" name="Section" maxlength="100" />
+                        </div>
+                    </div>
+                    <div class="col-sm-8" style="margin-top:20px;">
+                        <button type="submit" id="BtnSectionSave" class="btn btn-success pull-right">Save</button>
+                    </div>
+                </div>
+            </form>
+
+
+        </div>
+
+    </div><!-- 1st row closed -->
+
+
+
+
+
+</div>*@
+
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6">
+                            <h4> Class & Sections  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        @*<div class="col-sm-6">
+                            <button class="btn btn-info pull-right"><a href="sis_view_all_rooms.html" class="button_a">View Rooms </a></button>
+
+                        </div>*@
+                    </div>
+                </div>
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+        <span class="pull-right"><a style="font-size: 25px; color:black;" class="fa fa-chevron-circle-left" href="~/Dashboard/Dashboard" id="circleimage"></a></span>
+
+
+        <div class="col-sm-12" style="border-bottom: 1px solid #E6E9ED;">
+            <!-- col-sm-12 started -->
+            <h4 class="std_head well-sm">Class Setup</h4>
+
+
+
+
+            <div class="col-sm-1">
+                <!-- col-sm-3 started -->
+            </div><!-- col-sm-3 closed -->
+            <div class="col-sm-8">
+                <!-- col-sm-6 started -->
+
+
+                <ul class="nav nav-tabs">
+                    @*<li class="active"><a data-toggle="tab" href="#home" class="sis_tab_a">New Class  Setup</a></li>*@
+                    <li class="active"><a data-toggle="tab" href="#menu1" class="sis_tab_a">Section Setup</a></li>
+
+                </ul>
+
+                <div class="tab-content tab_sis">
+                    @*<div id="home" class="tab-pane fade in active">
+                        <h4 class="std_head well-sm">Setup New Class </h4>
+                        <form action="/Master/AddClassSetup" method="post" enctype="multipart/form-data" id="ClassForm">
+                            <div class="form-group">
+                                <input type="hidden" id="Class_Id" name="Class_Id" />
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Class Name :</label>
+                                <input type="text" class="form-control" id="Class_Name" name="Class_Name" maxlength="100">
+                            </div>
+
+                            <div class="col-sm-7" style="margin-top:20px;">
+                                <!-- col-sm-6 started -->
+
+                                <button type="submit" class="btn btn-success pull-right" id="BtnSaveClass">Save</button>
+                                <button type="button" class="btn btn-success pull-right" onclick="BtnClearClass()">Clear</button>
+
+                            </div>
+                        </form>
+                        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+
+                            <table class="table table-bordered" id="ClassSetUpForm" style="margin-top:10px">
+                                <thead>
+                                    <tr>
+                                        <th>S.No</th>
+                                        <th>Class Name</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @{
+                                        int i = 1;
+                                        foreach (var item in ViewBag.ClasseDetails as IEnumerable<SchoolManagement.Website.Models.Tbl_Class>)
+                                        {
+                                            <tr>
+                                                <td>@i</td>
+                                                <td>@item.Class_Name</td>
+
+                                                <td>
+                                                    <button type="button" class="btn btn-success EditClass" data-val="@item.Class_Id">Edit</button>
+                                                    <button type="button" class="btn btn-success DeleteClass" data-val="@item.Class_Id">Delete</button>
+                                                </td>
+                                            </tr>
+                                            i++;
+                                        }
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div><!-- tab-pane fade in active closed -->*@
+                    <div id="menu1" class="tab-pane fade in active">
+                        <!-- tab-pane fade started -->
+                        <h4 class="std_head well-sm">Set Section </h4>
+                        <form action="/Master/AddClassSubject" method="post" id="SectionSetupForm" enctype="multipart/form-data">
+                            
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4">Select Class <span style="color:red">*</span></label>
+                                            <div class="col-sm-6">
+
+                                                <input type="int" id="Id" name="Id" style="display:none" />
+                                                <select class="form-control" id="ClassId" name="ClassId" required>
+                                                    <option>--Select Class--</option>
+                                                    @*@foreach (var item in ViewBag.ClassList as IEnumerable<SchoolManagement.Website.Models.Tbl_Class>)
+                        {
+                            <option value="@item.Class_Id">@item.Class_Name</option>
+                        }*@
+                                                    @foreach (var item in ViewBag.Class as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                                    {
+                                                        <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                                    }
+                                                </select>
+                                                <input type="text" id="ClassId" name="ClassId" style="display:none" />
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+
+                                            <label class="control-label col-sm-4">Subject <span style="color:red">*</span></label>
+                                            <div class="col-sm-6">
+                                                <select class="form-control" id="SubjectId" name="SubjectId" required>
+                                                    <option value="0">--Select Subject--</option>
+                                                    @*@{
+                            foreach (var item in ViewBag.Section as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                            {
+                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                            }
+                        }*@
+                                                    @{
+                                                        foreach (var item in ViewBag.Section as IEnumerable<SchoolManagement.Website.Models.Tbl_SubjectsSetup>)
+                                                        {
+                                                            <option value="@item.Subject_ID">@item.Subject_Name</option>
+                                                        }
+                                                    }
+                                                </select>
+                                                <input type="text" id="SubjectId" name="SubjectId" style="display:none" />
+                                            </div>
+
+                                            @*<div class="col-sm-6">
+                    <input type="text" id="Section" class="form-control" name="Section" maxlength="100" />
+                </div>*@
+                                        </div>
+                                    </div>
+                                    <div class="form-group" id="IsElectiveView">
+                                        <label>Is Elective Subject:</label>
+                                        <input id="IsElective" type="checkbox" value="true" name="IsElective" />
+                                        <input type="hidden" value="false" name="IsElective" />
+                                        @*<input type="checkbox" id="IsElective" name="IsElective" value="True" class="form-check-input" />*@
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-7" style="margin-top:20px;">
+                                <!-- col-sm-6 started -->
+
+                                <button type="submit" class="btn btn-success pull-right" id="BtnSectionSave">Save</button>
+                                <button type="button" class="btn btn-success pull-right" onclick="BtnClearSectionSetup()">Clear</button>
+
+                            </div>
+                        </form>
+                        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+                            <table class="table table-bordered" id="SectionSetupTable" style="margin-top:10px">
+                                <thead>
+                                    <tr>
+                                        <th>S.No</th>
+                                        <th>Class</th>
+                                        <th>Subject</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int j = 1;
+                                        foreach (var item in ViewBag.SectionDetails as IEnumerable<SchoolManagement.Website.Controllers.MasterController.ClassSubject>)
+                                        {
+                                            <tr>
+                                                <td>@j</td>
+                                                <td>@item.ClassName</td>
+                                                <td>@item.SubjectName</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-success EditSection" data-val="@item.Id">Edit</button>
+                                                    <button type="button" class="btn btn-success DeleteSection" data-val="@item.Id">Delete</button>
+                                                </td>
+                                            </tr>
+                                            j++; <!-- Increment here -->
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div><!-- tab-pane fade closed -->
+                </div><!-- tab-content closed -->
+
+            </div><!-- col-sm-6 closed -->
+            <!-- col-sm-6 closed -->
+        </div><!-- col-sm-12 closed -->
+
+
+    </div><!-- col-msx-12  closed -->
+</div>
+
+
+@section scripts{
+    
+<script>
+    $("#ClassSetUpForm").DataTable();
+    $("#SectionSetupTable").DataTable();
+
+  //  $(".EditClass").on('click', function () {
+        $(document).on('click', '.EditClass', function () {
+        $("#ClassForm").attr('action', '/Master/UpdateClass');
+        var id = $(this).attr("data-val");
+
+        $("#BtnSaveClass").text("Update");
+        GetClassById(id);
+    });
+
+    function GetClassById(id) {
+        $.ajax({
+            url: "/Master/GetClassById?id=" + id,
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json;charset=UTF-8",
+            success: function (result) {
+                if (result != null) {
+                    $("#Class_Id").val(result.Class_Id);
+                    $("#Id").val(result.Id);
+                    $("#Class_Name").val(result.Class_Name);
+                }
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+
+        });
+    }
+
+    //$(".DeleteClass").on('click', function () {
+        $(document).on('click', '.DeleteClass', function () {
+        var id = $(this).attr("data-val");
+        if (confirm("Do You Want To Delete")) {
+            window.location.href = "/Master/DeleteClass?id=" + id;
+        }
+    });
+
+    function BtnClearClass() {
+
+        var cnf = confirm("Are You Sure, You Want to Delete?");
+        if (cnf == true) {
+            $("#Class_Id").val('');
+            $("#Class_Name").val('');
+            
+
+            $("#ClassForm").attr('action', '/Master/AddClassSetup');
+            $("#BtnSaveClass").text("Save");
+        }
+
+
+    }
+
+
+    $(".EditSection").on('click', function () {
+        $("#SectionSetupForm").attr('action', '/Master/UpdateClassSubject');
+        var id = $(this).attr("data-val");
+
+        $("#BtnSectionSave").text("Update");
+        GetSectionById(id);
+
+        $("#BtnSectionSave").on('click', function () {
+            ValidateForm();
+            
+        })
+
+    });
+
+    function GetSectionById(id) {
+        $.ajax({
+            url: "/Master/GetClassSubject?id=" + id,
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json;charset=UTF-8",
+            success: function (result) {
+                if (result != null) {
+                    $("#ClassId").val(result.ClassId);
+                    $("#Id").val(result.Id);
+                    $("#SubjectId").val(result.SubjectId);
+                    if (result.IsElective) {
+                        $("#IsElective").prop("checked", true); // Check the checkbox
+                    }
+                    else {
+                        $("#IsElective").prop("checked", false); // UnCheck the checkbox
+                    }
+                }
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+
+        });
+    }
+
+    function ValidateForm() {
+        var msg = "";
+        var ClassId = $("#ClassId").val();
+        var SectionId = $("#SubjectID").val();
+
+        if (ClassId == "") {
+            msg += "class id cannot be blank";
+        }
+        if (SectionId == "") {
+            msg += "SubjectID should not blank";
+        }
+    }
+
+
+    $(".DeleteSection").on('click', function () {
+        var id = $(this).attr("data-val");
+        if (confirm("Do You Want To Delete")) {
+            window.location.href = "/Master/DeleteClassSubject?id=" + id;
+        }
+    });
+
+    function BtnClearSectionSetup() {
+
+        var cnf = confirm("Are You Sure, You Want to Delete?");
+        if (cnf == true) {
+            $("#Section").val('');
+            $("#Section_Id").val('');
+            $("#Class").val('');
+
+
+            $("#SectionSetupForm").attr('action', '/Master/AddSection');
+            $("#BtnSectionSave").text("Save");
+        }
+
+
+    }
+
+</script>
+    
+    }

@@ -1,0 +1,86 @@
+﻿@model SchoolManagement.Data.Models.StafsDetails
+@{
+    ViewBag.Title = "Staff Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Staff Profile - @Model.Name</h2>
+                    <div class="clearfix"></div>
+                </div>
+
+                <div class="x_content">
+                    <div class="row">
+                        <!-- Profile Left -->
+                        <div class="col-md-4">
+                            <div class="profile_img">
+                                <img src="~/Uploads/@Model.File" class="img-thumbnail" style="width:100%; height:auto;" />
+                            </div>
+                            <h3>@Model.Name</h3>
+                            <p><b>Designation:</b> @Model.Designation</p>
+                            <p><b>Employee ID:</b> @Model.EmpId</p>
+                            <p><b>Gender:</b> @Model.Gender</p>
+                            <p><b>DOB:</b> @Model.DOB</p>
+                            <p><b>Contact:</b> @Model.Contact</p>
+                            <p><b>Email:</b> @Model.Email</p>
+                        </div>
+
+                        <!-- Profile Details Right -->
+                        <div class="col-md-8">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>UIN</th>
+                                    <td>@Model.UIN</td>
+                                </tr>
+                                <tr>
+                                    <th>Qualification</th>
+                                    <td>@Model.Qualification</td>
+                                </tr>
+                                <tr>
+                                    <th>Work Experience</th>
+                                    <td>@Model.WorkExperience</td>
+                                </tr>
+                                <tr>
+                                    <th>Nationality</th>
+                                    <td>@Model.Nationality</td>
+                                </tr>
+                                <tr>
+                                    <th>Religion</th>
+                                    <td>@Model.Religion</td>
+                                </tr>
+                                <tr>
+                                    <th>Blood Group</th>
+                                    <td>@Model.BloodGroup</td>
+                                </tr>
+                                <tr>
+                                    <th>Address</th>
+                                    <td>@Model.Address</td>
+                                </tr>
+                                <tr>
+                                    <th>Bank Details</th>
+                                    <td>
+                                        Bank: @Model.Bank_Name <br />
+                                        A/C: @Model.Account_No <br />
+                                        IFSC: @Model.IFSC_Code
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Other Details</th>
+                                    <td>@Model.OtherDetails</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="ln_solid"></div>
+                    <a href="/Staf/ViewStaff" class="btn btn-danger">Back to List</a>
+                    <a href="/Staf/AddStaf?UpdateId=@Model.StafId" class="btn btn-primary">Edit</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

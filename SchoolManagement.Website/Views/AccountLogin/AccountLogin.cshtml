@@ -1,0 +1,205 @@
+﻿
+@{
+//ViewBag.Title = "AccountLogin";
+
+    Layout = null;
+
+}
+
+
+<!DOCTYPE html>
+
+<html lang="en" class="body-full-height">
+<head>
+    <title>Carmel Teresa School</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="icon" href="~/WebsiteImages/img/fevicon.png" type="image/x-icon" />
+    <!-- END META SECTION -->
+    <!-- CSS INCLUDE -->
+    <link rel="stylesheet" type="text/css" id="theme" href="~/Content/WebsiteCss/css/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" id="theme" href="~/Content/WebsiteCss/css/theme-default.css" />
+    <!-- EOF CSS INCLUDE -->
+    <style>
+        .bg_color {
+            /*background-image: url(images/bg_back.png);*/
+            background-image: url('../../WebsiteImages/img/bg_back.png');
+            width: 100%;
+            height: 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .login_bg {
+            /*background-image: url(images/login_bg.jpg);*/
+            background-image: url('../../WebsiteImages/img/login_bg.jpg');
+            /*padding-top: 5%;*/
+        }
+
+            .login_bg h3 {
+                color: #fff;
+                font-family: 'Roboto', sans-serif;
+            }
+
+            .login_bg p {
+                color: #fff;
+                font-family: 'Roboto', sans-serif;
+            }
+
+        .login_text {
+            background-color: #fff;
+            margin: 0 auto;
+        }
+
+            .login_text p {
+                font-family: 'Roboto', sans-serif;
+                font-size: 25px;
+                font-weight: 600;
+                padding-top: 10%;
+                color: #5bc0de;
+            }
+
+        .mt_top {
+            /*margin-top: 12%;*/
+            margin-top: 9%;
+            margin-bottom: 12%;
+        }
+
+        .login_box {
+            margin: 0 12% 5% 12%;
+        }
+
+        .log_box {
+            margin: 5% 12% 0 12%;
+            padding-bottom: 11%;
+        }
+
+            .log_box label {
+                font-family: 'Roboto', sans-serif;
+                font-size: 16px;
+            }
+
+        .dumy_text {
+            margin-top: 22%;
+            margin-bottom: 15%;
+            padding-left: 15%;
+            padding-right: 15%;
+        }
+
+        .input_box {
+            height: 39px;
+            padding: 6px 14px;
+        }
+
+        .login_btn {
+            background-color: #2a3f54;
+            border-radius: 100px;
+            font-family: 'Roboto', sans-serif;
+            padding: 6px 25px 6px 24px;
+            font-weight: 500;
+            margin-top: 3%;
+            color: #fff;
+        }
+
+            .login_btn:hover {
+                background-color: #5BC0DE;
+                color: #fff;
+            }
+
+        .raise_text {
+            margin-top: 28%;
+        }
+
+        .copy_text {
+            padding-bottom: 9%;
+        }
+
+
+        @@media screen and ( min-width: 1440px ) {
+            .mt_top {
+                /*margin-top: 12% !important;*/
+                margin-top: 7% !important;
+                margin-bottom: 12% !important;
+            }
+        }
+
+
+        @@media screen and ( min-width: 360px ) {
+
+            .mt_top {
+                margin-top: 35%;
+                margin-bottom: 35%;
+            }
+        }
+    </style>
+
+</head>
+
+<body class="bg_color">
+    <section class="mt_top">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5 login_bg text-center" style="height:420px;">
+                    @*<img src="images/logo.png" alt="logo" width="20%">*@
+                    <img src="~/WebsiteImages/img/logo.png" style="margin-top:40px" alt="logo" width="20%">
+                    <h3>Welcome</h3>
+                    @*<p>LUMEN SOF</p>*@
+
+                    <p class="raise_text">"We raise by lifting others"</p>
+                    <p class="copy_text">Copyright - 2021 © www.iroots.in</p>
+                </div>
+                <div class="col-md-7 login_text">
+
+                    <div class="col-md-9 login_box">
+                        <p>Login here</p>
+                    </div>
+                    <div class="col-md-9 log_box">
+                        @*@using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            <div class="form-group">
+                                <label for="email">User Name:</label>
+                                @*<input type="email" class="form-control input_box" id="email" placeholder="Enter email" name="email">
+                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "UserName" })
+                                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <label for="pwd">Password:</label>
+                                @*<input type="password" class="form-control input_box" id="pwd" placeholder="Enter password" name="pwd">
+                                @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger", @placeholder = "Password" })
+                            </div>
+                            <button type="submit" class="btn btn-default login_btn">LOGIN</button>
+                            <button type="submit" class="btn btn-default login_btn"><a href="/Student/AdmissionPortal">PORTAL</a></button>
+                        }*@
+                        <div class="form-group">
+                            <label>UserName:</label>
+                            <input type="text" class="form-control input_box" id="uername" placeholder="Enter UserName"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="password" class="form-control input_box" placeholder="Enter Password"/>
+                        </div>
+                        <button type="button" class="btn btn-default login_btn" id="loginbtn"><a href="/AccountLogin/AccountDashboard">LOGIN</a></button>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+</body>
+
+</html>
+
+
+@*<script>
+    $("#loginbtn").on('click', function () {
+        window.location.href = "/AccountLogin/AccountDashboard";
+    });
+</script>*@

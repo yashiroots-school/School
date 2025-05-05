@@ -1,0 +1,807 @@
+﻿@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<style>
+    .table-bordered > thead > tr > th, .table-bordered > thead > tr > td {
+        border-bottom-width: 2px;
+        color: #E9837F;
+        background-color: #ffffff;
+    }
+</style>
+
+
+
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <h5 class="sis_heading">Previous <i class="glyphicon glyphicon-triangle-left"></i> Date : <span> 15 june 2015 </span> <i class="glyphicon glyphicon-triangle-right"></i> Next Day </h5>
+                    </div>
+
+                    <div class="col-md-4 col-sm-4 col-xs-12" style="margin:7px 0px;">
+                        <!-- <h4><button type="button" class="form_datetime btn btn-info pull-right" id="datetimepicker" data-date="12-02-2012" data-date-format="dd-mm-yyyy"> Select Day </button></h4>-->
+                        Select Day : <input type="text" id="DateId" value="@DateTime.Now.ToString("dd/MM/yyyy")" style="width:90px;" class=" datepicker">
+
+                    </div>
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <button class="btn btn-info pull-right"><a href="/Master/ViewTimeTable" class="button_a">View Time Table </a></button>
+                        <button class="btn btn-danger pull-right"><a href="/Master/ManageTimeTable" class="button_a">Manage Time Table</a></button>
+                    </div>
+                    <div class="col-sm-7" style="margin-top: 15px;">
+                        <div class="col-sm-6">
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-6">Select Class :</label>
+                                <div class="col-sm-6">
+
+                                    <select class="form-control" id="Class_Id" name="Class_Id" @*onclick="GetClass()"*@>
+                                        <option value="0">---Select Class---</option>
+                                        @{
+                                            foreach (var item in ViewBag.Classes as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                            {
+                                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div><!--col-md-6 closed -->
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-sm-7">Select Section :</label>
+                                <div class="col-sm-5">
+                                    <select class="form-control" id="Subject_ID" name="Subject_ID">
+                                        <option value="0">---Select Section---</option>
+                                        @{
+                                            foreach (var item1 in ViewBag.Section as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                            {
+                                                <option value="@item1.DataListItemId">@item1.DataListItemName</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div><!--col-md-6 closed -->
+                    </div><!--col-md-7 closed -->
+                </div><!-- row x_title closed-->
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-md-12 closed -->
+
+        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+            <!-- col-msx-12 started -->
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="head_color">Day</th>
+                        @{
+                            foreach (var item2 in ViewBag.Timeperiod as IEnumerable<SchoolManagement.Website.Models.Tbl_SetTime>)
+                            {
+                                <th class="head_color">@item2.Time</th>
+                            }
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @{
+                        foreach (var item3 in ViewBag.WeekDays as IEnumerable<SchoolManagement.Website.Models.Tbl_WeekDays>)
+                        {
+                            <tr>
+
+                                <td class="week_color">@item3.Week_day</td>
+                                @{
+                                    foreach (var item4 in ViewBag.Timeperiod as IEnumerable<SchoolManagement.Website.Models.Tbl_SetTime>)
+                                    {
+                                        <td data-toggle="modal" href="#1" onclick="GetTimeTable(@item3.Day_Id,@item4.Time_Id)"></td>
+                                    }
+                                }
+
+                            </tr>
+                        }
+                    }
+
+
+
+
+                </tbody>
+            </table>
+        </div><!-- col-sm-12 closed -->
+    </div><!-- 1st row closed -->
+</div>
+<div>
+    <div id="Appendata">
+
+    </div>
+
+</div>
+
+
+
+
+@section scripts{
+
+    <script src="~/Scripts/DevelopmentJS/GetAllDetails.js"></script>
+    <script src="~/Scripts/WebsiteJs/js/jquery.min.js" defer></script>
+    <script src="~/Scripts/WebsiteJs/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+
+    <script>
+
+
+
+        function GetTimeTable(Day_id, Time_id) {
+
+
+            GetAllClasses();
+            GetAllSection();
+            GetAllSubject();
+            GetAllStafff();
+            GetAllRoom();
+            GetDate();
+            CheckData(Day_id, Time_id);
+
+
+
+
+
+            //$.ajax({
+            //    url: "/Master/GetTimeTableId",
+            //    data: { Day_id: Day_id, Time_id: Time_id },
+            //    type: "GET",
+            //    contentType: "application/json;charset=UTF-8",
+            //    dataType: "json",
+            //    success: function (result) {
+            //        //alert(result);
+            //        if (result != null) {
+            //            var row =
+
+            //                "<div class='modal fade' id='1' aria-hidden='true' style='z-index:99999;'>" +
+            //                "<form action='/Master/AddTimeTable' method='post' enctype='multipart/form-data'>" +
+            //                "<div class='form-group'>" +
+            //                "<input type='hidden' id='TimeTable_Id' name='TimeTable_Id'/>" +
+            //                "</div>" +
+            //                "<div class='form-group'>" +
+            //                "<input type='hidden' id='Day_ID' name='Day_ID' value='" + result.DayId + "'/>" +
+            //                "</div>" +
+            //                "<div class='form-group'>" +
+            //                "<input type='hidden' id='Time_ID' name='Time_ID' value='" + result.TimeId + "'/>" +
+            //                "</div>"+
+            //                "<div class='modal-dialog'>" +
+            //                "<div class='modal-content'>" +
+            //                "<div class='modal-header'>" +
+            //                "<button type='button' class='close' data-dismiss='modal' aria-label='close'><span aria-hidden='true'>&times;</span></button>" +
+            //                "<h2 class='modal-title' style='color:#0068ad;font-weight:bold;text-align:center;'>Set a New Period</h2>" +
+            //                "</div>" +
+            //                "<div class='modal-body'>" +
+            //                "<div class='form-group'>" +
+            //                "<label>class :</label>" +
+            //                "<select id='Classlist' class='form-control' name='Class_Id' ></select>" +
+            //                "<input type='text' id='Class_Name' name='Class_Name' style='display:none'/>" +
+            //                "</div>" +
+            //                "<div class='form-group'>" +
+            //                "<label>Section :</label>" +
+            //                "<select id='Sectionlist' class='form-control' name='Section_Id'></select>" +
+            //                "<input type='text' id='Section_Name' name='Section_Name' style='display:none'/>" +
+            //                "</div>" +
+            //                "<div class='form-group'>" +
+            //                "<label>Subject :</label>" +
+            //                "<select class='form-control' id='subjectlist' name='Subject_ID' ></select>" +
+            //                "<input type='text' id='Subject_Name' name='Subject_Name' style='display:none'/>" +
+            //                "</div>" +
+            //                "<div class='form-group'>" +
+            //                "<label>Staff :</label>" +
+            //                "<select class='form-control' id='StaffList' name='StafId' ></select>" +
+            //                "<input type='text' id='Staff_Name' name='Staff_Name' style='display:none'/>" +
+            //                "</div>" +
+            //                "<div class='form-group'>" +
+            //                "<label>Room :</label>" +
+            //                "<select class='form-control' id='RoomList' name='Room_Id' ></select>" +
+            //                "<input type='text' id='Room_Name' name='Room_Name' style='display:none'/>" +
+            //                "</div>" +
+            //                "<label>Date :</label>" +
+            //                "<input type='text' id='Date' name='Date' class='form-control datepicker'/>" +
+            //                "</div>" +
+            //                "<div class='modal-footer'>" +
+            //                "<button type='button' class='btn btn-primary pull-right' id='btnsavetimeperiod' /*onclick='savetimetable()'*/ style='margin-top:20px'>Save</button>" +
+            //                "</div>" +
+            //                "</div>" +
+            //                "</div>" +
+            //                "</form>" +
+            //                "</div>"
+
+            //            $("#Appendata").append(row);
+
+            //        }
+            //    }
+            //});
+
+
+
+        }
+
+        function CheckData(Day_id, Time_id) {
+            
+            var classid = $("#Class_Id").val();
+            var sectionid = $("#Subject_ID").val();
+
+            var Date = $("#DateId").val();
+            var Dayid = Day_id;
+            var Timeid = Time_id;
+
+            if (classid == 0 || sectionid == 0 || Date == null || Dayid == null || Timeid == null) {
+                alert("Please Select Class, Section and Date");
+            }
+            else {
+                $.ajax({
+                    url: "/Master/CheckTimeTable",
+                    data: { classid: classid, sectionid: sectionid, Date: Date, Dayid: Dayid, Timeid: Timeid },
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json;charset=UTF-8",
+                    success: function (response) {
+                        //alert(response.TimeTable_Id);
+                        
+                        //alert(response);
+                        if (response == "Fail") {
+                            //alert("Data is not present");
+                            GetModalTable(Dayid, Timeid);
+                        }
+                        else {
+                            //alert("Data is  present");
+                            var cnf = confirm("Are You Sure, You Want to Replace?");
+                            if (cnf == true) {
+                                //alert("Replace the Data");
+
+                                $("#Appendata").empty();
+                                var row =
+
+                                    "<div class='modal ' id='1' aria-hidden='true' style='z-index:99999;'>" +
+                                    "<form action='/Master/ReplaceTimeTable' method='post' enctype='multipart/form-data'>" +
+                                    "<div class='form-group'>" +
+                                    "<input type='hidden' id='TimeTable_Id' name='TimeTable_Id' value='" + response.TimeTable_Id + "'/>" +
+                                    "</div>" +
+                                    "<div class='form-group'>" +
+                                    "<input type='hidden' id='Day_ID' name='Day_ID' value='" + response.DayId + "'/>" +
+                                    "</div>" +
+                                    "<div class='form-group'>" +
+                                    "<input type='hidden' id='Time_ID' name='Time_ID' value='" + response.TimeId + "'/>" +
+                                    "</div>" +
+                                    "<div class='modal-dialog'>" +
+                                    "<div class='modal-content'>" +
+                                    "<div class='modal-header'>" +
+                                    "<button type='button' class='close' data-dismiss='modal' aria-label='close'><span aria-hidden='true'>&times;</span></button>" +
+                                    "<h2 class='modal-title' style='color:#0068ad;font-weight:bold;text-align:center;'>Set a New Period</h2>" +
+                                    "</div>" +
+                                    "<div class='modal-body'>" +
+                                    "<div class='form-group'>" +
+                                    "<label>class :</label>" +
+                                    "<select id='ReplaceClasslist' class='form-control' name='Class_Id' ></select>" +
+                                    "<input type='text' id='Class_Name' name='Class_Name' style='display:none'/>" +
+                                    "</div>" +
+                                    "<div class='form-group'>" +
+                                    "<label>Section :</label>" +
+                                    "<select id='ReplaceSectionlist' class='form-control' name='Section_Id'></select>" +
+                                    "<input type='text' id='Section_Name' name='Section_Name' style='display:none'/>" +
+                                    "</div>" +
+                                    "<div class='form-group'>" +
+                                    "<label>Subject :</label>" +
+                                    "<select class='form-control' id='Replacesubjectlist' name='Subject_ID' ></select>" +
+                                    "<input type='text' id='Subject_Name' name='Subject_Name' style='display:none'/>" +
+                                    "</div>" +
+                                    "<div class='form-group'>" +
+                                    "<label>Staff :</label>" +
+                                    "<select class='form-control' id='ReplaceStaffList' name='StafId' ></select>" +
+                                    "<input type='text' id='Staff_Name' name='Staff_Name' style='display:none'/>" +
+                                    "</div>" +
+                                    "<div class='form-group'>" +
+                                    "<label>Room :</label>" +
+                                    "<select class='form-control' id='ReplaceRoomList' name='Room_Id' ></select>" +
+                                    "<input type='text' id='Room_Name' name='Room_Name' style='display:none'/>" +
+                                    "</div>" +
+                                    "<label>Date :</label>" +
+                                    "<input type='text' id='ReplaceDate' name='Date' class='form-control datepicker' value='" + response.Date + "'/>" +
+                                    "</div>" +
+                                    "<div class='modal-footer'>" +
+                                    "<button type='submit' class='btn btn-primary pull-right' id='btnsavetimeperiod' /*onclick='savetimetable()'*/ style='margin-top:20px'>Replace</button>" +
+                                    "</div>" +
+                                    "</div>" +
+                                    "</div>" +
+                                    "</form>" +
+                                    "</div>"
+
+                                $("#Appendata").append(row);
+                                Replaceclass(response.Class_Id);
+                                ReplaceSection(response.Section_Id);
+                                ReplaceSubject(response.Subject_ID);
+                                ReplaceStaff(response.StafId);
+                                //ReplaceRoom(response.Room_Id);
+                                $("#1").show();
+                            }
+                        }
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+                });
+            }
+
+
+        }
+
+
+
+        function GetModalTable(Dayid, Timeid) {
+            
+            $.ajax({
+                url: "/Master/GetTimeTableId",
+                data: { Day_id: Dayid, Time_id: Timeid },
+                type: "GET",
+                contentType: "application/json;charset=UTF-8",
+                dataType: "json",
+                success: function (result) {
+                    //alert(result);
+                    if (result != null) {
+                        //$("#Appendata").empty();
+                        var row =
+
+                            "<div class='modal fade' id='1' aria-hidden='true' style='z-index:99999;'>" +
+                            "<form action='/Master/AddTimeTable' method='post' enctype='multipart/form-data'>" +
+                            "<div class='form-group'>" +
+                            "<input type='hidden' id='TimeTable_Id' name='TimeTable_Id'/>" +
+                            "</div>" +
+                            "<div class='form-group'>" +
+                            "<input type='hidden' id='Day_ID' name='Day_ID' value='" + result.DayId + "'/>" +
+                            "</div>" +
+                            "<div class='form-group'>" +
+                            "<input type='hidden' id='Time_ID' name='Time_ID' value='" + result.TimeId + "'/>" +
+                            "</div>" +
+                            "<div class='modal-dialog'>" +
+                            "<div class='modal-content'>" +
+                            "<div class='modal-header'>" +
+                            "<button type='button' class='close' data-dismiss='modal' aria-label='close'><span aria-hidden='true'>&times;</span></button>" +
+                            "<h2 class='modal-title' style='color:#0068ad;font-weight:bold;text-align:center;'>Set a New Period</h2>" +
+                            "</div>" +
+                            "<div class='modal-body'>" +
+                            "<div class='form-group'>" +
+                            "<label>class :</label>" +
+                            "<select id='Classlist' class='form-control' name='Class_Id' ></select>" +
+                            "<input type='text' id='Class_Name' name='Class_Name' style='display:none'/>" +
+                            "</div>" +
+                            "<div class='form-group'>" +
+                            "<label>Section :</label>" +
+                            "<select id='Sectionlist' class='form-control' name='Section_Id'></select>" +
+                            "<input type='text' id='Section_Name' name='Section_Name' style='display:none'/>" +
+                            "</div>" +
+                            "<div class='form-group'>" +
+                            "<label>Subject :</label>" +
+                            "<select class='form-control' id='subjectlist' name='Subject_ID' ></select>" +
+                            "<input type='text' id='Subject_Name' name='Subject_Name' style='display:none'/>" +
+                            "</div>" +
+                            "<div class='form-group'>" +
+                            "<label>Staff :</label>" +
+                            "<select class='form-control' id='StaffList' name='StafId' ></select>" +
+                            "<input type='text' id='Staff_Name' name='Staff_Name' style='display:none'/>" +
+                            "</div>" +
+                            "<div class='form-group'>" +
+                            "<label>Room :</label>" +
+                            "<select class='form-control' id='RoomList' name='Room_Id' ></select>" +
+                            "<input type='text' id='Room_Name' name='Room_Name' style='display:none'/>" +
+                            "</div>" +
+                            "<label>Date :</label>" +
+                            "<input type='text' id='Date' name='Date' class='form-control datepicker'/>" +
+                            "</div>" +
+                            "<div class='modal-footer'>" +
+                            "<button type='submit' class='btn btn-primary pull-right' id='btnsavetimeperiod' onclick='savetimetable()' style='margin-top:20px'>Save</button>" +
+                            "</div>" +
+                            "</div>" +
+                            "</div>" +
+                            "</form>" +
+                            "</div>"
+
+                        $("#Appendata").append(row);
+
+
+                    }
+                }
+            });
+
+        }
+
+
+        function GetAllClasses() {
+            //alert("Working");
+            $("#Classlist").empty();
+            var id = $("#Class_Id").val();
+            
+            if (id != 0) {
+                $.ajax({
+                    url: "/Master/GetClassName",
+                    data: { id: id },
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json;charset=utf-8",
+                    success: function (result) {
+                        if (result != null) {
+                            //alert(result.Class_Name);
+                            var row = "<option value='" + result.Class_Id + "'>" + result.Class_Name + "</option>";
+                            $("#Classlist").empty();
+
+                            $("#Classlist").append(row);
+                        }
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+                });
+            }
+            else {
+                $.ajax({
+                    url: "/Master/GetAllClasses",
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json;charset=utf-8",
+                    success: function (result) {
+                        //alert(result);
+                        //var dropdown;
+                        var dropdown = '<option value="0">---Select Class---</option>';
+                        for (var i = 0; i < result.length; i++) {
+                            dropdown += '<option value="' + result[i].Class_Id + '">' + result[i].Class_Name + '</option>';
+                        }
+                        $("#Classlist").append(dropdown);
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+                });
+            }
+        }
+
+        function Replaceclass(id) {
+            //alert(id);
+            $.ajax({
+                url: "/Master/GetClassName",
+                data: { id: id },
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json;charset=utf-8",
+                success: function (result) {
+                    if (result != null) {
+                        //alert(result.Class_Name);
+                        var row = "<option value='" + result.Class_Id + "'>" + result.Class_Name + "</option>";
+                        $("#ReplaceClasslist").empty();
+
+                        $("#ReplaceClasslist").append(row);
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+
+        function GetAllSection() {
+            //alert("Working");
+            $("#Sectionlist").empty();
+
+            var id = $("#Subject_ID").val();
+            if (id != 0) {
+                $.ajax({
+                    url: "/Master/GetsectionName?id=" + id,
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json;charset=utf-8",
+                    success: function (result) {
+                        if (result != null) {
+                            //alert(result.Class_Name);
+                            var row = "<option value='" + result.Section_Id + "'>" + result.Section + "</option>";
+                            $("#Sectionlist").append(row);
+                        }
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+                });
+            }
+            else {
+                {
+                    $.ajax({
+                        url: "/Master/GetAllSection",
+                        type: "GET",
+                        dataType: "json",
+                        contentType: "application/json;charset=utf-8",
+                        success: function (result) {
+                            //alert(result);
+                            //var dropdown;
+                            var dropdown = '<option value="0">---Select Section---</option>';
+                            for (var i = 0; i < result.length; i++) {
+                                dropdown += '<option value="' + result[i].Section_Id + '">' + result[i].Section + '</option>';
+                            }
+                            $("#Sectionlist").empty();
+
+                            $("#Sectionlist").append(dropdown);
+                        },
+                        error: function (errormessage) {
+                            alert(errormessage.responseText);
+                        }
+                    });
+                }
+            }
+
+
+        }
+
+        function ReplaceSection(id) {
+            $.ajax({
+                url: "/Master/GetsectionName?id=" + id,
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json;charset=utf-8",
+                success: function (result) {
+                    if (result != null) {
+                        //alert(result.Class_Name);
+                        var row = "<option value='" + result.Section_Id + "'>" + result.Section + "</option>";
+                        $("#ReplaceSectionlist").append(row);
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+
+
+        function GetAllSubject() {
+            //alert("Working");
+
+
+            {
+
+                $.ajax({
+                    url: "/Master/GetAllSubject",
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json;charset=utf-8",
+                    success: function (result) {
+                        //alert(result);
+                        //var dropdown;
+                        var dropdown = '<option value="0">---Select Subject---</option>';
+                        for (var i = 0; i < result.length; i++) {
+                            dropdown += '<option value="' + result[i].Subject_ID + '">' + result[i].Subject_Name + '</option>';
+                        }
+                        $("#subjectlist").empty();
+
+                        $("#subjectlist").append(dropdown);
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+                });
+            }
+
+        }
+
+        function ReplaceSubject(id) {
+            $.ajax({
+                url: "/Master/GetSubjectName?id=" + id,
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json;charset=utf-8",
+                success: function (result) {
+                    if (result != null) {
+                        //alert(result.Class_Name);
+                        var row = "<option value='" + result.Subject_ID + "'>" + result.Subject_Name + "</option>";
+                        $("#Replacesubjectlist").append(row);
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+
+        function GetAllStafff() {
+            //alert("Working");
+
+            $.ajax({
+                url: "/Master/GetAllStafff",
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json;charset=utf-8",
+                success: function (result) {
+                    //alert(result);
+                    //var dropdown;
+                    var dropdown = '<option value="0">---Select Staff---</option>';
+                    for (var i = 0; i < result.length; i++) {
+                        dropdown += '<option value="' + result[i].StafId + '">' + result[i].Name + '</option>';
+                    }
+                    $("#StaffList").empty();
+
+                    $("#StaffList").append(dropdown);
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+
+
+        function ReplaceStaff(id) {
+            $.ajax({
+                url: "/Master/GetstaffName?id=" + id,
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json;charset=utf-8",
+                success: function (result) {
+                    if (result != null) {
+                        //alert(result.Class_Name);
+                        var row = "<option value='" + result.StafId + "'>" + result.Name + "</option>";
+                        $("#ReplaceStaffList").append(row);
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+
+
+        function GetAllRoom() {
+            //alert("Working");
+
+            $.ajax({
+                url: "/Master/GetAllRoom",
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json;charset=utf-8",
+                success: function (result) {
+                    //alert(result);
+                    //var dropdown;
+                    var dropdown1 = '<option value="0">---Select Room---</option>';
+                    for (var i = 0; i < result.length; i++) {
+                        dropdown1 += '<option value="' + result[i].Room_Id + '">' + result[i].Room_Name + '</option>';
+                    }
+                    $("#RoomList").empty();
+
+                    $("#RoomList").append(dropdown1);
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+
+        function ReplaceRoom(id) {
+            $.ajax({
+                url: "/Master/GetRoomName?id=" + id,
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json;charset=utf-8",
+                success: function (result) {
+                    if (result != null) {
+                        //alert(result.Class_Name);
+                        var row = "<option value='" + result.Room_Id + "'>" + result.Room_Name + "</option>";
+                        $("#ReplaceRoomList").append(row);
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+
+        function GetDate() {
+            var id = $("#DateId").val();
+
+            if (id == 0 || id == null) {
+                $("#Date").val('');
+            } else {
+                $("#Date").val(id);
+            }
+
+            //alert(id);
+
+        }
+
+
+
+        function savetimetable() {
+            //alert("working");
+            
+            var classid = $("#Classlist").val();
+            var sectionid = $("#Sectionlist").val();
+            var subjectid = $("#subjectlist").val();
+            var staffid = $("#StaffList").val();
+            var roomid = $("#RoomList").val();
+            var Date = $("#Date").val();
+            var Dayid = $("#Day_ID").val();
+            var Timeid = $("#Time_ID").val();
+
+            if (classid == null || sectionid == null || subjectid == null
+                || staffid == null || roomid == null || Date == null || Dayid == null ||
+                Timeid == null) {
+                alert("Please Fill All the Fields");
+            }
+            else {
+                if (classid != null && sectionid != null && subjectid != null
+                    && staffid != null && roomid != null && Date != null && Dayid != null &&
+                    Timeid != null) {
+
+                }
+            }
+        }
+
+
+
+    </script>
+    <script>
+        //
+        var iscode = $.cookie("iscode");
+        if (iscode == "200") {
+            $("#mymessage").html("<b>Data saved successfully !</b>");
+            $("#mymessage").css("color", "green");
+            $('#myalertbox').modal({
+                backdrop: 'static'
+            });
+            $("#myalertbox").modal("show");
+            $.cookie('iscode', null, { path: '/' })
+        }
+        $(".closemodel").on("click", function () {
+            location.reload();
+        });
+    </script>
+    <script>
+        //
+        var iscode = $.cookie("iscode");
+        if (iscode == "204") {
+            $("#mymessage").html("<b>Some Error Occured !</b>");
+            $("#mymessage").css("color", "red");
+            $('#myalertbox').modal({
+                backdrop: 'static'
+            });
+            $("#myalertbox").modal("show");
+            $.cookie('iscode', null, { path: '/' })
+        }
+        $(".closemodel").on("click", function () {
+            location.reload();
+        });
+    </script>
+    <script>
+        //
+        var iscode = $.cookie("iscode");
+        if (iscode == "201") {
+            $("#mymessage").html("<b>Data Updated Successfully !</b>");
+            $("#mymessage").css("color", "green");
+            $('#myalertbox').modal({
+                backdrop: 'static'
+            });
+            $("#myalertbox").modal("show");
+            $.cookie('iscode', null, { path: '/' })
+        }
+        $(".closemodel").on("click", function () {
+            location.reload();
+        });
+    </script>
+    <script>
+        //
+        var iscode = $.cookie("iscode");
+        if (iscode == "202") {
+            $("#mymessage").html("<b>Data Deleted Successfully !</b>");
+            $("#mymessage").css("color", "blue");
+            $('#myalertbox').modal({
+                backdrop: 'static'
+            });
+            $("#myalertbox").modal("show");
+            $.cookie('iscode', null, { path: '/' })
+        }
+        $(".closemodel").on("click", function () {
+            location.reload();
+        });
+    </script>
+}

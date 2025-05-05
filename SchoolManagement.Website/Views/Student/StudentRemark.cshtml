@@ -1,0 +1,347 @@
+﻿
+@{
+    ViewBag.Title = "StudentRemark";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@*<a href="~/Views/Student/StudentRemark.cshtml">~/Views/Student/StudentRemark.cshtml</a>*@
+<style>
+
+    /* Sticky headers */
+    .fixTableHead thead th {
+        position: sticky;
+        top: 0;
+        background-color: #f0f0f0;
+        z-index: 2;
+    }
+
+    /* Sticky second column */
+    .sticky-column {
+        position: sticky;
+        left: 0;
+        background-color: #fff; /* Change to your desired background color */
+        z-index: 1;
+    }
+
+    /* Other CSS remains unchanged */
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        /* Add a specific height to the table container */
+        height: 500px;
+    }
+
+    .table.dataTable thead .dynamic-header {
+        color: white !important;
+    }
+
+    th,
+    td {
+        padding: 8px 15px;
+        border: 2px solid #529432;
+    }
+
+    th {
+        background: #f0f0f0;
+    }
+
+    /* Add a specific height to the container for sticky scrolling */
+    .fixTableHead {
+        overflow-y: scroll;
+        height: 500px;
+    }
+
+    .tooltip-note {
+        background-color: #f5f5f5;
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+        .tooltip-note h4 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .tooltip-note p {
+            font-size: 14px;
+            margin: 0;
+            padding-left: 15px;
+        }
+
+    .important-text {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .absent-indicator {
+        display: inline-block;
+        background-color: #ff6666;
+        color: #fff;
+        font-weight: bold;
+        padding: 2px 5px;
+        border-radius: 3px;
+    }
+
+    .error-border {
+        border-color: red;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 34px !important;
+    }
+
+    .select2-container--default .select2-selection--single {
+        border: 1px solid #ccc !important;
+        border-radius: 0px !important;
+    }
+
+    tr.disabled {
+        opacity: 0.5; /* Adjust opacity to visually indicate the disabled state */
+        pointer-events: none; /* Prevent pointer events on the disabled row */
+    }
+</style>
+<script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <h2>Student Remarks</h2>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="row">
+                @*<h4 class="std_head well-sm"> Staff Information Form</h4>*@
+                <div class="tab-content tab_sis">
+                    <div class="tab-pane fade in active" id="add">
+                        <div class="row">
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label>Select Staff :</label>
+
+                                    <select class="form-control select2  " id="Staff_Id" name="Staff_Id">
+                                        <option value="0">---Select Staff---</option>
+                                        @foreach (var item in ViewBag.Staff as IEnumerable<SchoolManagement.Data.Models.StafsDetails>)
+                                        {
+                                            <option value="@item.StafId">@item.Name</option>
+                                        }
+
+                                    </select>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label>Class :</label>
+                                    <select class="form-control select2 " id="ClassID" name="ClassID">
+                                        <option value="0">---Select Class---</option>
+
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label>Section :</label>
+                                    <select class="form-control select2 " id="SectionId" name="SectionId">
+                                        <option value="0">---Select Section---</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label>Term :</label>
+                                    <select class="form-control select2 " id="TermID" name="TermID">
+                                        <option value="0">---Select Term---</option>
+                                        @foreach (var item in ViewBag.Terms as IEnumerable<SchoolManagement.Website.Models.Tbl_Term>)
+                                        {
+                                            <option value="@item.TermID">@item.TermName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            @*<div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Select Batch :</label>
+
+                                        <select class="form-control select2  " id="Batch_Id" name="Batch_Id">
+                                            <option value="0">---Select Batch---</option>
+                                            @foreach (var item in ViewBag.BatchList as IEnumerable<SchoolManagement.Data.Models.BatchListDTO>)
+                                            {
+                                                <option value="@item.Batch_Id">@item.Batch_Name</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>*@
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label>Batch :</label>
+                                    <select class="form-control select2 " id="BatchID" name="BatchID">
+                                        <option value="0">---Select Batch---</option>
+                                        @foreach (var item in ViewBag.Batch as IEnumerable<SchoolManagement.Website.Models.Tbl_Batches>)
+                                        {
+                                            <option value="@item.Batch_Id">@item.Batch_Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group col-sm-6 " style="text-align:center;top: 24px;">
+                                    <button type="button" class=" btn btn-success " id="BtnShowStudent" style="width:100%">Show</button>
+                                </div>
+                                <div class="form-group col-sm-6  " style="text-align:center;top: 24px;">
+                                    <button class="btn btn-info " style="width:100%"><a href="~/Exam/ReportCard" class="button_a">Reports</a></button>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="table-responsive fixTableHead">
+                            <table class="table table-bordered" id="TableStudent">
+                                <thead>
+                                    <tr id="HeaderRow">
+                                        <th style="color:white !important">S.No</th>
+                                        <th style="" ;">Student Id</th>
+                                        <th style="z-index:100;color:white !important">Student Name</th>
+                                        <th style="color:white !important">Remark</th>
+                                        <th style="color:white !important">Reward</th>
+                                        <th style="color:white !important">Award</th>
+                                        <th style="color:white !important">Punishment</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="TableBody"></tbody>
+                            </table>
+                            <button class="btn btn-success pull-right" id="SaveButton">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="~/Scripts/DevelopmentJS/StudentRemark.js"></script>
+}
+<script>
+
+
+    function getClassData(staffId) {
+
+        // Make an AJAX request to the controller method
+        $.ajax({
+            url: '/Student/GetStaffClassById', // Replace with the actual URL of your controller method
+            type: 'GET',
+            data: { staffId: staffId },
+            success: function (data) {
+                // Populate the class select box with the retrieved data
+                var classSelect = $('#ClassID');
+                classSelect.empty();
+                classSelect.append('<option value="0">---Select Class---</option>');
+                $.each(data, function (index, item) {
+                    classSelect.append('<option value="' + item.DataListItemId + '">' + item.DataListItemName + '</option>');
+                });
+            },
+            error: function () {
+                // Handle error if any
+            }
+        });
+    }
+
+    function getSectionData(staffId, classId) {
+        // Make an AJAX request to the controller method
+        $.ajax({
+            url: '/Student/GetClassSectionById', // Replace with the actual URL of your controller method
+            type: 'GET',
+            data: { staffId: staffId, classId: classId },
+            success: function (data) {
+                // Populate the class select box with the retrieved data
+                var classSelect = $('#SectionId');
+                classSelect.empty();
+                classSelect.append('<option value="0">---Select Section---</option>');
+                $.each(data, function (index, item) {
+                    classSelect.append('<option value="' + item.DataListItemId + '">' + item.DataListItemName + '</option>');
+                });
+            },
+            error: function () {
+                // Handle error if any
+            }
+        });
+    }
+
+
+    //Get Terms Marks
+    function getTermData() {
+        // Make an AJAX request to the controller method
+        $.ajax({
+            url: '/Exam/TermsData', // Replace with the actual URL of your controller method
+            type: 'GET',
+            success: function (data) {
+                // Populate the class select box with the retrieved data
+                var TestIdSelect = $('#TermID');
+                TestIdSelect.empty();
+                TestIdSelect.append('<option  value="0">---Select Term---</option>');
+                $.each(data, function (index, item) {
+                    TestIdSelect.append('<option value="' + item.TermID + '">' + item.TermName + '</option>');
+                });
+            },
+            error: function () {
+                // Handle error if any
+            }
+        });
+    }
+
+    //Get Terms Marks
+    function getSubjectData(classId, staffId) {
+        // Make an AJAX request to the controller method
+        $.ajax({
+            url: '/Exam/GetStaffSubjects', // Replace with the actual URL of your controller method
+            type: 'GET',
+            data: { classId: classId, staffId: staffId },
+            success: function (data) {
+                // Populate the class select box with the retrieved data
+                var TestIdSelect = $('#SubjectId');
+                TestIdSelect.empty();
+                TestIdSelect.append('<option value="0">---Select Subject---</option>');
+                $.each(data, function (index, item) {
+                    TestIdSelect.append('<option value="' + item.Subject_ID + '">' + item.Subject_Name + '</option>');
+                });
+            },
+            error: function () {
+                // Handle error if any
+            }
+        });
+    }
+    $(document).ready(function () {
+
+        $('.select2').select2();
+
+        $('#Staff_Id').change(function () {
+            var selectedOptionId = $(this).val();
+            getClassData(selectedOptionId); // Call your function and pass the selected option ID as a parameter
+        });
+
+        $('#ClassID').change(function () {
+            var selectedOptionId = $(this).val();
+            var selectedStaffId = $('#Staff_Id').val();
+            getSectionData(selectedStaffId, selectedOptionId); // Call your function and pass the selected option ID as a parameter
+            // getSubjectData(selectedOptionId, selectedOptionId)
+        });
+
+        $('#SectionId').change(function () {
+            var selectedOptionId = $(this).val();
+            getTermData(); // Call your function and pass the selected option ID as a parameter
+        });
+
+    });
+</script>
+<script src="~/Scripts/DevelopmentJS/StudentRemark.js"></script>

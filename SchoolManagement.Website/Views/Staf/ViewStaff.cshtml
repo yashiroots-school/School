@@ -1,0 +1,106 @@
+﻿
+@{
+    ViewBag.Title = "ViewStaff";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@*<link href="~/WebsiteCss/Select2/select2.min.css" rel="stylesheet" />*@
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6">
+                            <h4>  All Staff List  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6">
+                            <button class="btn btn-info pull-right"><a href="/Staf/AddStaf" class="button_a">Add New</a></button>
+                            <button class="btn btn-danger pull-right"><a href="/Staf/ManageStaff" class="button_a">Manage</a></button>
+                        </div>
+
+                        <div class="col-sm-7" style="margin-top: 15px;">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label col-sm-4">Filter by :</label>
+                                    <div class="col-sm-7">
+                                        <select id="AllEmpId" class="form-control">
+                                            @foreach (var item in @ViewBag.allEmpId)
+                                            {
+                                                <option value="@item.EmpId">@item.EmpId</option>
+
+                                            }
+                                        </select>
+                                        @*@Html.DropDownList("EmpId", ViewBag.EmpId as SelectList, "Select Employee Id", new { @class = "form-control" })*@
+                                        @*@Html.DropDownList("EmpId",  new SelectList(ViewBag.EmpId), "Select Employee Id", new { @class = "form-control" })*@
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <input type="button" value="Filter Staff" id="FilterStaff" class=" pull-right btn btn-success" />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-5" style="margin-top: 15px;">
+                            <h5>Total No Of Teachers : @ViewBag.totalEmp</h5>
+                        </div>
+                    </div><!-- col-sm-12 closed -->
+                </div><!--row x_title closed -->
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+
+        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+            <!-- col-msx-12 started -->
+            <table class="table table-bordered" id="Stafftbl">
+                <thead>
+                    <tr>
+                        <th style="color: white;">S.No.</th>
+                        <th style="color: white;">Employee ID</th>
+                        <th style="color: white;">Name</th>
+                        <th style="color: white;">Qualification</th>
+                        <th style="color: white;">Gender</th>
+                        <th style="color: white;">Date of Employment</th>
+                        <th style="color: white;">Photo</th>
+                    </tr>
+                </thead>
+                @*<tbody id="stafftblbody"></tbody>*@
+                <tbody class="tbody">
+                    @{
+                        int j = 1;
+                        foreach (var item in ViewBag.allStaff as IEnumerable<SchoolManagement.Data.Models.StafsDetails>)
+                        {
+                            <tr>
+                                <td>@j</td>
+                                <td><a href="/Staf/FullStaffView?Type=Staff&id=@item.StafId">@item.EmpId</a></td>
+                                <td><a href="/Staf/FullStaffView?Type=Staff&id=@item.StafId">@item.Name</a></td>
+                                <td>@item.Qualification</td>
+                                <td>@item.Gender</td>
+                                <td>@item.EmpDate</td>
+                                <td style="width:20%">
+                                    @{
+                                        if (!string.IsNullOrWhiteSpace(@item.File))
+                                        {
+
+                                            <img alt="" src="~/WebsiteImages/MemberImage/@item.File" class="img-thumbnail" style="max-width: 32%" />
+                                        }
+                                        else
+                                        {
+                                            <img src="~/WebsiteImages/images/user.png" alt="" class="img-thumbnail" style="max-width: 30%" />
+
+                                        }
+                                    }
+
+                                </td>
+                            </tr>
+                            j++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div><!-- col-msx-12  closed -->
+    </div><!-- 1st row closed -->
+</div>  <!-- /page content -->
+
+@section Scripts{
+    @*<script src="~/css/Select2/select2.min.js"></script>*@
+    <script src="~/Scripts/DevelopmentJS/ViewStaff.js"></script>
+}

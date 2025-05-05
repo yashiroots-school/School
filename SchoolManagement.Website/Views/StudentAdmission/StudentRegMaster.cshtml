@@ -1,0 +1,164 @@
+﻿
+@{
+    ViewBag.Title = "StudentRegMaster";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4>Configure Student Regstration  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6" style="display:none;">
+                            <button class="btn btn-info pull-right"><a href="sis_manage_student.html" class="button_a">Manage</a></button>
+                            <button class="btn btn-danger pull-right"><a href="sis_add_new_student.html" class="button_a">Add New</a></button>
+                        </div>
+                    </div><!--row x_title closed -->
+
+                </div><!-- dashboard_graph closed-->
+            </div><!--col-msx-12 closed-->
+        </div>
+        <div class="col-sm-12">
+            <!-- col-sm-12 started -->
+            <h4 class="std_head well-sm">Configure Student Regstration</h4>
+            <div class="col-sm-6" style="border-right: 1px solid #eee;">
+                <div class="form-group">
+                    <label>Select Class :</label>
+                    @*<input type="text" id="FeeValue" class="form-control">
+                    @Html.DropDownList("Class", new SelectList(ViewBag.Classes, "DataListItemName", "DataListItemName"), "select", new { @id = "Class", @class = "form-control" })*@
+                    <select class="form-control" id="Class_id">
+                        <option>---Select Class---</option>
+                        @foreach(var item in ViewBag.Classes as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                        {
+                            <option value="@item.DataListItemId">@item.DataListItemName</option>
+                        }
+                    </select>
+                    <input type="text" id="Class_name" style="display:none" class="form-control"/>
+                </div>
+                @*<div class="form-group">
+                    <label>Select Batch :</label>
+                    <input type="text" id="FeeValue" class="form-control">
+                    @Html.DropDownList("Batches", new SelectList(ViewBag.BatcheNames, "DataListItemName", "DataListItemName"), "select", new { @id = "Batches", @class = "form-control" })
+                </div>*@
+            </div><!-- col-sm-6 closed -->
+            <div class="col-sm-6">
+
+                <div class="form-group">
+                    <label>Reg Number Prefix :</label>
+                    <input type="text" id="RegNoPrefix" class="form-control">
+                    @*@Html.DropDownList("Account", @ViewBag.Batches as SelectList, "Select", new { @class = "form-control" })*@
+
+                </div>
+                <div class="form-group">
+                    <label>Reg Number length :</label>
+                    <input type="number" id="RegNolength" class="form-control">
+                    @*@Html.DropDownList("Account", @ViewBag.Batches as SelectList, "Select", new { @class = "form-control" })*@
+
+                </div>
+                <div class="form-group">
+                    <label>Reg Number Start With :</label>
+                    <input type="number" id="RegNoStartWith" class="form-control">
+                    @*@Html.DropDownList("Account", @ViewBag.Batches as SelectList, "Select", new { @class = "form-control" })*@
+
+                </div>
+                <div class="form-group">
+                    <span id="FrequencyMessage" style="color:red"></span>
+                </div>
+            </div><!-- col-sm-6 closed -->
+        </div>
+
+        <div class="col-sm-12" style="border-bottom: 2px solid #b4b4b4;">
+            <button id="btnSubmit" class="btn btn-success pull-right">Save</button>
+        </div>
+
+        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+            <!-- col-msx-12 started -->
+            <table class="table table-bordered" id="TblFeePlanes" style="margin-top:5px;">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        @*<th>Batch</th>*@
+                        <th>Class</th>
+                        <th>Reg Prefix</th>
+                        <th>Reg Length</th>
+                        <th>Reg Number StartWith</th>
+                        @*<th>Action</th>*@
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int i = 1;}
+                        @foreach (var item in ViewBag.StudentReg as IEnumerable<SchoolManagement.Website.ViewModels.StudentRegMasterModel>)
+                        {
+                            <tr>
+                                <td>@i</td>
+                                @*<td>@item.BatchName</td>*@
+                                <td>@item.Class</td>
+                                <td>@item.RegPrefix</td>
+                                <td>@item.RegLength</td>
+                                <td>@item.RegNumberStartWith</td>
+                            </tr>
+                            i++;
+                        }
+                </tbody>
+            </table>
+        </div><!-- col-msx-12  closed -->
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $("#btnSubmit").on("click", function () {
+            validation();
+            
+            var StudentRegMasterModel = {};
+
+            //StudentRegMasterModel.BatchName = $("#Batches option:selected").val();
+            StudentRegMasterModel.Class = $("#Class_id").val();
+            StudentRegMasterModel.RegPrefix = $("#RegNoPrefix").val();
+            StudentRegMasterModel.RegLength = $("#RegNolength").val();
+            StudentRegMasterModel.RegNumberStartWith = $("#RegNoStartWith").val();
+
+            if (StudentRegMasterModel.BatchName == '') {
+                alert("Please Select Any Batch Name");
+                return false;
+            }
+            $.ajax({
+                url: '/StudentAdmission/ConfigureStudentRegMaster',
+                dataType: "json",
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(StudentRegMasterModel),
+                async: true,
+                processData: false,
+                cache: false,
+                success: function (data) {
+                    window.location.reload();
+                },
+                error: function (xhr) {
+                }
+            });
+        });
+        function validation() {
+            if ($("#Batches").val() == "" || $("#Batches").text() == "") {
+                $("#Batches").css("border", "1px solid red");
+                return;
+            } else {
+                $("#Batches").css("border", "1px solid #b4b4b4");
+            }
+            if ($("#Class").val() == "" || $("#Class").text() == "") {
+                $("#Class").css("border", "1px solid red");
+                return;
+            } else {
+                $("#Class").css("border", "1px solid #b4b4b4");
+            }
+        }
+    </script>
+}

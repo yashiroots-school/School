@@ -1,0 +1,22 @@
+﻿<div class="row">
+    <!-- header started -->
+    <div class="col-md-12 col-sm-12 col-xs-12 bord-btm-nav">
+        <div class="col-md-3 col-sm-3 col-xs-12 pull-left">
+            @*<a href="index.html"><img src="~/WebsiteImages/images/logo.png" alt="images" class="logo_mar"></a>*@
+
+            @{
+                var data = Session["SchoolImage"];
+                if (data != null)
+                {
+                    <a href="/Dashboard/Dashboard"><img src="~/WebsiteImages/SchoolImage/@Session["SchoolImage"]" class="logo_mar" style="height:41px;"> <span class="clr-white">@Session["SchoolName"]</span></a>
+                }
+                else
+                {
+                    <a href="/Dashboard/Dashboard"><img src="~/WebsiteImages/img/No_image_available.png" class="logo_mar" style="height:41px;"> <span class="clr-white">Nirmala Convent S.S. School</span></a>
+                }
+            }
+
+
+        </div>
+    </div>
+</div>

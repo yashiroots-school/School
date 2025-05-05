@@ -1,0 +1,246 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4>  Batch Setup  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <!--<div class="col-sm-6">
+                        <button class="btn btn-info pull-right"><a href="sis_add_new_teacher.html" class="button_a">Add New</a></button>
+                         <button class="btn btn-danger pull-right"><a href="sis_manage_teacher.html" class="button_a">Manage</a></button>
+                          </div>-->
+
+
+                    </div><!-- col-sm-12 closed -->
+                </div><!--row x_title closed -->
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+        <div class="col-sm-12" style="margin-top: 15px;">
+            <h4 class="std_head well-sm">Batch Setup </h4>
+            <form action="/Master/AddBatches" method="post" id="BatchForm" enctype="multipart/form-data">
+
+                <div class="col-sm-3"></div>
+                <div class="col-sm-7">
+                    <div class="form-group">
+                        <input type="hidden" id="Batch_Id" name="Batch_Id" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Batches :</label>
+
+                        <input type="text" id="Batch_Name" name="Batch_Name" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Is Active For Admission? </label>
+                        <select id="IsActiveForAdmission" name="IsActiveForAdmission" class="form-control">
+                            <option value="false">Inactive</option>
+                            <option value="true">Active</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Is Active For Payments? </label>
+                        <select id="IsActiveForPayments" name="IsActiveForPayments" class="form-control">
+                            <option value="false">Inactive</option>
+                            <option value="true">Active</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Registration </label>
+                        <select id="IsActiveForRegistrationFee" name="IsActiveForRegistrationFee" class="form-control">
+                            <option value="false">Inactive</option>
+                            <option value="true">Active</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-8" style="margin-top:20px;">
+                        <button type="button" class="btn btn-success pull-right" id="BtnClear" onclick="ClearData()">Clear</button>
+                        <button type="submit" class="btn btn-success pull-right" id="BtnSaveBatch">Save</button>
+                    </div>
+                </div>
+
+            </form>
+
+            <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+                <!-- col-msx-12 started -->
+                <table class="table table-bordered" id="TblBatches" style="margin-top:5px;">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Batch Name</th>
+                            <th>Is Active For Admission</th>
+                            <th>Is Active For Payments</th>
+                            <th>Is Active For Registration</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            @{
+                                int i = 1;
+                                foreach(var item in ViewBag.BatchList as IEnumerable<SchoolManagement.Website.Models.Tbl_Batches>)
+                                {
+                        <tr>
+                            <td>@i</td>
+                            <td>@item.Batch_Name</td>
+                            <td>
+                                @(item.IsActiveForAdmission ? "Active" : "Inactive")
+                            </td>
+                            <td>
+                                @(item.IsActiveForPayments ? "Active" : "Inactive")
+                            </td>
+                            <td>
+                                @(item.IsActiveForRegistrationFee ? "Active" : "Inactive")
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-info BatchEdit" data-val="@item.Batch_Id">Edit</button>
+                                <button type="button" class="btn btn-success BatchDelete" data-val="@item.Batch_Id">Delete</button>
+                            </td>
+                        </tr>
+                                    i++;
+                                }
+
+                            }
+                        </tbody>
+                </table>
+            </div>
+
+        </div>
+
+
+    </div><!-- 1st row closed -->
+
+
+
+
+
+</div>
+@section Scripts{
+
+    <script>
+        $("#TblBatches").DataTable();
+
+        $(document).on('click', '.BatchEdit', function () {
+            $("#BatchForm").attr('action', "/Master/UpdateBatches");
+            var id = $(this).attr("data-val");
+
+            $("#BtnSaveBatch").text("Update");
+            GetBatchById(id);
+
+        });
+        
+
+        function GetBatchById(id) {
+            $.ajax({
+                url: "/Master/GetBatchById?id=" + id,
+                type: "GET",
+                datatype: "json",
+                contentType: "application/json;charset=UTF-8",
+                success: function (result) {
+                    if (result != null) {
+                        $("#Batch_Id").val(result.Batch_Id);
+                        $("#Batch_Name").val(result.Batch_Name);
+                        $('#IsActiveForAdmission').val(result.IsActiveForAdmission ? 'true' : 'false');
+                        $('#IsActiveForPayments').val(result.IsActiveForPayments ? 'true' : 'false');
+                        $('#IsActiveForRegistrationFee').val(result.IsActiveForRegistrationFee ? 'true' : 'false');
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+
+
+        $(".BatchDelete").on("click", function () {
+            var id = $(this).attr("data-val");
+            if (confirm("Do You Want to Delete?")) {
+                window.location.href = "DeleteBatches?id=" + id;
+            }
+        });
+
+        function ClearData() {
+            var cnf = confirm('Are you sure, you want to clear all the data?');
+
+            if (cnf == true) {
+                $("#Batch_Id").vals('');
+                $("#Batch_Name").val('');
+
+                $("#BatchForm").attr('/Master/AddBatches');
+                $("#BtnSaveBatch").text("save");
+            }
+
+        }
+
+        //function InitDatatable() {
+        //    $("#TblSubjectsetup").DataTable().destroy();
+        //    
+
+        //    datatable = $("#TblSubjectsetup")
+        //        .DataTable({
+        //            "sAjaxSource": "/Master/GetAllSubjectDetails",
+        //            "retrieve": true,
+        //            "bServerSide": true,
+        //            "bProcessing": true,
+        //            "bSearchable": false,
+        //            "order": [[1, 'asc']],
+        //            "autoWidth": false,
+        //            "columns":
+        //                [
+        //                    {
+        //                        "data": "Teacher",
+        //                        "autoWidth": false,
+        //                        "width": "200px",
+        //                        "searchable": true
+        //                    },
+        //                    {
+        //                        "data": "Class",
+        //                        "autoWidth": false,
+        //                        "width": "200px",
+        //                        "searchable": true
+        //                    },
+        //                    {
+        //                        "data": "Subject",
+        //                        "autoWidth": false,
+        //                        "width": "200px",
+        //                        "searchable": true
+        //                    },
+        //                    {
+        //                        "data": "Id",
+        //                        "searchable": true,
+        //                        "render": function (data, type, row) {
+        //                            if (data != null && data != '') {
+        //                                return '<button type="button"><i style = "font-size:12px; color:#39b2e1; cursor:pointer;"data-val="' + data + '" class="fa fa-edit SubjectEdit"onclick=updatesubject(' + data + ')></i></button><button><i style="font-size:12px; color:#29b2e1; cursor:pointer;"data-val="' + data + '"class = "fa fa-trash-o SubjectDelete" onclick = DeleteSubject(' + data + ')></i></button>';
+        //                            }
+        //                        }
+        //                    }
+        //                ]
+        //        });
+
+        //}
+
+        //function updatesubject(id) {
+        //    $("#Subsetupform").attr('action', "/Master/UpdateSubject");
+
+        //    $("#Btnsavesubject").text("Update");
+        //    GetSubjectById(id);
+        //}
+        //function DeleteSubject(id) {
+        //    if (confirm("Do You Want to delete?")) {
+        //        window.location.href = "/Master/DeleteSubject?id=" + id;
+        //    }
+        //}
+      
+    </script>
+  
+   
+
+}

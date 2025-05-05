@@ -1,0 +1,178 @@
+﻿
+@{
+    ViewBag.Title = "CoScholastic";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+
+    .select2-container .select2-selection--single {
+        height: 34px !important;
+    }
+
+    .select2-container--default .select2-selection--single {
+        border: 1px solid #ccc !important;
+        border-radius: 0px !important;
+    }
+</style>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <h2>Manage CoScholastic</h2>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="row">
+                @*<h4 class="std_head well-sm"> Staff Information Form</h4>*@
+                <div class="tab-content tab_sis">
+                    <div class="tab-pane fade in active" id="add">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <form method="post" id="CoScholasticForm" action="/Exam/CreateCoScholastic">
+                                    <h4 class="std_head well-sm">CoScholastic Details</h4>
+                                    <input type="hidden" id="BoardID" name="BoardID" />
+                                    <input type="hidden" id="Id" name="Id" />
+                                    <div class="col-sm-8">
+                                        <div class="form-group">
+                                            <label>CoScholastic Title:</label>
+                                            <input type="text" name="Title" id="Title" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group" style="text-align:right">
+                                            <button type="submit" id="BtnSubmitCoScholastic" style="margin-top:5%" class="btn btn-success">Create New</button>
+
+
+                                        </div>
+                                    </div>
+                                </form>
+
+
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <form method="post" id="CoScholasticClassForm" action="/Exam/CreateCoScholasticClass">
+                                    <div class="col-sm-4">
+                                        <input type="hidden" id="BoardID" name="BoardID" />
+                                        <input type="hidden" id="Id" class="CoScholasticId" name="Id" />
+                                        <div class="form-group">
+                                            <label>Select CoScholastic Area :</label>
+
+                                            <select class="form-control select2" id="CoscholasticID" name="CoscholasticID">
+                                                <option value="0">---Select Coscholastic---</option>
+                                                @foreach (var item in ViewBag.CoScholasticList as IEnumerable<SchoolManagement.Website.Models.Tbl_CoScholastic>)
+                                                {
+                                                    <option value="@item.Id">@item.Title</option>
+                                                }
+                                            </select>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>Select Class :</label>
+
+                                            <select class="form-control select2" id="ClassID" name="ClassID">
+                                                <option value="0">---Select Class---</option>
+                                                @foreach (var item in ViewBag.ClassList as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                                {
+                                                    <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                                }
+                                            </select>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group" style="text-align:right">
+                                            <button type="submit" style="margin-top:5%" id="BtnSubmitCoScholasticClass" class="btn btn-success">Submit</button>
+                                            <button type="button" style="margin-top:5%" id="CancleBtn" class="btn btn-secondary">Cancel</button>
+
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <hr />
+                            <div class="col-sm-12" style="margin-top:20px;">
+                                <div>
+                                    <table class="table table-bordered display" id="CoScholasticTable" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>S.No</th>
+                                                <th>CoScholastic Title</th>
+                                                <th>Class</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="TableBody">
+                                            @{
+                                                var i = 1;
+                                                foreach (var item in ViewBag.CoScholasticListTable as dynamic)
+                                                {
+                                                    <tr>
+                                                        <td>@i</td>
+                                                        <td>@item.Coscholastic</td>
+                                                        <td>@item.Class</td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-info BtnCoScholasticEdit" data-val="@item.Id">Edit</button>
+                                                            <button type="button" class="btn btn-danger BtnCoScholasticDelete" data-val="@item.Id">Delete</button>
+                                                        </td>
+                                                    </tr>
+                                                    i++;
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+    $(document).ready(function () {
+
+        $('.select2').select2();
+        $("#BtnSubmitCoScholastic").on('click', function (event) {
+            var titleName = $("#Title").val().trim();
+
+            if (titleName === '') {
+                alert("CoScholastic Title cannot be empty.");
+                event.preventDefault(); // Prevent the form from submitting
+            }
+        });
+
+        $("#BtnSubmitCoScholasticClass").on('click', function (event) {
+            var fields = [
+                { id: "#CoscholasticID", name: "Coscholastic" },
+                { id: "#ClassID", name: "Class" }
+            ];
+            for (var i = 0; i < fields.length; i++) {
+                var fieldValue = $(fields[i].id).val();
+                if (fieldValue === '0') {
+                    missingField = fields[i].name;
+                    break;
+                }
+            }
+
+            if (missingField !== "") {
+                alert("Please select a " + missingField + ".");
+                event.preventDefault(); // Prevent the form from submitting
+            }
+        });
+    });
+</script>
+
+@section scripts{
+    <script src="~/Scripts/DevelopmentJS/CoScholastic.js"></script>
+}

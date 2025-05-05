@@ -1,0 +1,100 @@
+﻿@{
+    ViewBag.Title = "ViewPeriodTimings";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="dashboard_graph">
+                <div class="row x_title">
+
+                    <div class="col-sm-7" style="margin-top: 15px;">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-sm-6">Select Class :</label>
+                                <div class="col-sm-6">
+                                    @Html.DropDownList("Class", new SelectList(ViewBag.Class, "DataListItemName", "DataListItemName"), "select", new { @id = "Class", @class = "form-control" })
+
+                                </div>
+                            </div>
+                        </div><!--col-md-6 closed -->
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-sm-7">Select Section :</label>
+                                <div class="col-sm-5">
+                                 @Html.DropDownList("Section", new SelectList(ViewBag.Section, "DataListItemName", "DataListItemName"), "select", new { @id = "Section", @class = "form-control" })
+                                </div>
+                            </div>
+                        </div><!--col-md-6 closed -->
+                        <div class="col-sm-9">
+                            <input type="button" value="Filter" id="Filter" class=" pull-right btn btn-success" />
+                        </div>
+                    </div><!--col-md-7 closed -->
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <button class="btn btn-info pull-left"><a href="/TimeTable/AddPeriodTimings" class="button_a">Set Time Table </a></button>
+                        <button class="btn btn-danger pull-left"><a href="/TimeTable/ManagePeriodTimings" class="button_a">Manage Time Table</a></button>
+                    </div>
+                </div><!--row x_title closed -->
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-md-12 closed -->
+        <div id="prientbox">
+            <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                <!-- col-msx-12 started -->
+                <table class="table table-bordered" id="tblalltimeschedule">
+                    <thead>
+                        <tr>
+                            @{
+                                foreach (var item in ViewBag.GetTime as IEnumerable<SchoolManagement.Data.Models.TimeSettings>)
+                                {
+                                    <th class="head_color">Day</th>
+                                    <th class="head_color">@item.Time1-@item.Time11</th>
+                                    <th class="head_color">@item.Time2-@item.Time22</th>
+                                    <th class="head_color">@item.Time3-@item.Time33</th>
+                                    <th class="head_color">@item.Time4-@item.Time44</th>
+                                    <th class="head_color">@item.Time5-@item.Time55</th>
+                                    <th class="head_color">@item.Time6-@item.Time66</th>
+                                    <th class="head_color">@item.Time7-@item.Time77</th>
+                                    <th class="head_color">@item.Time8-@item.Time88</th>
+                                    <th class="head_color">@item.Time9-@item.Time99</th>
+                                }
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            @{
+                                foreach (var item in ViewBag.AllSubject as IEnumerable<SchoolManagement.Data.Models.PeriodSchedule>)
+                                {
+                            <td class="week_color">@item.Day</td>
+                                    <td class="subject_bgclr_emty">@item.Period1</td>
+                                    <td class="subject_bgclr_cntn">@item.Period2</td>
+                                    <td class="subject_bgclr_over">@item.Period3</td>
+                                    <td class="subject_bgclr_emty">@item.Period4</td>
+                                    <td class="subject_bgclr_over">@item.Period5</td>
+                                    <td class="subject_bgclr_cntn">@item.Period6</td>
+                                    <td class="subject_bgclr_emty">@item.Period7</td>
+                                    <td class="subject_bgclr_cntn">@item.Period8</td>
+                                    <td class="subject_bgclr_over">@item.Period9</td>
+                                }
+                            }
+                        </tr>
+                      
+                    </tbody>
+                </table>
+                <button class="btn btn-warning pull-right" id="btnPrint">Print</button>
+            </div><!-- col-sm-12 closed -->
+        </div>
+    </div><!-- 1st row closed -->
+</div>  <!-- /page content -->
+@section scripts{
+    <script src="~/Scripts/printThis.js"></script>   
+    <script>
+        $('#btnPrint').on("click", function () {
+            $('#prientbox').printThis();
+        });
+
+    </script>
+
+}

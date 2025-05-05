@@ -1,0 +1,466 @@
+﻿@model IEnumerable<SchoolManagement.Data.Models.FeeHeadings>
+@{
+    ViewBag.Title = "Fee Headings";
+}
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4>Create Fee Heading  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6" style="display:none">
+                            <button class="btn btn-info pull-right"><a href="sis_manage_student.html" class="button_a">Manage</a></button>
+                            <button class="btn btn-danger pull-right"><a href="sis_add_new_student.html" class="button_a">Add New</a></button>
+                        </div>
+                    </div><!--row x_title closed -->
+
+                </div><!-- dashboard_graph closed-->
+            </div><!--col-msx-12 closed-->
+        </div>
+        <div class="col-sm-12">
+            <!-- col-sm-12 started -->
+            <h4 class="std_head well-sm">  Add New Fee Heading</h4>
+            <div class="col-sm-6" style="border-right: 1px solid #eee;">
+                <!-- col-sm-6 started -->
+
+                <div class="form-group">
+                    <label>Fee Heading Name :</label>
+                    <input type="text" id="FeeHeadingName" class="form-control">
+                </div>
+            <div class="form-group">
+                <label>Select</label>
+                <select class="form-control" id="Status">
+                    <option value="0">Active</option>
+                    <option value="1">InActive</option>
+                </select>
+
+            </div>
+                @*<div class="form-group">
+                        <label>Group Name :</label>
+
+                        @Html.DropDownList("FeeHeadingGroup", @ViewBag.FeeHeadingGroups as SelectList, "Select", new { @class = "form-control" })
+                    </div>*@
+
+
+            </div><!-- col-sm-6 closed -->
+            <div class="col-sm-6">
+                @*<div class="form-group">
+                        <label>Account Name :</label>
+
+                        @Html.DropDownList("Account", @ViewBag.Accounts as SelectList, "Select", new { @class = "form-control" })
+
+                    </div>*@
+                <div class="form-group">
+                    <label>Frequency :</label>
+                    @*@Html.DropDownList("Frequencys",
+                         @ViewBag.Frequencys as SelectList,
+                        new { @class="form-control"}
+                        )*@
+                    @Html.DropDownList("Frequency", @ViewBag.Frequencys as SelectList, "Select", new { @class = "form-control" })
+                    <label id="FrequencyMsg" class="red"></label>
+                </div>
+                <div class="form-group">
+                    <span id="FrequencyMessage" style="color:red"></span>
+                </div>
+            </div><!-- col-sm-6 closed -->
+
+
+        </div>
+        <div class="col-sm-12">
+            <div class="row x_title">
+                <!--row x_title started -->
+                <div class="col-sm-12">
+                    <!-- col-sm-12 started -->
+                    <div class="col-sm-6">
+                        <h5><u style="color:red;">Select Months in which this fees becomes due towards student </u></h5>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="Jan" name="Jan" value="Jan"> Jan
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="May" name="May" value="May"> May
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="Sep" name="Sep" value="Sep"> Sep
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="Feb" name="Feb" value="Feb"> Feb
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="Jun" name="Jun" value="Jun"> Jun
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="Oct" name="Oct" value="Oct"> Oct
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="Mar" name="Mar" value="Mar"> Mar
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="Jul" name="Jul" value="Jul"> Jul
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="Nov" name="Nov" value="Nov"> Nov
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="Apr" name="Apr" value="Apr"> Apr
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="Aug" name="Aug" value="Aug"> Aug
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-check">
+                        <label class="form-check-label" for="check2">
+                            <input type="checkbox" class="form-check-input" id="Dec" name="Dec" value="Dec"> Dec
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12" style="border-bottom: 2px solid #b4b4b4;">
+            @{
+                var data = ViewBag.Permission;
+                if (data != null)
+                {
+                    if (data == "true")
+                    {
+                        <button id="btnSubmit" class="btn btn-success pull-right">Save</button>
+                    }
+                }
+            }
+        </div>
+
+        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+            <!-- col-msx-12 started -->
+            <table class="table table-bordered" style="margin-top:5px;" id="TblFeeHeadingList">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Fee Heading</th>
+                        @*<th>Group</th>
+                            <th>Account</th>*@
+                        <th>Frequency</th>
+                        <th>Jan</th>
+                        <th>Feb</th>
+                        <th>Mar</th>
+                        <th>Apr</th>
+                        <th>May</th>
+                        <th>Jun</th>
+                        <th>Jul</th>
+                        <th>Aug</th>
+                        <th>Sep</th>
+                        <th>Oct</th>
+                        <th>Sep</th>
+                        <th>Dec</th>
+                        @*<th>Action</th>*@
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int i = 1;}
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@i</td>
+                            <td>@item.FeeName</td>
+                            @*<td>@item.FeeHeadGroupName</td>
+                                <td>@item.AccountName</td>*@
+                            <td>@item.FeeFrequencyName</td>
+                            <td>@Html.CheckBox("Jan", @item.Jan == 1 ? true : false)</td>
+                            <td>@Html.CheckBox("Jan", @item.Feb == 1 ? true : false)</td>
+                            <td>@Html.CheckBox("Jan", @item.Mar == 1 ? true : false)</td>
+                            <td>@Html.CheckBox("Jan", @item.Apr == 1 ? true : false)</td>
+                            <td>@Html.CheckBox("Jan", @item.May == 1 ? true : false)</td>
+                            <td>@Html.CheckBox("Jan", @item.Jun == 1 ? true : false)</td>
+                            <td>@Html.CheckBox("Jan", @item.Jul == 1 ? true : false)</td>
+                            <td>@Html.CheckBox("Jan", @item.Aug == 1 ? true : false)</td>
+                            <td>@Html.CheckBox("Jan", @item.Sep == 1 ? true : false)</td>
+                            <td>@Html.CheckBox("Jan", @item.Oct == 1 ? true : false)</td>
+                            <td>@Html.CheckBox("Jan", @item.Nov == 1 ? true : false)</td>
+                            <td>@Html.CheckBox("Jan", @item.Dec == 1 ? true : false)</td>
+                            @*<td><a href="#" class="btn btn-success btn-sm" role="button">Edit</a> <button id="@item.FeeId" class="btn btn-danger btn-sm" role="button">Delete</button></td>*@
+                        </tr>
+                        i++;
+                    }
+
+                </tbody>
+            </table>
+        </div><!-- col-msx-12  closed -->
+    </div>
+</div>
+
+@section scripts{
+
+    <script>
+        $('input:checkbox').attr('disabled', 'disabled');
+        $('input:checkbox').attr('readonly', 'readonly');
+        $("#Frequency").on("change", function () {
+
+            ClearAllCheckbox();
+            $('input:checkbox').prop('readonly', true);
+            var Frequency = $("#Frequency option:selected").text();
+
+            if (Frequency == "" || Frequency == "Select") {
+
+                return false;
+            }
+            BindCheckbox(Frequency);
+
+            $.ajax({
+                url: '/Fee/GetFrequencyMessage?name=' + Frequency,
+                dataType: "json",
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                //data: {'id': Frequency},
+                async: true,
+                processData: false,
+                cache: false,
+                success: function (data) {
+                    $("#FrequencyMsg").text(data);
+                },
+                error: function (xhr) {
+                    alert("Some Error Occure");
+                }
+            });
+        });
+
+        $('#btnSubmit').on("click", function () {
+
+            var bool = Validate();
+            if (bool == false) {
+                return;
+            }
+            var formObj = {};
+
+            formObj.FeeName = $('#FeeHeadingName').val();
+            //formObj.FeeHeadGroupId = $('#FeeHeadingGroup option:selected').val();
+            //formObj.FeeHeadGroupName = $('#FeeHeadingGroup  option:selected').text();
+            //formObj.AccountId = $('#Account  option:selected').val();
+            //formObj.AccountName = $('#Account  option:selected').text();
+            formObj.FeeFrequencyId = $('#Frequency  option:selected').val();
+            formObj.FeeFrequencyName = $('#Frequency  option:selected').text();
+            formObj.Active = $("#Status").val();
+
+            formObj.Jan = $('#Jan').prop("checked") == true ? true : false;
+            formObj.Feb = $('#Feb').prop("checked") == true ? true : false;
+            formObj.Mar = $('#Mar').prop("checked") == true ? true : false;
+            formObj.Apr = $('#Apr').prop("checked") == true ? true : false;
+            formObj.May = $('#May').prop("checked") == true ? true : false;
+            formObj.Jun = $('#Jun').prop("checked") == true ? true : false;
+            formObj.Jul = $('#Jul').prop("checked") == true ? true : false;
+            formObj.Aug = $('#Aug').prop("checked") == true ? true : false;
+            formObj.Sep = $('#Sep').prop("checked") == true ? true : false;
+            formObj.Oct = $('#Oct').prop("checked") == true ? true : false;
+            formObj.Nov = $('#Nov').prop("checked") == true ? true : false;
+            formObj.Dec = $('#Dec').prop("checked") == true ? true : false;
+            $.ajax({
+                url: '/Fee/AddFeeHeading?Feetype=1',
+                dataType: "json",
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(formObj),
+                async: true,
+                processData: false,
+                cache: false,
+                success: function (data) {
+
+                    window.location.reload();
+                },
+                error: function (xhr) {
+
+                }
+            });
+        });
+        function BindCheckbox(Frequency) {
+            UnCheck();
+            if (Frequency == "Annual") {
+                $('#Apr').prop('checked', true);
+            }
+            if (Frequency == "Bi Monthly") {
+                $('#Feb').prop('checked', true);
+                $('#Jun').prop('checked', true);
+                $('#Oct').prop('checked', true);
+                $('#Apr').prop('checked', true);
+                $('#Aug').prop('checked', true);
+                $('#Dec').prop('checked', true);
+            }
+            if (Frequency == "Half Yearly") {
+                $('#Apr').prop('checked', true);
+                $('#Oct').prop('checked', true);
+
+
+            }
+            if (Frequency == "Monthly") {
+                // $('input:checkbox').prop('checked', true);
+                AllCheckbox();
+
+            }
+            if (Frequency == "One Time") {
+                $('#Apr').prop('checked', true);
+            }
+            if (Frequency == "Quarterly") {
+                $('#Jan').prop('checked', true);
+                $('#Apr').prop('checked', true);
+                $('#Jul').prop('checked', true);
+                $('#Oct').prop('checked', true);
+            }
+            if (Frequency == "Four Monthly") {
+                $('#Apr').prop('checked', true);
+                $('#Aug').prop('checked', true);
+                $('#Dec').prop('checked', true);
+            }
+            if (Frequency == "Select Choose") {
+                $('input:checkbox').removeAttr('disabled');
+                $('input:checkbox').removeAttr('readonly');
+                //UnCheck();
+
+            }
+            if (Frequency == "Select Choose") {
+                $('input:checkbox').removeAttr('disabled');
+                $('input:checkbox').removeAttr('readonly');
+                //UnCheck();
+
+            }
+            else {
+                $('input:checkbox').attr('disabled', 'disabled');
+                $('input:checkbox').attr('readonly', 'readonly');
+            }
+        }
+        function Validate() {
+            if ($('#FeeHeadingName').val() == null || $('#FeeHeadingName').val() == "") {
+                $("#FeeHeadingName").css("border", "1px solid red");
+                $("#FeeHeadingName").focus();
+                return false;
+            }
+            //if ($('#Account option:selected').val() == null || $('#Account option:selected').val() == "") {
+            //    $("#Account").css("border", "1px solid red");
+            //    return false;
+
+            //}
+            //if ($('#FeeHeadingGroup option:selected').val() == null || $('#FeeHeadingGroup option:selected').val() == "") {
+            //    $("#FeeHeadingGroup").css("border", "1px solid red");
+            //    return false;
+
+            //}
+            if ($('#Frequency option:selected').val() == null || $('#Frequency option:selected').val() == "") {
+                $("#Frequency").css("border", "1px solid red");
+                return false;
+
+            }
+        }
+        function ClearAllCheckbox() {
+            $('#Jan').prop('checked', false);
+            $('#Feb').prop('checked', false);
+            $('#Mar').prop('checked', false);
+            $('#Apr').prop('checked', false);
+
+            $('#May').prop('checked', false);
+            $('#Jul').prop('checked', false);
+            $('#Jun').prop('checked', false);
+            $('#Aug').prop('checked', false);
+
+            $('#Sep').prop('checked', false);
+
+            $('#Oct').prop('checked', false);
+            $('#Nov').prop('checked', false);
+            $('#Dec').prop('checked', false);
+        }
+        function AllCheckbox() {
+            $('#Jan').prop('checked', true);
+            $('#Feb').prop('checked', true);
+            $('#Mar').prop('checked', true);
+            $('#Apr').prop('checked', true);
+            $('#May').prop('checked', true);
+            $('#Jul').prop('checked', true);
+            $('#Jun').prop('checked', true);
+            $('#Aug').prop('checked', true);
+            $('#Sep').prop('checked', true);
+            $('#Oct').prop('checked', true);
+            $('#Nov').prop('checked', true);
+            $('#Dec').prop('checked', true);
+        }
+        function UnCheck() {
+            $('#Jan').prop('checked', false);
+            $('#Feb').prop('checked', false);
+            $('#Mar').prop('checked', false);
+            $('#Apr').prop('checked', false);
+            $('#May').prop('checked', false);
+            $('#Jul').prop('checked', false);
+            $('#Jun').prop('checked', false);
+            $('#Aug').prop('checked', false);
+            $('#Sep').prop('checked', false);
+            $('#Oct').prop('checked', false);
+            $('#Nov').prop('checked', false);
+            $('#Dec').prop('checked', false);
+        }
+    </script>
+
+
+    <script>
+
+        $('#TblFeeHeadingList').DataTable();
+
+    </script>
+}

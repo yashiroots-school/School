@@ -1,0 +1,91 @@
+﻿@using SchoolManagement.Website.EnumData;
+@using SchoolManagement.Data.Models;
+
+<div class="col-md-3 left_col">
+    <div class="left_col scroll-view">
+
+        <div class="navbar nav_title" style="border: 0;">
+            <a href="/Dashboard/Dashboard" class="site_title"><i class="fa fa-tachometer"></i> <span style="font-size:19px;">Dash Board</span></a>
+        </div>
+        <div class="clearfix"></div>
+
+        <!-- menu prile quick info -->
+        <div class="profile">
+            <div class="profile_pic">
+                <img src="~/WebsiteImages/images/user.png" alt="image" class="img-circle profile_img">
+            </div>
+            <div class="profile_info">
+                <span>Welcome,</span>
+                <h2>@*Admin*@</h2>
+            </div>
+        </div>
+        <!-- /menu prile quick info -->
+
+        <br />
+
+
+        <!-- sidebar menu -->
+        <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+
+            <div class="menu_section">
+                <ul class="nav side-menu">
+                    <li>
+                        <a><i class="fa fa-weixin"></i>Reception<span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu" style="display:none">
+
+                            <li><a href="/AdmissionFee/AllReceipts">All Receipts</a></li>
+
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            @*<div class="menu_section">
+                <ul class="nav side-menu" id="LeftMenu">
+                    @{
+                        string[] icons = { "fa fa-weixin", "fa fa-list - alt", "fa fa-film", "fa fa-male", "fa fa-book", "fa fa-list - ol", "fa fa-cogs", "fa fa-table", "fa fa-bug", "fa fa-dashboard", "fa fa-life - bouy", "fa fa-share - alt - square", "fa fa-podcast", "fa fa-snowflake - o", "fa fa-user - secret" };
+                        //string[] icons1 = { "fa fa-users", "fa fa-list - alt", "fa fa-bullseye", "fa fa-building", "fa fa-book", "fa fa-list - ol", "fa fa-users", "fa fa-list - alt", "fa fa-bullseye", "fa fa-building", "fa fa-book", "fa fa-list - ol", "fa fa-users", "fa fa-list - alt", "fa fa-bullseye", "fa fa-building", "fa fa-book", "fa fa-list - ol" };
+
+                        int icnt = -1;
+
+
+                        var rolePermissionList = Session["rolePermissionList"] as List<RolePagePermission>;
+                        if (rolePermissionList == null)
+                        {
+                            Session.Abandon();
+                            Response.Redirect("/Account/Login");
+                        }
+
+
+                        foreach (int item in Enum.GetValues(typeof(SideParentMenuEnum)))
+                        {
+                            var RootName = Enum.GetName(typeof(SideParentMenuEnum), item);
+                            var rolePermissionListByRootId = rolePermissionList.Where(x => x.ParentId == item);
+                            if (rolePermissionListByRootId.ToList().Count > 0)
+                            {
+                                icnt++;
+                                <li>
+                                    <a><i class='@icons[icnt]'></i>@RootName <span class='fa fa-chevron-down'></span></a>
+                                    <ul class='nav child_menu' style='display: none'>
+                                        @foreach (var pageName in rolePermissionListByRootId)
+                                        {
+                                            <li><a href='@pageName.PageName'>@pageName.PageViewName</a></li>
+                                            //-----for loop
+                                        }
+                                        @*<li><a href="/master/TcAmount">Manage Amount</a></li>
+                                    </ul>
+                                </li>
+                            }
+                        }
+
+                    }
+                </ul>
+            </div>*@
+
+        </div>
+        <!-- /sidebar menu -->
+    </div>
+</div>
+
+
+

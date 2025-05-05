@@ -1,0 +1,106 @@
+﻿
+@{
+    ViewBag.Title = "TeacherWisePerformanceReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/DropDownSelect2/dist/css/select2.min.css" rel="stylesheet" />
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <h2>Performace Report</h2>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+
+            <div class="row">
+                @*<h4 class="std_head well-sm"> Staff Information Form</h4>*@
+                <div class="tab-content tab_sis">
+                    <div class="tab-pane fade in active" id="add">
+                        <h2>Marks Range Report</h2>
+                        <div class="row">
+
+                            <div class="col-md-2 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label>Select Section :</label>
+                                    @Html.DropDownList("Staff", new SelectList(ViewBag.Staff, "StafId", "Name"), "Select Teacher", new { @class = "form-control select2", @Id = "ddlStaff" })
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label>Select Batch :</label>
+                                    @Html.DropDownList("BatchId", new SelectList(ViewBag.Batch, "Batch_Id", "Batch_Name"), "Select Batch", new { @class = "form-control select2", @Id = "ddlBatch" })
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label>Select Term :</label>
+
+                                    <select class="form-control select2 " id="TermID" name="TermID">
+                                        <option value="0">---Select Term---</option>
+                                        <option value="10">All</option>
+                                        @foreach (var item in ViewBag.Terms as IEnumerable<SchoolManagement.Website.Models.Tbl_Term>)
+                                        {
+                                            <option value="@item.TermID">@item.TermName</option>
+                                        }
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label> &nbsp;</label>
+                                    <input type="submit" value="Submit" class="btn btn-info" onclick="loadPerformanceTable()" />
+                                </div>
+                            </div>
+                        </div>
+
+                      
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top:20px;">
+                <div id="performanceTableContainer">
+                    <!-- Partial View will load here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Content/DropDownSelect2/dist/js/select2.min.js"></script>
+
+<script>
+    $('.select2').select2({
+    });
+</script>
+<script>
+    function loadPerformanceTable() {
+    debugger
+        //var classId = $('#ddlClass').val();
+        var Staff = $('#ddlStaff').val();
+        var batchId = $('#ddlBatch').val();
+        var Test = $('#TermID').val();
+        if (!Staff || !batchId || !Test) {
+            alert("Please select all filters.");
+            return;
+        }
+        console.log("Staff:", Staff, "batchId:", batchId, "testId:", Test);
+        $.ajax({
+            url: '/TimeTableNew/StaffWiseMarksRangeReport',//'@Url.Action("MarksRangeSummary", "TimeTableNew")',
+            type: 'POST',
+            data: {
+                //classId: classId,int staffId, int termId, int batchId
+                staffId: Staff,
+                batchId: batchId,
+                termId: Test,
+            },
+            success: function (data) {
+                $('#performanceTableContainer').html(data);
+            },
+            error: function () {
+                alert('Error loading data.');
+            }
+        });
+    }
+</script>

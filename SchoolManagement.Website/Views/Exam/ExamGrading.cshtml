@@ -1,0 +1,273 @@
+﻿
+@{
+    ViewBag.Title = "GradingCriteria";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+
+    .error {
+        color: red;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 34px !important;
+    }
+
+    .select2-container--default .select2-selection--single {
+        border: 1px solid #ccc !important;
+        border-radius: 0px !important;
+    }
+</style>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <h2>Manage Grading Criteria</h2>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="row">
+                @*<h4 class="std_head well-sm"> Staff Information Form</h4>*@
+                <div class="tab-content tab_sis">
+                    <div class="tab-pane fade in active" id="add">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <form method="post" id="GradingCriteriaForm" action="/Exam/Create" enctype="multipart/form-data">
+                                    <h4 class="std_head well-sm">Grading Details</h4>
+                                    <input type="hidden" id="CriteriaID" name="CriteriaID" />
+                                    <input type="hidden" id="BoardID" name="BoardID" />
+                                    <div class="col-sm-6" style="border-right: 1px solid #eee;">
+
+
+                                        <div class="form-group">
+                                            <label>Select Term :</label>
+
+                                            <select class="form-control select2 " id="TermID" name="TermID">
+                                                <option value="0">---Select Term---</option>
+                                                @*   <option value="All10">All</option>*@
+                                                @foreach (var item in ViewBag.Terms as IEnumerable<SchoolManagement.Website.Models.Tbl_Term>)
+                                                {
+                                                    //string optionValue;
+                                                    //if (item.TermID == 1 || item.TermID == 2)
+                                                    //{
+                                                    //    optionValue = "UT" + item.TermID;
+                                                    //}
+                                                    //else if (item.TermID == 3 || item.TermID == 4)
+                                                    //{
+                                                    //    optionValue = "Term" + item.TermID;
+                                                    //}
+                                                    //else if (item.TermID == 7 || item.TermID == 8)
+                                                    //{
+                                                    //    optionValue = "PreBoard" + item.TermID;
+                                                    //}
+                                                    //else
+                                                    //{
+                                                    //    optionValue = ""; // Replace this with a default value if needed
+                                                    //}
+
+                                                    <option value="@item.TermID">@item.TermName</option>
+                                                }
+
+                                            </select>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label>Class Name:</label>
+                                            <select class="form-control select2" id="ClassID" name="ClassID">
+                                                <option value="0">---Select Class---</option>
+                                                @foreach (var item in ViewBag.ClassList as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                                {
+                                                    <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                                }
+
+                                            </select>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label>Batch Name:</label>
+                                            <select class="form-control select2" id="BatchID" name="BatchID">
+                                                <option value="0">---Select Batch---</option>
+                                                @foreach (var item in ViewBag.SectionList as IEnumerable<SchoolManagement.Website.Models.Tbl_Batches>)
+                                                {
+                                                    @*if (ViewBag.SectionList == )
+                    {
+                        <option value="@item.Batch_Id" selected>@item.Batch_Name</option>
+                    }*@
+                                                    // else
+                                                    // {
+                                                    <option value="@item.Batch_Id">@item.Batch_Name</option>
+                                                }
+
+                                            </select>
+                                        </div>
+                                        @* <div class="form-group">
+                                            <label>Test Name:</label>
+                                            <select class="form-control select2" id="TestID" name="TestID">
+                                                <option value="0">---Select Test---</option>
+                                                @foreach (var item in ViewBag.TestList as IEnumerable<SchoolManagement.Website.Models.Tbl_Tests>)
+                                                {
+
+                                                    <option value="@item.TestID">@item.TestName</option>
+                                                }
+
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+            <label>Test Name:</label>
+            <input type="text" name="TestName" id="TestName" class="form-control">
+            <span class="error" id="TestNameError"></span> <!-- Error message will be displayed here -->
+        </div>>*@
+
+                                        @*<div class="form-group">
+            <label>Test Type:</label>
+            <select class="form-control select2" id="TestType" name="TestType">
+                <option>---Select Test Type---</option>
+                <option value="Theory">Theory</option>
+                <option value="Practical">Practical</option>
+            </select>
+            <span class="error" id="TestTypeError"></span> <!-- Error message will be displayed here -->
+        </div>*@
+                                    </div>
+                                    <div class="col-sm-6" style="border-right:1px solid #eee;">
+                                        <div class="form-group">
+                                            <label>Minimum Percentage:</label>
+                                            <input type="number" name="MinimumPercentage" id="MinimumPercentage" step="0.01" class="form-control" required>
+                                            <span class="error" id="MinimumPercentageError"></span> <!-- Error message will be displayed here -->
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Maximum Percentage:</label>
+                                            <input type="number" name="MaximumPercentage" id="MaximumPercentage" step="0.01" class="form-control" required>
+                                            <span class="error" id="MaximumPercentageError"></span> <!-- Error message will be displayed here -->
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Grade:</label>
+                                            <input type="text" name="Grade" id="Grade" class="form-control" required>
+                                            <span class="error" id="GradeError"></span> <!-- Error message will be displayed here -->
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Grade Description:</label>
+                                            <input type="text" name="GradeDescription" id="GradeDescription" class="form-control" required>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" style="text-align:right">
+                                        <button type="submit" id="BtnSubmitGrading" class="btn btn-success">Submit</button>
+                                    </div>
+                                </form>
+
+
+                            </div>
+                            <hr />
+                            <div class="col-sm-12" style="margin-top:20px;">
+                                <div>
+                                    <table class="table table-bordered display" id="GradingCriteriaTable" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>S.No</th>
+                                                <th>TERM</th>
+                                                <th>Class</th>
+                                                <th>Batch</th>
+                                                @*<th>TestName</th>*@
+                                                <th>Minimum Percentage</th>
+                                                <th>Maximum Percentage</th>
+
+                                                <th>Grade</th>
+                                                <th>Grade Description</th>
+
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="TableBody">
+                                            @{
+                                                var i = 1;
+                                                foreach (var item in ViewBag.GradingCriteriaLists as IEnumerable<SchoolManagement.Website.Controllers.ExamController.GradingCriteriaModel>)
+                                                {
+                                                    //foreach (var item in ViewBag.TestAssignList as IEnumerable<SchoolManagement.Website.Controllers.ExamController.PL_TestAssignData>)
+                                                    //{
+                                            <tr>
+                                                <td>@i</td>
+                                                <td>@item.TermName</td>
+                                                <td>@item.ClassName</td>
+                                                <td>@item.BatchName</td>
+                                                @*<th>@item.TestName</th>*@
+
+                                                
+                                                <td>@item.MinimumPercentage</td>
+                                                <td>@item.MaximumPercentage</td>
+                                                <td>@item.Grade</td>
+                                                <td>@item.GradeDescription</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-info BtnGradeEdit" data-val="@item.CriteriaID">Edit</button>
+                                                    <button type="button" class="btn btn-danger BtnGradeDelete" data-val="@item.CriteriaID">Delete</button>
+                                                </td>
+                                            </tr>
+                                                    i++;
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#BtnSubmitGrading").on('click', function (event) {
+            var minimumPercentage = $("#MinimumPercentage").val().trim();
+            var maximumPercentage = $("#MaximumPercentage").val().trim();
+            var grade = $("#Grade").val().trim();
+            var gradeDescription = $("#GradeDescription").val().trim();
+
+            var isValid = true;
+
+            if (minimumPercentage === '') {
+                $("#MinimumPercentageError").text("Minimum Percentage cannot be empty.");
+                isValid = false;
+            } else {
+                $("#MinimumPercentageError").text("");
+            }
+
+            if (maximumPercentage === '') {
+                $("#MaximumPercentageError").text("Maximum Percentage cannot be empty.");
+                isValid = false;
+            } else {
+                $("#MaximumPercentageError").text("");
+            }
+
+            if (grade === '') {
+                $("#GradeError").text("Grade cannot be empty.");
+                isValid = false;
+            } else {
+                $("#GradeError").text("");
+            }
+
+            if (gradeDescription === '') {
+                $("#GradeDescriptionError").text("Grade Description cannot be empty.");
+                isValid = false;
+            } else {
+                $("#GradeDescriptionError").text("");
+            }
+
+            if (!isValid) {
+                event.preventDefault(); // Prevent the form from submitting
+            }
+        });
+    });
+
+</script>
+
+@section scripts{
+    <script src="~/Scripts/DevelopmentJS/Exam.js"></script>
+}

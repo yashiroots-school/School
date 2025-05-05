@@ -1,0 +1,207 @@
+﻿
+@{
+    ViewBag.Title = "AddSMSandEmailTemplete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+        color: white;
+        background-color: #29b2e1;
+        border: 1px solid #dddddd;
+        border-bottom-color: transparent;
+        cursor: default;
+    }
+</style>
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4> SMS and Email Templete &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        @*<div class="col-sm-3">
+                                <button class="btn btn-danger pull-right"><a href="/Student/AddStudent" class="button_a">Create New Templete</a></button>
+                            </div>*@
+                        @*<div class="col-sm-3">
+                                <button class="btn btn-success pull-right"><a href="/Student/VewAllStudent" class="button_a">Vew All Student</a></button>
+                            </div>*@
+
+                    </div>
+
+                    <div class="tab-content tab_sis">
+                        <div id="Mainadd" class="tab-pane fade in active">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                                    <button class="btn btn-danger pull-right"><a onclick="Changetab1()" class="button_a">Next Step</a></button>
+                                </div>
+                                <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                                    <div class="col-sm-12">
+                                        <div class="form-group stright_line">
+                                            <label>Select Message Type :</label>
+                                            SMS
+                                            <input type="radio" id="smsradio" name="type" onclick="Radiocheck()" />
+                                            EMAIL
+                                            <input type="radio" id="Emailradio" name="type" onclick="Radiocheck()" />
+                                            Both
+                                            <input type="radio" id="bothradio" name="type" onclick="Radiocheck()" checked="checked" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <div class="form-group stright_line">
+                                            <label>Subject</label>
+                                            <input type="text" id="SMSSubject" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12" id="divSMSMessageID">
+                                        <div class="form-group stright_line">
+                                            <label>SMS Text*(0 characters)</label>
+                                            <br />
+                                            <label>**Message Limit is 160 characters. Messages above 160 chars will be charged more per message.</label>
+                                            <input type="text" id="SMSText" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12" id="divAttachedMessageID">
+                                        <div class="form-group stright_line">
+                                            <label>Attach File(s)</label>
+                                            <input type="file" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12" id="divEmailMessageID">
+                                        <div class="form-group stright_line">
+                                            <label>Email Message</label>
+                                            @*<input type="text" id="Eamilmessage" class="form-control">*@
+                                            <textarea id="Eamilmessage" class="ckeditor form-control"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <div class="form-group stright_line">
+                                            <button class='btn btn-info pull-right'><a href='#' onclick="BtnPayNow()" id="BtnPayNow" class='button_a'>Add</a></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div><!-- 1st row closed -->
+    </div>  <!-- /page content -->
+</div>
+@section scripts{
+    <script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
+    <script>
+
+        function Radiocheck() {
+            var smsradio = document.getElementById("smsradio");
+            var Emailradio = document.getElementById("Emailradio");
+            var bothradio = document.getElementById("bothradio");
+            if (smsradio.checked) {
+                document.getElementById("divSMSMessageID").style.display = "block";
+                document.getElementById("divAttachedMessageID").style.display = "none";
+                document.getElementById("divEmailMessageID").style.display = "none";
+            }
+            else if (Emailradio.checked) {
+                document.getElementById("divSMSMessageID").style.display = "none";
+                document.getElementById("divAttachedMessageID").style.display = "block";
+                document.getElementById("divEmailMessageID").style.display = "block";
+            }
+            else if (bothradio.checked) {
+                document.getElementById("divSMSMessageID").style.display = "block";
+                document.getElementById("divAttachedMessageID").style.display = "block";
+                document.getElementById("divEmailMessageID").style.display = "block";
+            }
+        }
+
+
+        function BtnPayNow() {
+
+            var AddSMSandEmail = {}
+            var smsradio = document.getElementById("smsradio");
+            var Emailradio = document.getElementById("Emailradio");
+            var bothradio = document.getElementById("bothradio");
+            if (smsradio.checked) {
+                AddSMSandEmail.SMSEmailtype = "S";
+            }
+            else if (Emailradio.checked) {
+                AddSMSandEmail.SMSEmailtype = "E";
+            }
+            else if (bothradio.checked) {
+                AddSMSandEmail.SMSEmailtype = "B";
+            }
+            AddSMSandEmail.Eamilmessage = CKEDITOR.instances["Eamilmessage"].getData();// document.getElementById("Eamilmessage").value;
+            //GetStudentDetailsById1($('#StudentId').val());
+            AddSMSandEmail.SMSSubject = $('#SMSSubject').val();// $("#StudentName option:selected").val();
+            AddSMSandEmail.SMSText = $('#SMSText').val();
+            if (AddSMSandEmail.SMSEmailtype == "B") {
+                if (AddSMSandEmail.SMSSubject == null || AddSMSandEmail.SMSSubject == "") {
+                    $("#SMSSubject").css("border", "1px solid red");
+                    alert("Please Enter Subject Message.");
+                    return;
+                }
+                if (AddSMSandEmail.Eamilmessage == null || AddSMSandEmail.Eamilmessage == "") {
+                    alert("Please Enter Email Message.");
+                    return;
+                }
+                if (AddSMSandEmail.SMSText == null || AddSMSandEmail.SMSText == "") {
+                    $("#SMSText").css("border", "1px solid red");
+                    alert("Please Enter SMS Text Message.");
+                    return;
+                }
+            }
+            else if (AddSMSandEmail.SMSEmailtype == "S") {
+                if (AddSMSandEmail.SMSSubject == null || AddSMSandEmail.SMSSubject == "") {
+                    $("#SMSSubject").css("border", "1px solid red");
+                    alert("Please Enter Subject Message.");
+                    return;
+                }
+                if (AddSMSandEmail.SMSText == null || AddSMSandEmail.SMSText == "") {
+                    $("#SMSText").css("border", "1px solid red");
+                    alert("Please Enter SMS Text Message.");
+                    return;
+                }
+            }
+            else if (AddSMSandEmail.SMSEmailtype == "E") {
+                if (AddSMSandEmail.SMSSubject == null || AddSMSandEmail.SMSSubject == "") {
+                    $("#SMSSubject").css("border", "1px solid red");
+                    alert("Please Enter Subject Message.");
+                    return;
+                }
+                if (AddSMSandEmail.Eamilmessage == null || AddSMSandEmail.Eamilmessage == "") {
+                    alert("Please Enter Email Message.");
+                    return;
+                }
+            }
+
+            $.ajax({
+                url: "/SMSandEmail/AddSMSandEmailTemplete",
+                //  url: '/Fee/AddFeeReceipt1',
+                dataType: "json",
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(AddSMSandEmail),
+                async: true,
+                processData: false,
+                cache: false,
+                success: function (data) {
+                    alert("Templete Saved Successfully.")
+                    //window.location.reload();
+                    //return Json(new { result = "Redirect", url = Url.Action("StudnetPaymentSummary", "FeeConfiguration") });
+                     window.location.href = '@Url.Action("SMSandEmailTemplete", "SMSandEmail")';
+                },
+                error: function (xhr) {
+                    // window.location.reload();
+                }
+            });
+
+        }
+    </script>
+}
+

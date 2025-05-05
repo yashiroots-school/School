@@ -1,0 +1,100 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6">
+                            <h4> Revisions &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6">
+                            <button class="btn btn-info pull-right"><a href="/Master/ViewRevision" class="button_a">View List </a></button>
+                            <button class="btn btn-danger pull-right"><a href="/Master/ManageRevision" class="button_a">Manage </a> </button>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+
+
+        <div class="col-sm-12" style="border-bottom: 1px solid #E6E9ED;">
+            <!-- col-sm-12 started -->
+            <h4 class="std_head well-sm"> Add New Revision</h4>
+            <form action="/Master/AddRevision" method="post" id="RevisionForm" enctype="multipart/form-data">
+                <div class="col-sm-3">
+                    <!-- col-sm-3 started -->
+                </div><!-- col-sm-3 closed -->
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <input type="hidden" id="Revision_Id" name="Revision_Id" />
+                    </div>
+                    <!-- col-sm-6 started -->
+                    <div class="form-group">
+                        <label>Revision Date : </label>
+
+                        <div class="input-group input-append date" id="datePicker">
+                            <input type="text" class="form-control datepicker" name="Revision_Date" id="Revision_Date" />
+                            <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label>Select Class :</label>
+                        <select class="form-control" id="Class_Id" name="Class_Id">
+                            <option>---select class---</option>
+                            @foreach (var item in ViewBag.ClassList as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                            {
+                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                            }
+
+                        </select>
+                        <input type="text" id="Class_Name" name="Class_Name" style="display:none" />
+                    </div>
+                    <div class="form-group">
+                        <label>Select Section :</label>
+                        <select class="form-control" id="Section_Id" name="Section_Id">
+                            <option>---select section---</option>
+                            @foreach (var item in ViewBag.SectionList as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                            {
+                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                            }
+                        </select>
+                        <input type="text" id="Section_Name" name="Section_Name" style="display:none" />
+                    </div>
+                    <div class="form-group">
+                        <label>Select Subject :</label>
+                        <select class="form-control" id="Subject_ID" name="Subject_ID">
+                            <option>---select Subject---</option>
+                            @foreach (var item in ViewBag.SubjectList as IEnumerable<SchoolManagement.Website.Models.Tbl_SubjectsSetup>)
+                            {
+                                <option value="@item.Subject_ID">@item.Subject_Name</option>
+                            }
+                        </select>
+                        <input type="text" id="Subject_Name" name="Subject_Name" style="display:none" />
+                    </div>
+                    <div class="form-group">
+                        <label>Description : </label>
+                        <textarea type="text" class="form-control" id="Description" name="Description"></textarea>
+                    </div>
+
+
+                </div><!-- col-sm-6 closed -->
+                <div class="col-sm-6">
+                    <!-- col-sm-6 started -->
+                    <button type="submit" class="btn btn-success pull-right" id="BtnSaveRevision">Save</button>
+                </div>
+            </form>
+            <!-- col-sm-6 closed -->
+        </div><!-- col-sm-12 closed -->
+
+
+    </div><!-- col-msx-12  closed -->
+</div>

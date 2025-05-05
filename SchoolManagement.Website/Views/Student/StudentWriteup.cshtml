@@ -1,0 +1,122 @@
+﻿
+@{
+    Layout = null;
+}
+@*<link href="~/Content/WebsiteCss/css/fontawesome/font-awesome.min.css" rel="stylesheet" />*@
+<link href="~/Content/WebsiteCss/css/bootstrap.min.css" rel="stylesheet">
+<link href="~/Content/WebsiteCss/css/fontawesome/font-awesome.min.css" rel="stylesheet" />
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>StudentWriteup</title>
+    <style>
+        .myAlert-bottom {
+            position: fixed;
+            bottom: 5px;
+            left: 2%;
+            width: 96%;
+        }
+
+        div.fullscreen {
+            position: absolute;
+            width: 100%;
+            height: 960px;
+            top: 0;
+            left: 0;
+            background-color: lightblue;
+        }
+
+        .alert {
+            display: none;
+        }
+
+        .org-titlebar {
+            background-image: linear-gradient(to left,#48bbef,#00bcd4) !important;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="navbar navbar-fixed-top navbar-default org-titlebar">
+            <div class="container">
+                <h3 style="padding-left:150px">
+                    Carmel Teresa
+                    <small style="font-size:60%">Admission Portal</small>
+                </h3>
+            </div>
+        </div>
+        <div class="row" style="margin-top:100px;">
+            <div class="col-sm-12" style="padding-left:50px;">
+                <div class="col-sm-4">
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Application Number:<span>@ViewBag.Applicationnumber</span></label>
+                    </div>
+                    <div class="form-group">
+                        <label>Student Name:<span>@ViewBag.studentname</span></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top:50px;">
+            <div>
+                <div class="col-sm-12" style="padding-left:200px;">
+                    <div class="row" style="margin-top:5px">
+
+                        <label style="font-style:italic"> * All the fields are required and will be used to retrieve your admission form for future reference</label>
+                        @*<small style="font-style:italic">
+                                * All the fields are required and will be used to retrieve your admission form for future reference
+                            </small>*@
+                    </div>
+                    <div class="row" style="margin-top:5px">
+                        <label style="font-style:italic">
+                            * If you have already filled the registration form then you will be presented with partially filled form
+                        </label>
+                        @*<small style="font-style:italic">
+                                * If you have already filled the registration form then you will be presented with partially filled form
+                            </small>*@
+                    </div>
+                    <div class="row" style="margin-top:5px">
+                        <label style="font-style:italic">
+                            * In the course of filling admission form, anytime if you feel to do it later then you can save that form and continue it later
+                        </label>
+                        @*<small style="font-style:italic">
+
+                            </small>*@
+                    </div>
+                    <div class="row" style="margin-top:5px">
+                        <label style="font-style:italic;color:red;">
+                            * Mandatory fields are marked. However please fill as much information as possible for smooth application processing.
+                        </label>
+                        @*<small style="font-style:italic; color:red;">
+
+                            </small>*@
+                    </div>
+                    <div class="row" style="margin-top:5px">
+                        <label style="font-style:italic;color:red;">
+                            * At the end please check the iagree checkbox to be able to submit your application.
+                        </label>
+                        @*<small style="font-style:italic; color:red;">
+                                * At the end please check the iagree checkbox to be able to submit your application.
+                            </small>*@
+                    </div>
+                    <div>
+                        @*<input type="submit" class="btn btn-success pull-right"/>*@
+                        <button type="submit" class="btn btn-success pull-right"><a href="/Account/Login">Home</a></button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,138 @@
+﻿
+@{
+    ViewBag.Title = "TransportKm";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-12">
+                            <h4>Transport Details &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+
+                        <div class="col-sm-12" style="margin-top: 15px;">
+                            @*<div class="col-sm-2">
+
+                            </div>*@
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label>Upload File</label>
+                                    <input type="file" accept=".xlsx" id="Uploadtransportkm"  />
+                                </div>
+                                
+                            </div> 
+
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <div class="form-group stright_line">
+                                        <label>Search :</label><br />
+                                        <button type="button" class="btn btn-success" id="BtnUpload"> Upload  </button>
+                                    </div>
+                                </div>
+                               
+                            </div>
+                           
+                        </div>
+
+                    </div> <!-- dashboard_graph closed-->
+                    @*</form>*@
+                </div> <!--col-msx-12 closed-->
+
+                <div class="col-md-12 col-sm-12 col-xs-12 table-responsive" id="PrintBox">
+                    <!-- col-msx-12 started -->
+                    <div id="FeeRecepitAll">
+                        <table class="table table-bordered" id="AllFeeReceiptTbl">
+                            <thead>
+                                <tr>
+                                    <th>S.No</th>
+                                    <th>Student Name</th>
+                                    <th>Scholar Number</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+
+                           
+                        </table>
+                    </div>
+                   <!-- col-msx-12  closed -->
+                </div><!-- col-msx-12  closed -->
+                @*<div class="col-md-12 col-sm-12 col-xs-12">
+
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6 pull-left table-responsive">
+                            <table class="table table-borderedless">
+                                <tr>
+                                    <td style="font-size:18px;">Total Gross = 1222/-</td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>*@
+
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <!-- col-msx-12 started -->
+                    <div class="col-sm-6"></div>
+                    <div class="col-sm-6 pull-left table-responsive">
+                        <table class="table table-borderedless">
+                            <tr>
+                                <td>
+                                    @*<button class="btn btn-warning">Export to Excel </button>*@
+                                    <button class="btn btn-warning" id="btn_Print">Print Report</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div> <!-- col-msx-12  closed -->
+            </div><!-- 1st row closed -->
+        </div>  <!-- /page content -->
+    </div>
+</div>
+
+
+<script>
+    $("#BtnUpload").on('click', function () {
+        if (window.FormData !== undefined) {
+            var fileupload = $("#Uploadtransportkm").get(0);
+            var files = fileupload.files;
+
+            // Create FormData object
+            var fileData = new FormData();
+
+            // Looping over all files and add it to FormData object
+            for (var i = 0; i < files.length; i++) {
+                fileData.append(files[i].name, files[i]);
+            }
+            console.log("files", files);
+            console.log("filedata", fileData);
+
+            $.ajax({
+                url: '/ExcelWork/UploadTransportExcelFile',
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                data: fileData,
+                success: function (result) {
+                    if (result == "1") {
+                        alert("Excel uploaded Successfully");
+                        window.location.reload();
+                    } else {
+                        alert("Some Error Occure");
+                    }
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                }
+            });
+
+        }
+        else {
+            alert("FormData is not Supported");
+        }
+    });
+</script>

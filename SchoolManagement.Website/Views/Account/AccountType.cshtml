@@ -1,0 +1,127 @@
+﻿
+@{
+    ViewBag.Title = "AccountType";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="col-sm-12">
+            <form action="/Account/AddAccountType" method="post" id="Basicpayform">
+                <div class="col-sm-12" style="border-right:1px solid #eee;">
+                    <div class="form-group">
+                        <input type="hidden" id="Account_TypeId" name="Account_TypeId" />
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label>Account Type</label>
+                            <input type="text" id="Account_Typename" name="Account_Typename" class="form-control" />
+                        </div>
+                        <div class="form-group" style="text-align:right">
+                            @{
+                                var data = ViewBag.Permission;
+                                if (data != null)
+                                {
+                                    if (data == "true")
+                                    {
+                                        <button type="submit" class="btn btn-success" id="BtnBasicSave">Save</button>
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </form>
+        </div>
+        <hr />
+        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+            <table class="table table-bordered" id="TblAccounttype" style="margin-top:5px;">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Account Type</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int i = 1;
+                        foreach (var item in ViewBag.Accounttype as IEnumerable<SchoolManagement.Website.ViewModels.Tbl_Accouttypeviewmodel>)
+                        {
+                            <tr>
+                                <td>@i</td>
+                                <td>@item.Account_Typename</td>
+                                <td>
+                                    @{
+                                        if (item.Editpermission == "true")
+                                        {
+                                            <button class="btn btn-success AccounttypeEdit" id="BtnBasicEdit1" data-val="@item.Account_TypeId">Edit</button>
+                                        }
+
+                                        if (item.DeletePermission == "true")
+                                        {
+                                            <button class="btn btn-danger AccounttypeDelete" id="BtnBasicDelete1" data-val="@item.Account_TypeId">Delete</button>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $("#TblAccounttype").DataTable();
+
+    })
+</script>
+
+<script>
+    $(".AccounttypeEdit").on('click', function () {
+        var id = $(this).attr("data-val");
+
+        $("#Basicpayform").attr('action', '/Account/UpdateAccountType');
+        $("#BtnBasicSave").text("Update");
+        GetBasicPayById(id);
+
+    });
+
+    function GetBasicPayById(id) {
+        $.ajax({
+            url: "/Account/GetAccountypeById?id=" + id,
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json;charset=utf-8",
+            success: function (result) {
+                $("#Account_TypeId").val(result.Account_TypeId);
+                $("#Account_Typename").val(result.Account_Typename);
+
+
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }
+
+</script>
+
+<script>
+    $(".AccounttypeDelete").on('click', function () {
+        var id = $(this).attr("data-val");
+
+        var cnf = confirm("Are You Sure,You Want to Continue?");
+        if (cnf == true) {
+            window.location.href = "/Account/DeleteAccountype?id=" + id;
+        }
+
+    });
+</script>

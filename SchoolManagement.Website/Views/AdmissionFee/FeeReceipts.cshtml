@@ -1,0 +1,1055 @@
+﻿@using SchoolManagement.Data.Models;
+
+@{
+    /**/
+
+    ViewBag.Title = "FeeReceipts";
+}
+<link href="~/Content/DropDownSelect2/dist/css/select2.min.css" rel="stylesheet" />
+<div class="right_col" role="main">
+    <input type="text" id="hdnStudentID"  readonly class="form-control" style="display:none">
+    <input type="text" id="hdnStudentRegID"  readonly class="form-control" style="display:none">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12"> 
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        @*<a href="~/Views/Fee/FeeReceipts.cshtml">FeeReceipts.cshtml</a>*@
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4>Student Fees  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6" style="display:none">
+                            <button class="btn btn-info pull-right"><a href="sis_manage_student.html" class="button_a">Manage</a></button>
+                            <button class="btn btn-danger pull-right"><a href="sis_add_new_student.html" class="button_a">Add New</a></button>
+                        </div>
+                    </div><!--row x_title closed -->
+
+                </div><!-- dashboard_graph closed-->
+            </div><!--col-msx-12 closed-->
+        </div>
+        <div class="col-sm-12">
+            <!-- col-sm-12 started -->
+            <h4 class="std_head well-sm"> Generate Student Fees</h4>
+            <div class="col-sm-6" style="border-right: 1px solid #eee;">
+                <!-- col-sm-6 started -->
+                <!-- col-sm-6 started -->
+                @*<div class="form-group">
+                        <label>Batch :</label>
+                        <input type="text" id="Batch" readonly class="form-control">
+                    </div>*@
+                <div class="form-group" id="ClassGroup">
+                    <label>Class :</label>
+
+                    <select class="form-control" id="Class" name="SchoolName">
+                        <option value="0">---Select---</option>
+                        @{
+                            foreach (var item in ViewBag.Classes as IEnumerable<Tbl_DataListItem>)
+                            {
+                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                            }
+                        }
+                    </select>
+
+                </div>
+                <div class="form-group">
+                    <label>Student Name :</label>
+
+
+                    <select class="form-control" id="StudentName" name="SchoolName">
+                        <option value="0">---Select---</option>
+                        @{
+                            foreach (var item in ViewBag.StudentNames as IEnumerable<Student>)
+                            {
+                                <option value="@item.ApplicationNumber">@item.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                @*<div class="form-group">
+                        <label>Course :</label>
+                        <input type="text" id="Course" data-myval="" readonly class="form-control">
+                    </div>*@
+
+                <div class="form-group">
+                    <label>Category :</label>
+                    <input type="text" id="Category" data-myval="" readonly class="form-control">
+                    @* @Html.DropDownList("FeeHeadingGroup", @ViewBag.FeeHeadingGroups as SelectList, "Select", new { @class = "form-control" })*@
+                </div>
+                <div class="form-group">
+                    <label>Due Balance :</label>
+                    <input type="text" id="OldBalance1" value="0" readonly class="form-control">
+                    @*@Html.DropDownList("Frequency", @ViewBag.Frequencys as SelectList, "Select", new { @class = "form-control" })*@
+                    <label id="FrequencyMsg" class="red"></label>
+                </div>
+                @*<div class="form-group">
+                        <label>Fee Type:</label>
+                        <select class="form-control" id="Feetype">
+                            <option value="0">---select Feetype---</option>
+                            <option value="243">Admission Fee</option>
+                            <option value="242">Academic Fee</option>
+                        </select>
+                    </div>*@
+                <div class="form-group">
+                    <input type="button" id="btn_dueAmmount" value="Pay Due Amount" class="btn btn-success btn-sm pull-right">
+                    @*@Html.DropDownList("Frequency", @ViewBag.Frequencys as SelectList, "Select", new { @class = "form-control" })*@
+                </div>
+
+
+            </div><!-- col-sm-6 closed -->
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>Name :</label>
+                    <input type="text" id="Name" readonly class="form-control">
+                    @* @Html.DropDownList("FeeHeadingGroup", @ViewBag.FeeHeadingGroups as SelectList, "Select", new { @class = "form-control" })*@
+                </div>
+                <div class="form-group">
+                    <label>Father's Name :</label>
+                    <input type="text" id="FatherName" readonly class="form-control">
+
+                    @*@Html.DropDownList("Frequency", @ViewBag.Frequencys as SelectList, "Select", new { @class = "form-control" })*@
+                </div>
+                <div class="form-group">
+                    <label>Roll No. :</label>
+                    <input type="text" id="roleNumber" readonly class="form-control">
+
+                    @*@Html.DropDownList("Frequency", @ViewBag.Frequencys as SelectList, "Select", new { @class = "form-control" })*@
+                </div>
+                <div class="form-group">
+                    <label>Contact No. :</label>
+                    <input type="text" id="ContNum" readonly class="form-control">
+
+                    @*@Html.DropDownList("Frequency", @ViewBag.Frequencys as SelectList, "Select", new { @class = "form-control" })*@
+                </div>
+                <div class="form-group" style="display:none">
+                    <label>Select Months : <input type="checkbox" id="selectAllMonth" /></label>
+                    <div class="form-control" style="border:1px solid #b4b4b4; height: 110px;
+                                                    overflow-x: hidden;
+                                                    overflow-x: auto;
+                                                    text-align:justify;">
+
+                        <div class="col-sm-4">
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="category" value="Jan" style="margin-top: 10px;">January</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="category" value="Feb" style="margin-top: 10px;">February </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="category" value="Mar" style="margin-top: 10px;">March </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="category" value="Apr" style="margin-top: 10px;">April </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="category" value="May" style="margin-top: 10px;">May </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="category" value="Jun" style="margin-top: 10px;">June </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="category" value="Jul" style="margin-top: 10px;">July </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="category" value="Aug" style="margin-top: 10px;">August </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="category" value="Sep" style="margin-top: 10px;">September</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="category" value="Oct" style="margin-top: 10px;">October  </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="category" value="Nov" style="margin-top: 10px;">November  </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="category" value="Dec" style="margin-top: 10px;">December </label>
+                            </div>
+                        </div>
+
+                    </div>
+                    @*@Html.DropDownList("Frequency", @ViewBag.Frequencys as SelectList, "Select", new { @class = "form-control" })*@
+                </div>
+            </div><!-- col-sm-6 closed -->
+
+        </div>
+        <div class="col-sm-12" style="border-bottom: 2px solid #b4b4b4;">
+            <button id="CheckFee" class="btn btn-success pull-right">Check</button>
+        </div>
+
+        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+            <!-- col-msx-12 started -->
+            <table class="table " id="mytable" style="margin-top:5px;">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>FeeHeading</th>
+                        <th><label><input type="checkbox" id="selectAll" name="selectAll" />Select All</label></th>
+                        <th>Total</th>
+                        <th>Collect Fee</th> 
+                        @*<th>Month Name</th>*@
+                    </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+            </table> 
+        </div><!-- col-msx-12  closed -->
+        <div class="col-sm-12" style="margin-top:10px">
+            @*<div class="col-sm-1">
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label><input type="checkbox" id="selectAll" name="selectAll" value="">Select All</label>
+                        </div>
+                    </div>
+                </div>*@
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Total Fee</label>
+                    <input type="text" class="form-control" readonly id="TotalFee" placeholder="Total Fee">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Old Balance</label>
+                    <input type="text" class="form-control" readonly id="OldBalance2" placeholder="Old Balance">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Late Fee</label>
+                    <input type="number" class="form-control" id="LateFee" placeholder="Late Fee">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Concession</label>
+                    <input type="number" class="form-control" maxlength="3" max="100" id="Concession" placeholder="Ammount">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Concession Amt</label>
+                    <input type="number" readonly class="form-control" maxlength="3" max="100" id="ConcessionAmt" placeholder="Concession Amt">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Net Fee</label>
+                    <input type="text" class="form-control" readonly id="NetFee" placeholder="Net Fee">
+                </div>
+                <div>
+                    <input type="hidden" class="form-control" id="TotalCollectFee" placeholder="Late Fee">
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-sm-12">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Receipt Amt</label>
+                    <input type="number" class="form-control" id="ReceiptAmt" placeholder="Receipt Amt">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Balance Amt</label>
+                    <input type="number" class="form-control" readonly id="BalanceAmt" placeholder="Balance Amt">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Payment Mode</label>
+                    @*<input type="email" class="form-control" id="PaymentMode" placeholder="Payment Mode">*@
+                    <select id="PaymentMode" class="form-control">
+                        <option value="Cash">Cash</option>
+                        <option value="Online">Online</option>
+                        <option value="Cheque">Cheque</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1" id="banklabel">Bank Name</label>
+                    <input type="text" class="form-control" id="BankName" placeholder="Bank Name">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Check Id/DD No</label>
+                    <input type="text" class="form-control" id="CheckId" placeholder=" Check Id">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Remark</label>
+                    <input type="text" class="form-control" id="Remark" placeholder="Remark">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group stright_line">
+                    <label>Date:</label>
+                    <input type="text" name="DateFrom" id="DateFrom" class="form-control datepicker" readonly>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="col-sm-12">
+                <div class="form-group" style="margin-top:20px;">
+                    @{
+                        if (ViewBag.Permission == "true")
+                        {
+                            <button id="btnSaveReceipt" disabled class="btn btn-success pull-right btnSaveReceipt">Save</button>
+                        }
+
+                    }
+                    @*  <input type="button" id="cancelBtn" value="Cancel" class="btn btn-default pull-right" />*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Content/DropDownSelect2/dist/js/select2.min.js"></script>
+    <script>
+
+        var Branchdetails = '@ViewBag.TblBranch';
+
+        $('#StudentName').select2({
+
+        });
+        $("#Class").select2({
+
+        });
+        $(document).ready(function () {
+            $("#mytable").hide();
+            var datetime = new Date();
+            $("#DateFrom").val(datetime.toLocaleString())
+        });
+        var allfee = 0;
+        $("#StudentName").on("change", function () {
+            //
+
+
+            //---xrnik--
+            $.ajax({
+                url: '/Fee/GetStudentIDByApplicationNumber?ApplicationNumber=' + $("#StudentName option:selected").val(),
+                dataType: "json",
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                async: false,
+                processData: false,
+                cache: false,
+                success: function (data) {
+                    $('#hdnStudentID').val(data);
+                },
+                error: function (xhr) { 
+                    window.location.reload();
+                }
+            });
+
+            $.ajax({
+                url: '/Fee/GetStudentRegIDByApplicationNumber?ApplicationNumber=' + $("#StudentName option:selected").val(),
+                dataType: "json",
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                async: false,
+                processData: false,
+                cache: false,
+                success: function (data) {
+                    $('#hdnStudentRegID').val(data);
+                },
+                error: function (xhr) {
+                    window.location.reload();
+                }
+            });
+            //alert($('#hdnStudentID').val());  //testingm
+            //alert($('#hdnStudentRegID').val());  //testingm
+            //alert(this.value);  //testingm
+
+            //--
+
+            var studentId = this.value;
+            if (studentId == "") {
+                //$("#Name").val("");
+                //$("#Class").val("");
+                //$("#Category").val("");
+                //$("#OldBalance1").val("");
+                //return;
+                window.location.reload();
+                return;
+            }
+            $.ajax({
+                url: '/Student/GetStudentDetailsById?ApplicationNumber=' + studentId,
+                dataType: "json",
+                type: "GET",
+                contentType: 'application/json; charset=utf-8',
+                //data: {'id': Frequency},
+                async: true,
+                processData: false,
+                cache: false,
+                success: function (data) {
+                    //
+                    $("#Name").val(data.StudentName);
+                    $("#FatherName").val(data.FatherName);
+                    //$("#Class").val(data.Class);
+                    $("#Category").val(data.Category);
+                    $("#OldBalance1").val(data.OldBalance);
+                    //$("#OldBalance2").val(data.OldBalance);
+                    $("#roleNumber").val(data.RoleNumber);
+                    $("#ContNum").val(data.Contact);
+                    $("#Batch").val(data.Batch);
+                    allfee = 0;
+                    $("#tbody").html('');
+
+                    $("#Class").val(data.ClassId);
+                    $("#ClassGroup .select2-selection__rendered").text(data.Class);
+
+                    $("#allTotal").html(0);
+                    $("#TotalFee").val(0);
+                    $("#NetFee").val(0);
+                    $("#ConcessionAmt").val(0);
+                    $("#LateFee").val(0);
+                    $("#Concession").val(0);
+                    $("#BalanceAmt").val(0);
+                    $("#ReceiptAmt").val(0);
+                    $("#BalanceAmt").val(0);
+
+                },
+                error: function (xhr) {
+                    alert("Some Error Occure");
+                }
+            });
+        });
+
+        $("#Class").on("change", function () {
+            var classid = this.value;
+            if (classid == "") {
+                window.location.reload();
+                return;
+            }
+            $.ajax({
+                url: "/AdmissionFee/GetStudentByClass?classid=" + classid +'&Filtertype=1',
+                type: "GET",
+                dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+
+                    var alldata = [];
+                    if (data.length>0) {
+
+                        $("#StudentName").html('').select2({ data: [{ id: '', text: '' }] });
+                        alldata.push({ id: 0, text: "Select" });
+                        //
+                        //for (var i = 0; i < data.length; i++) {
+                        //    alldata.push({
+                        //        id: data[i].StudentRegisterID,
+                        //        text: data[i].Name + " "
+                        //            + data[i].Last_Name + "-"
+                        //            + data[i].Class_Name + "-"
+                        //            + data[i].Section_Name
+                        //    });
+                        //}
+                        //----xrnik---
+                        for (var i = 0; i < data.length; i++) {
+                            alldata.push({
+                                id: data[i].ApplicationNumber,
+                                text: data[i].Name + " "
+                                    + data[i].Last_Name + "-"
+                                    + data[i].Class_Name + "-"
+                                    + data[i].Section_Name
+                            });
+                        }
+                        //---
+                    }
+
+                    $("#StudentName").html('').select2({
+                        data: alldata
+                    });
+                    //else {
+                    //    alert("There is no student Present in this class");
+                    //    window.location.reload();
+                    //}
+                }
+            });
+
+        });
+
+        $("#CheckFee").on("click", function () {
+            var Months = [];
+            var Feetype_id = $("#Feetype").val();
+            console.log("Feetypeid", Feetype_id);
+            var studentId = $("#StudentName option:selected").val();
+            $.each($("input[name='category']:checked"), function () {
+                Months.push($(this).val());
+            });
+            
+            if (studentId == "") {
+                return;
+            }
+            $("#mytable").show();
+
+            {
+
+                $.ajax({
+                    url: '/Fee/GetStudentFees?ApplicationNumber=' + studentId,
+                    dataType: "json",
+                    type: "GET",
+                    contentType: 'application/json; charset=utf-8',
+                    //data: {'id': Frequency},
+                    async: true,
+                    processData: false,
+                    cache: false,
+                    success: function (data) {
+                        //
+                        $("#tbody").html(data.ConfigureFeeData);
+
+                        $("#allTotal").html(0);
+                        $("#TotalFee").val(0);
+                        $("#NetFee").val(0);
+                        $("#ConcessionAmt").val(0);
+                        $("#LateFee").val(0);
+                        $("#Concession").val(0);
+                        $("#BalanceAmt").val(0);
+                        $("#ReceiptAmt").val(0);
+                        $("#BalanceAmt").val(0);
+                        AddDueFee();
+                    },
+                    error: function (xhr) {
+                        alert("Some Error Occure");
+                    }
+                });
+            }
+
+
+
+        });
+
+        function AddDueFee() {
+            var feeReceiptViewModel = {}
+            var FeeHeadings = [];
+            var FeeHeadingAmt = [];
+            var Selectedmonths = [];
+            var collectFees = [];
+            var Jan = [];
+            var Feb = [];
+            var Mar = [];
+            var Apr = [];
+            var May = [];
+            var Jun = [];
+            var Jul = [];
+            var Aug = [];
+            var Sep = [];
+            var Oct = [];
+            var Nov = [];
+            var Dec = [];
+
+
+            feeReceiptViewModel.StudentId = $('#hdnStudentID').val();//$("#StudentName option:selected").val();  //x-rnik
+            feeReceiptViewModel.CourseSpecialization = $("#CourseSpecialization").val();
+            feeReceiptViewModel.ClassName = $("#Class option:selected").val();
+            feeReceiptViewModel.CategoryName = $("#Category").val();
+            feeReceiptViewModel.StudentName = $("#Name").val();
+            feeReceiptViewModel.BatchName = $("#Batch").val();
+
+            $.each($("input[name='category']:checked"), function () {
+                Selectedmonths.push($(this).val());
+            });
+
+            feeReceiptViewModel.Selectedmonths = Selectedmonths;
+
+            $("#mytable tbody tr:not() ").not(':first').not(':last').each(function () {
+
+                //var checkBox = $(this).find('input[type="checkbox"]').is(':checked');
+                // if (checkBox == true) {
+                var FeeHeading = $(this).find("td:eq(1)").html();
+                var total = $(this).find("td:nth-last-child(2)").html();
+                var fee = $(this).find(':input[type="number"]').val();
+                FeeHeadings.push(FeeHeading);
+                FeeHeadingAmt.push(total);
+                collectFees.push(fee);
+                Jan.push($(this).find("td:eq(3)").html());
+                Feb.push($(this).find("td:eq(4)").html());
+                Mar.push($(this).find("td:eq(5)").html());
+                Apr.push($(this).find("td:eq(6)").html());
+                May.push($(this).find("td:eq(7)").html());
+                Jun.push($(this).find("td:eq(8)").html());
+                Jul.push($(this).find("td:eq(9)").html());
+                Aug.push($(this).find("td:eq(10)").html());
+                Sep.push($(this).find("td:eq(11)").html());
+                Oct.push($(this).find("td:eq(12)").html());
+                Nov.push($(this).find("td:eq(13)").html());
+                Dec.push($(this).find("td:eq(14)").html());
+            });
+
+            feeReceiptViewModel.Jan = Jan;
+            feeReceiptViewModel.Feb = Feb;
+            feeReceiptViewModel.Mar = Mar;
+            feeReceiptViewModel.Apr = Apr;
+            feeReceiptViewModel.May = May;
+            feeReceiptViewModel.Jun = Jun;
+            feeReceiptViewModel.Jul = Jul;
+            feeReceiptViewModel.Aug = Aug;
+            feeReceiptViewModel.Sep = Sep;
+            feeReceiptViewModel.Oct = Oct;
+            feeReceiptViewModel.Nov = Nov;
+            feeReceiptViewModel.Dec = Dec;
+            feeReceiptViewModel.FeeHeadings = FeeHeadings;
+            feeReceiptViewModel.FeeHeadingAmt = collectFees;
+            feeReceiptViewModel.collectFees = collectFees;
+            feeReceiptViewModel.TotalFee = $("#TotalFee").val();
+            feeReceiptViewModel.Course = $("#Course").val();
+
+            if (FeeHeadingAmt.length == 0) {
+                return;
+            }
+            $.ajax({
+                url: '/Fee/AddDueFee',
+                dataType: "json",
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(feeReceiptViewModel),
+                async: true,
+                processData: false,
+                cache: false,
+                success: function (data) {
+                    //console.log("Due Fees updated");
+                    // alert(data);
+                },
+                error: function (xhr) {
+                    window.location.reload();
+                }
+            });
+        }
+
+        $(document).on('change', '.selectbox', function () {
+
+            //var email = $(this).parent().closest('tr').find('td:nth-child(3)').text();
+            var total = $(this).parent().closest('tr').find("td:nth-last-child(2)").html();
+            if ($(this).prop("checked")) {
+
+                allfee = allfee + Number(total);
+            } else {
+                allfee = allfee - Number(total);
+            }
+            $("#allTotal").html(allfee);
+            $("#TotalFee").val(allfee);
+            $("#OldBalance2").val($("#OldBalance1").val());
+
+           // $("#NetFee").val(Number(allfee) + Number($("#OldBalance1").val()));
+            $("#NetFee").val(Number(allfee) );
+        });
+
+        $("#selectallmonths").on("change", function () {
+
+        });
+        $("#selectAll").on("change", function () {
+            allfee = 0;
+            if ($(this).prop("checked")) {
+
+                $("input[name='selectbox']").prop('checked', true);
+
+                //---x-rnik
+                $("#mytable tbody tr:not()").not(':last').each(function () {
+                         var total = $(this).find("td:nth-last-child(2)").html();
+                    allfee = Number(allfee) + Number(total);
+                    //alert($(this).find("td:nth-last-child(5)").html());
+
+                });
+                //---
+                //$("#mytable tbody tr:not() ").not(':first').not(':last').each(function () {
+
+                //    var total = $(this).find("td:nth-last-child(2)").html();
+                //    allfee = Number(allfee) + Number(total);
+                //    alert($(this).find("td:nth-last-child(5)").html());
+                //});
+
+                $("#allTotal").html(allfee);
+
+                $("#TotalFee").val(allfee);
+                $("#OldBalance2").val($("#OldBalance1").val());
+                $("#NetFee").val(Number(allfee) + Number($("#OldBalance1").val()));
+
+               // $("#NetFee").val(Number(allfee));
+
+            } else {
+                $("input[name='selectbox']").prop('checked', false);
+                allfee = 0;
+                $("#OldBalance2").val($("#OldBalance1").val());
+
+                $("#allTotal").html(0);
+                $("#TotalFee").val(0);
+                $("#NetFee").val(0);
+                $("#ConcessionAmt").val(0);
+                $("#LateFee").val(0);
+                $("#Concession").val(0);
+                $("#BalanceAmt").val(0);
+                $("#ReceiptAmt").val(0);
+                $("#BalanceAmt").val(0);
+            }
+        });
+
+        $("#LateFee").on("change", function () {
+            var data = Number($("#NetFee").val()) + Number($("#LateFee").val());
+
+            $("#NetFee").val(data);
+            $("#ReceiptAmt").val(0);
+            $("#BalanceAmt").val(0);
+            $("#Concession").val("");
+            $("#ConcessionAmt").val("");
+        });
+
+        $("#Concession").on("change", function () {
+            //
+            var Concession = $("#Concession").val();
+            if (Number(Concession) == 0) {
+                return;
+            }
+            if (Number(Concession) < 0) {
+                alert("Concession should greater then  0");
+                $("#Concession").val("")
+                return;
+            }
+            var totalfee = $("#TotalFee").val();
+            var lateFee = $("#LateFee").val();
+
+
+            var NetFee = Number(totalfee) + Number(lateFee);
+
+
+            //var ConcessionAmt = Number(totalfee) - Number(Concession);
+            var afterConcession = Number(totalfee) - Number(Concession);
+
+            $("#NetFee").val(Number(afterConcession) + Number(lateFee));
+            $("#ConcessionAmt").val(Concession);
+            $("#ReceiptAmt").val(0);
+            $("#BalanceAmt").val(0);
+        });
+
+        $(document).on('change', '#ReceiptAmt', function () {
+            var netFee = $("#NetFee").val();
+            var ReceiptAmt = $(this).val();
+            var BalanceAmt = $("#BalanceAmt").val();
+
+            if (Number(ReceiptAmt) + Number(BalanceAmt) > Number(netFee)) {
+                alert("Receipt Amt can't greater then Net Balance");
+                $(this).val(0);
+                $("#BalanceAmt").val(0);
+                return;
+            }
+            //  alert(netFee + " - " + ReceiptAmt)
+            $("#BalanceAmt").val(Number(netFee) - Number(ReceiptAmt));
+        });
+
+        $(document).on("click", "#verifyBtn", function () {
+            var collectFeeAmt = 0;
+            $("#mytable tbody tr:not()").not(':last').each(function () {
+                var checkBox = $(this).find('input[type="checkbox"]').is(':checked');
+                //console.log("checkbox", checkBox);
+                //alert(checkBox);
+                if (checkBox == true) {
+                    var fee = $(this).find(':input[type="number"]').val();
+                    collectFeeAmt = collectFeeAmt + Number(fee);
+
+                }
+            });
+            //console.log("receitamt", collectFeeAmt);
+
+            $("#TotalCollectFee").val(collectFeeAmt);
+            $("#OldBalance2").val(Number($("#OldBalance1").val()));
+
+            $("#ReceiptAmt").val(collectFeeAmt);
+            $("#allTotal").text(collectFeeAmt);
+            //$("#TotalFee").val($("#allTotal").html());
+            //var netFee = Number($("#TotalCollectFee").html()) + Number($("#LateFee").val()) + Number($("#OldBalance1").val()) - Number($("#ConcessionAmt").val());
+            var netFee = Number($("#TotalCollectFee").val()) + Number($("#LateFee").val()) - Number($("#ConcessionAmt").val());
+            $("#NetFee").val(netFee);
+            //console.log("netfee", netFee);
+            $("#ReceiptAmt").val(netFee);
+            //$("#BalanceAmt").val(Number($("#allTotal").html()) - collectFeeAmt);
+            var balanceamt1 = $("#TotalFee").val();
+            $("#BalanceAmt").val(balanceamt1 - collectFeeAmt);
+            $("#btnSaveReceipt").removeAttr('disabled');
+        });
+
+        $("#PaymentMode").on('click', function () {
+            var paymentmode = $(this).val();
+            if (paymentmode == "Cheque") {
+                document.getElementById("BankName").placeholder = "Check Number";
+                $("#banklabel").text("Check Number");
+            }
+            else {
+                document.getElementById("BankName").placeholder = "Bank Name";
+
+                $("#banklabel").text("Bank Name");
+
+            }
+        });
+
+        $("#btnSaveReceipt").on("click", function () {
+            var paymentmode = $("#PaymentMode").val();
+            
+            if (paymentmode == "Online") {
+                var feeReceiptViewModel = {}
+                var FeeHeadings = [];
+                var FeeHeadingAmt = [];
+                var Selectedmonths = [];
+                var collectedFeeAmount = [];
+                feeReceiptViewModel.StudentId = $('#hdnStudentRegID').val();// $("#StudentName option:selected").val(); //---xrnik
+                feeReceiptViewModel.ClassName = $("#Class option:selected").val();
+                feeReceiptViewModel.CategoryName = $("#Category").val();
+                feeReceiptViewModel.StudentName = $("#Name").val();
+
+                $.each($("input[name='category']:checked"), function () {
+                    Selectedmonths.push($(this).val());
+                });
+
+                feeReceiptViewModel.Selectedmonths = Selectedmonths;
+
+                $("#mytable tbody tr:not() ").not(':last').each(function () {
+
+                    var FeeHeading = $(this).find("td:nth-child(2)").html();
+                    //var total = $(this).find("td:nth-last-child(2)").html();
+                    var total = $(this).find("td:eq(4)").val();
+                    var fee = $(this).find(':input[type="number"]').val();
+                    var checkBox = $(this).find('input[type="checkbox"]').is(':checked');
+                    //
+                    if (checkBox == true) {
+                        FeeHeadings.push(FeeHeading);
+                        FeeHeadingAmt.push(total);
+                        collectedFeeAmount.push(fee);
+                    }
+                });
+                if (FeeHeadings.length <= 0) {
+                    alert("Please select Fee Headings.")
+                    return;
+                }
+                if (Number($("#TotalFee").val()) <= 0) {
+                    alert("Total Fee can't 0")
+                    return;
+                }
+                //if (Number($("#ReceiptAmt").val()) <= 0) {
+                //    alert("Receipt Amt can't be 0.")
+                //    return;
+                //}
+
+                if ($("#PaymentMode").val() == null) {
+                    if ($("#ConcessionAmt").val() != $("#TotalFee").val()) {
+                        alert("Please select the payment mode");
+
+                        return false;
+                    }
+                }
+                feeReceiptViewModel.FeeHeadings = FeeHeadings;
+                feeReceiptViewModel.FeeHeadingAmt = collectedFeeAmount;
+                feeReceiptViewModel.TotalFee = $("#TotalFee").val();
+                feeReceiptViewModel.OldBalance = $("#OldBalance").val();
+                feeReceiptViewModel.LateFee = $("#LateFee").val();
+                feeReceiptViewModel.Concession = $("#Concession").val();
+                feeReceiptViewModel.ConcessionAmt = $("#ConcessionAmt").val();
+                feeReceiptViewModel.NetFee = $("#NetFee").val();
+                feeReceiptViewModel.ReceiptAmt = $("#ReceiptAmt").val();
+                feeReceiptViewModel.BalanceAmt = $("#BalanceAmt").val();
+                feeReceiptViewModel.PaymentMode = $("#PaymentMode").val();
+                feeReceiptViewModel.BankName = $("#BankName").val();
+                feeReceiptViewModel.CheckId = $("#CheckId").val();
+                feeReceiptViewModel.Remark = $("#Remark").val();
+                feeReceiptViewModel.Course = $("#Course").val();
+                feeReceiptViewModel.DateTimeVal = $("#DateFrom").val();
+                feeReceiptViewModel.collectedFeeAmt = collectedFeeAmount;
+                
+                $.ajax({
+                url: "/Fee/AmountTransferGateway?isStudent=false",
+                //  url: '/Fee/AddFeeReceipt1',
+                dataType: "json",
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(feeReceiptViewModel),
+                async: true,
+                processData: false,
+                cache: false,
+                    success: function (data) {
+                        
+                        if(Branchdetails == "Worldline") {
+                            window.location.href = '@Url.Action("PaymentProcess", "Payment")';
+                        }
+                        else if (Branchdetails == "Razorpay ") {
+                            window.location.href = '@Url.Action("RazorpayPaymentprocess", "Payment")';
+                        }
+                        else if (Branchdetails == "AUTUM")
+                        {
+
+                            window.location.href = '@Url.Action("CommonPaymentprocess", "Payment", new { paymentgatewayName = "Atomic" })';
+                        }
+
+                },
+                error: function (xhr) {
+                    // window.location.reload();
+                }
+            });
+
+            }
+            else {
+                var feeReceiptViewModel = {}
+                var FeeHeadings = [];
+                var FeeHeadingAmt = [];
+                var Selectedmonths = [];
+                var collectedFeeAmount = [];
+                var Feeids = [];
+                feeReceiptViewModel.StudentId = $('#hdnStudentRegID').val();//$("#StudentName option:selected").val();//---x-rnik---
+                feeReceiptViewModel.ClassName = $("#Class option:selected").val();
+                feeReceiptViewModel.CategoryName = $("#Category").val();
+                feeReceiptViewModel.StudentName = $("#Name").val();
+
+                $.each($("input[name='category']:checked"), function () {
+                    Selectedmonths.push($(this).val());
+                });
+
+                feeReceiptViewModel.Selectedmonths = Selectedmonths;
+
+                $("#mytable tbody tr:not() ").not(':last').each(function () {
+
+                    var FeeHeading = $(this).find("td:nth-child(2)").html();
+                    var total = $(this).find("td:nth-last-child(2)").html();
+                    var fee = $(this).find(':input[type="number"]').val();
+                    var checkBox = $(this).find('input[type="checkbox"]').is(':checked');
+                    //
+                    if (checkBox == true) {
+                        FeeHeadings.push(FeeHeading);
+                        FeeHeadingAmt.push(total);
+                        collectedFeeAmount.push(fee);
+                    }
+                });
+                if (FeeHeadings.length <= 0) {
+                    alert("Please select Fee Headings.")
+                    return;
+                }
+                if (Number($("#TotalFee").val()) <= 0) {
+                    alert("Total Fee can't 0")
+                    return;
+                }
+                //if (Number($("#ReceiptAmt").val()) <= 0) {
+                //    alert("Receipt Amt can't be 0.")
+                //    return;
+                //}
+
+                if ($("#PaymentMode").val() == null) {
+                    if ($("#ConcessionAmt").val() != $("#TotalFee").val()) {
+                        alert("Please select the payment mode");
+                        $("#btnSaveReceipt").removeAttr('disabled');
+                        return false;
+                    }
+                }
+                feeReceiptViewModel.FeeHeadings = FeeHeadings;
+                feeReceiptViewModel.FeeHeadingAmt = collectedFeeAmount;
+                feeReceiptViewModel.TotalFee = $("#TotalFee").val();
+                feeReceiptViewModel.OldBalance = $("#OldBalance").val();
+                feeReceiptViewModel.LateFee = $("#LateFee").val();
+                feeReceiptViewModel.Concession = $("#Concession").val();
+                feeReceiptViewModel.ConcessionAmt = $("#ConcessionAmt").val();
+                feeReceiptViewModel.NetFee = $("#NetFee").val();
+                feeReceiptViewModel.ReceiptAmt = $("#ReceiptAmt").val();
+                feeReceiptViewModel.BalanceAmt = $("#BalanceAmt").val();
+                feeReceiptViewModel.PaymentMode = $("#PaymentMode").val();
+                feeReceiptViewModel.BankName = $("#BankName").val();
+                feeReceiptViewModel.CheckId = $("#CheckId").val();
+                feeReceiptViewModel.Remark = $("#Remark").val();
+                feeReceiptViewModel.Course = $("#Course").val();
+                feeReceiptViewModel.DateTimeVal = $("#DateFrom").val();
+                feeReceiptViewModel.collectedFeeAmt = collectedFeeAmount;
+
+
+                //console.log("feeReceiptViewModel", feeReceiptViewModel);
+                $.ajax({
+                    url: '/Fee/AddFeeReceipt',
+                    dataType: "json",
+                    type: "POST",
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(feeReceiptViewModel),
+                    async: true,
+                    processData: false,
+                    cache: false,
+                    success: function (data) {
+                        //alert(data.FeeReceiptId);
+                        alert("Fee Saved Successfully.");
+                        if (data != null) {
+                            window.open("/AdmissionFee/PrintReceiptusingrotativa?id=" + data.FeeReceiptId + "&ReceiptId=2", "_blank");
+
+                            //window.location.href = "/AdmissionFee/PrintReceiptusingrotativa?id=" + data.FeeReceiptId +"&ReceiptId=2";
+                        }
+                        window.location.reload();
+                    },
+                    error: function (xhr) {
+                        window.location.reload();
+                    }
+                });
+            }
+
+            //
+
+        });
+
+        $("#btn_dueAmmount").on("click", function () {
+            if ($("#OldBalance1").val() > 0) {
+                var dueAmmount = {};
+                dueAmmount.StudentId = $('#hdnStudentID').val();//$("#StudentName option:selected").val();  //x-rnik
+                dueAmmount.Class = $("#Class option:selected").html();
+                dueAmmount.DuaAmmount = $("#OldBalance1").val();
+
+                $.ajax({
+                    url: '/Fee/PayDueAmmount',
+                    dataType: "json",
+                    type: "POST",
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(dueAmmount),
+                    async: true,
+                    processData: false,
+                    cache: false,
+                    success: function (data) {
+                        alert("due amount saved.");
+                    },
+                    error: function (xhr) {
+                        window.location.reload();
+                    }
+                });
+            } else {
+                alert("No Due");
+            }
+        });
+
+        $("#selectAllMonth").on("change", function () {
+            if ($(this).prop("checked")) {
+                $("input[name='category']").prop('checked', true);
+            } else {
+                $("input[name='category']").prop('checked', false);
+
+            }
+        });
+    </script>
+}

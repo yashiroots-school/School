@@ -1,0 +1,185 @@
+﻿@using System.Data
+@using System.Linq
+@using SchoolManagement.Data.Models
+@{
+    ViewBag.Title = "WeeklyTimeTable";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/DropDownSelect2/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    thead th,
+    tbody td {
+        white-space: nowrap; /* Prevent content wrapping */
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    thead th,
+    tbody td {
+        padding: 8px;
+        border: 1px solid #ddd;
+    }
+
+        /* Sticky first column */
+        thead th:first-child,
+        tbody td:first-child {
+            position: sticky;
+            left: 0;
+            background-color: #fff;
+            z-index: 2;
+        }
+
+    /* Sticky header row (staff names) */
+    thead th {
+        position: sticky;
+        top: 0;
+        background-color: #fff;
+        z-index: 3;
+    }
+
+        /* Top-left corner cell: higher z-index */
+        thead th:first-child {
+            z-index: 4;
+        }
+
+    /* Optional: fix table height and enable scroll */
+    .fixTableHead {
+        overflow: auto;
+        max-height: 600px; /* adjust as needed */
+    }
+</style>
+@{
+    var dt = ViewBag.DataTable as DataTable;
+
+    var model = dt.AsEnumerable()
+        .GroupBy(r => new
+        {
+            ClassName = r.Field<string>("ClassName"),
+            SectionName = r.Field<string>("SectionName"),
+            PeriodNumber = r.Field<int>("PeriodNumber")
+        })
+        .Select(g => new TimeTableRow
+        {
+            ClassName = g.Key.ClassName,
+            SectionName = g.Key.SectionName,
+            PeriodNumber = g.Key.PeriodNumber,
+            DayWiseCells = g.ToDictionary(
+                x => x.Field<int>("DayOfWeek"),
+                x => new TimeTableCell
+                {
+                    SubjectName = x.Field<string>("Subject_Name"),
+                    StaffName = x.Field<string>("StaffName"),
+                    Load = x.Field<int>("TotalStaffLoadPerDay")
+                })
+        }).ToList();
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <h2>WeeklyTimeTable</h2>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+
+            <div class="row">
+                @*<h4 class="std_head well-sm"> Staff Information Form</h4>*@
+                <div class="tab-content tab_sis">
+                    <div class="tab-pane fade in active" id="add">
+                        @using (Html.BeginForm("WeeklyTimeTable", "TimeTableNew", FormMethod.Post))
+                        {
+                            <div class="row">
+                                <div class="col-md-3 col-sm-3 col-xs-4">
+                                    @Html.DropDownList("timeTableId", new SelectList(ViewBag.TimeTableList, "TimeTableId", "TimeTableName"), "Select TimeTable", new { @class = "form-control select2" })
+                                </div>
+                                <div class="col-md-2 col-sm-2 col-xs-2">
+                                    <input type="submit" value="Filter" class="btn btn-info" />
+
+                                </div>
+                            </div>
+                        }
+                        <div class="row">
+                            <div class="table-responsive fixTableHead">
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr id="HeaderRow">
+                                            <th style="width:70px;">Class</th>
+                                            <th style="width:100px;">Section</th>
+                                            <th style="width:100px;">Period</th>
+
+                                            <th style="width:250px;">Monday</th>
+                                            <th style="width:250px;">Tuesday</th>
+                                            <th style="width:250px;">Wednesday</th>
+                                            <th style="width:250px;">Thursday</th>
+                                            <th style="width:250px;">Friday</th>
+                                            <th style="width:250px;">Saturday</th>
+                                            <th style="width:250px;">Sunday</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var row in model)
+                                        {
+                                            <tr>
+                                                <td>@row.ClassName</td>
+                                                <td>@row.SectionName</td>
+                                                <td>@row.PeriodNumber</td>
+                                                @for (int day = 1; day <= 7; day++)  // 1 = Sunday to Saturday
+                                                {
+                                                    string bgColor = "#fff"; // default
+
+                                                    if (row.DayWiseCells.ContainsKey(day))
+                                                    {
+                                                        var cell = row.DayWiseCells[day];
+                                                        switch (cell.SubjectName.ToLower())
+                                                        {
+                                                            case "mathematics":
+                                                                bgColor = "#ffdddd"; break; // light red
+                                                            case "hindi lang":
+                                                                bgColor = "#ddffdd"; break; // light green
+                                                            case "supw":
+                                                                bgColor = "#ddddff"; break; // light blue
+                                                            case "english literature":
+                                                                bgColor = "#fff0cc"; break; // light orange
+                                                            case "evs":
+                                                                bgColor = "#4ec552"; break;
+                                                            case "computer":
+                                                                bgColor = "#ffd9c7"; break;
+                                                            default:
+                                                                bgColor = "#f9f9f9"; break;
+                                                        }
+                                                    }
+
+                                                    <td style="background-color:@bgColor">
+                                                        @if (row.DayWiseCells.ContainsKey(day))
+                                                        {
+                                                            var cell = row.DayWiseCells[day];
+                                                            <strong>@cell.SubjectName</strong><br />
+                                                            @($"{cell.StaffName} ({cell.Load})")
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>-</span>
+                                                        }
+                                                    </td>
+                                                }
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Content/DropDownSelect2/dist/js/select2.min.js"></script>
+
+<script>
+    $('.select2').select2({
+    });
+ 
+</script>

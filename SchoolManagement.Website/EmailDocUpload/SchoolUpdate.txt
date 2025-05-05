@@ -1,0 +1,118 @@
+1) student register (inital information need to stroed with Application Number).
+   a) New Insert
+   b) Exists Student
+
+We need to stored information on student_registrations. 
+
+2) Student Details (Should validate each tab must be complete)
+3) Each tab information we need to define Mandatory Fields
+4) Application should give to student after finished the final step(Need to disucss). 
+
+
+you continu 
+
+
+
+AIzaSyA8zy3reM0HthDBo8Wzl7kjLpI_lXipFj8
+
+ok
+
+
+
+Give me the password 
+User Name: admin
+password: Rajesh@123
+ 
+
+continu
+
+
+can you plee check it in your system
+http://pratiyasha.com/
+
+not working mam
+ok
+
+mam i have a one doubt excel sheet data are uploaded to student table or student registraion table?
+tel me
+we hae to ask sir only call him once 
+ok mam
+need updat bothe the table 
+sir is not responding mam
+ok 
+its a posible to complet ?
+excel sheet and time table only bending mam. In the excel sheet dcocuments uploaded but doesnt save to database.
+
+
+connect 9866 system
+
+
+select province
+check the sheet province name its should match 
+
+
+student login: 20220503122017
+password: Student@123
+
+Updated studentlogin: 20220503041353
+
+
+http://www.carmelteresaschool.in/Payment/PaymentProcess
+
+
+Local:
+ <add key="SchoolPaymentWID" value="WL0000000065006"/>
+    <add key ="SchoolPaymentkey" value="6a2bb917db1d8b8a3ca5259e0023c236"/>
+
+    <add key="SchoolTransportWID" value="WL0000000065006"/>
+    <add key ="SchoolTransportkey" value="6a2bb917db1d8b8a3ca5259e0023c236"/>
+
+    <add key="PreSchoolPaymentWID" value="WL0000000065006"/>
+    <add key ="PreSchoolPaymentkey" value="6a2bb917db1d8b8a3ca5259e0023c236"/>
+
+    <add key="PaymentURL" value="https://cgt.in.worldline.com/ipg/doMEPayRequest"/>  
+
+
+server:
+ <add key="SchoolPaymentWID" value="WL0000000023383"/>
+    <add key ="SchoolPaymentkey" value="07c211fd120e04e3cbf68afb7b3b12f6"/>
+
+    <add key="SchoolTransportWID" value="WL0000000023382"/>
+    <add key ="SchoolTransportkey" value="6c79a03b0f5f41dc3ac8cdc50ff39c19"/>
+
+    <add key="PreSchoolPaymentWID" value="WL0000000023381"/>
+    <add key ="PreSchoolPaymentkey" value="a770da31af831c731036950b92878a36"/>  
+
+    <!--<add key="PaymentURL" value="https://ipg.in.worldline.com/doMEPayRequest"/>-->
+
+                objInputPayment.ResponseUrl = "http://www.carmelteresaschool.in/Payment/PaymentProcessResult";
+
+
+
+
+
+username: 20220903101859
+Password: Student@123
+
+
+
+
+
+
+
+11-03-2022 School Update:
+
+Total Count of Particular Class and batch have to be displayed.
+In the Admission Process Dropdown "Admitted" option have to be added.
+Change Admission Number to StudentId.
+Change the design of Manage Student Table.
+In the Promotion Table promotion is not working.
+Fee Report is not working.
+Hide All the batches.
+Fee structure have to be changed.
+Transport Fee is not working.
+
+
+
+
+

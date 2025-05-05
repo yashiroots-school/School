@@ -1,0 +1,74 @@
+﻿
+@{
+    ViewBag.Title = "SMSandEmailTemplete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        $('#loadsmsemailtemptbl').DataTable();
+    });
+</script>
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4> SMS and Email Templete Summary  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-3">
+                            <button class="btn btn-danger pull-right"><a href="/SMSandEmail/AddSMSandEmailTemplete" class="button_a">Create New Templete</a></button>
+                        </div>
+                        @*<div class="col-sm-3">
+                                <button class="btn btn-success pull-right"><a href="/Student/VewAllStudent" class="button_a">Vew All Student</a></button>
+                            </div>*@
+
+                    </div>
+
+                    <div class="tab-content tab_sis">
+                        <div id="Mainadd" class="tab-pane fade in active">
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                                    <!-- col-msx-12 started -->
+                                    <!-- col-sm-12 closed -->
+                                    <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                                        <!-- col-msx-12 started -->
+                                        <div id="loadsmsemailtemp">
+                                            <table class="table table-responsive table-striped" style="width: 100%" id="loadsmsemailtemptbl">
+                                                <thead id="loadsmsemailtemphead">
+                                                    <tr>
+                                                        <th>Select</th>
+                                                        <th>Type</th>
+                                                        <th>Subject</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="stdnttblbody">
+                                                    @foreach (var item in ViewBag.SMSEMAILTEM as IEnumerable<SchoolManagement.Website.ViewModels.SMSEMAILTEMPLETESUMMARY>)
+                                                        {
+                                                            <tr>
+                                                                <td><input class='Feeselectbox' type='checkbox'/></td>
+                                                                <td class="row-data">@item.NOTIFICATIONTYPE </td>
+                                                                <td class="row-data">@item.SUBJECT</td>
+                                                            </tr>
+                                                        }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div><!-- 1st row closed -->
+    </div>  <!-- /page content -->
+</div>
+

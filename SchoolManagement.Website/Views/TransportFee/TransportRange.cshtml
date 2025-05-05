@@ -1,0 +1,77 @@
+﻿
+@{
+    ViewBag.Title = "TransportRange";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6">
+                            <h4>Transport Range  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-12">
+            <form class="form-horizontal" method="post" id="Rangeform" enctype="multipart/form-data" action="/TransportFee/SaveTransportRange">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Month Range</label>
+                        <input type="text" id="MonthRagne" name="Range" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Amount</label>
+                        <input type="text" id="Amount" name="Amount" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" id="Btnsave" class="btn btn-success pull-right">Save</button>
+                    </div>
+                </div>
+                <div class="col-sm-2"></div>
+            </form>
+
+        </div>
+
+        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+            <table class="table table-bordered" id="TableRange">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Range</th>
+                        <th>Amount</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int i = 1;
+                        foreach (var item in ViewBag.Transportrange as IEnumerable<SchoolManagement.Website.Models.TblTransportReducedAmount>)
+                        {
+                            <tr>
+                                <td>@i</td>
+                                <td>@item.Range</td>
+                                <td>@item.Amount</td>
+                                <td><button class="btn btn-success" id="Btnedit" data-val="@item.ReducedAmount_Id">Edit</button>
+                                <button class="btn btn-danger" id="BtnDelete" data-val="@item.ReducedAmount_Id">Delete</button>
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+@section scripts{
+
+    <script src="~/Scripts/Transport/TransportRange.js"></script>
+}

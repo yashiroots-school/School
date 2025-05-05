@@ -1,0 +1,252 @@
+﻿
+@{
+    ViewBag.Title = "TransportFeeReceipts";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/DropDownSelect2/dist/css/select2.min.css" rel="stylesheet" />
+<div class="right_col" role="main">
+
+    <div class="row">
+
+        <div class="col-md-12 col-sm-12 col-xs-12">
+
+            <div class="dashboard_graph">
+                <div class="row x_title">
+
+                    <div class="col-sm-12">
+                        <div class="col-sm-6">
+                            <h4>Student Transport Fees  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+
+        <!-- col-sm-12 started -->
+        <h4 class="std_head well-sm"> Generate Student Transport Fees</h4>
+        <div class="col-sm-6" style="border-right: 1px solid #eee;">
+
+            <div class="form-group">
+                <label>Class :</label>
+                @Html.DropDownList("Class", ViewBag.Classes as SelectList, "Select", new { @class = "form-control" })
+
+            </div>
+            <div class="form-group">
+                <label>Student Name :</label>
+
+                @Html.DropDownList("StudentName", @ViewBag.StudentNames as SelectList, "Select", new { @class = "form-control" })
+
+            </div>
+            <div class="form-group">
+                <label>Contact No. :</label>
+                <input type="text" id="ContNum" readonly class="form-control">
+
+
+            </div>
+
+
+        </div><!-- col-sm-6 closed -->
+        <div class="col-sm-6">
+
+            <div class="form-group">
+                <label>Father's Name :</label>
+                <input type="text" id="FatherName" readonly class="form-control">
+
+            </div>
+            <div class="form-group">
+                <label>Roll No. :</label>
+                <input type="text" id="roleNumber" readonly class="form-control">
+
+
+            </div>
+
+        </div>
+
+
+
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <button id="CheckFee" class="btn btn-success pull-right">Check</button>
+        </div>
+    </div>
+
+    <div id="Section2" style="border-top:2px solid;" hidden>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+                <!-- col-msx-12 started -->
+                <table class="table table-bordered" id="section2Table" style="margin-top:5px;">
+                    <thead>
+                        <tr>
+
+                            <th>S.NO </th>
+                            <th>FeeHeading </th>
+                            <th><input id='selectAll' name='selectbox' type='checkbox' />Select </th>
+                            <th>Total</th>
+                            <th>Paid</th>
+                            <th>Collect Fee </th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tbody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group" style="margin-top:20px;">
+
+                    <b>
+                        <span>Total Amount : </span> 
+                        <span id='allTotal'>0</span></b>
+                    
+                    <br>
+                    <b>
+                        <span>Total Collect Amount : </span>
+                        <span id='TotalCollectFee'>0</span>
+                    </b>
+                    <input type="button" id="btnCalculateFee" value="Calculate Fee" class="btn btn-success pull-right" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div id="Section3" style="border-top:2px solid;" hidden>
+        <div class="row">
+
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Total Fee</label>
+                    <input type="text" class="form-control" readonly id="TotalFee" placeholder="Total Fee">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Old Balance</label>
+                    <input type="text" class="form-control" readonly id="OldBalance" placeholder="Old Balance">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Late Fee</label>
+                    <input type="number" class="form-control" id="LateFee" placeholder="Late Fee">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Concession</label>
+                    <input type="number" class="form-control" maxlength="3" max="100" id="Concession" placeholder="Ammount">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Concession Amt</label>
+                    <input type="number" readonly class="form-control" maxlength="3" max="100" id="ConcessionAmt" placeholder="Concession Amt">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Net Fee</label>
+                    <input type="text" class="form-control" readonly id="NetFee" placeholder="Net Fee">
+                </div>
+                <div>
+                    <input type="hidden" class="form-control" id="TotalCollectFee" placeholder="Late Fee">
+
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Receipt Amt</label>
+                    <input type="number" class="form-control" id="ReceiptAmt" placeholder="Receipt Amt">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Balance Amt</label>
+                    <input type="number" class="form-control" readonly id="BalanceAmt" placeholder="Balance Amt">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Payment Mode</label>
+
+                    <select id="PaymentMode" class="form-control">
+                        <option value="Cash">Cash</option>
+                        <option value="Online">Online</option>
+                        <option value="Cheque">Cheque</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Bank Name</label>
+                    <input type="text" class="form-control" id="BankName" placeholder="Bank Name">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Check Id/DD No</label>
+                    <input type="text" class="form-control" id="CheckId" placeholder=" Check Id">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Remark</label>
+                    <input type="text" class="form-control" id="Remark" placeholder="Remark">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group stright_line">
+                    <label>Date:</label>
+                    <input type="text" name="DateFrom" id="DateFrom" class="form-control datepicker">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-sm-12">
+                <div class="form-group" style="margin-top:20px;">
+                    @{
+                        var data = ViewBag.Permission;
+                        if (data != null)
+                        {
+                            if (data == "true")
+                            {
+                                <button id="btnSaveReceipt" class="btn btn-success pull-right btnSaveReceipt">Save</button>
+                            }
+                        }
+                    }
+                    <input type="button" id="cancelBtn" value="Cancel" class="btn btn-default pull-right" />
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+@section scripts{
+    <script src="~/Content/DropDownSelect2/dist/js/select2.min.js"></script>
+    <script src="~/Scripts/TransportFee/TransportFeeReceipts.js"></script>
+}

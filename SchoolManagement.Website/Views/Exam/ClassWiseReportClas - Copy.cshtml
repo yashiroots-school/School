@@ -1,0 +1,792 @@
+﻿@model List<SchoolManagement.Website.ViewModels.PrintReportCardData>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Neuton:wght@300;400;700&display=swap"
+          rel="stylesheet" />
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <style>
+        /*   body {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+         */
+        body {
+            font-family: 'Times New Roman', serif;
+            font-size: 12px;
+            line-height: 1.3;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        #headerid {
+            border: none;
+        }
+
+        .ft10 {
+            font-size: 11px;
+            font-family: Times;
+            color: #333333;
+        }
+
+        .ft11 {
+            font-size: 34px;
+            font-family: Times;
+            color: #333333;
+        }
+
+        .ft12 {
+            font-size: 15px;
+            font-family: Times;
+            color: #333333;
+        }
+
+        .ft13 {
+            font-size: 20px;
+            font-family: Times;
+            color: #333333;
+        }
+
+        .ft14 {
+            font-size: 11px;
+            font-family: Times;
+            color: #333333;
+        }
+
+        .ft15 {
+            font-size: 12px;
+            font-family: Times;
+            color: #333333;
+        }
+
+        .ft16 {
+            font-size: 16px;
+            font-family: Times;
+            color: #333333;
+        }
+
+        .ft17 {
+            font-size: 12px;
+            line-height: 17px;
+            font-family: Times;
+            color: #333333;
+        }
+
+        .headerTermColumn {
+            width: 80px !important;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        /* table, th, td {
+            border: 1px solid #000;
+            padding: 4px;
+            font-size: 12px;
+        } */
+        /* table, th, td {
+                    border: 0.2px solid #00000067;
+                    border-collapse: collapse;
+                } */
+
+        .signature {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .a4-wrapper {
+            width: 240mm;
+            height: 350mm;
+            padding: 0mm;
+            margin: auto;
+            box-sizing: border-box;
+            page-break-after: always;
+            position: relative;
+            background-color: white;
+        }
+
+        .report-content {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* PRINT SETTINGS */
+        @@media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+
+            .a4-wrapper {
+                page-break-after: always;
+                padding: 20mm !important;
+            }
+
+            .report-content {
+                position: relative;
+            }
+
+            img {
+                max-height: 90px;
+                object-fit: contain;
+            }
+
+            section {
+                padding: 10px 20px !important;
+            }
+        }
+
+
+        #printT {
+            /* border: 1px solid #ccc;  */
+            border: none;
+            padding: 20px;
+            margin: 20px;
+            width: 210mm; /* Adjusted width to fit within A4 width */
+            min-height: 297mm; /* Adjusted height to fit within A4 height */
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            page-break-after: always;
+            */ /* Force a new page after each card */
+        }
+        /* Styles for the loader overlay */
+        #loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Make sure the overlay is on top */
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+        }
+
+        #printColumns {
+            min-height: 11.69in;
+        }
+
+        @@keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @@media print {
+            #printT {
+                min-height: 11.69in;
+            }
+        }
+
+        .border-bottom-dashed {
+            display: inline-block;
+            border-bottom: 1px dashed #000;
+            padding-bottom: 1px;
+            min-width: 100px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="d-flex  h-100" id="JsonPrint">
+        @foreach (var student in Model)
+        {
+            @*  <div class="d-flex flex-column" id="printColumns">
+                <div class="border border-dark mt-3" id="printT"> *@
+            <div class="a4-wrapper" style=" border: 1px solid black !important;">
+                <div class="report-content">
+
+                    <table style="width: 100%; border-collapse: collapse; border: none;" Id="headerid">
+                        <tr border: none;>
+                            <!-- Left Logo -->
+                            <td style="width: 25%; text-align: left; border: none;">
+                                <img src="@student.StudentData.SchoolLogo" alt="Left Logo" style="height: 110px; width: 110px; margin-left:20px; margin-right:10px;" />
+                            </td>
+
+                            <!-- Center Title -->
+                            <td style="width: 50%; text-align: center; border: none;">
+                                <div style="font-size: 28px; font-weight: bold; font-family: 'Times New Roman', Times, serif;">
+                                    @student.StudentData.SchoolName
+                                </div>
+                                <div style="font-size: 18px;"><b>Academic Session: @student.StudentData.CurrentYear</b></div>
+                                <div style="font-size: 18px;"><b>Report Card</b></div>
+                            </td>
+
+                            <!-- Right Logo and Affiliation -->
+                            <td style="width: 25%; text-align: right; border: none; ,align:center; margin-left:10px; margin-right:10px; margin-top:30px;">
+                                <img src="/Content/SchoolImages/logo3.png" alt="Right Logo" style="height: 95px; margin-left:10px; margin-right:20px;" />
+                                <div style="font-size: 14px; text-align: center;">CISCE Affiliation No. : MP034</div>
+                            </td>
+                        </tr>
+                    </table>
+                    <table style="width: 100%; border-collapse: collapse; border: none; cellpadding:5px; margin-bottom:0px;" Id="headerid ">
+                        <tr border="none" ;>
+                            <td style="width: 50%; text-align: left; border: none; margin-left:40px; margin-right:10px">
+                                <div style="margin-left:40px; margin-right:10px"> <b>Student's Name</b> : <span class="text-uppercase border-bottom-dashed">@student.StudentData.StudentName</span></div>
+                                <div style="margin-left:40px; margin-right:10px"> <b>Father's Name</b> : <span class="text-uppercase border-bottom-dashed">@student.StudentData.FatherName</span></div>
+                                <div style="margin-left:40px; margin-right:10px"> <b>Mother's Name</b> : <span class="text-uppercase border-bottom-dashed">@student.StudentData.MotherName</span></div>
+                                <div style="margin-left:40px; margin-right:10px"> <b>Roll No.</b> : <span class="text-uppercase border-bottom-dashed">@student.StudentData.RollNo</span></div>
+                            </td>
+                            <td style="width: 50%; text-align: left; border: none;">
+                                <div style="margin-left:100px; margin-right:10px"><b>Class & Section</b> : <span class="text-uppercase border-bottom-dashed">@student.StudentData.ClassName - @student.StudentData.SectionName</span></div>
+                                <div style="margin-left:100px; margin-right:10px"><b>Date of Birth</b> : <span class="text-uppercase border-bottom-dashed">@student.StudentData.DateOfBirth</span></div>
+                                <div style="margin-left:100px; margin-right:10px"><b>Attendance</b> : <span class="text-uppercase border-bottom-dashed">@student.StudentData.Attendance</span></div>
+                                <div style="margin-left:100px; margin-right:10px"><b>Scholar No.</b> : <span class="text-uppercase border-bottom-dashed">@student.StudentData.ScholarNo</span></div>
+
+                            </td>
+
+                        </tr>
+                    </table>
+                    <!-- marks section  -->
+                    <table class="text-center my-2 ft15" id="MarksTable" style="margin-top:0px;">
+                        <tr>
+                            <th>Scholastic Areas:</th>
+
+                            @if (student.GroupedTerms.Where(x => x.Term.Contains("UT")).Any())
+                            {
+                                var colspan = @student.GroupedTerms.Where(x => x.Term.Contains("UT")).Count() + 2;
+                                <th colspan="2" scope="colgroup">Unit Test</th>
+                            }
+
+                            @foreach (var col in student.GroupedTerms.Where(x => !x.Term.Contains("UT")).GroupBy(x => x.Term))
+                            {
+                                <th colspan="4" scope="colgroup">@col.</th>
+                                <th colspan="3" scope="colgroup">Total</th>
+                            }
+
+
+                        </tr>
+                        @*<tr>
+            <th scope="col">Subjects</th>
+            @if (student.GroupedTerms.Where(x => x.Term.Contains("UT")).Any())
+            {
+                decimal _total = 0;
+                foreach (var col in student.GroupedTerms.Where(x => x.Term.Contains("UT")).GroupBy(x => x.Term))
+                {
+                    _total += (decimal)col.MaximumMarks;
+                    <th scope="colgroup">@col.Term (@col.MaximumMarks)</th>
+                }
+                <th scope="col">Grade</th>
+
+            }
+            @foreach (var col in student.GroupedTerms.Where(x => !x.Term.Contains("UT")).GroupBy(x => x.Term))
+            {
+
+                var theoryTotalMarks = @student.GroupedTerms.Where(x => x.Term == col.Term && x.TestType == "Theory").Select(x => x.MaximumMarks).FirstOrDefault();
+                var practicalTotalMarks = @student.GroupedTerms.Where(x => x.Term == col.Term && x.TestType == "Practical").Select(x => x.MaximumMarks).FirstOrDefault();
+                var total = theoryTotalMarks + practicalTotalMarks;
+                <th scope="col">Theory (@theoryTotalMarks)<span class=""></span></th>
+                <th scope="col">Practical  (@practicalTotalMarks) <span id=""></span></th>
+                <th scope="col">Marks Obt. (@total)<span id=""></span></th>
+                <th scope="col">Grade</th>
+                <th scope="col">Marks</th>
+                <th scope="col" colspan="2">Grade</th>
+            }
+
+
+
+        </tr>*@
+
+
+                        <tr>
+                            <th scope="col">Subjects</th>
+                            @if (student.GroupedTerms.Where(x => x.Term.Contains("UT")).Any())
+                            {
+                                decimal _total = 0;
+                                foreach (var col in student.GroupedTerms.Where(x => x.Term.Contains("UT")).GroupBy(x => x.Term))
+                                {
+                                    var firstItem = col.FirstOrDefault();
+                                    if (firstItem != null)
+                                    {
+                                        _total += (decimal)firstItem.MaximumMarks;
+                                        <th scope="colgroup">@firstItem.Term (@firstItem.MaximumMarks)</th>
+                                    }
+                                }
+                                <th scope="col">Grade</th>
+                                @* <th scope="col">Marks Obt. (@_total)<span id=""></span></th> *@
+                            }
+
+                            @foreach (var col in student.GroupedTerms.Where(x => !x.Term.Contains("UT")).GroupBy(x => x.Term))
+                            {
+                                var termName = col.Key;
+                                var theoryTotalMarks = student.GroupedTerms
+                                    .Where(x => x.Term == termName && x.TestType == "Theory")
+                                    .Select(x => x.MaximumMarks)
+                                    .FirstOrDefault();
+
+                                var practicalTotalMarks = student.GroupedTerms
+                                    .Where(x => x.Term == termName && x.TestType == "Practical")
+                                    .Select(x => x.MaximumMarks)
+                                    .FirstOrDefault();
+
+                                var total = theoryTotalMarks + practicalTotalMarks;
+
+                                <th scope="col">Theory (@theoryTotalMarks)<span class=""></span></th>
+                                <th scope="col">Practical  (@practicalTotalMarks) <span id=""></span></th>
+                                <th scope="col">Marks Obt. (@total)<span id=""></span></th>
+                                <th scope="col">Grade</th>
+                                <th scope="col">Marks</th>
+                                <th scope="col" colspan="2">Grade</th>
+                            }
+                        </tr>
+                        @if (student.GroupedSubjects != null)
+                        {
+                            foreach (var row in student.GroupedSubjects.OrderBy(x => x.SubjectName))
+                            {
+
+                                if (!row.IsOptional)
+                                {
+                                    decimal unitTest = 0;
+
+                                    decimal total = 0;
+
+                                    <tr>
+                                        <td>@row.SubjectName</td>
+
+                                        @foreach (var col in row.Terms.Where(x => x.Name.Contains("UT")).ToList())
+                                        {
+                                            unitTest += (decimal)@col.TheoryMark;
+                                            <td>@col.TheoryMark</td>
+                                            <td>@col.Grade</td>
+                                        }
+                                        @*  <td>@unitTest</td> *@
+                                        @foreach (var col in row.Terms.Where(x => !x.Name.Contains("UT")).ToList())
+                                        {
+                                            total += (decimal)@col.TotallMark;
+                                            <td>@col.TheoryMark</td>
+                                            <td>@col.PracticalMark</td>
+                                            <td>@col.TotallMark</td>
+                                            <td>@col.Grade</td>
+                                            <td>@total</td>
+                                            <td>@col.Grade</td>
+                                        }
+
+                                        @*  <td></td> *@
+                                    </tr>
+                                }
+
+                            }
+                            <tr>
+                                <td>Total</td>
+                                @{
+                                    decimal unitTestTotal = 0;
+                                    decimal tot_total = 0;
+                                }
+                                @foreach (var col in student.Term.Where(x => x.Contains("UT")).ToList())
+                                {
+
+                                    var totalMarkUT = student.GroupedTerms.Where(a => a.Term == col).Select(x => x.Total).FirstOrDefault();
+                                    unitTestTotal += (decimal)totalMarkUT;
+                                    <td>@totalMarkUT</td>
+
+                                    tot_total += (decimal)totalMarkUT;
+                                    <td></td>
+                                }
+                                @*  <td>@unitTestTotal</td> *@
+                                @foreach (var col in student.Term.Where(x => !x.Contains("UT")).ToList())
+                                {
+                                    var totalMarkTheory = student.GroupedTerms.Where(a => a.Term == col && a.TestType == "Theory").Select(x => x.Total).FirstOrDefault();
+                                    var totalMarkPractical = student.GroupedTerms.Where(a => a.Term == col && a.TestType == "Practical").Select(x => x.Total).FirstOrDefault();
+                                    var sum = totalMarkTheory + totalMarkPractical;
+                                    <td>@totalMarkTheory</td>
+                                    <td>@totalMarkPractical</td>
+                                    <td>@sum</td>
+                                    <td></td>
+
+
+                                    tot_total += (decimal)sum;
+                                    <td>@tot_total</td>
+                                    <td></td>
+                                }
+
+
+
+                            </tr>
+                            <tr>
+                                <td>Percentage</td>
+                                @{
+                                    decimal _unitTesTotaltPerc = 0;
+                                    decimal _tot_Total_Perc = 0;
+                                }
+                                @foreach (var col in student.Term.Where(x => x.Contains("UT")).ToList())
+                                {
+
+                                    var ut_perc = student.GroupedTerms.Where(a => a.Term == col).Select(x => x.Percentage).FirstOrDefault();
+
+                                    <td>@ut_perc.ToString("F2")%</td>
+
+                                    _unitTesTotaltPerc += ut_perc;
+                                    _tot_Total_Perc += ut_perc;
+                                    <td></td>
+                                }
+                                @{
+                                    decimal _unitTestPerc = _unitTesTotaltPerc / 2;
+                                }
+                                @*   <td>@_unitTestPerc.ToString("F2")%</td> *@
+                                @foreach (var col in student.Term.Where(x => !x.Contains("UT")).ToList())
+                                {
+                                    var ter_perc = student.GroupedTerms.Where(a => a.Term == col && a.TestType == "Theory").Select(x => x.Percentage).FirstOrDefault();
+
+                                    var ter_perc_prac = student.GroupedTerms.Where(a => a.Term == col && a.TestType == "Practical").Select(x => x.Percentage).FirstOrDefault();
+
+                                    var sum = (ter_perc + ter_perc_prac) / 2;
+                                    <td>@ter_perc.ToString("F2")%</td>
+                                    <td>@ter_perc_prac.ToString("F2")%</td>
+                                    <td>@sum.ToString("F2")%</td>
+                                    <td></td>
+
+                                    tot_total += (int)sum;
+                                    _tot_Total_Perc += ter_perc_prac;
+                                    <td></td>
+                                    <td></td>
+                                }
+
+
+                                @*   <td>@_unitTestPerc.ToString("F2")%</td>   *@
+                            </tr>
+
+                            foreach (var row in student.GroupedSubjects)
+                            {
+                                if (row.IsOptional)
+                                {
+                                    <tr>
+                                        <td>@row.SubjectName</td>
+                                        @if (row.Terms.Where(x => x.Name.Contains("UT")).Any())
+                                        {
+                                            foreach (var col in row.Terms.Where(x => x.Name.Contains("UT")).ToList())
+                                            {
+
+                                                @* <td>@col.TheoryMark</td> *@
+                                                var a = "";
+                                                var b = @col.TheoryMark.ToString();
+                                                if (b == "1.0")
+                                                    a = "A";
+                                                else if (b == "2.0")
+                                                    a = "B";
+                                                else if (b == "3.0")
+                                                    a = "C";
+                                                else if (b == "4.0")
+                                                    a = "D";
+                                                else
+                                                    a = "";
+                                                <td>@a.ToString()</td>
+                                                <td> @col.Grade </td>
+                                            }
+
+                                        }
+                                        @*   else
+                        {
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        } *@
+
+                                        @if (row.Terms.Where(x => !x.Name.Contains("UT")).Any())
+                                        {
+                                            foreach (var col in row.Terms.Where(x => !x.Name.Contains("UT")).ToList())
+                                            {
+
+
+                                                <td>@col.PracticalMark</td>
+                                                <td>@col.TheoryMark</td>
+                                                <td>@col.TotallMark</td>
+                                                <td>@col.Grade</td>
+                                            }
+                                            <td></td>
+                                            <td></td>
+                                        }
+                                        @* else
+                        {
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        } *@
+
+                                    </tr>
+                                }
+
+                            }
+
+
+                        }
+                    </table>
+
+                    <br />
+
+                    @{
+                        var normalized = student.CoscholasticAreaData
+                        .Select(x => new
+                        {
+                            Name = x.Name,
+                            Term = (x.Term ?? "").ToUpper().Replace(" ", "").Replace("-", ""),
+                            Grade = x.ObtainedGrade ?? ""
+                        })
+                        .ToList();
+
+                        var hasTerm1 = normalized.Any(x => x.Term == "TERMI" || x.Term == "HALFYEARLY");
+                        var hasTerm2 = normalized.Any(x => x.Term == "TERMII" || x.Term == "ANNUAL");
+
+                        var grouped = normalized
+                        .GroupBy(x => x.Name)
+                        .Select(g => new
+                        {
+                            Name = g.Key,
+                            Term1Grade = g.FirstOrDefault(x => x.Term == "HALFYEARLY" || x.Term == "TERMI")?.Grade ?? "",
+                            Term2Grade = g.FirstOrDefault(x => x.Term == "ANNUAL" || x.Term == "TERMII")?.Grade ?? ""
+                        })
+                        .ToList();
+
+                        var paired = new List<(string Name1, string T1_1, string T2_1, string Name2, string T1_2, string T2_2)>();
+                        for (int i = 0; i < grouped.Count; i += 2)
+                        {
+                            var g1 = grouped[i];
+                            var g2 = (i + 1 < grouped.Count) ? grouped[i + 1] : null;
+
+                            paired.Add((
+                            g1.Name, g1.Term1Grade, g1.Term2Grade,
+                            g2?.Name ?? "", g2?.Term1Grade ?? "", g2?.Term2Grade ?? ""
+                            ));
+                        }
+                    }
+                    @if (student?.CoscholasticAreaData != null && student.CoscholasticAreaData.Any())
+                    {
+                        <table class="text-center" id="coScholasticTable" style="width: 100%; border-collapse: collapse; border: none;">
+                            <thead>
+                                <tr>
+                                    <th colspan="@(hasTerm1 && hasTerm2 ? "6" : "4")">  Co-Scholastic Areas [on a 4-point (A-NA) grading scale]</th>
+                                </tr>
+                                <tr>
+                                    <th colspan="@(hasTerm1 && hasTerm2 ? "6" : "4")">Co-Scholastic Areas</th>
+                                </tr>
+                                <tr>
+                                    <th>Name</th>
+                                    @if (hasTerm1)
+                                    {
+                                        <th>Term-I</th>
+                                    }
+                                    @if (hasTerm2)
+                                    {
+                                        <th>Term-II</th>
+                                    }
+                                    <th>Name</th>
+                                    @if (hasTerm1)
+                                    {
+                                        <th>Term-I</th>
+                                    }
+                                    @if (hasTerm2)
+                                    {
+                                        <th>Term-II</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var row in paired)
+                                {
+                                    <tr>
+                                        <td>@row.Name1</td>
+                                        @if (hasTerm1)
+                                        {
+                                            <td>@row.T1_1</td>
+                                        }
+                                        @if (hasTerm2)
+                                        {
+                                            <td>@row.T2_1</td>
+                                        }
+                                        <td>@row.Name2</td>
+                                        @if (hasTerm1)
+                                        {
+                                            <td>@row.T1_2</td>
+                                        }
+                                        @if (hasTerm2)
+                                        {
+                                            <td>@row.T2_2</td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+
+
+
+
+
+
+                    <br />
+
+
+
+
+
+                    <!-- Result section  -->
+                    <div class="d-flex justify-content-between align-items-center px-1">
+                        <div class="ft15">
+                            <span><b>Result :</b></span>
+                            <span id="result"> @student?.Result</span>
+                            <span style="float:right;">
+                                <b>Overall Grade :@student?.ObtainedGrade/b>
+                            </span>
+                        </div>
+                        <div class="ft15">
+                        </div>
+                    </div>
+                    <div class="ft15 px-1" id="teacherRemark">
+                        <span><b>Class Teacher's Remarks : </b></span>
+                        <span><span id="teacherRemarkText">@student?.StudentData.Remark</span>  <span id="promotedClass">@student?.StudentData.PromotedClass</span> </span>
+                    </div>
+
+                    <br />
+
+
+                    <!-- signature section  -->
+
+                    <table style="width: 100%; border-collapse: collapse; border-width:0px;" Id="headerid">
+                        <tr border: none;>
+                            <!-- Left Logo -->
+                            <td style="text-align: Center; border: none;">
+                                <br /><br />
+                                <br /><br />
+                                <div><span class="ft15"><b>Parent / Guardian</b></span></div>
+                            </td>
+
+                            <!-- Center Title -->
+                            <td style="text-align: Center; border: none;">
+                                <img src="@student?.StudentData.StaffSignatureLink" id="teachersignature" style="width:115px; height:60px; border: none;" alt="" />
+                                <div><span class="ft15"><b>Class Teacher</b></span></div>
+                            </td>
+
+                            <!-- Right Logo and Affiliation -->
+                            <td style="text-align: Center; border: none;">
+                                <img src="@student?.StudentData.PrincipalSign" style="width:115px; height:60px; border: none;" alt="" />
+                                <div><span class="ft15"><b>Principal</b></span></div>
+                            </td>
+                        </tr>
+                    </table>
+                    <br />
+
+                    <div class="ft15 px-1 mt-2">
+                        <span><b>Grading scale for Scholastic Areas : </b></span>
+                        <span>Grades are awarded on a 6-point grading scale as follows -</span>
+                    </div>
+
+                    <!-- marks range section  -->
+                    <table class="text-center" style="width: 100%; border-collapse: collapse; border: none;">
+                        <thead>
+                            <tr>
+                                <th>Range (%)</th>
+                                @foreach (var item in student?.GradingCriteria ?? Enumerable.Empty<SchoolManagement.Website.Models.GradingCriteria>())
+                                {
+                                    <td>
+                                        @(item.MinimumPercentage == item.MaximumPercentage
+                                            ? $"{item.MinimumPercentage} & Below"
+                                            : $"{item.MinimumPercentage} - {item.MaximumPercentage}")
+                                    </td>
+                                }
+                            </tr>
+                            <tr>
+                                <th>Grade</th>
+                                @foreach (var item in student?.GradingCriteria ?? Enumerable.Empty<SchoolManagement.Website.Models.GradingCriteria>())
+                                {
+                                    <td>@item.Grade</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th>Description</th>
+                                @foreach (var item in student?.GradingCriteria ?? Enumerable.Empty<SchoolManagement.Website.Models.GradingCriteria>())
+                                {
+                                    <td>@item.GradeDescription</td>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="@(student?.GradingCriteria.Count + 1 )" class="text-start ps-1">
+                                    <div class="ft15">
+                                        4. N.B. There will be no second attempt for English Language and Literature.
+                                        Second attempt is allowed for one subject provided the score is below 35.
+                                    </div>
+                                    <div class="ft15">Minimum mark for passing is 35.</div>
+                                    <div class="ft15">** It Indicates Improvement Exam.</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+
+
+                    <!-- End  -->
+                </div>
+            </div>
+        }
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.slim.js" integrity="sha256-7GO+jepT9gJe9LB4XFf8snVOjX3iYNb0FHYr5LI1N5c=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="~/Scripts/DevelopmentJS/PrintReport.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        // Function to handle the printing
+        function printDiv() {
+            const printContent = document.getElementById("JsonPrint");
+            const originalContent = document.body.innerHTML;
+
+            document.body.innerHTML = printContent.outerHTML;
+            window.print();
+
+            document.body.innerHTML = originalContent;
+        }
+
+        // Attach click event to the 'Print' button
+        const printButton = document.getElementById("printButton");
+        printButton.addEventListener("click", printDiv);
+
+    </script>
+</body>
+
+<!-- Add the 'Print' button -->
+
+
+
+</html>

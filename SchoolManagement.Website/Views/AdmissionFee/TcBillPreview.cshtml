@@ -1,0 +1,117 @@
+﻿@model SchoolManagement.Website.Models.StudentTcRceiptViewModel
+@{
+    ViewBag.Title = "TcBillPreview";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .invoice-title h2, .invoice-title h3 {
+        display: inline-block;
+    }
+
+    .table > tbody > tr > .no-line {
+        border-top: none;
+    }
+
+    .table > thead > tr > .no-line {
+        border-bottom: none;
+    }
+
+    .table > tbody > tr > .thick-line {
+        border-top: 2px solid;
+    }
+
+    .table > thead > tr {
+        background-color: #7186ff;
+        color: black;
+    }
+</style>
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-sm-12">
+            <div class="container-fluid" id="PrintBox">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="invoice-title">
+                            <h2>Invoice</h2><input type="button" id="btn_Print" class="btn btn-success btn-sm pull-right" value="Print" />
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <strong>ScholarNumber: </strong>@Model.ScollarNumber<br>
+                                <strong>Name: </strong> @Model.Studnt<br>
+
+                            </div>
+                            <div class="col-xs-4">
+                                @* <strong>Course: </strong> @Model.Course<br>*@
+
+                                <strong>Class Name: </strong> @Model.Class<br>
+                            </div>
+                            <div class="col-xs-4">
+                                <strong>Bill Date: </strong> @Model.createdon<br>
+                                <strong>Invoice Number: </strong> @Model.Id<br>
+                            </div>
+                        </div><br />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="panel panel-default">
+                            @*<div class="panel-heading">
+                                    <h3 class="panel-title"><strong>Order summary</strong></h3>
+                                </div>*@
+                            <div class="panel-body">
+                                <div class="table-responsive">
+                                    <table class="table table-condensed">
+                                        <thead>
+                                            <tr style="color: black;background-color: #e1e1ff;">
+                                                <td><strong>S.No.</strong></td>
+                                                <td><strong>Fee Types</strong></td>
+                                                <td class="text-center"><strong>Fee Amount</strong></td>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                           <tr>
+                                               <td>1</td>
+                                               @if (Model.IsTcfree.HasValue && !Model.IsTcfree.Value)
+                                               {
+                                               <td>
+                                                   Admission fee
+                                               </td>
+                                               }
+                                               else
+                                               {
+                                                   <td>
+                                                    TC fee
+                                                   </td>
+                                               }
+                                               
+                                               <td>@Model.Amount (rupees)</td>
+                                           </tr>
+                                           
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div> <!--pagination closed-->
+@section scripts{
+    <script src="~/Scripts/printThis.js"></script>
+    <script>
+        $('#btn_Print').on("click", function () {
+            $('#PrintBox').printThis();
+        });
+    </script>
+}
+

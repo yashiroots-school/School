@@ -1,0 +1,394 @@
+﻿@{
+    /**/
+
+    ViewBag.Title = "Fee Reports";
+}
+@*<link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />*@
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/start/jquery-ui.css"
+      rel="Stylesheet" type="text/css" />
+<link href="~/Content/DropDownSelect2/dist/css/select2.min.css" rel="stylesheet" />
+<!-- page content -->
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //$('#AllFeeReceiptTbl').DataTable();
+    });
+</script>
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    @*<form method="get" action="/Fee/AllFeeReports">*@
+
+
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-12">
+                            <h4>Today Fee Collection &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+
+                        <div class="col-sm-12" style="margin-top: 15px;">
+
+                            <div class="col-sm-2">
+                                <div class="form-group stright_line">
+                                    <label>Filter by Student:</label>
+                                    @Html.DropDownList("student", ViewBag.AllStudentName as List<SelectListItem>, "select", new { @id = "studentDll", @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group stright_line">
+                                    <label>Filter by Header :</label>
+                                    @Html.DropDownList("header", new SelectList(ViewBag.FeeHeadings, "FeeId", "FeeName"), "select", new { @id = "headerDll", @class = "form-control" })
+
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group stright_line">
+                                    <label>Filter by Class :</label>
+                                    @Html.DropDownList("semester", new SelectList(ViewBag.Classes, "DataListItemName", "DataListItemName"), new { @id = "classDll", @class = "form-control" })
+
+                                </div>
+                            </div>
+
+                            <div class="col-sm-2">
+                                <div class="form-group stright_line">
+                                    <label>School Type :</label>
+                                    @Html.DropDownList("SchoolType", new SelectList(ViewBag.SchoolType, "Value", "Text"), new { @id = "SchoolType", @class = "form-control" })
+
+                                </div>
+                            </div>
+
+                            @*<div class="col-sm-2">
+            <div class="form-group stright_line">
+                <label>Filter By Batch :</label>
+                @Html.DropDownList("Batch", new SelectList(ViewBag.BatcheNames, "DataListItemName", "DataListItemName"), "select", new { @id = "BatcheNames", @class = "form-control" })
+            </div>
+        </div>*@
+                            @*<div class="col-sm-2">
+            <div class="form-group stright_line">
+                <label>Date :</label>
+                <input type="text" name="Date" id="DateActual" class="form-control datepicker" readonly>
+            </div>
+        </div>*@
+                            <div class="col-sm-2">
+                                <div class="form-group stright_line">
+                                    <label>Date From:</label>
+                                    <input type="text" name="DateFrom" id="DateFrom" class="form-control datepicker" readonly>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group stright_line">
+                                    <label>Date To:</label>
+                                    <input type="text" name="DateTo" id="DateTo" class="form-control datepicker" readonly>
+                                </div>
+                            </div>
+
+
+                            <div class="col-sm-2">
+                                <div class="form-group stright_line">
+                                    <label>Search :</label><br />
+                                    <button type="button" onclick="GetAllFeeRecepits()" class="btn btn-success"> Filter Records </button>
+                                </div>
+                            </div>
+                            @*<div class="col-sm-3">
+            <div class="form-group">
+                <label class="control-label col-sm-4"></label>
+                <div class="col-sm-4">
+                    <button type="button" id="btnSearch" class="btn btn-success">Search </button>
+                </div>
+                <div class="col-sm-4">
+                    <button type="button" id="btnrefresh" class="btn btn-default">Refresh </button>
+                </div>
+            </div>
+        </div>*@
+                        </div>
+
+                    </div> <!-- dashboard_graph closed-->
+                    @*</form>*@
+                </div> <!--col-msx-12 closed-->
+
+                <div class="col-md-12 col-sm-12 col-xs-12 table-responsive" id="PrintBox">
+                    <!-- col-msx-12 started -->
+                    <div id="FeeRecepitAll">
+                        <table class="table table-bordered" id="AllFeeReceiptTbl">
+                            <thead>
+                                <tr>
+                                    <th>S.No</th>
+                                    <th>Bill No</th>
+                                    <th>Student Name</th>
+                                    <th>Scholar Number</th>
+                                    <th>Heading</th>
+                                    <th>Paid Date</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+
+                            @{ int total = 0;}
+                            <tbody>
+                                @foreach (var item in ViewBag.allFeeReceipts as IEnumerable<SchoolManagement.Website.ViewModels.TodayFeeReportViewModel>)
+                                {
+                                    <tr>
+                                        <td>@item.SNO</td>
+                                        <td>@item.BillNo</td>
+                                        <td>@item.StudentName</td>
+                                        <td>@item.ScholarNumber</td>
+                                        <td>@item.Heading</td>
+                                        <td>@item.PaidDate</td>
+                                        <td>@item.Amount</td>
+                                    </tr>
+                                    total = total + Convert.ToInt32(item.Amount);
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <!-- col-msx-12 started -->
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6 pull-left table-responsive">
+                            <table class="table table-borderedless">
+                                <tr>
+                                    <td style="font-size:18px;">Total Received = <span id="totalReceived">@total </span>/-</td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div> <!-- col-msx-12  closed -->
+                </div><!-- col-msx-12  closed -->
+                @*<div class="col-md-12 col-sm-12 col-xs-12">
+
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6 pull-left table-responsive">
+                            <table class="table table-borderedless">
+                                <tr>
+                                    <td style="font-size:18px;">Total Gross = 1222/-</td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>*@
+
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <!-- col-msx-12 started -->
+                    <div class="col-sm-6"></div>
+                    <div class="col-sm-6 pull-left table-responsive">
+                        <table class="table table-borderedless">
+                            <tr>
+                                <td>
+                                    @*<button class="btn btn-warning">Export to Excel </button>*@
+                                    <button class="btn btn-warning" id="btn_Print">Print Report</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div> <!-- col-msx-12  closed -->
+            </div><!-- 1st row closed -->
+        </div>  <!-- /page content -->
+    </div>
+</div>
+
+<style>
+    table tr,td{
+        padding:5px !important;
+    }
+</style>
+
+
+@section scripts{
+    <script src="~/Content/DropDownSelect2/dist/js/select2.min.js"></script>
+
+    <script type="text/javascript">
+        $("#studentDll").select2();
+
+        //$('#classDll').prepend("<option value='' selected disabled='disabled'></option");
+        $('#classDll').select2({
+            multiple: true,
+            placeholder: "Select"
+        });
+
+        $('#classDll').val(null);
+        $('.select2-selection__rendered').html('');
+
+        $(function () {
+            $("#TodayDate").datepick({
+
+                onSelect: function (selected) {
+                    var dt = new Date(selected);
+                    dt.setDate(dt.getDate() + 1);
+                    $("#endDate").datepicker("option", "minDate", dt);
+                    $("#FromDate").val('');
+                    $("#ToDate").val('');
+                },
+                dateFormat: 'dd/mm/yy'
+            });
+
+            $("#DateFrom").datepick({
+
+                onSelect: function (selected) {
+                    var dt = new Date(selected);
+                    dt.setDate(dt.getDate() + 1);
+                    $("#ToDate").datepicker("option", "minDate", dt);
+                    $("#TodayDate").val('');
+                    $("#ToDate").val('');
+                },
+                dateFormat: 'dd/mm/yy'
+            });
+
+            $("#DateTo").datepick({
+                onSelect: function (selected) {
+                    var dt = new Date(selected);
+                    dt.setDate(dt.getDate() - 1);
+                    $("#FromDate").datepicker("option", "maxDate", dt);
+                    $("#TodayDate").val('');
+                },
+                dateFormat: 'dd/mm/yy'
+            });
+
+
+
+            $("#PrintReport").click(function () {
+                window.open(
+                    "/Fee/AllFeeReports?download=Ok",
+                    "_blank"
+                );
+            });
+        });
+        $("#btnrefresh").click(function () {
+            window.location.href = "/Fee/AllFeeReports";
+        });
+
+        $("#btnSearch").click(function () {
+           // 
+            var TodayDate = $("#TodayDate").val();
+            var FromDate = $("#FromDate").val();
+            var ToDate = $("#ToDate").val();
+            var Download = "";
+
+            if (FromDate != "") {
+                if (ToDate == "") {
+                    alert("Please select ToDate ");
+                    return false;
+                }
+            }
+            if (ToDate != "") {
+                if (FromDate == "") {
+                    alert("Please select FromDate ");
+                    return false;
+                }
+            }
+
+            window.location.href = "/Fee/AllFeeReports?TodayDate=" + TodayDate + "&FromDate=" + FromDate + "&ToDate=" + ToDate;
+        });
+
+        function formatJsonDate(jsonDate) {
+            // Extract timestamp
+            let timestamp = parseInt(jsonDate.replace(/\/Date\((\d+)\)\//, "$1"));
+
+            // Create a new date object and format it as dd/MM/yyyy
+            let date = new Date(timestamp);
+            let day = String(date.getDate()).padStart(2, '0');
+            let month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+            let year = date.getFullYear();
+
+            return `${day}/${month}/${year}`;
+        }
+
+        function GetAllFeeRecepits() {
+            var fromDt = $('#DateFrom').val();
+            var toDt = $('#DateTo').val();
+            var html = "";
+            let classValues = $('#classDll').val();
+            let classValuesStr = '';
+            if (classValues != null) {
+                for (var i = 0; i < classValues.length; i++) {
+                    classValuesStr = classValuesStr + classValues[i] + ",";
+                }
+
+                classValuesStr = classValuesStr.replace(/(^,)|(,$)/g, "");
+            }
+            //alert(${ '#SchoolType').val());
+            //return;
+            $.ajax({
+                url: "/Fee/GenerateFeeReports",
+                type: "GET",
+                
+                
+                data: { DDClass: classValuesStr, FeeHeader: $('#headerDll').val(), DateFrom: fromDt, DateTo: toDt, StudentId: $('#studentDll').val(), FeeHeading: "NOTTransport", SchoolType: $('#SchoolType').val()},
+                dataType: "json",
+                success: function (data) {
+                    //
+                    //$("#stdnttblbody").empty();
+                    //$("#Studenttbl > stdnttblbody").html("");
+                    //$("#Studenttbl").html("");
+
+                    var stdnttbl = document.getElementById('FeeRecepitAll');
+                    var totalspan = document.getElementById('totalReceived');
+                    html = '';
+                    var cnt = 1;
+                    var totalAmt = 0;
+
+                    html = '<table class="table table-responsive table-striped" id="AllFeeReceiptTbl">';
+                    html = html + '<thead id="stdnttblhead"><tr><th> S.No</th><th>Bill No</th><th>Student Name</th><th>Scholar Number</th><th>Heading</th><th>Paid Date</th><th>Amount</th></tr></thead>';
+                    html = html + '<tbody id="stdnttblbody">';
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i].Spare1 == 'admin' || data[i].Spare1 == 'admin user') {
+                            html += '<tr style="color:orange;">';
+                        }
+                        else {
+                            html += '<tr>';
+                        }
+                        var paiddate = formatJsonDate(data[i].PaidDate)
+                        //      
+                        //console.log(data[i].PaidDate)
+                        //var dd = data[i].PaidDate;
+                        //var date = new Date(parseInt(dd.substr(6)));
+                        ////var paiddate = date.getDate() + "-" + date.getMonth() + "-" + date.getFullYear();
+                        //var _dd = "";
+                        //var _mm = "";
+                        //var _yy = date.getFullYear();
+                        //date.getDate() < 10 ? (_dd = '0' + date.getDate()) : (_dd = date.getDate());
+                        //(date.getMonth() + 1) < 10 ? (_mm = '0' + (date.getMonth() + 1)) : (_mm = date.getDate() + 1);
+                        //var paiddate = _dd + '/' + _mm + '/' + _yy;
+                        
+                        html += '<td style="padding:5px;">' + data[i].SNO + '</td>';
+                        html += '<td style="padding:5px;">' + data[i].BillNo + '</td>';
+                        html += '<td style="padding:5px;">' + data[i].StudentName + '</td>';
+                        html += '<td style="padding:5px;">' + data[i].ScholarNumber + '</td>';
+                        html += '<td style="padding:5px;">' + data[i].Heading + '</td>';
+                        html += '<td style="padding:5px;">' + paiddate + '</td>';
+                        html += '<td style="padding:5px;">' + data[i].Amount + '</td>';
+                        html += '</tr>';
+                        totalAmt = parseInt(totalAmt) + parseInt(data[i].Amount);
+                        cnt++;
+                    }
+
+                    html += '</tbody></html>'
+
+                    stdnttbl.innerHTML = html;
+                    totalspan.innerHTML = totalAmt;
+                    $('#DateFrom').val('');
+                    $('#DateTo').val('');
+                    $('#classDll').val('');
+                    $('#headerDll').val('');
+                    $('#studentDll').val('').trigger('change');
+
+                    //$('#AllFeeReceiptTbl').DataTable();
+                },
+                error: function (result) {
+                    alert("Error" + result);
+                    console.log("Error" + result);
+                }
+            });
+        }
+    </script>
+    <script src="~/Scripts/printThis.js"></script>
+    <script>
+        $('#btn_Print').on("click", function () {
+            $('#PrintBox').printThis();
+        });
+    </script>
+}

@@ -1,0 +1,349 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6">
+                            <h4> Class Room Setup  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        <div class="col-sm-6">
+                            <button class="btn btn-info pull-right"><a href="sis_view_all_rooms.html" class="button_a">View Rooms </a></button>
+
+                        </div>
+                    </div>
+                </div>
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+
+
+        <div class="col-sm-12" style="border-bottom: 1px solid #E6E9ED;">
+            <!-- col-sm-12 started -->
+            <h4 class="std_head well-sm">Class Room Setup</h4>
+
+
+
+
+            <div class="col-sm-1">
+                <!-- col-sm-3 started -->
+            </div><!-- col-sm-3 closed -->
+            <div class="col-sm-8">
+                <!-- col-sm-6 started -->
+
+
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#home" class="sis_tab_a">New Class Room Setup</a></li>
+                    <li><a data-toggle="tab" href="#menu1" class="sis_tab_a">Set Room Types</a></li>
+
+                </ul>
+
+                <div class="tab-content tab_sis">
+                    <div id="home" class="tab-pane fade in active">
+                        <h4 class="std_head well-sm">Setup New Room </h4>
+                        <form action="/Master/AddRoom" method="post" id="RoomForm" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <input type="hidden" id="Roomid" name="Room_Id" />
+                            </div>
+                            <div class="form-group">
+                                <label>Name :</label>
+                                <input type="text" class="form-control" id="Name" name="Room_Name" >
+                            </div>
+                            <div class="form-group">
+                                <label>Room No : </label>
+                                <input type="text" id="roomno" name="Room_No" class="form-control"  />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Room Type : </label>
+                                @Html.DropDownList("Tbl_Room.Room_Type", new SelectList(ViewBag.Room_Type, "Room_Type", "Room_Type"), "Select", new { @id = "room_type", @class = "form-control" });
+                            </div>
+                            <div class="form-group">
+                                <label>Seating Capacity :</label>
+                                <input type="text" class="form-control" id="seatcapacity" name="Seating_Capacity" >
+                            </div>
+                            <div class="form-group">
+                                <label>Location / Land Mark :</label>
+                                <input type="text" class="form-control" id="location0" name="Location">
+                            </div>
+                            <div class="form-group">
+                                <label>Remarks :</label>
+                                <textarea type="text" class="form-control" id="remarks" name="Remarks"></textarea>
+                            </div>
+                            <div class="col-sm-7" style="margin-top:20px;">
+                                <!-- col-sm-6 started -->
+
+                                <button type="button" class="btn btn-success pull-right" id="Btnsave">Save</button>
+                                <button type="button" class="btn btn-success pull-right" onclick="ClearroomData()">Clear</button>
+
+                            </div>
+                        </form>
+                        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+
+                            <table class="table table-bordered" style="margin-top:10px" id="RoomTable">
+                                <thead>
+                                    <tr>
+                                        <th>S.No</th>
+                                        <th>Room Name</th>
+                                        <th>Room Number</th>
+                                        <th>Room Type</th>
+                                        <th>Seating Capacity</th>
+                                        <th>Location</th>   
+                                        <th>Remarks</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int j = 1;
+                                        foreach (var item in ViewBag.Rooms as IEnumerable<SchoolManagement.Website.Models.Tbl_Room>)
+                                        {
+                                            <tr>
+                                                <td>@j</td>
+                                                <td>@item.Room_Name</td>
+                                                <td>@item.Room_No</td>
+                                                <td>@item.Room_Type</td>
+                                                <td>@item.Seating_Capacity</td>
+                                                <td>@item.Location</td>
+                                                <td>@item.Remarks</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-info EditRoom" data-val="@item.Room_Id">Edit</button>
+                                                    <button type="button" class="btn btn-info DeleteRoom" data-val="@item.Room_Id">Delete</button>
+                                                </td>
+                                            </tr>
+
+                                            j++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                    </div><!-- tab-pane fade in active closed -->
+                    <div id="menu1" class="tab-pane fade">
+                        <!-- tab-pane fade started -->
+                        <h4 class="std_head well-sm">Set Room Types </h4>
+                        <form action="/Master/AddRoomType" enctype="multipart/form-data" id="Roomtypeform" method="post">
+                            <div class="form-group">
+                                <input type="hidden" id="RoomTypeid" name="Room_Id" />
+                            </div>
+                            <div class="form-group">
+                                <label>Add Room Type :</label>
+                                <input type="text" class="form-control" placeholder="Class Room" maxlength="100" id="RoomName" name="Room_Type" />
+                            </div>
+                            <div class="col-sm-7" style="margin-top:20px;">
+                                <!-- col-sm-6 started -->
+
+                                <button type="button" class="btn btn-success pull-right" onclick="ClearData()">Clear</button>
+                                <button type="button" class="btn btn-success pull-right" id="BtnRoomSave">Save</button>
+
+                            </div>
+                        </form>
+
+                        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+
+                            <table class="table table-bordered" style="margin-top:10px" id="RoomType_Table">
+                                <thead>
+                                    <tr>
+                                        <th>S.No</th>
+                                        <th>Room Type</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{ 
+                                        int i = 1;
+                                        foreach(var itme in ViewBag.Roomtype as IEnumerable<SchoolManagement.Website.Models.Tbl_RoomType>)
+                                        {
+                                            <tr>
+                                                <td>@i</td>
+                                                <td>@itme.Room_Type</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-info RoomTypeEdit" data-val="@itme.Room_Id">Edit</button>
+                                                    <button type="button" class="btn btn-info RoomTypeDelete" data-val="@itme.Room_Id">Delete</button>
+                                                </td>
+                                            </tr>
+
+                                            i++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+
+
+                    </div><!-- tab-pane fade closed -->
+                </div><!-- tab-content closed -->
+
+            </div><!-- col-sm-6 closed -->
+            <!-- col-sm-6 closed -->
+        </div><!-- col-sm-12 closed -->
+
+
+    </div><!-- col-msx-12  closed -->
+</div>
+
+@section scripts{
+    <script>
+
+        $("#RoomTable").DataTable();
+        $("#RoomType_Table").DataTable();
+
+
+        $(".RoomTypeEdit").on('click', function () {
+            $("#Roomtypeform").attr('action', '/Master/UpdateRoomType');
+            var id = $(this).attr("data-val");
+
+            $("#BtnRoomSave").text("Update");
+            GetRoomById(id);
+        });
+
+            function GetRoomById(id) {
+                
+                $.ajax({
+                    url: "/Master/GetRoomTypeById?id=" + id,
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json;charset=UTF-8",
+                    success: function (result) {
+                        if (result != null) {
+                            $("#RoomTypeid").val(result.Room_Id);
+                            $("#RoomName").val(result.Room_Type);
+                        }
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+                });
+            }
+
+
+        $(".RoomTypeDelete").on('click', function () {
+            var id = $(this).attr("data-val");
+            if (confirm("Do You Want to Delete")) {
+                window.location.href = "/Master/DeleteRoomType?id=" + id;
+            }
+        });
+
+        function ClearData() {
+            var cnf = confirm("Are your Sure, You Want to Delete?");
+            if (cnf != null) {
+                $("#RoomTypeid").val('');
+                $("#RoomName").val('');
+
+                $("#Roomtypeform").attr('action', '/Master/AddRoomType');
+                $("#BtnRoomSave").text("Save");
+
+            }
+        }
+
+
+        //for Room Setup
+        $(".EditRoom").on('click', function () {
+            $("#RoomForm").attr('action', '/Master/UpdateRooms');
+            var id = $(this).attr("data-val");
+
+            $("#Btnsave").text("Save");
+            GetRoomNameById(id);
+
+        });
+
+        function GetRoomNameById(id) {
+            $.ajax({
+                url: "/Master/GetRoomsById",
+                type: "GET",
+                dataType: "json",
+                success: function (result) {
+                    $("#Roomid").val(result.Room_Id);
+                    $("#Name").val(result.Room_Name);
+                    $("#roomno").val(result.Room_No);
+                    $("#room_type").val(result.Room_Type);
+                    $("#seatcapacity").val(result.Seating_Capacity);
+                    $("#location0").val(result.Location);
+                    $("#remarks").val(result.Remarks);
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+
+
+        $(".DeleteRoom").on('click', function () {
+            var id = $(this).attr("data-val");
+            if (confirm("Do You Want to Delete?")) {
+                window.location.href = "/Master/DeleteRooms?id=" + id;
+            }
+        });
+
+
+        function ClearroomData() {
+            $("#Roomid").val('');
+            $("#Name").val('');
+            $("#roomno").val('');
+            $("#room_type").val('');
+            $("#seatcapacity").val('');
+            $("#location0").val('');
+            $("#remarks").val('');
+
+            $("#RoomForm").attr('action', '/Master/AddRoom');
+            $("#Btnsave").text("Save");
+
+
+        }
+
+        
+         //if (  name != null || roomnumber != null || RoomType != null || SeatCapacity != null || Location != null || Remarks != null) {
+            //    alert("Please Fill All the Details");
+            //}
+            //else {
+    </script>
+
+    <script>
+        $("#Btnsave").on('click', function () {
+            
+            var id = $("#Roomid").val();
+            var name = $("#Name").val();
+            var roomnumber = $("#roomno").val();
+            var RoomType = $("#room_type").val();
+            var SeatCapacity = $("#seatcapacity").val();
+            var Location = $("#location0").val();
+            var Remarks = $("#remarks").val();
+            alert(name);
+
+            if (  name == null || roomnumber == null || RoomType == null || SeatCapacity == null || Location == null || Remarks == null) {
+                alert("Please Fill All the Details");
+            }
+
+            $.ajax({
+                url: "/Master/AddRoom",
+                data: {name: name, roomnumber: roomnumber, RoomType: RoomType, SeatCapacity: SeatCapacity, location: location, Remarks: Remarks },
+                type: "POST",
+                dataType: "json",
+                async: false,
+                //contentType: false,
+                processData: false,
+                success: function (result) {
+                    if (result.status == "Success") {
+                        alert("Data Added Successfully");
+                        window.location.reload();
+                    } else {
+                        alert("Something Went Wrong");
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+
+
+        });
+    </script>
+
+    }

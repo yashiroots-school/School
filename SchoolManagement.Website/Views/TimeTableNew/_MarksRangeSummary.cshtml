@@ -1,0 +1,30 @@
+﻿@model List<SchoolManagement.Website.ViewModels.SubjectMarksRangeViewModel>
+
+@{
+    var allSubjects = Model.SelectMany(m => m.SubjectCounts.Keys).Distinct().ToList();
+}
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Marks Range</th>
+            @foreach (var subject in allSubjects)
+            {
+                <th>@subject</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.MarksRange</td>
+                @foreach (var subject in allSubjects)
+                {
+                    <td>@(item.SubjectCounts.ContainsKey(subject) ? item.SubjectCounts[subject] : 0)</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+

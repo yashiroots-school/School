@@ -1,0 +1,163 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .table-bordered > thead > tr > th, .table-bordered > thead > tr > td {
+        border-bottom-width: 2px;
+        color: #E9837F;
+        background-color: #ffffff;
+    }
+</style>
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <h5 class="sis_heading">Previous <i class="glyphicon glyphicon-triangle-left"></i> Date : <span> 15 june 2015 </span> <i class="glyphicon glyphicon-triangle-right"></i> Next Day </h5>
+                    </div>
+
+                    <div class="col-md-4 col-sm-4 col-xs-12" style="margin:7px 0px;">
+                        <!-- <h4><button type="button" class="form_datetime btn btn-info pull-right" id="datetimepicker" data-date="12-02-2012" data-date-format="dd-mm-yyyy"> Select Day </button></h4>-->
+                        Select Day : <input type="text" value=" 27-06-2015" style="width:90px;">
+
+                    </div>
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <button class="btn btn-info pull-right"><a href="sis_set_time_table.html" class="button_a">Set Time Table </a></button>
+                        <button class="btn btn-danger pull-right"><a href="sis_manage_time_table.html" class="button_a">Manage Time Table</a></button>
+                    </div>
+
+                    <div class="col-sm-7" style="margin-top: 15px;">
+                        <div class="col-sm-6">
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-6">Select Class :</label>
+                                <div class="col-sm-6">
+                                    <select class="form-control" id="sel1">
+                                        <option>I</option>
+                                        <option>II</option>
+                                        <option>III</option>
+                                        <option>IV</option>
+                                        <option>V</option>
+                                        <option>VI</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div><!--col-md-6 closed -->
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-sm-7">Select Section :</label>
+                                <div class="col-sm-5">
+                                    <select class="form-control" id="sel1">
+                                        <option>A</option>
+                                        <option>B</option>
+                                        <option>C</option>
+                                        <option>D</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div><!--col-md-6 closed -->
+                    </div><!--col-md-7 closed -->
+                </div><!--row x_title closed -->
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-md-12 closed -->
+
+        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+            <!-- col-msx-12 started -->
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="head_color">Day</th>
+                        <th class="head_color">9AM - 9:50AM</th>
+                        <th class="head_color">9:50AM - 10:40AM</th>
+                        <th class="head_color">10:40AM - 11:30AM</th>
+                        <th class="head_color">11:30AM - 12:20PM</th>
+                        <th>BREAK</th>
+                        <th class="head_color">1PM - 1:50PM</th>
+                        <th class="head_color">1:50PM - 2:40PM</th>
+                        <th class="head_color">2:40PM - 3:30PM</th>
+                        <th class="head_color">3:30PM - 4:20PM</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="week_color">Monday</td>
+                        <td class="subject_bgclr_emty">English</td>
+                        <td class="subject_bgclr_cntn">Hindi</td>
+                        <td class="subject_bgclr_over">Maths</td>
+                        <td class="subject_bgclr_emty">Computers</td>
+                        <td></td>
+                        <td class="subject_bgclr_cntn">Science</td>
+                        <td class="subject_bgclr_emty">Social</td>
+                        <td class="subject_bgclr_cntn">Graph</td>
+                        <td class="subject_bgclr_over">Arabic</td>
+                    </tr>
+                    <tr>
+                        <td class="week_color">Tuesday</td>
+                        <td class="subject_bgclr_emty">English</td>
+                        <td class="subject_bgclr_emty">Social</td>
+                        <td class="subject_bgclr_cntn">Hindi</td>
+                        <td class="subject_bgclr_emty">Computers</td>
+                        <td></td>
+                        <td class="subject_bgclr_cntn">Science</td>
+                        <td class="subject_bgclr_over">Maths</td>
+                        <td class="subject_bgclr_cntn">Graph</td>
+                        <td class="subject_bgclr_over">Arabic</td>
+                    </tr>
+                    <tr>
+                        <td class="week_color">Wednesday</td>
+                        <td class="subject_bgclr_emty">English</td>
+                        <td class="subject_bgclr_cntn">Hindi</td>
+                        <td class="subject_bgclr_cntn">Science</td>
+                        <td class="subject_bgclr_emty">Computers</td>
+                        <td></td>
+                        <td class="subject_bgclr_over">Maths</td>
+                        <td class="subject_bgclr_cntn">Graph</td>
+                        <td class="subject_bgclr_emty">Social</td>
+                        <td class="subject_bgclr_cntn">Arabic</td>
+                    </tr>
+                    <tr>
+                        <td class="week_color">Thursday</td>
+                        <td class="subject_bgclr_emty">English</td>
+                        <td class="subject_bgclr_cntn">Hindi</td>
+                        <td class="subject_bgclr_over">Maths</td>
+                        <td class="subject_bgclr_emty">Computers</td>
+                        <td></td>
+                        <td class="subject_bgclr_cntn">Science</td>
+                        <td class="subject_bgclr_emty">Social</td>
+                        <td class="subject_bgclr_cntn">Graph</td>
+                        <td class="subject_bgclr_over">Arabic</td>
+                    </tr>
+                    <tr>
+                        <td class="week_color">Friday</td>
+                        <td class="subject_bgclr_emty">English</td>
+                        <td class="subject_bgclr_emty">Social</td>
+                        <td class="subject_bgclr_cntn">Hindi</td>
+                        <td class="subject_bgclr_emty">Computers</td>
+                        <td></td>
+                        <td class="subject_bgclr_cntn">Science</td>
+                        <td class="subject_bgclr_over">Maths</td>
+                        <td class="subject_bgclr_cntn">Graph</td>
+                        <td class="subject_bgclr_over">Arabic</td>
+                    </tr>
+                    <tr>
+                        <td class="week_color">Saturday</td>
+                        <td class="subject_bgclr_emty">English</td>
+                        <td class="subject_bgclr_cntn">Hindi</td>
+                        <td class="subject_bgclr_cntn">Science</td>
+                        <td class="subject_bgclr_emty">Computers</td>
+                        <td></td>
+                        <td class="subject_bgclr_over">Maths</td>
+                        <td class="subject_bgclr_cntn">Graph</td>
+                        <td class="subject_bgclr_emty">Social</td>
+                        <td class="subject_bgclr_cntn">Arabic</td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class="btn btn-warning pull-right">Print</button>
+        </div><!-- col-sm-12 closed -->
+    </div><!-- 1st row closed -->
+</div>

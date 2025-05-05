@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @*@Styles.Render("~/Content/css")*@
+    @Scripts.Render("~/bundles/modernizr")
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/WebsiteImages/images/icons.png">
+    <link href="~/Content/WebsiteCss/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Content/WebsiteCss/css/animate.min.css" rel="stylesheet">
+    @*<link href="~/Content/DatePicker/datepicker.css" rel="stylesheet">*@
+    <link href="~/Content/WebsiteCss/css/custom.css" rel="stylesheet">
+    <link href="~/Content/WebsiteCss/css/floatexamples.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    @*<link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">*@
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" />
+    <link href="~/Content/DatePicker2/css/jquery.datepick.css" rel="stylesheet" />
+    <style>
+        table.dataTable thead th {
+            color: black;
+        }
+    </style>
+    <script src="~/Scripts/WebsiteJs/js/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+</head>
+
+<body class="nav-md">
+    <div class="container body">
+        <div class="main_container">
+            @{ Html.RenderPartial("_LayoutHeader");}
+            @*@{ Html.RenderPartial("_LayoutSidebar");}
+                @{ Html.RenderPartial("_LayoutTopNavBar");}*@
+
+            @RenderBody();
+        </div>
+    </div>
+
+    <script src="~/Scripts/WebsiteJs/js/custom.js"></script>
+    <script src="~/Scripts/WebsiteJs/js/nprogress.js"></script>
+    <script src="~/Scripts/WebsiteJs/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/WebsiteJs/js/moment.min.js"></script>
+
+    @*<script src="~/Scripts/WebsiteJs/js/jquery.min.js"></script>*@
+    <script src="~/Scripts/RegistrationJs/StudentAcadamicDetails.js"></script>
+    <script src="~/Scripts/RegistrationJs/StudentWorkExperienceWr.js"></script>
+    <script src="~/Scripts/RegistrationJs/RegistrationJS.js"></script>
+    <script src="~/Scripts/RegistrationJs/StudentRegistration.js"></script>
+    <script src="~/Scripts/RegistrationJs/RegMethods.js"></script>
+    <script src="~/Scripts/DevelopmentJS/leftMenuBinderJS.js"></script>
+
+    @*<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>*@
+
+
+    <script type="text/javascript">
+        function disableConfirm() {
+            if (document.getElementById('Dec_interestedinFinalPlacementYesChkbox').checked == 1) {
+                $('#divagree').show();
+                $('#divnoreason').hide();
+
+            } else if (document.getElementById('Dec_interestedinFinalPlacementNoChkbox').checked == 1) {
+                $("#Dec_AgreeChkbox").prop("checked", false);
+                $('#divagree').hide();
+                $('#divnoreason').show();
+            }
+        }
+    </script>
+    <script type="text/javascript">
+        function disablefieldProject() {
+            if (document.getElementById('Intern_ProjectSubmissionYesChkbox').checked == 1) {
+                document.getElementById('Intern_ReasonforNoSubmission').disabled = 'disabled';
+
+            } else {
+                document.getElementById('Intern_ReasonforNoSubmission').disabled = '';
+            }
+        }
+    </script>
+    <script type="text/javascript">
+        function disablefield() {
+            if (document.getElementById('OutStationNoChkbox').checked == 1) {
+                document.getElementById('Native').disabled = 'disabled';
+
+            } else {
+                document.getElementById('Native').disabled = '';
+            }
+        }
+    </script>
+
+    <script>
+        function resetliactive() {
+            $("#listddetails").removeClass("active");
+            $("#listacddetails").removeClass("active");
+            $("#listacdworkexp").removeClass("active");
+            $("#listsummerintrn").removeClass("active");
+            $("#listskillst").removeClass("active");
+            $("#listfmlydetails").removeClass("active");
+            $("#listdeclrtn").removeClass("active");
+        }
+
+        function hidealltabs() {
+            $("#add").removeClass("in active");
+            $("#add1").removeClass("in active");
+            $("#add2").removeClass("in active");
+            $("#add3").removeClass("in active");
+            $("#add4").removeClass("in active");
+            $("#add5").removeClass("in active");
+            $("#add6").removeClass("in active");
+        }
+
+
+
+    </script>
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.js"></script>*@
+    @*<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>*@
+    <script src="~/Content/DatePicker2/js/jquery.plugin.min.js"></script>
+
+    <script src="~/Content/DatePicker2/js/jquery.datepick.js"></script>
+    <script>
+        //$('.datepicker').datepicker({
+        //    format: "dd/mm/yyyy"
+        //});
+        $('.datepicker').datepick({ dateFormat: 'dd/mm/yyyy' });
+    </script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

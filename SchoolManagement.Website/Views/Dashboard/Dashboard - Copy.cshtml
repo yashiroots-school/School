@@ -1,0 +1,401 @@
+﻿
+@{
+    ViewBag.Title = "Dashboard";
+}
+
+<!-- page content -->
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        @if (string.IsNullOrEmpty(Convert.ToString(Session["ScolarNo"])))
+        {
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <!-- col-msx-12 started -->
+                <h4 class="std_head_ra"> Masters Setup</h4>
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="/Master/Class_section_setup"><img src="~/WebsiteImages/images/Training-icon (1).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa"> Class & Subject</h4>
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-1 co-sm-1">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-1 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="/Master/SubjectSetup"><img src="~/WebsiteImages/images/Training-icon (2).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa">Teachers Allocation</h4>
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-1 co-sm-1">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-1 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="/Master/TeacherAllocation"><img src="~/WebsiteImages/images/Training-icon (3).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa"> Marks Allocation</h4>
+                </div>
+                <!--col-msx-2 closed-->
+            </div>
+            <div class="col-md-12 col-sm-12">
+                <!-- col-msx-12 started -->
+
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="/Master/Department"><img src="~/WebsiteImages/images/Training-icon (10).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa"> Department</h4>
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-1 co-sm-1">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-1 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="/Master/RoomTypes"><img src="~/WebsiteImages/images/Training-icon (11).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa">Class Room Setup</h4>
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-1 co-sm-1">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-1 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="/Master/ExamTypes"><img src="~/WebsiteImages/images/Training-icon (12).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa">Set Exam Types</h4>
+                </div>
+                <!--col-msx-2 closed-->
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(Convert.ToString(Session["ScolarNo"])))
+        {
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <!-- col-msx-12 started -->
+                <h4 class="std_head_ra">Student Details</h4>
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="/AdmissionFee/FeePaid"><img src="~/WebsiteImages/images/Training-icon (14).png" alt="Student Fee Paid" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa"> Fee Payment</h4>
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-1 co-sm-1">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="/Student/ViewStudent?studentId=@Convert.ToString(Session["ScolarNo"])"><img src="~/WebsiteImages/images/Training-icon (10).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa"> Student Profile</h4>
+                </div>
+                <div class="col-md-1 co-sm-1">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="/AdmissionFee/AllReceipts"><img src="~/WebsiteImages/images/Training-icon (14).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa"> Fee Receipts</h4>
+                </div>
+
+            </div>
+
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <!-- col-msx-12 started -->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="/Master/TimeTable"><img src="~/WebsiteImages/images/Training-icon (5).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa"> Class Time Table</h4>
+                </div>
+                <div class="col-md-1 co-sm-1">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="/Attendance/StudentAttendanceView"><img src="~/WebsiteImages/images/Training-icon (11).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa"> Check Attendence</h4>
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-1 co-sm-1">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="/Exam/StudentReportCard"><img src="~/WebsiteImages/images/Training-icon (2).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa"> Books</h4>
+                </div>
+            </div>
+
+
+            if (ViewBag.Additionalinfo == "yes")
+            {
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-md-2 co-sm-2">
+                        <!-- col-msx-12 started -->
+                    </div>
+                    <div class="col-md-2 co-sm-2">
+                        <!-- col-msx-12 started -->
+                        <a href="/TransportFee/TransportFeePaid"><img src="~/WebsiteImages/images/Training-icon (14).png" alt="Student Fee Paid" class="img-circle ra_color" /></a>
+                        <h4 class="std_head_raa">Transport Fee Payment</h4>
+                    </div>
+                    <div class="col-md-1 co-sm-1">
+                        <!-- col-msx-12 started -->
+                    </div>
+                    <div class="col-md-2 co-sm-2">
+                        <!-- col-msx-12 started -->
+                        <a href="/TransportFee/AllTransportReceipts"><img src="~/WebsiteImages/images/Training-icon (14).png" alt="school management" class="img-circle ra_color" /></a>
+                        <h4 class="std_head_raa"> Transport Fee Receipts</h4>
+                    </div>
+                </div>
+            }
+
+
+
+
+        }
+
+
+
+        @if (string.IsNullOrEmpty(Convert.ToString(Session["ScolarNo"])))
+        {
+            <div class="col-md-12 col-sm-12 col-xs-12" style="height:1px;background-color:#F7EBEB;">
+                <!-- col-msx-12 started -->
+            </div>
+            <!--col-msx-12 closed-->
+
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <!-- col-msx-12 started -->
+                <h4 class="std_head_ra"> Time Table</h4>
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="/Master/ViewTimeTable"><img src="~/WebsiteImages/images/Training-icon (4).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa">Period timings</h4>
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-1 co-sm-1">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-1 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="/Master/SetTimeTable"><img src="~/WebsiteImages/images/Training-icon (5).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa">Set time table</h4>
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-1 co-sm-1">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-1 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="sis_schedule_exams.html"><img src="~/WebsiteImages/images/Training-icon (13).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa">Exam Schedular</h4>
+                </div>
+                <!--col-msx-2 closed-->
+            </div>
+        }
+
+        <!--col-msx-12 closed-->
+        @if (string.IsNullOrEmpty(Convert.ToString(Session["ScolarNo"])))
+        {
+            <div class="col-md-12 col-sm-12 col-xs-12" style="height:1px;background-color:#F7EBEB;">
+                <!-- col-msx-12 started -->
+            </div>
+            <!--col-msx-12 closed-->
+
+            <div class="col-md-12 col-sm-12">
+                <!-- col-msx-12 started -->
+                <h4 class="std_head_ra"> Fee Management</h4>
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="/Fee/ConfigureFeePlanes"><img src="~/WebsiteImages/images/Training-icon (14).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa" style="margin-left:12px;"> Fee Setup</h4>
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-1 co-sm-1">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-1 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="/Fee/FeeReceipts"><img src="~/WebsiteImages/images/Training-icon (18).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa" style="margin-left:12px;"> Fee & Pay roll Mgnt</h4>
+                </div>
+                <!--col-msx-2 closed-->
+            </div>
+            <!--col-msx-12 closed-->
+        }
+
+        @if (string.IsNullOrEmpty(Convert.ToString(Session["ScolarNo"])))
+        {
+            <div class="col-md-12 col-sm-12 col-xs-12" style="height:1px;background-color:#F7EBEB;">
+                <!-- col-msx-12 started -->
+            </div>
+            <!--col-msx-12 closed-->
+
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <!-- col-msx-12 started -->
+                <h4 class="std_head_ra"> Library Management</h4>
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="sis_create_sections_of_library.html"><img src="~/WebsiteImages/images/Training-icon (15).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa">Create Sections</h4>
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-1 co-sm-1">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-1 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="sis_members_management.html"><img src="~/WebsiteImages/images/Training-icon (16).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa">Members Management</h4>
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-1 co-sm-1">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-1 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="sis_missing_or_lost.html"><img src="~/WebsiteImages/images/Training-icon (17).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa">Missing / Lost Adjustment</h4>
+                </div>
+                <!--col-msx-2 closed-->
+            </div>
+            <!--col-msx-12 closed-->
+        }
+
+        @if (string.IsNullOrEmpty(Convert.ToString(Session["ScolarNo"])))
+        {
+            <div class="col-md-12 col-sm-12 col-xs-12" style="height:1px;background-color:#F7EBEB;">
+                <!-- col-msx-12 started -->
+            </div>
+            <!--col-msx-12 closed-->
+
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <!-- col-msx-12 started -->
+                <h4 class="std_head_ra"> Assets & Inventory Management</h4>
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="sis_add_inventory_category.html"><img src="~/WebsiteImages/images/Training-icon (19).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa">Add Category</h4>
+                </div>
+                <!--col-msx-2 closed-->
+
+            </div>
+            <!--col-msx-12 closed-->
+        }
+
+        @if (string.IsNullOrEmpty(Convert.ToString(Session["ScolarNo"])))
+        {
+            <div class="col-md-12 col-sm-12 col-xs-12" style="height:1px;background-color:#F7EBEB;">
+                <!-- col-msx-12 started -->
+            </div>
+            <!--col-msx-12 closed-->
+
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <!-- col-msx-12 started -->
+                <h4 class="std_head_ra"> User & Logins</h4>
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="/Student/ManageStudent"><img src="~/WebsiteImages/images/Training-icon (6).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa"> Manage Students</h4>
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-1 co-sm-1">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-1 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="#"><img src="~/WebsiteImages/images/Training-icon (7).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa">Set Privileges</h4>
+                </div>
+                <!--col-msx-2 closed-->
+
+
+            </div>
+            <!--col-msx-12 closed-->
+        }
+
+        @if (string.IsNullOrEmpty(Convert.ToString(Session["ScolarNo"])))
+        {
+            <div class="col-md-12 col-sm-12 col-xs-12" style="height:1px;background-color:#F7EBEB;">
+                <!-- col-msx-12 started -->
+            </div>
+            <!--col-msx-12 closed-->
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <!-- col-msx-12 started -->
+                <h4 class="std_head_ra"> Backup & Restore</h4>
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="#"><img src="~/WebsiteImages/images/Training-icon (8).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa"> Backup Entire Data</h4>
+                </div>
+                <!--col-msx-2 closed-->
+                <div class="col-md-1 co-sm-1">
+                    <!-- col-msx-12 started -->
+                </div>
+                <!--col-msx-1 closed-->
+                <div class="col-md-2 co-sm-2">
+                    <!-- col-msx-12 started -->
+                    <a href="#"><img src="~/WebsiteImages/images/Training-icon (9).png" alt="school management" class="img-circle ra_color" /></a>
+                    <h4 class="std_head_raa" style="margin-left:16px;">Restore</h4>
+                </div>
+                <!--col-msx-2 closed-->
+            </div>
+        }
+
+        <!--col-msx-12 closed-->
+        <div class="col-md-12 col-sm-12 col-xs-12" style="height:1px;background-color:#F7EBEB;">
+            <!-- col-msx-12 started -->
+        </div>
+        <!--col-msx-12 closed-->
+    </div><!-- 1st row closed -->
+</div> <!-- /page content -->

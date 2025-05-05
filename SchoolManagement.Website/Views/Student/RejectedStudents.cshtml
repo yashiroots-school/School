@@ -1,0 +1,62 @@
+﻿
+@{
+    ViewBag.Title = "RejectedStudents";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="row">
+                <!-- row started -->
+                <div class="col-md-12 col-sm-12 col-xs-12 jss_c">
+                    <!-- col-msx-12 started -->
+                    <!-- col-sm-12 closed -->
+                    <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                        <!-- col-msx-12 started -->
+
+                        <table class="table table-responsive table-striped" style="width: 100%" id="RejectedStudentTabl">
+                            <thead>
+                                <tr>
+                                    <th>S.No</th>
+                                    <th>Application Number</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    @*<th> Class</th>*@
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ 
+                                    int i = 1;
+                                    foreach(var item in ViewBag.RejectedStudents as IEnumerable<SchoolManagement.Data.Models.StudentsRegistration>)
+                                    {
+                                      <tr>
+                                          <td>@i</td>
+                                          <td>@item.ApplicationNumber</td>
+                                          <td>@item.Name</td>
+                                          <td>@item.Last_Name</td>
+                                      </tr>
+                                    i++;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        //$("RejectedStudentTabl").DataTable();
+        $("#RejectedStudentTabl").DataTable();
+
+    });
+</script>

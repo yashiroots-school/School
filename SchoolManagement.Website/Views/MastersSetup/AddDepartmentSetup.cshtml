@@ -1,0 +1,116 @@
+﻿@model IEnumerable<SchoolManagement.Data.Models.Departments>
+@{
+    ViewBag.Title = "AddDepartmentSetup";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6">
+                            <h4>  Manage Department  &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                    </div><!-- col-sm-12 closed -->
+                </div><!--row x_title closed -->
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+        <div class="col-sm-12" style="margin-top: 15px;">
+            <div class="col-sm-3"></div>
+            <form method="post" action="/MastersSetup/AddDepartmentSetup" id="AddDepartmentSetup" enctype="multipart/form-data">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Add New Department :</label>
+                        <div class="col-sm-6">
+                            <input type="hidden" id="Id" name="DepartmentId" class="form-control">
+                            <input type="text" id="Department" name="DepartmentName" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-sm-8" style="margin-top:20px;">
+                        <button type="submit" class="btn btn-success pull-right" value="Submit Form" id="btnsave">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive border-bottom">
+            <!-- col-msx-12 started -->
+            <table class="table table-bordered" id="tbldepartment" style="margin-top:5px;">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Departments</th>
+                        <th>Action</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int i = 1; }
+                    @foreach (var item in ViewBag.Departments as IEnumerable<SchoolManagement.Data.Models.tbl_Department>)
+                    {
+                        <tr>
+                            <td>@i</td>
+                            <td>@item.DepartmentName</td>             
+                            <td><button class="btn btn-success btn-sm EditBtn" data-val="@item.DepartmentId" role="button">Edit</button> <button id="@item.DepartmentId" class="btn btn-danger btn-sm deleteBtn" data-val="@item.DepartmentId" role="button">Delete</button></td>
+                        </tr>
+                        i++;
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div><!-- 1st row closed -->
+</div>  <!-- /page content -->
+@section scripts{
+    <script type="text/javascript">
+        $('#tbldepartment').DataTable();
+    </script>
+
+    <script type="text/javascript">
+
+        $(".EditBtn").on('click', function () {
+            var Id = $(this).attr("data-val");
+            GetDepartmentById(Id);
+
+        });
+        function GetDepartmentById(Id) {
+            $.ajax({
+                url: "/MastersSetup/GetDepartmentById?id=" + Id,
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    
+                    $('#AddDepartmentSetup').attr('action', '/MastersSetup/UpdateDepartment');
+                    $("#btnsave").val("Update");
+                    if (result != null) {
+                        $("#Id").val(result.DepartmentId);
+                        $("#Department").val(result.DepartmentName);
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+        $(".deleteBtn").on('click', function () {
+            var dataListId = $(this).attr("data-val");
+            $.ajax({
+                url: "/MastersSetup/DeleteDepartment?id=" + dataListId,
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    
+                    alert(result);
+                    window.location.reload();
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,106 @@
+﻿@model SchoolManagement.Website.Models.InputPaymentResult
+
+@{
+    Layout = "~/Views/Shared/PaymentResultview.cshtml";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>PaymentProcessResult</title>
+</head>
+<body>
+    <div class="right_col" role="main">
+        <div class="row">
+            <!-- row started -->
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <!-- col-msx-12 started -->
+                <div class="dashboard_graph">
+                    <div class="row x_title">
+                        <div class="col-sm-12">
+                            <div class="col-sm-6">
+                                <h4 id="HeadingText"> Student Payment Result  &nbsp;<i class="fa fa-forward"></i></h4>
+                            </div>
+                            @*<div class="col-sm-6">
+                                    <button class="btn btn-info pull-right"><a href="/Student/VewAllStudent" class="button_a">View All Students </a></button>
+                                    <button class="btn btn-danger pull-right"><a href="/Student/ManageStudent" class="button_a">Manage Student</a> </button>
+                                </div>*@
+                        </div>
+                    </div>
+                </div><!-- dashboard_graph closed-->
+                @*<ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#add" class="sis_tab_a">Student Payment Details</a></li>
+                    </ul>*@
+
+                <div class="col-sm-12" style="border-right: 1px solid #eee;">
+                    <form enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label>Transaction Reference :</label>
+                            @Html.Label("TransactionReference", (string)@Model.PgMeTrnRefNo)
+                        </div>
+                        <div class="form-group">
+                            <label>Transaction Amount :</label>
+                            @Html.Label("TransactionAmount", (string)@Model.TrnAmt)
+
+                        </div>
+                        <div class="form-group">
+                            <label>Transaction Request Date :</label>
+                            @Html.Label("RequestDate", (string)@Model.TrnReqDate)
+
+                        </div>
+                        <div class="form-group">
+                            <label>Transaction Status :</label>
+                            @Html.Label("TransactionStatus", (string)@Model.StatusCode)
+
+                        </div>
+                        <div class="form-group">
+                            <label>Transaction Status Description :</label>
+                            @Html.Label("StatusDescription", (string)@Model.StatusDesc)
+                        </div>
+
+                        <div class="form-group">
+                            <label>Student Name :</label>
+                            @Html.Label("StudentName", (string)@Model.AddField1)
+                        </div>
+
+                        <div class="form-group">
+                            <label>Class :</label>
+                            @Html.Label("Class", (string)@Model.AddField2)
+                        </div>
+
+                        <div class="form-group">
+                            @{
+                                if (Model.AddField3 == "NoCast")
+                                {
+                                    <label style="display:none">Category :</label>
+                                    @Html.Label("Category", (string)@Model.AddField3, new { @style = "display:none" })
+                                }
+                                else
+                                {
+                                    <label>Category :</label>
+                                    @Html.Label("Category", (string)@Model.AddField3)
+                                }
+                            }
+                        </div>
+
+
+                        @*action="/Student/AdmissionRegistration"*@
+                        @*<div class="tab-content tab_sis">
+                            <div id="add" class="tab-pane fade in active">
+                                <div class="row" style="float:left">
+                                    <input type="submit" class="btn btn-success pull-right" id="submitformBTn" value="Print" style="margin-left: 21px;" />
+                                </div>
+                            </div>
+                        </div>*@
+                    </form>
+                </div>
+
+            </div><!-- col-msx-12  closed -->
+        </div><!-- 1st row closed -->
+    </div>
+</body>
+</html>

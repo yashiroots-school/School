@@ -1,0 +1,237 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="right_col" role="main">
+    <div class="row">
+        <!-- row started -->
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <!-- col-msx-12 started -->
+            <div class="dashboard_graph">
+                <div class="row x_title">
+                    <!--row x_title started -->
+                    <div class="col-sm-12">
+                        <!-- col-sm-12 started -->
+                        <div class="col-sm-6">
+                            <h4> Assignment List &nbsp;<i class="fa fa-forward"></i></h4>
+                        </div>
+                        @{
+                            if (ViewBag.sessionlist == "Student")
+                            {
+                                <div class="col-sm-6">
+                                    <button class="btn btn-info pull-right" style="display:none"><a href="/Master/TableAssignment" class="button_a">Add New</a></button>
+                                    <button class="btn btn-danger pull-right" style="display:none"><a href="/Master/ManageAssignment" class="button_a">Manage </a> </button>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-sm-6">
+                                    <button class="btn btn-info pull-right"><a href="/Master/TableAssignment" class="button_a">Add New</a></button>
+                                    <button class="btn btn-danger pull-right"><a href="/Master/ManageAssignment" class="button_a">Manage </a> </button>
+                                </div>
+                            }
+                        }
+
+                        <div class="col-sm-12" style="margin-top: 15px;">
+
+
+                            <div class="col-sm-3">
+
+                                <div class="form-group">
+                                    <label class="control-label col-sm-5">Select Class :</label>
+                                    <div class="col-sm-6">
+
+                                        <select class="form-control" id="Class_Id" name="Class_Id" @*onclick="GetClass()"*@>
+                                            <option value="0">---Select Class---</option>
+                                            @foreach (var item in ViewBag.ClassList as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                            {
+                                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label class="control-label col-sm-5">Select Section :</label>
+                                    <div class="col-sm-6">
+                                        <select class="form-control" id="Section_Id" name="Subject_ID">
+                                            <option value="0">---Select Section---</option>
+                                            @foreach (var item in ViewBag.SectionList as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                            {
+                                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+
+                                <div class="form-group">
+                                    <label class="control-label col-sm-5">Select Subject :</label>
+                                    <div class="col-sm-6">
+                                        <select class="form-control" id="Subject_ID" name="Subject_ID">
+                                            <option value="0">---Select Subject---</option>
+                                            @{
+                                                foreach (var item1 in ViewBag.SubjectList as IEnumerable<SchoolManagement.Website.Models.Tbl_SubjectsSetup>)
+                                                {
+                                                    <option value="@item1.Subject_ID">@item1.Subject_Name</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-3">
+                                <button type="button" class="btn btn-success" id="BtnViewTimetable">Show</button>
+                            </div>
+
+                        </div><!-- col-sm-12 closed -->
+
+                    </div><!-- col-sm-12 closed -->
+                </div><!--row x_title closed -->
+            </div><!-- dashboard_graph closed-->
+        </div><!--col-msx-12 closed-->
+
+        <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+            <!-- col-msx-12 started -->
+            <h4 class="std_head well-sm">  List </h4>
+            <div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+                <!-- col-msx-12 started -->
+                <table class="table table-bordered" id="AssignmentTable">
+                    <thead>
+                        <tr>
+                            @*<th>S.No</th>*@
+                            <th>Description</th>
+                            <th>Class</th>
+                            <th>Section</th>
+                            <th>Subject</th>
+                            <th>Date of Assign</th>
+                            <th>Date of Submission</th>
+                        </tr>
+                    </thead>
+
+                </table>
+            </div><!-- col-msx-12  closed -->
+        </div><!-- col-msx-12  closed -->
+
+
+    </div><!-- 1st row closed -->
+
+
+
+
+
+</div>
+
+
+@section scripts{
+    <script src="~/Scripts/WebsiteJs/js/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+
+    <script>
+
+        if ("@ViewBag.sessionlist" == "Student") {
+         
+            $(document).ready(function () {
+                InitDatatable();
+            })
+        }
+    </script>
+    <script>
+
+
+        $("#BtnViewTimetable").on('click', function () {
+            var classid = $("#Class_Id").val();
+            var sectionid = $("#Section_Id").val();
+            var Subjectid = $("#Subject_ID").val();
+
+            if (classid == 0 || sectionid == 0 || Subjectid == 0) {
+                alert("Please select Class, section and Subject");
+            }
+            else {
+                InitDatatable();
+            }
+        });
+
+        //$(document).ready(function () {
+        //    InitDatatable();
+        //});
+
+        function InitDatatable() {
+            $("#AssignmentTable").DataTable().destroy();
+
+            datatable = $("#AssignmentTable")
+                .DataTable({
+                    "sAjaxSource": "/Master/GetAllAssignmentDetails",
+                    "fnServerParams": function (aoData) {
+                        aoData.push(
+                            {
+                                "name": "classid", "value": $("#Class_Id").val()
+                            },
+                            {
+                                "name": "sectionid", "value": $("#Section_Id").val()
+                            },
+                            {
+                                "name": "subjectid", "value": $("#Subject_ID").val()
+                            }
+                        );
+                    },
+                    "retrieve": true,
+                    "bServerSide": true,
+                    "bProcessing": true,
+                    "bSearchable": false,
+                    "order": [[1, 'asc']],
+                    "autoWidth": false,
+                    "columns":
+                        [
+                            {
+                                "data": "New_Assignment",
+                                "autoWidth": false,
+                                "width": "200px",
+                                "searchable": true
+                            },
+                            {
+                                "data": "Class_Name",
+                                "autoWidth": false,
+                                "width": "200px",
+                                "searchable": true
+                            },
+                            {
+                                "data": "Section_Name",
+                                "autoWidth": false,
+                                "width": "200px",
+                                "searchable": true
+                            },
+                            {
+                                "data": "Subject_Name",
+                                "autoWidth": false,
+                                "width": "200px",
+                                "searchable": true
+                            },
+                            {
+                                "data": "Assignment_Date",
+                                "autoWidth": false,
+                                "width": "200px",
+                                "searchable": true
+                            },
+                            {
+                                "data": "Submitted_Date",
+                                "autoWidth": false,
+                                "width": "200px",
+                                "searchable": true
+                            },
+
+                        ]
+                });
+
+        }
+
+
+    </script>
+
+}

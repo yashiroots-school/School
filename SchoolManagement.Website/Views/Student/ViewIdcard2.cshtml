@@ -1,0 +1,227 @@
+﻿
+@{
+    ViewBag.Title = "ViewIdcard2";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .id-container-2 {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .id-card-2 {
+        width: 500px;
+        height: 300px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        background: #fff;
+        position: relative;
+        page-break-inside: avoid;
+        border: 3px solid #8c1d40;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .id-header {
+        background: #8c1d40;
+        color: white;
+        text-align: center;
+    }
+
+        .id-header img {
+            height: 50px;
+            width: auto;
+            margin-right: 10px;
+            padding: 2px;
+            vertical-align: middle;
+        }
+
+        .id-header span {
+            font-size: 18px;
+            font-weight: bold;
+            vertical-align: middle;
+            margin-top: 0px;
+            padding: 0px;
+        }
+
+    .id-body {
+        display: flex;
+        padding: 15px;
+        align-items: center;
+    }
+
+        .id-body .photo {
+            flex: 0 0 140px;
+            text-align: center;
+        }
+
+            .id-body .photo img {
+                width: 120px;
+                height: 150px;
+                object-fit: cover;
+                border-radius: 6px;
+                border: 2px solid #8c1d40;
+            }
+
+    .hil {
+        width: 210px;
+        height: 60px;
+    }
+
+    .HOT1 {
+        color: white !important;
+    }
+
+    .HOT {
+        font-family: 'Roboto Condensed', sans-serif;
+        white-space: nowrap;
+        max-width: 250px;
+        transform-origin: left center;
+        margin-left: 0px;
+        height: 30px;
+        color: white !important;
+        font-size: 18px;
+        font-weight: bold;
+        vertical-align: middle;
+        margin-top: 0px;
+        padding: 0px;
+    }
+
+    .id-body .details {
+        flex: 1;
+        padding-left: 20px;
+        font-size: 14px;
+    }
+
+        .id-body .details p {
+            margin: 5px 0;
+        }
+
+        .id-body .details span {
+            font-weight: bold;
+            color: #8c1d40;
+        }
+
+    .id-footer {
+        background: #f5f5f5;
+        padding: 0px;
+        font-size: 12px;
+        color: #444;
+        text-align: center;
+        margin-top: 0px;
+    }
+
+    /* PRINT */
+
+    @@media print {
+        body {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: white !important;
+        }
+
+        header, footer, .nav_menu, .top_nav, .left_col, .sidebar,
+        #printBtn, .print-button, #sigma {
+            display: none !important;
+        }
+
+        .id-header, .id-header img, .HOT, .HOT1, .hil {
+            background: #8c1d40 !important;
+            color: white !important;
+            text-align: center !important;
+        }
+
+            .id-header img {
+                margin-top: 5px !important;
+                margin-left: 40px !important;
+            }
+
+        .HOT, .HOT1 {
+            margin-left: 10px !important;
+        }
+
+        .id-container-2 {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            justify-content: center !important;
+            gap: 20px !important;
+        }
+
+        .id-card-2 {
+            page-break-inside: avoid !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+    }
+</style>
+
+<div class="right_col" role="main">
+    <div class="row">
+        <button id="printBtn" class="print-button" onclick="window.print()">🖨️ Print ID Card</button>
+
+        <div class="id-container-2">
+            <div class="id-card-2">
+                <!-- Header -->
+                <div class="id-header">
+                    <div class="row">
+                        <div class="col-sm-3" style="padding: 0px;">
+                            <img src="~/WebsiteImages/SchoolImage/@Session["SchoolImage"]" alt="Logo" />
+                        </div>
+                        <div class="col-sm-9 hil" style="margin-top:0px;">
+                            <p class="HOT" style="height:20px; margin-bottom:0px; margin-left: 15px;">@Session["SchoolName"] </p>
+                            <p class="HOT1" style="height:40px; margin-top:0px;">@Session["SchoolAddress"]</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Body -->
+                <div class="id-body">
+                    <div class="photo">
+                        @{
+                            var student1 = (ViewBag.allStudentData as IEnumerable<SchoolManagement.Data.Models.Student>)?.FirstOrDefault();
+                            if (student1 != null)
+                            {
+                                if (!string.IsNullOrWhiteSpace(student1.ProfileAvatar))
+                                {
+                                    <img src="~/WebsiteImages/StudentPhoto/@student1.ProfileAvatar" />
+                                }
+                                else
+                                {
+                                    <img src="~/WebsiteImages/images/user.png" />
+                                }
+                            }
+                        }
+                    </div>
+                    <div class="details">
+                        @if (student1 != null)
+                        {
+                            <p><span>Name</span> : @student1.Name @student1.Last_Name</p>
+                            <p><span>Class</span> : @student1.Class</p>
+                            <p><span>DOB</span> : @student1.DOB</p>
+                            <p><span>Gender</span> : @student1.Gender</p>
+                        }
+
+                        @{
+                            var family = (ViewBag.allData as IEnumerable<SchoolManagement.Data.Models.FamilyDetail>)?.FirstOrDefault();
+                        }
+
+                        @if (family != null)
+                        {
+                            <p><span>Father</span> : @family.FatherName (Mob. @family.FMobile)</p>
+                            <p><span>Mother</span> : @family.MotherName</p>
+                            <p><span>Address</span> : @family.MPermanentAddress</p>
+                        }
+                    </div>
+                </div>
+                <!-- Footer -->
+                <div class="id-footer">
+                    School Identification Card | Valid for Academic Year 2024-25.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
