@@ -19,31 +19,34 @@ namespace SchoolManagement.Website.Controllers
         [AllowAnonymous]
         public JsonResult BindLeftMenuData()
         {
-            var loginUserRoleID = Session["LoginRoleID"].ToString();
-            var rolePermissionList = _context.RolePagePermissions.Where(x => x.RoleId == loginUserRoleID).ToList();
             StringBuilder menuHTML = new StringBuilder();
-            foreach (int item in Enum.GetValues(typeof(SideParentMenuEnum)))
+            if (Session["LoginRoleID"] != null)
             {
-                string htmlSub = string.Empty;
-                string li = string.Empty;
-                var RootName = Enum.GetName(typeof(SideParentMenuEnum), item);
-                var rolePermissionListByRootId = rolePermissionList.Where(x => x.ParentId == item);
-                if (rolePermissionListByRootId.ToList().Count > 0)
+                var loginUserRoleID = Session["LoginRoleID"].ToString();
+                var rolePermissionList = _context.RolePagePermissions.Where(x => x.RoleId == loginUserRoleID).ToList();
+                foreach (int item in Enum.GetValues(typeof(SideParentMenuEnum)))
                 {
-                    htmlSub = @"<li>
-                                    <a><i class='fa fa-arrow-circle-o-down'></i>" + RootName + " <span class='fa fa-chevron-down'></span></a>" +
-                                       "<ul class='nav child_menu' style='display: none'>{0}</ul></li>";
-
-                    foreach (var pageName in rolePermissionListByRootId)
+                    string htmlSub = string.Empty;
+                    string li = string.Empty;
+                    var RootName = Enum.GetName(typeof(SideParentMenuEnum), item);
+                    var rolePermissionListByRootId = rolePermissionList.Where(x => x.ParentId == item);
+                    if (rolePermissionListByRootId.ToList().Count > 0)
                     {
-                        li += "<li><a href='" + pageName.PageName + "'>" + pageName.PageViewName + "</a></li>";
+                        htmlSub = @"<li>
+                                    <a><i class='fa fa-arrow-circle-o-down'></i>" + RootName + " <span class='fa fa-chevron-down'></span></a>" +
+                                           "<ul class='nav child_menu' style='display: none'>{0}</ul></li>";
+
+                        foreach (var pageName in rolePermissionListByRootId)
+                        {
+                            li += "<li><a href='" + pageName.PageName + "'>" + pageName.PageViewName + "</a></li>";
+                        }
+                        var html = string.Format(htmlSub, li);
+                        menuHTML.Append(html);
                     }
-                    var html = string.Format(htmlSub, li);
-                    menuHTML.Append(html);
+
                 }
-
             }
-
+            
             return Json(menuHTML.ToString(), JsonRequestBehavior.AllowGet);
         }
     }

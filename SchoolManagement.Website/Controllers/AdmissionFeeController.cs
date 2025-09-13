@@ -174,7 +174,7 @@ namespace SchoolManagement.Website.Controllers
 
             var studentlist = (from a in _context.Students
                                join fp in _context.FeePlans on new { a = a.Class_Id, a.Medium } equals new { a = fp.ClassId, fp.Medium }
-                               where a.IsApprove != 192
+                               where a.IsApprove != 192 && a.IsApplyforTC==false
                                select a).DistinctBy(a => a.StudentId).ToList();
 
             var Classes = _context.DataListItems.Where(x => x.DataListId == _context.DataLists.FirstOrDefault(c => c.DataListName.ToLower() == "class").DataListId.ToString()).ToList();
@@ -279,7 +279,7 @@ namespace SchoolManagement.Website.Controllers
             //var lstStudents = _context.Students.Where(x => x.Class_Id == classid).ToList();
             var studentlist1 = (from sr in _context.Students
                                 join fp in _context.FeePlans on new { a = sr.Class_Id, sr.Medium } equals new { a = fp.ClassId, fp.Medium }
-                               where sr.Class_Id == classid && sr.IsApprove != 192
+                               where sr.Class_Id == classid && sr.IsApprove != 192 && sr.IsApplyforTC==false
                                select sr).DistinctBy(a => a.StudentId).ToList();
 
             //---
@@ -425,143 +425,148 @@ namespace SchoolManagement.Website.Controllers
 
             var pagename = "All Receipts";
             var editpermission = "Delete_Permission";
-
-            if (Session["rolename"].ToString() == "Student")
+            if (Session["rolename"] != null)
             {
-                int studentid = Convert.ToInt32(Session["StudentId"]);
-
-                //var tblstudent = _context.Students.ToList();
-                var tblstudentregistrations = _context.Students.FirstOrDefault(x => x.StudentId == studentid);
-                int applicationid;
-                //var tblstudentdata = tblstudent.FirstOrDefault(x => x.StudentId == studentid);
-                //if(tblstudentdata != null)
-                //{
-                //     applicationid = tblstudentdata.StudentId;
-                //}
-                //else
+                if (Session["rolename"].ToString() == "Student")
                 {
-                    applicationid = Convert.ToInt32(tblstudentregistrations.StudentId);
-                }
+                    int studentid = Convert.ToInt32(Session["StudentId"]);
 
-                List<Tbl_Feereceiptsviewmodel> tbl_Feereceiptsviewmodels = new List<Tbl_Feereceiptsviewmodel>();
-
-                var AllFeeREceipts = _context.TblFeeReceipts.Where(x => x.StudentId == applicationid && x.FeeHeadingIDs != "21").ToList();
-
-                foreach (var item in AllFeeREceipts)
-                {
-                    tbl_Feereceiptsviewmodels.Add(new Tbl_Feereceiptsviewmodel
+                    //var tblstudent = _context.Students.ToList();
+                    var tblstudentregistrations = _context.Students.FirstOrDefault(x => x.StudentId == studentid);
+                    int applicationid;
+                    //var tblstudentdata = tblstudent.FirstOrDefault(x => x.StudentId == studentid);
+                    //if(tblstudentdata != null)
+                    //{
+                    //     applicationid = tblstudentdata.StudentId;
+                    //}
+                    //else
                     {
-                        StudentName = item.StudentName,
-                        ClassName = item.ClassName,
-                        PayHeadings = item.PayHeadings,
-                        PaymentMode = item.PaymentMode,
-                        TotalFee = item.TotalFee,
-                        PaidAmount = item.PaidAmount,
-                        AddedDate = item.AddedDate,
-                        FeeReceiptId = item.FeeReceiptId,
-                        FeeReceiptsOneTimeCreator = item.FeeReceiptsOneTimeCreator,
-                        DeletePermission = CheckDeletepermission(pagename, editpermission)
+                        applicationid = Convert.ToInt32(tblstudentregistrations.StudentId);
+                    }
 
-                    });
+                    List<Tbl_Feereceiptsviewmodel> tbl_Feereceiptsviewmodels = new List<Tbl_Feereceiptsviewmodel>();
+
+                    var AllFeeREceipts = _context.TblFeeReceipts.Where(x => x.StudentId == applicationid && x.FeeHeadingIDs != "21").ToList();
+
+                    foreach (var item in AllFeeREceipts)
+                    {
+                        tbl_Feereceiptsviewmodels.Add(new Tbl_Feereceiptsviewmodel
+                        {
+                            StudentName = item.StudentName,
+                            ClassName = item.ClassName,
+                            PayHeadings = item.PayHeadings,
+                            PaymentMode = item.PaymentMode,
+                            TotalFee = item.TotalFee,
+                            PaidAmount = item.PaidAmount,
+                            AddedDate = item.AddedDate,
+                            FeeReceiptId = item.FeeReceiptId,
+                            FeeReceiptsOneTimeCreator = item.FeeReceiptsOneTimeCreator,
+                            DeletePermission = CheckDeletepermission(pagename, editpermission)
+
+                        });
+                    }
+
+                    ViewBag.sessionlist = "Student";
+
+                    //AllFeeREceipts = AllFeeREceipts.Where(x => Convert.ToString(x.AddedDate) == DateTime.Now.ToString("dd/MM/yyyy")).ToList();
+                    //foreach (var item in AllFeeREceipts)
+                    //{
+                    //    string monthNames = string.Empty;
+                    //    if (Session["StudentId"] != null && Session["StudentId"].ToString().Trim() != "")
+                    //    {
+                    //        var rs = Session["StudentId"];
+                    //        int studid = Convert.ToInt32(Session["StudentId"]);
+                    //        var allFeeReceiptForOneTimeCreator = _TblFeeReceiptsRepository.GetAll().Where(x => x.FeeReceiptsOneTimeCreator == item.FeeReceiptsOneTimeCreator && x.StudentId == studid).ToList();
+                    //        foreach (var item2 in allFeeReceiptForOneTimeCreator)
+                    //        {
+                    //            monthNames = monthNames + item2.PaidMonths;
+                    //            if (allFeeReceiptForOneTimeCreator.Count() > 1)
+                    //            {
+                    //                monthNames = monthNames + " | ";
+                    //            }
+                    //        }
+                    //        item.PaidMonths = monthNames;
+                    //    }
+
+                    //}           var   allFeeREceipts = _contextTblFeeReceipts.ToList();
+                    //allFeeREceipts = allFeeREceipts.Where(x => Convert.ToString(x.AddedDate) == DateTime.Now.ToString("dd/MM/yyyy")).ToList();
+
+                    return View(tbl_Feereceiptsviewmodels.ToList());
+
+                    //var   allFeeREceipts = _context.TblFeeReceipts.ToList();
+                    //allFeeREceipts = allFeeREceipts.Where(x => Convert.ToString(x.AddedDate) == DateTime.Now.ToString("dd/MM/yyyy")).ToList();
+
                 }
+                else
+                {
+                    List<TblFeeReceipts> tblFeeReceipts = new List<TblFeeReceipts>();
+                    List<Tbl_Feereceiptsviewmodel> tbl_Feereceiptsviewmodels = new List<Tbl_Feereceiptsviewmodel>();
+                    var feelist = _context.TblFeeReceipts.Where(x => x.FeeHeadingIDs != null).ToList().OrderByDescending(x => x.AddedDate);
+                    var studentlist = _context.Students.Where(x => x.IsApprove != 192).ToList();
+                    List<TblFeeReceipts> transportfee = new List<TblFeeReceipts>();
 
-                ViewBag.sessionlist = "Student";
+                    foreach (var item in feelist)
+                    {
+                        if (item.FeeHeadingIDs == "21" || item.FeeHeadingIDs == "25" || item.FeeHeadingIDs == "21,25" || item.FeeHeadingIDs == "25,21")
+                        {
+                            transportfee.Add(item);
+                        }
+                        else
+                        {
+                            var studentdata = studentlist.FirstOrDefault(x => x.StudentId == item.StudentId);
+                            if (studentdata != null)
+                            {
+                                item.StudentName = studentdata.Name + " " + studentdata.Last_Name;
+                                //tblFeeReceipts.Add(item);
+                                tbl_Feereceiptsviewmodels.Add(new Tbl_Feereceiptsviewmodel
+                                {
+                                    StudentName = item.StudentName,
+                                    ClassName = item.ClassName,
+                                    PayHeadings = item.PayHeadings,
+                                    PaymentMode = item.PaymentMode,
+                                    TotalFee = item.TotalFee,
+                                    PaidAmount = item.PaidAmount,
+                                    AddedDate = item.AddedDate,
+                                    FeeReceiptId = item.FeeReceiptId,
+                                    FeeReceiptsOneTimeCreator = item.FeeReceiptsOneTimeCreator,
+                                    DeletePermission = CheckDeletepermission(pagename, editpermission)
 
-                //AllFeeREceipts = AllFeeREceipts.Where(x => Convert.ToString(x.AddedDate) == DateTime.Now.ToString("dd/MM/yyyy")).ToList();
-                //foreach (var item in AllFeeREceipts)
-                //{
-                //    string monthNames = string.Empty;
-                //    if (Session["StudentId"] != null && Session["StudentId"].ToString().Trim() != "")
-                //    {
-                //        var rs = Session["StudentId"];
-                //        int studid = Convert.ToInt32(Session["StudentId"]);
-                //        var allFeeReceiptForOneTimeCreator = _TblFeeReceiptsRepository.GetAll().Where(x => x.FeeReceiptsOneTimeCreator == item.FeeReceiptsOneTimeCreator && x.StudentId == studid).ToList();
-                //        foreach (var item2 in allFeeReceiptForOneTimeCreator)
-                //        {
-                //            monthNames = monthNames + item2.PaidMonths;
-                //            if (allFeeReceiptForOneTimeCreator.Count() > 1)
-                //            {
-                //                monthNames = monthNames + " | ";
-                //            }
-                //        }
-                //        item.PaidMonths = monthNames;
-                //    }
+                                });
 
-                //}           var   allFeeREceipts = _contextTblFeeReceipts.ToList();
-                //allFeeREceipts = allFeeREceipts.Where(x => Convert.ToString(x.AddedDate) == DateTime.Now.ToString("dd/MM/yyyy")).ToList();
+                            }
+                        }
+                    }
 
-                return View(tbl_Feereceiptsviewmodels.ToList());
+                    //var allFeeREceipts = _context.TblFeeReceipts.Where(x => x.FeeHeadingIDs != "21").ToList();
+                    //allFeeREceipts = allFeeREceipts.Where(x => Convert.ToString(x.AddedDate) == DateTime.Now.ToString("dd/MM/yyyy")).ToList();
+                    //foreach (var item in allFeeREceipts)
+                    //{
+                    //    string monthNames = string.Empty;
 
-                //var   allFeeREceipts = _context.TblFeeReceipts.ToList();
-                //allFeeREceipts = allFeeREceipts.Where(x => Convert.ToString(x.AddedDate) == DateTime.Now.ToString("dd/MM/yyyy")).ToList();
+                    //    var allFeeReceiptForOneTimeCreator = _TblFeeReceiptsRepository.GetAll().Where(x => x.FeeReceiptsOneTimeCreator == item.FeeReceiptsOneTimeCreator).ToList();
+                    //    foreach (var item2 in allFeeReceiptForOneTimeCreator)
+                    //    {
+                    //        monthNames = monthNames + item2.PaidMonths;
+                    //        if (allFeeReceiptForOneTimeCreator.Count() > 1)
+                    //        {
+                    //            monthNames = monthNames + " | ";
+                    //        }
+                    //    }
+                    //    item.PaidMonths = monthNames;
 
+
+
+                    //}
+                    ViewBag.sessionlist = "Professor";
+
+                    return View(tbl_Feereceiptsviewmodels);
+
+                }
             }
             else
             {
-                List<TblFeeReceipts> tblFeeReceipts = new List<TblFeeReceipts>();
-                List<Tbl_Feereceiptsviewmodel> tbl_Feereceiptsviewmodels = new List<Tbl_Feereceiptsviewmodel>();
-                var feelist = _context.TblFeeReceipts.Where(x => x.FeeHeadingIDs != null).ToList().OrderByDescending(x=>x.AddedDate);
-                var studentlist = _context.Students.Where(x => x.IsApprove != 192).ToList();
-                List<TblFeeReceipts> transportfee = new List<TblFeeReceipts>();
-
-                foreach (var item in feelist)
-                {
-                    if (item.FeeHeadingIDs == "21" || item.FeeHeadingIDs == "25" || item.FeeHeadingIDs == "21,25" || item.FeeHeadingIDs == "25,21")
-                    {
-                        transportfee.Add(item);
-                    }
-                    else
-                    {
-                        var studentdata = studentlist.FirstOrDefault(x => x.StudentId == item.StudentId);
-                        if (studentdata != null)
-                        {
-                            item.StudentName = studentdata.Name + " " + studentdata.Last_Name;
-                            //tblFeeReceipts.Add(item);
-                            tbl_Feereceiptsviewmodels.Add(new Tbl_Feereceiptsviewmodel
-                            {
-                                StudentName = item.StudentName,
-                                ClassName = item.ClassName,
-                                PayHeadings = item.PayHeadings,
-                                PaymentMode = item.PaymentMode,
-                                TotalFee = item.TotalFee,
-                                PaidAmount = item.PaidAmount,
-                                AddedDate = item.AddedDate,
-                                FeeReceiptId = item.FeeReceiptId,
-                                FeeReceiptsOneTimeCreator = item.FeeReceiptsOneTimeCreator,
-                                DeletePermission = CheckDeletepermission(pagename, editpermission)
-
-                            });
-
-                        }
-                    }
-                }
-
-                //var allFeeREceipts = _context.TblFeeReceipts.Where(x => x.FeeHeadingIDs != "21").ToList();
-                //allFeeREceipts = allFeeREceipts.Where(x => Convert.ToString(x.AddedDate) == DateTime.Now.ToString("dd/MM/yyyy")).ToList();
-                //foreach (var item in allFeeREceipts)
-                //{
-                //    string monthNames = string.Empty;
-
-                //    var allFeeReceiptForOneTimeCreator = _TblFeeReceiptsRepository.GetAll().Where(x => x.FeeReceiptsOneTimeCreator == item.FeeReceiptsOneTimeCreator).ToList();
-                //    foreach (var item2 in allFeeReceiptForOneTimeCreator)
-                //    {
-                //        monthNames = monthNames + item2.PaidMonths;
-                //        if (allFeeReceiptForOneTimeCreator.Count() > 1)
-                //        {
-                //            monthNames = monthNames + " | ";
-                //        }
-                //    }
-                //    item.PaidMonths = monthNames;
-
-
-
-                //}
-                ViewBag.sessionlist = "Professor";
-
-                return View(tbl_Feereceiptsviewmodels);
-
+                return RedirectToAction("Login", "Account");
             }
-
 
         }
 
@@ -832,165 +837,179 @@ namespace SchoolManagement.Website.Controllers
             TblFeeReceipts tblFeeReceipts = new TblFeeReceipts();
             List<PreviewFeeReceiptViewModel> ReceiptPreviewList = new List<PreviewFeeReceiptViewModel>();
             Student student = new Student();
-            var session = Session["rolename"].ToString();
-            if (session == null)
+            if (Session["rolename"] != null)
             {
-                return RedirectToAction("Login", "Account");
+                var session = Session["rolename"].ToString();
+                if (session == null)
+                {
+                    return RedirectToAction("Login", "Account");
+                }
+                else
+                {
+                    ViewBag.session = session;
+                }
+                if (id != null)
+                {
+                    ViewBag.Date = System.DateTime.Now;
+                    tblFeeReceipts = _TblFeeReceiptsRepository.GetById(id);
+                    //tblFeeReceipts = _context.TblFeeReceipts.FirstOrDefault(x => x.StudentId == id);
+                    int? studentId = tblFeeReceipts.StudentId;
+
+
+
+
+                    //var tblstudentid = _context.Students.FirstOrDefault(x => x.StudentId == studentId);
+                    //if(tblstudentid != null)
+                    //{
+                    //    ViewBag.ScollarNumber = _context.Students.FirstOrDefault(x => x.StudentId == studentId).StudentId;
+
+                    //    var studentDetails = _context.Students.FirstOrDefault(x => x.StudentId == studentId);
+                    //    ViewBag.studentDetails = studentDetails;
+                    //    //ViewBag.Total = tblFeeReceipts.TotalFee - tblFeeReceipts.ConcessionAmt + tblFeeReceipts.LateFee + tblFeeReceipts.OldBalance;
+                    //    ViewBag.Total = tblFeeReceipts.ReceiptAmt;
+
+                    //    var studentregistration = _context.StudentsRegistrations.FirstOrDefault(x => x.ApplicationNumber == studentDetails.ApplicationNumber);
+                    //    var familydetails = _context.FamilyDetails.FirstOrDefault(x => x.StudentRefId == studentregistration.StudentRegisterID);
+                    //    ViewBag.ContactNo = familydetails.FMobile;
+                    //}
+                    //else
+                    {
+                        ViewBag.ScollarNumber = _context.StudentsRegistrations.FirstOrDefault(x => x.StudentRegisterID == studentId).StudentRegisterID;
+                        ViewBag.ClassName = _context.StudentsRegistrations.FirstOrDefault();
+                        //ViewBag.Section = _context.StudentsRegistrations.FirstOrDefault();
+                        //ViewBag.Section = _context.DataListItems.Where(x => x.DataListId == _context.DataLists.FirstOrDefault(x => x.DataListName.ToLower() == "section").DataListId.ToString()).ToList();
+                        ViewBag.SectionName = _context.DataListItems.Where(x => x.DataListItemId == student.Section_Id).Select(x => x.DataListItemName.ToLower() == "section").FirstOrDefault();
+                        var studentDetails = _context.StudentsRegistrations.FirstOrDefault(x => x.StudentRegisterID == studentId);
+                        ViewBag.studentDetails = studentDetails;
+                        //ViewBag.Total = tblFeeReceipts.TotalFee - tblFeeReceipts.ConcessionAmt + tblFeeReceipts.LateFee + tblFeeReceipts.OldBalance;
+                        ViewBag.Total = tblFeeReceipts.ReceiptAmt;
+
+                        var familydetails = _context.FamilyDetails.FirstOrDefault(x => x.ApplicationNumber == studentDetails.ApplicationNumber);
+                        ViewBag.ContactNo = familydetails == null ? string.Empty : familydetails.FMobile;
+                    }
+
+
+                    string[] AllHeadings = tblFeeReceipts.PayHeadings.Split(',');
+                    AllHeadings = AllHeadings.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+                    string[] HeadingPaid = tblFeeReceipts.FeePaids.Split(',');
+                    HeadingPaid = HeadingPaid.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+
+                    for (int i = 0; i < AllHeadings.Length; i++)
+                    {
+                        if (AllHeadings[i] != "" && HeadingPaid[i] != "")
+                        {
+                            PreviewFeeReceiptViewModel previewFeeReceiptViewModel = new PreviewFeeReceiptViewModel()
+                            {
+                                CreatedDate = tblFeeReceipts.AddedDate.ToString(),
+                                FeePaid = HeadingPaid[i],
+                                HeadingNames = AllHeadings[i],
+                                SelectedMonths = tblFeeReceipts.PaidMonths
+                            };
+                            ReceiptPreviewList.Add(previewFeeReceiptViewModel);
+                        }
+
+                    }
+                    ViewBag.FeeReceiptsTbl = ReceiptPreviewList;
+
+                    if (ReceiptId == 1)
+                        ViewBag.Receiptid = 1;
+                    else
+                        ViewBag.Receiptid = 2;
+
+
+
+                    // return View(tblFeeReceipts);
+                }
+                return View(tblFeeReceipts);
             }
             else
             {
-                ViewBag.session = session;
+                return RedirectToAction("Login", "Account");
             }
-            if (id != null)
-            {
-                ViewBag.Date = System.DateTime.Now;
-                tblFeeReceipts = _TblFeeReceiptsRepository.GetById(id);
-                //tblFeeReceipts = _context.TblFeeReceipts.FirstOrDefault(x => x.StudentId == id);
-                int? studentId = tblFeeReceipts.StudentId;
-
-                
-     
-               
-                //var tblstudentid = _context.Students.FirstOrDefault(x => x.StudentId == studentId);
-                //if(tblstudentid != null)
-                //{
-                //    ViewBag.ScollarNumber = _context.Students.FirstOrDefault(x => x.StudentId == studentId).StudentId;
-
-                //    var studentDetails = _context.Students.FirstOrDefault(x => x.StudentId == studentId);
-                //    ViewBag.studentDetails = studentDetails;
-                //    //ViewBag.Total = tblFeeReceipts.TotalFee - tblFeeReceipts.ConcessionAmt + tblFeeReceipts.LateFee + tblFeeReceipts.OldBalance;
-                //    ViewBag.Total = tblFeeReceipts.ReceiptAmt;
-
-                //    var studentregistration = _context.StudentsRegistrations.FirstOrDefault(x => x.ApplicationNumber == studentDetails.ApplicationNumber);
-                //    var familydetails = _context.FamilyDetails.FirstOrDefault(x => x.StudentRefId == studentregistration.StudentRegisterID);
-                //    ViewBag.ContactNo = familydetails.FMobile;
-                //}
-                //else
-                {
-                    ViewBag.ScollarNumber = _context.StudentsRegistrations.FirstOrDefault(x => x.StudentRegisterID == studentId).StudentRegisterID;
-                    ViewBag.ClassName = _context.StudentsRegistrations.FirstOrDefault();
-                    //ViewBag.Section = _context.StudentsRegistrations.FirstOrDefault();
-                    //ViewBag.Section = _context.DataListItems.Where(x => x.DataListId == _context.DataLists.FirstOrDefault(x => x.DataListName.ToLower() == "section").DataListId.ToString()).ToList();
-                    ViewBag.SectionName = _context.DataListItems.Where(x => x.DataListItemId == student.Section_Id).Select(x => x.DataListItemName.ToLower() == "section").FirstOrDefault();
-                    var studentDetails = _context.StudentsRegistrations.FirstOrDefault(x => x.StudentRegisterID == studentId);
-                    ViewBag.studentDetails = studentDetails;
-                    //ViewBag.Total = tblFeeReceipts.TotalFee - tblFeeReceipts.ConcessionAmt + tblFeeReceipts.LateFee + tblFeeReceipts.OldBalance;
-                    ViewBag.Total = tblFeeReceipts.ReceiptAmt;
-
-                    var familydetails = _context.FamilyDetails.FirstOrDefault(x => x.ApplicationNumber == studentDetails.ApplicationNumber);
-                    ViewBag.ContactNo = familydetails == null ? string.Empty : familydetails.FMobile;
-                }
-
-
-                string[] AllHeadings = tblFeeReceipts.PayHeadings.Split(',');
-                AllHeadings = AllHeadings.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-                string[] HeadingPaid = tblFeeReceipts.FeePaids.Split(',');
-                HeadingPaid = HeadingPaid.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-
-                for (int i = 0; i < AllHeadings.Length; i++)
-                {
-                    if (AllHeadings[i] != "" && HeadingPaid[i] != "")
-                    {
-                        PreviewFeeReceiptViewModel previewFeeReceiptViewModel = new PreviewFeeReceiptViewModel()
-                        {
-                            CreatedDate = tblFeeReceipts.AddedDate.ToString(),
-                            FeePaid = HeadingPaid[i],
-                            HeadingNames = AllHeadings[i],
-                            SelectedMonths = tblFeeReceipts.PaidMonths
-                        };
-                        ReceiptPreviewList.Add(previewFeeReceiptViewModel);
-                    }
-
-                }
-                ViewBag.FeeReceiptsTbl = ReceiptPreviewList;
-
-                if (ReceiptId == 1)
-                    ViewBag.Receiptid = 1;
-                else
-                    ViewBag.Receiptid = 2;
-
-
-
-                // return View(tblFeeReceipts);
-            }
-            return View(tblFeeReceipts);
         }
 
         public ActionResult PrintpdfusingItextsharp(int? id, int ReceiptId)
         {
             TblFeeReceipts tblFeeReceipts = new TblFeeReceipts();
             List<PreviewFeeReceiptViewModel> ReceiptPreviewList = new List<PreviewFeeReceiptViewModel>();
-            var session = Session["rolename"].ToString();
-            if (session == null)
+            if (Session["rolename"] != null)
             {
-                return RedirectToAction("Login", "Account");
-            }
-            else
-            {
-                ViewBag.session = session;
-            }
-            {
-                ViewBag.Date = System.DateTime.Now;
-                tblFeeReceipts = _TblFeeReceiptsRepository.GetById(id);
-                StudentsRegistration studentDetails = new StudentsRegistration();
-                var student_Name = "";
-                int? studentId = tblFeeReceipts.StudentId;
+                var session = Session["rolename"].ToString();
+                if (session == null)
                 {
-                    ViewBag.ScollarNumber = _context.StudentsRegistrations.FirstOrDefault(x => x.StudentRegisterID == studentId).StudentRegisterID;
-                    studentDetails = _context.StudentsRegistrations.FirstOrDefault(x => x.StudentRegisterID == studentId);
-                    ViewBag.studentDetails = studentDetails;
-                    ViewBag.Total = tblFeeReceipts.ReceiptAmt;
-                    ViewBag.classname = tblFeeReceipts.ClassName;
-                    ViewBag.receiptid = tblFeeReceipts.FeeReceiptId;
-                    ViewBag.concessionamt = tblFeeReceipts.ConcessionAmt;
-                    ViewBag.studentname = studentDetails.Name + " " + studentDetails.Last_Name;
-                    student_Name = studentDetails.Name + " " + studentDetails.Last_Name;
-                    var familydetails = _context.FamilyDetails.FirstOrDefault(x => x.ApplicationNumber == studentDetails.ApplicationNumber);
-                    ViewBag.ContactNo = familydetails == null ? string.Empty : familydetails.FMobile;
+                    return RedirectToAction("Login", "Account");
                 }
-
-
-                string[] AllHeadings = tblFeeReceipts.PayHeadings.Split(',');
-                AllHeadings = AllHeadings.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-                string[] HeadingPaid = tblFeeReceipts.FeePaids.Split(',');
-                HeadingPaid = HeadingPaid.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-
-                for (int i = 0; i < AllHeadings.Length; i++)
+                else
                 {
-                    if (AllHeadings[i] != "" && HeadingPaid[i] != "")
+                    ViewBag.session = session;
+                }
+                {
+                    ViewBag.Date = System.DateTime.Now;
+                    tblFeeReceipts = _TblFeeReceiptsRepository.GetById(id);
+                    StudentsRegistration studentDetails = new StudentsRegistration();
+                    var student_Name = "";
+                    int? studentId = tblFeeReceipts.StudentId;
                     {
-                        PreviewFeeReceiptViewModel previewFeeReceiptViewModel = new PreviewFeeReceiptViewModel()
+                        ViewBag.ScollarNumber = _context.StudentsRegistrations.FirstOrDefault(x => x.StudentRegisterID == studentId).StudentRegisterID;
+                        studentDetails = _context.StudentsRegistrations.FirstOrDefault(x => x.StudentRegisterID == studentId);
+                        ViewBag.studentDetails = studentDetails;
+                        ViewBag.Total = tblFeeReceipts.ReceiptAmt;
+                        ViewBag.classname = tblFeeReceipts.ClassName;
+                        ViewBag.receiptid = tblFeeReceipts.FeeReceiptId;
+                        ViewBag.concessionamt = tblFeeReceipts.ConcessionAmt;
+                        ViewBag.studentname = studentDetails.Name + " " + studentDetails.Last_Name;
+                        student_Name = studentDetails.Name + " " + studentDetails.Last_Name;
+                        var familydetails = _context.FamilyDetails.FirstOrDefault(x => x.ApplicationNumber == studentDetails.ApplicationNumber);
+                        ViewBag.ContactNo = familydetails == null ? string.Empty : familydetails.FMobile;
+                    }
+
+
+                    string[] AllHeadings = tblFeeReceipts.PayHeadings.Split(',');
+                    AllHeadings = AllHeadings.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+                    string[] HeadingPaid = tblFeeReceipts.FeePaids.Split(',');
+                    HeadingPaid = HeadingPaid.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+
+                    for (int i = 0; i < AllHeadings.Length; i++)
+                    {
+                        if (AllHeadings[i] != "" && HeadingPaid[i] != "")
                         {
-                            CreatedDate = tblFeeReceipts.AddedDate.ToString(),
-                            FeePaid = HeadingPaid[i],
-                            HeadingNames = AllHeadings[i],
-                            SelectedMonths = tblFeeReceipts.PaidMonths
-                        };
-                        ReceiptPreviewList.Add(previewFeeReceiptViewModel);
+                            PreviewFeeReceiptViewModel previewFeeReceiptViewModel = new PreviewFeeReceiptViewModel()
+                            {
+                                CreatedDate = tblFeeReceipts.AddedDate.ToString(),
+                                FeePaid = HeadingPaid[i],
+                                HeadingNames = AllHeadings[i],
+                                SelectedMonths = tblFeeReceipts.PaidMonths
+                            };
+                            ReceiptPreviewList.Add(previewFeeReceiptViewModel);
+                        }
+
+                    }
+                    ViewBag.FeeReceiptsTbl = ReceiptPreviewList;
+
+                    if (ReceiptId == 1)
+                        ViewBag.Receiptid = 1;
+                    else
+                        ViewBag.Receiptid = 2;
+                    var data = tblFeeReceipts;
+                    var htmltostrin = Renderviewtostring(ControllerContext, "~/Views/AdmissionFee/FeeReceiptPreview.cshtml", data);
+
+                    using (MemoryStream stream = new MemoryStream())
+                    {
+                        StringReader sr = new StringReader(htmltostrin);
+                        Document pdfdoc = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
+                        PdfWriter writter = PdfWriter.GetInstance(pdfdoc, stream);
+                        pdfdoc.Open();
+                        XMLWorkerHelper.GetInstance().ParseXHtml(writter, pdfdoc, sr);
+                        pdfdoc.Close();
+                        return File(stream.ToArray(), "application/pdf", "" + student_Name + ".pdf");
+
                     }
 
                 }
-                ViewBag.FeeReceiptsTbl = ReceiptPreviewList;
-
-                if (ReceiptId == 1)
-                    ViewBag.Receiptid = 1;
-                else
-                    ViewBag.Receiptid = 2;
-                var data = tblFeeReceipts;
-                var htmltostrin = Renderviewtostring(ControllerContext, "~/Views/AdmissionFee/FeeReceiptPreview.cshtml", data);
-
-                using (MemoryStream stream = new MemoryStream())
-                {
-                    StringReader sr = new StringReader(htmltostrin);
-                    Document pdfdoc = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
-                    PdfWriter writter = PdfWriter.GetInstance(pdfdoc, stream);
-                    pdfdoc.Open();
-                    XMLWorkerHelper.GetInstance().ParseXHtml(writter, pdfdoc, sr);
-                    pdfdoc.Close();
-                    return File(stream.ToArray(), "application/pdf", "" + student_Name + ".pdf");
-
-                }
-
+            }
+            else
+            {
+                return RedirectToAction("Login", "Account");
             }
         }
 
@@ -1029,81 +1048,88 @@ namespace SchoolManagement.Website.Controllers
             TblFeeReceipts tblFeeReceipts = new TblFeeReceipts();
             Student student = new Student();
             List<PreviewFeeReceiptViewModel> ReceiptPreviewList = new List<PreviewFeeReceiptViewModel>();
-            var session = Session["rolename"].ToString();
-            if (session == null)
+            if (Session["rolename"] != null)
             {
-                return RedirectToAction("Login", "Account");
+                var session = Session["rolename"].ToString();
+                if (session == null)
+                {
+                    return RedirectToAction("Login", "Account");
+                }
+                else
+                {
+                    ViewBag.session = session;
+                }
+                {
+                    ViewBag.Date = System.DateTime.Now;
+                    tblFeeReceipts = _TblFeeReceiptsRepository.GetById(id);
+                    int? studentId = tblFeeReceipts.StudentId;
+                    {
+                        ViewBag.ScollarNumber = _context.Students.FirstOrDefault(x => x.StudentId == studentId).StudentId;
+
+                        var studentDetails = _context.Students.FirstOrDefault(x => x.StudentId == studentId);
+                        var sections = _context.DataListItems.FirstOrDefault(x => x.DataListItemId == studentDetails.Section_Id);
+                        ViewBag.studentDetails = studentDetails;
+                        ViewBag.Section = sections.DataListItemName;
+                        ViewBag.Total = tblFeeReceipts.ReceiptAmt;
+                        ViewBag.classname = tblFeeReceipts.ClassName + " " + sections.DataListItemName;
+                        ViewBag.receiptid = tblFeeReceipts.FeeReceiptId;
+                        ViewBag.concessionamt = tblFeeReceipts.ConcessionAmt;
+                        ViewBag.studentname = studentDetails.Name + "-" + studentDetails.Last_Name;
+                        ViewBag.balanceamt = tblFeeReceipts.BalanceAmt;
+                        var familydetails = _context.FamilyDetails.FirstOrDefault(x => x.ApplicationNumber == studentDetails.ApplicationNumber);
+                        ViewBag.ContactNo = familydetails == null ? string.Empty : familydetails.FMobile;
+                    }
+
+
+                    string[] AllHeadings = tblFeeReceipts.PayHeadings.Split(',');
+                    AllHeadings = AllHeadings.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+                    string[] HeadingPaid = tblFeeReceipts.FeePaids.Split(',');
+                    HeadingPaid = HeadingPaid.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+
+                    for (int i = 0; i < AllHeadings.Length; i++)
+                    {
+                        if (AllHeadings[i] != "" && HeadingPaid[i] != "")
+                        {
+                            PreviewFeeReceiptViewModel previewFeeReceiptViewModel = new PreviewFeeReceiptViewModel()
+                            {
+                                CreatedDate = tblFeeReceipts.AddedDate.ToString(),
+                                FeePaid = tblFeeReceipts.TotalFee.ToString(),
+                                HeadingNames = AllHeadings[i],
+                                SelectedMonths = tblFeeReceipts.PaidMonths,
+                                HeadingPaidAmount = HeadingPaid[i]
+                            };
+                            ReceiptPreviewList.Add(previewFeeReceiptViewModel);
+                        }
+
+                    }
+                    ViewBag.FeeReceiptsTbl = ReceiptPreviewList;
+
+                    var schoolsetup = _context.Tbl_SchoolSetup.ToList();
+                    TblCreateSchool tblCreateSchool = new TblCreateSchool();
+                    foreach (var item in schoolsetup)
+                    {
+                        tblCreateSchool = _context.TblCreateSchool.FirstOrDefault(x => x.School_Id == item.School_Id);
+                    }
+
+                    ViewBag.Schoolsetup = tblCreateSchool;
+                    if (ReceiptId == 1)
+                        ViewBag.Receiptid = 1;
+                    else
+                        ViewBag.Receiptid = 2;
+                    var data = tblFeeReceipts;
+
+                    return new Rotativa.ViewAsPdf("FeeReceiptPreview", data)
+                    {
+                        //FileName = "FeeReceipt.pdf",
+                        //PageMargins = new Rotativa.Options.Margins(10, 5, 10, 5),
+                        //PageSize = Rotativa.Options.Size.A5,
+                        //PageOrientation = Rotativa.Options.Orientation.Portrait,
+                    };
+                }
             }
             else
             {
-                ViewBag.session = session;
-            }
-            {
-                ViewBag.Date = System.DateTime.Now;
-                tblFeeReceipts = _TblFeeReceiptsRepository.GetById(id);
-                int? studentId = tblFeeReceipts.StudentId;
-                {
-                    ViewBag.ScollarNumber = _context.Students.FirstOrDefault(x => x.StudentId == studentId).StudentId;
-
-                    var studentDetails = _context.Students.FirstOrDefault(x => x.StudentId == studentId);
-                    var sections = _context.DataListItems.FirstOrDefault(x => x.DataListItemId == studentDetails.Section_Id);
-                    ViewBag.studentDetails = studentDetails;
-                    ViewBag.Section = sections.DataListItemName;
-                    ViewBag.Total = tblFeeReceipts.ReceiptAmt;
-                    ViewBag.classname = tblFeeReceipts.ClassName + " " + sections.DataListItemName;                   
-                    ViewBag.receiptid = tblFeeReceipts.FeeReceiptId;
-                    ViewBag.concessionamt = tblFeeReceipts.ConcessionAmt;
-                    ViewBag.studentname = studentDetails.Name + "-" + studentDetails.Last_Name;
-                    ViewBag.balanceamt = tblFeeReceipts.BalanceAmt;
-                    var familydetails = _context.FamilyDetails.FirstOrDefault(x => x.ApplicationNumber == studentDetails.ApplicationNumber);
-                    ViewBag.ContactNo = familydetails == null ? string.Empty : familydetails.FMobile;
-                }
-
-
-                string[] AllHeadings = tblFeeReceipts.PayHeadings.Split(',');
-                AllHeadings = AllHeadings.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-                string[] HeadingPaid = tblFeeReceipts.FeePaids.Split(',');
-                HeadingPaid = HeadingPaid.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-
-                for (int i = 0; i < AllHeadings.Length; i++)
-                {
-                    if (AllHeadings[i] != "" && HeadingPaid[i] != "")
-                    {
-                        PreviewFeeReceiptViewModel previewFeeReceiptViewModel = new PreviewFeeReceiptViewModel()
-                        {
-                            CreatedDate = tblFeeReceipts.AddedDate.ToString(),
-                            FeePaid = tblFeeReceipts.TotalFee.ToString(),
-                            HeadingNames = AllHeadings[i],
-                            SelectedMonths = tblFeeReceipts.PaidMonths,
-                            HeadingPaidAmount= HeadingPaid[i]
-                        };
-                        ReceiptPreviewList.Add(previewFeeReceiptViewModel);
-                    }
-
-                }
-                ViewBag.FeeReceiptsTbl = ReceiptPreviewList;
-
-                var schoolsetup = _context.Tbl_SchoolSetup.ToList();
-                TblCreateSchool tblCreateSchool = new TblCreateSchool();
-                foreach (var item in schoolsetup)
-                {
-                    tblCreateSchool = _context.TblCreateSchool.FirstOrDefault(x => x.School_Id == item.School_Id);
-                }
-
-                ViewBag.Schoolsetup = tblCreateSchool;
-                if (ReceiptId == 1)
-                    ViewBag.Receiptid = 1;
-                else
-                    ViewBag.Receiptid = 2;
-                var data = tblFeeReceipts;
-
-                return new Rotativa.ViewAsPdf("FeeReceiptPreview", data)
-                {
-                    //FileName = "FeeReceipt.pdf",
-                    //PageMargins = new Rotativa.Options.Margins(10, 5, 10, 5),
-                    //PageSize = Rotativa.Options.Size.A5,
-                    //PageOrientation = Rotativa.Options.Orientation.Portrait,
-                };
+                return RedirectToAction("Login", "Account");
             }
 
         }
@@ -1114,62 +1140,69 @@ namespace SchoolManagement.Website.Controllers
         {
             TblFeeReceipts tblFeeReceipts = new TblFeeReceipts();
             List<PreviewFeeReceiptViewModel> ReceiptPreviewList = new List<PreviewFeeReceiptViewModel>();
-            var session = Session["rolename"].ToString();
-            if (session == null)
+            if (Session["rolename"] != null)
             {
-                return RedirectToAction("Login", "Account");
+                var session = Session["rolename"].ToString();
+                if (session == null)
+                {
+                    return RedirectToAction("Login", "Account");
+                }
+                else
+                {
+                    ViewBag.session = session;
+                }
+                if (id != null)
+                {
+                    ViewBag.Date = System.DateTime.Now;
+                    tblFeeReceipts = _TblFeeReceiptsRepository.GetById(id);
+                    //tblFeeReceipts = _context.TblFeeReceipts.FirstOrDefault(x => x.StudentId == id);
+                    int? studentId = tblFeeReceipts.StudentId;
+
+                    {
+                        ViewBag.ScollarNumber = _context.StudentsRegistrations.FirstOrDefault(x => x.StudentRegisterID == studentId).StudentRegisterID;
+
+                        var studentDetails = _context.StudentsRegistrations.FirstOrDefault(x => x.StudentRegisterID == studentId);
+                        ViewBag.studentDetails = studentDetails;
+                        //ViewBag.Total = tblFeeReceipts.TotalFee - tblFeeReceipts.ConcessionAmt + tblFeeReceipts.LateFee + tblFeeReceipts.OldBalance;
+                        ViewBag.Total = tblFeeReceipts.ReceiptAmt;
+                        var familydetails = _context.FamilyDetails.FirstOrDefault(x => x.ApplicationNumber == studentDetails.ApplicationNumber);
+                        ViewBag.ContactNo = familydetails == null ? string.Empty : familydetails.FMobile;
+                    }
+
+
+                    string[] AllHeadings = tblFeeReceipts.PayHeadings.Split(',');
+                    AllHeadings = AllHeadings.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+                    string[] HeadingPaid = tblFeeReceipts.FeePaids.Split(',');
+                    HeadingPaid = HeadingPaid.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+
+                    for (int i = 0; i < AllHeadings.Length; i++)
+                    {
+                        if (AllHeadings[i] != "" && HeadingPaid[i] != "")
+                        {
+                            PreviewFeeReceiptViewModel previewFeeReceiptViewModel = new PreviewFeeReceiptViewModel()
+                            {
+                                CreatedDate = tblFeeReceipts.AddedDate.ToString(),
+                                FeePaid = HeadingPaid[i],
+                                HeadingNames = AllHeadings[i],
+                                SelectedMonths = tblFeeReceipts.PaidMonths
+                            };
+                            ReceiptPreviewList.Add(previewFeeReceiptViewModel);
+                        }
+
+                    }
+                    ViewBag.FeeReceiptsTbl = ReceiptPreviewList;
+
+                    if (ReceiptId == 1)
+                        ViewBag.Receiptid = 1;
+                    else
+                        ViewBag.Receiptid = 2;
+                }
+                return View(tblFeeReceipts);
             }
             else
             {
-                ViewBag.session = session;
+                return RedirectToAction("Login", "Account");
             }
-            if (id != null)
-            {
-                ViewBag.Date = System.DateTime.Now;
-                tblFeeReceipts = _TblFeeReceiptsRepository.GetById(id);
-                //tblFeeReceipts = _context.TblFeeReceipts.FirstOrDefault(x => x.StudentId == id);
-                int? studentId = tblFeeReceipts.StudentId;
-
-                {
-                    ViewBag.ScollarNumber = _context.StudentsRegistrations.FirstOrDefault(x => x.StudentRegisterID == studentId).StudentRegisterID;
-
-                    var studentDetails = _context.StudentsRegistrations.FirstOrDefault(x => x.StudentRegisterID == studentId);
-                    ViewBag.studentDetails = studentDetails;
-                    //ViewBag.Total = tblFeeReceipts.TotalFee - tblFeeReceipts.ConcessionAmt + tblFeeReceipts.LateFee + tblFeeReceipts.OldBalance;
-                    ViewBag.Total = tblFeeReceipts.ReceiptAmt;
-                    var familydetails = _context.FamilyDetails.FirstOrDefault(x => x.ApplicationNumber == studentDetails.ApplicationNumber);
-                    ViewBag.ContactNo = familydetails == null ? string.Empty : familydetails.FMobile;
-                }
-
-
-                string[] AllHeadings = tblFeeReceipts.PayHeadings.Split(',');
-                AllHeadings = AllHeadings.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-                string[] HeadingPaid = tblFeeReceipts.FeePaids.Split(',');
-                HeadingPaid = HeadingPaid.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-
-                for (int i = 0; i < AllHeadings.Length; i++)
-                {
-                    if (AllHeadings[i] != "" && HeadingPaid[i] != "")
-                    {
-                        PreviewFeeReceiptViewModel previewFeeReceiptViewModel = new PreviewFeeReceiptViewModel()
-                        {
-                            CreatedDate = tblFeeReceipts.AddedDate.ToString(),
-                            FeePaid = HeadingPaid[i],
-                            HeadingNames = AllHeadings[i],
-                            SelectedMonths = tblFeeReceipts.PaidMonths
-                        };
-                        ReceiptPreviewList.Add(previewFeeReceiptViewModel);
-                    }
-
-                }
-                ViewBag.FeeReceiptsTbl = ReceiptPreviewList;
-
-                if (ReceiptId == 1)
-                    ViewBag.Receiptid = 1;
-                else
-                    ViewBag.Receiptid = 2;
-            }
-            return View(tblFeeReceipts);
         }
 
 

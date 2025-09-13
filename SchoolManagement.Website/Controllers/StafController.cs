@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace SchoolManagement.Website.Controllers
 {
@@ -68,61 +69,63 @@ namespace SchoolManagement.Website.Controllers
         public ActionResult AddStaf(StafsDetails staffdetails, HttpPostedFileBase File, HttpPostedFileBase RelievingLetter, HttpPostedFileBase PerformanceLetter, HttpPostedFileBase AdharFile, HttpPostedFileBase PanFile,HttpPostedFileBase StaffSignatureFile) //
         {
            var url = Request.UrlReferrer.AbsoluteUri;
+            string trackId = DateTime.Now.ToString("yyyyddMMhhmmss");
             try
             {
-                if (File != null)
+                if (File != null && File.ContentLength > 0)
                 {
-                    if (File.ContentLength > 0)
-                    {
-                        var fileName = Path.GetFileName(File.FileName);
-                        var path = Path.Combine(Server.MapPath("~/WebsiteImages/MemberImage"), fileName);
-                        File.SaveAs(path);
-                        staffdetails.File = fileName;
-                    }
+                    var extension = Path.GetExtension(File.FileName);
+                    var fileName = "Profile_" + trackId + extension;
+                    var directory = Server.MapPath("~/WebsiteImages/MemberImage");
+                    if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+                    var path = Path.Combine(directory, fileName);
+                    File.SaveAs(path);
+                    staffdetails.File = fileName;
                 }
 
-                if (RelievingLetter != null)
+
+                if (RelievingLetter != null && RelievingLetter.ContentLength > 0)
                 {
-                    if (RelievingLetter.ContentLength > 0)
-                    {
-                        var fileName = Path.GetFileName(RelievingLetter.FileName);
-                        var path = Path.Combine(Server.MapPath("~/WebsiteImages/RelevingLetter"), fileName);
-                        RelievingLetter.SaveAs(path);
-                        staffdetails.RelievingLetter = fileName;
-                    }
+                    var extension = Path.GetExtension(RelievingLetter.FileName);
+                    var fileName = "Relieving_" + trackId + extension;
+                    var directory = Server.MapPath("~/WebsiteImages/RelevingLetter");
+                    if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+                    var path = Path.Combine(directory, fileName);
+                    RelievingLetter.SaveAs(path);
+                    staffdetails.RelievingLetter = fileName;
                 }
 
-                if (PerformanceLetter != null)
+                if (PerformanceLetter != null && PerformanceLetter.ContentLength > 0)
                 {
-                    if (PerformanceLetter.ContentLength > 0)
-                    {
-                        var fileName = Path.GetFileName(PerformanceLetter.FileName);
-                        var path = Path.Combine(Server.MapPath("~/WebsiteImages/PerforLetter"), fileName);
-                        PerformanceLetter.SaveAs(path);
-                        staffdetails.PerformanceLetter = fileName;
-                    }
+                    var extension = Path.GetExtension(PerformanceLetter.FileName);
+                    var fileName = "Performance_" + trackId + extension;
+                    var directory = Server.MapPath("~/WebsiteImages/PerforLetter");
+                    if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+                    var path = Path.Combine(directory, fileName);
+                    PerformanceLetter.SaveAs(path);
+                    staffdetails.PerformanceLetter = fileName;
                 }
 
-                if (AdharFile != null)
+                if (AdharFile != null && AdharFile.ContentLength > 0)
                 {
-                    if (AdharFile.ContentLength > 0)
-                    {
-                        var fileName = Path.GetFileName(AdharFile.FileName);
-                        var path = Path.Combine(Server.MapPath("~/WebsiteImages/StaffAdhar"), fileName);
-                        AdharFile.SaveAs(path);
-                        staffdetails.AdharFile = fileName;
-                    }
+                    var extension = Path.GetExtension(AdharFile.FileName);
+                    var fileName = "Aadhar_" + trackId + extension;
+                    var directory = Server.MapPath("~/WebsiteImages/StaffAdhar");
+                    if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+                    var path = Path.Combine(directory, fileName);
+                    AdharFile.SaveAs(path);
+                    staffdetails.AdharFile = fileName;
                 }
 
-                if (PanFile != null)
+                if (StaffSignatureFile != null && StaffSignatureFile.ContentLength > 0)
                 {
-                    if (PanFile.ContentLength > 0)
-                    {
-                        var fileName = Path.GetFileName(PanFile.FileName);
-                        var path = Path.Combine(Server.MapPath("~/WebsiteImages/StaffPanDoc"), fileName);
-                        PanFile.SaveAs(path);
-                        staffdetails.PanFile = fileName;
-                    }
+                    var extension = Path.GetExtension(StaffSignatureFile.FileName);
+                    var fileName = "Signature_" + trackId + extension;
+                    var directory = Server.MapPath("~/WebsiteImages/Staffsignature");
+                    if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+                    var path = Path.Combine(directory, fileName);
+                    StaffSignatureFile.SaveAs(path);
+                    staffdetails.StaffSignatureFile = fileName;
                 }
                 if (StaffSignatureFile != null)
                 {
@@ -167,7 +170,7 @@ namespace SchoolManagement.Website.Controllers
         public ActionResult ManageStaff()
         {
             var allStaff = db.StafsDetails.ToList();
-            ViewBag.allStaff = allStaff;
+            
             ViewBag.totalEmp = db.StafsDetails.Count();
             //ViewBag.EmpId = new SelectList(db.StafsDetails.ToList().OrderBy(x => x.EmpId).ToList(), "StafId", "EmpId");
             ViewBag.EmpId = new SelectList(db.StafsDetails.ToList().Select(x => new { x.EmpId, x.StafId }).ToList());
@@ -184,7 +187,16 @@ namespace SchoolManagement.Website.Controllers
         [HttpGet]
         public JsonResult GetStaffDetailList()
         {
-            var allStaff = db.StafsDetails.ToList();
+            //var allStaff = db.StafsDetails.ToList();
+            var allStaff = from s in _context.StafsDetails
+                           join d in _context.DataListItems
+                               on s.StaffCategory equals d.DataListItemId into gj
+                           from d in gj.DefaultIfEmpty()   // LEFT JOIN
+                           select new
+                           {
+                               s,   // all columns from StafsDetails
+                               StaffCategoryName = d != null ? d.DataListItemName : null
+                           };
             return Json(allStaff, JsonRequestBehavior.AllowGet);
         }
 

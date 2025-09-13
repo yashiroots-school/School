@@ -1,6 +1,6 @@
 ﻿$(document).ready(function () {
-    GetAllStaffDetails();
-    DeleleStaff(ID);
+    //GetAllStaffDetails();
+    //DeleleStaff(ID);
     GetstafById(id);
     
 });
@@ -49,6 +49,7 @@ $("#FilterStaff").on("click", function () {
 
 //Get All View Details for View
 function GetAllStaffDetails() {
+    debugger
     var tb = document.getElementById('Stafftbl');
     while (tb.rows.length > 1) {
         tb.deleteRow(1);

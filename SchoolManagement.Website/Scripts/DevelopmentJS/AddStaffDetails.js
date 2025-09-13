@@ -101,7 +101,12 @@ function GetstafById(id) {
             debugger
             $('#StaffCategory').val(result.StaffCategory).change();
             $('#StaffCategory').trigger('change');
-
+            $("#Filedocs").text(result.File);
+            $("#StaffSignaturedocs").text(result.StaffSignatureFile);
+            $("#Adhardocs").text(result.AdharFile);
+            $("#PanFiledocs").text(result.PanFile);
+            $("#RelievingLetterdocs").text(result.RelievingLetter);
+            $("#PerformanceLetterdocs").text(result.PerformanceLetter);
             $("#headingName").text("Update Staff Details");
             $("#btnstafsave").text("Update Staff");
             $('#StaffForm').attr('action', '/Staf/EditStaffDetail');

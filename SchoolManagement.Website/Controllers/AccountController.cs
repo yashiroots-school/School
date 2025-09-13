@@ -610,23 +610,30 @@ namespace SchoolManagement.Website.Controllers
 
         public ActionResult ChangeUserName()
         {
-            var rolename = Session["RoleName"].ToString();
-            if (rolename != "Student")
+            if (Session["RoleName"] != null)
             {
+                var rolename = Session["RoleName"].ToString();
+                if (rolename != "Student")
+                {
 
-                //return View();
+                    //return View();
+                }
+                else
+                {
+                    var studentid = Session["StudentId"].ToString();
+                    if (studentid != null)
+                    {
+                        var data = _context.StudentsRegistrations.FirstOrDefault(x => x.StudentRegisterID.ToString() == studentid);
+                        ViewBag.Studentid = data.StudentRegisterID;
+
+                    }
+                }
+                return View();
             }
             else
             {
-                var studentid = Session["StudentId"].ToString();
-                if (studentid != null)
-                {
-                    var data = _context.StudentsRegistrations.FirstOrDefault(x => x.StudentRegisterID.ToString() == studentid);
-                    ViewBag.Studentid = data.StudentRegisterID;
-                    
-                }
+                return RedirectToAction("Login", "Account");
             }
-            return View();
         }
 
         public ActionResult UpdateUserName(ChangeUserName changeUserName)
@@ -735,23 +742,31 @@ namespace SchoolManagement.Website.Controllers
 
         public ActionResult ChangePassword()
         {
-            var rolename = Session["RoleName"].ToString();
-            if (rolename != "Student")
+            if (Session["RoleName"] != null)
             {
+                var rolename = Session["RoleName"].ToString();
+                if (rolename != "Student")
+                {
 
-                //return View();
+                    //return View();
+                }
+                else
+                {
+                    var studentid = Session["StudentId"].ToString();
+                    if (studentid != null)
+                    {
+                        var data = _context.StudentsRegistrations.FirstOrDefault(x => x.StudentRegisterID.ToString() == studentid);
+                        ViewBag.Studentid = data.StudentRegisterID;
+
+                    }
+                }
+                return View();
             }
             else
             {
-                var studentid = Session["StudentId"].ToString();
-                if (studentid != null)
-                {
-                    var data = _context.StudentsRegistrations.FirstOrDefault(x => x.StudentRegisterID.ToString() == studentid);
-                    ViewBag.Studentid = data.StudentRegisterID;
-
-                }
+                return RedirectToAction("Login", "Account");
             }
-            return View();
+            
         }
 
         public ActionResult UpdatePassword(ChangeUserName changeUserName)
@@ -2878,14 +2893,14 @@ namespace SchoolManagement.Website.Controllers
 
         public ActionResult CreateEmployeeLogin()
         {
-            if (Session["rolename"].ToString() == null)
+            if (Session["rolename"] == null || Session["rolename"].ToString() == null)
             {
                 return RedirectToAction("Login", "Account");
             }
-
+            var nonteach = _context.DataListItems.Where(x => x.DataListItemName == "Non Teaching"|| x.DataListItemName == "Non Teaching Staff" || x.DataListItemName == "Non-Teaching Staff").FirstOrDefault().DataListItemId;
             if (Session["rolename"].ToString() == "Administrator")
             {
-                var stafflist = _context.StafsDetails.ToList();
+                var stafflist = _context.StafsDetails.Where(x=> (x.IsActive == true || x.IsActive == null)).ToList();
                 ViewBag.Stafflist = stafflist;
 
                 var pagename = "Staff Login";
@@ -3195,13 +3210,13 @@ namespace SchoolManagement.Website.Controllers
             ViewBag.sectionlist = _context.Tbl_SectionSetup.ToList();
             ViewBag.Class = _context.DataListItems.Where(e => e.DataListId == _context.DataLists.FirstOrDefault(x => x.DataListName.ToLower() == "class").DataListId.ToString()).ToList();
 
-            ViewBag.Staffdetails = _context.StafsDetails.ToList();
+            ViewBag.Staffdetails = _context.StafsDetails.Where(x=>x.IsActive==true||x.IsActive==null).ToList();
             return View();
         }
 
         public JsonResult StaffAttendanceList()
         {
-            var data = _context.StafsDetails.ToList();
+            var data = _context.StafsDetails.Where(x => x.IsActive == true || x.IsActive == null).ToList();
             return Json(data, JsonRequestBehavior.AllowGet);
         }
 
@@ -3215,7 +3230,7 @@ namespace SchoolManagement.Website.Controllers
 
             if (Session["rolename"].ToString() == "Administrator")
             {
-                var stafflist = _context.StafsDetails.ToList();
+                var stafflist = _context.StafsDetails.Where(x => x.IsActive == true || x.IsActive == null).ToList();
                 ViewBag.Staff_List = stafflist;
                 ViewBag.TotalCount = stafflist.Count();
                 ViewBag.Rolename = Session["rolename"].ToString();
@@ -3225,7 +3240,7 @@ namespace SchoolManagement.Website.Controllers
             {
                 var stafids = Convert.ToInt32(Session["Employeeid"]);
 
-                var staflist = _context.StafsDetails.Where(x => x.StafId == stafids).ToList();
+                var staflist = _context.StafsDetails.Where(x => x.StafId == stafids && (x.IsActive == true || x.IsActive == null)).ToList();
                 ViewBag.Staff_List = staflist;
                 ViewBag.TotalCount = 1;
                 ViewBag.Rolename = Session["rolename"].ToString();
@@ -3252,7 +3267,7 @@ namespace SchoolManagement.Website.Controllers
 
             if (Session["rolename"].ToString() == "Administrator")
             {
-                var stafflist = _context.StafsDetails.ToList();
+                var stafflist = _context.StafsDetails.Where(x => x.IsActive == true || x.IsActive == null).ToList();
                 ViewBag.Staff_List = stafflist;
                 ViewBag.TotalCount = stafflist.Count();
                 ViewBag.Rolename = Session["rolename"].ToString();

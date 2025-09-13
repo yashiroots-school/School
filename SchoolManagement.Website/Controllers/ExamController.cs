@@ -513,6 +513,7 @@ namespace SchoolManagement.Website.Controllers
                 ViewBag.ClassList = Classes;
                 var Section = _context.DataListItems.Where(e => e.DataListId == _context.DataLists.FirstOrDefault(x => x.DataListName.ToLower() == "section").DataListId.ToString()).ToList();
                 ViewBag.SectionList = Section;
+                var nonteach = _context.DataListItems.Where(x => x.DataListItemName == "Non Teaching" || x.DataListItemName == "Non Teaching Staff" || x.DataListItemName == "Non-Teaching Staff").FirstOrDefault().DataListItemId;
                 if (Session["RoleName"] != null)
                 {
                     string roleName = Session["RoleName"].ToString();
@@ -520,13 +521,14 @@ namespace SchoolManagement.Website.Controllers
                     if (roleName == "Staff")
                     {
                         long staffId = Int64.Parse(Session["StaffID"].ToString());
-                        var staff = _context.StafsDetails.Where(x => x.StafId == staffId).ToList();
+                        
+                        var staff = _context.StafsDetails.Where(x => x.StafId == staffId && x.StaffCategory != nonteach && (x.IsActive==true || x.IsActive==null)).ToList();
                         ViewBag.Staff = staff;
 
                     }
                     else
                     {
-                        var staff = _context.StafsDetails.OrderBy(x => x.Name).ToList();
+                        var staff = _context.StafsDetails.Where(x => x.StaffCategory != nonteach && (x.IsActive == true || x.IsActive == null)).OrderBy(x => x.Name).ToList();
                         ViewBag.Staff = staff;
                         var BatchList = _context.Tbl_Batches.Select(x => new Data.Models.BatchListDTO
                         {
@@ -9804,13 +9806,13 @@ namespace SchoolManagement.Website.Controllers
                     if (roleName == "Staff")
                     {
                         long staffId = Int64.Parse(Session["StaffID"].ToString());
-                        var staff = _context.StafsDetails.Where(x => x.StafId == staffId).ToList();
+                        var staff = _context.StafsDetails.Where(x => x.StafId == staffId&&(x.IsActive==true ||x.IsActive==null)).ToList();
                         ViewBag.Staff = staff;
 
                     }
                     else
                     {
-                        var staff = _context.StafsDetails.OrderBy(x => x.Name).ToList();
+                        var staff = _context.StafsDetails.Where(x => x.IsActive == true || x.IsActive == null).OrderBy(x => x.Name).ToList();
                         ViewBag.Staff = staff;
                         var BatchList = _context.Tbl_Batches.Select(x => new Data.Models.BatchListDTO
                         {

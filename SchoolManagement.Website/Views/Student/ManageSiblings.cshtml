@@ -59,8 +59,11 @@
                         @{
                             var j = 1;
                             var siblingsDataList = ViewBag.SiblingsData_ as List<SchoolManagement.Website.ViewModels.SiblingsVM>;
-
-                            var maxSiblingsCount = siblingsDataList?.Max(x => x.SiblingsData.Count) ?? 0;
+                            var maxSiblingsCount = 0;
+                            if (siblingsDataList.Count > 0)
+                            {
+                                maxSiblingsCount = siblingsDataList?.Max(x => x.SiblingsData.Count) ?? 0;
+                            }
                         }
 
                         <table class="table table-responsive table-striped" style="width: 100%" id="StudentReportTbl">

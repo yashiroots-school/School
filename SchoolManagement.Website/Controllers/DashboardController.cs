@@ -5,6 +5,7 @@ using Microsoft.Ajax.Utilities;
 using SchoolManagement.Data.Models;
 using SchoolManagement.Website.Migrations;
 using SchoolManagement.Website.Models;
+using SchoolManagement.Website.ViewModels;
 
 namespace SchoolManagement.Website.Controllers
 {
@@ -63,37 +64,48 @@ namespace SchoolManagement.Website.Controllers
             var TeacherCount = _context.StafsDetails.Where(x => x.IsDeleted == false).ToList().Count();
             ViewBag.TeacherCount = TeacherCount;
             ViewBag.TcCount = 0;
-           
-            var TcCount = _context.Tbl_StudentTcDetails.Where(x => x.BatchId == CurrentBatch.Batch_Id).ToList().Count();
-            ViewBag.TcCount = TcCount;
             ViewBag.NewAdmissionCount = 0;
-            var NewAdmission = _context.Students.Where(x => x.IsApplyforTC == false && x.CurrentYear == CurrentBatch.Batch_Id).ToList().Count();
-            ViewBag.NewAdmissionCount = NewAdmission;
-            var studentlist = (from a in _context.Students
-                               join fp in _context.FeePlans on new { a = a.Class_Id, a.Medium } equals new { a = fp.ClassId, fp.Medium }
-                               where a.IsApprove == 217
-                               select a).DistinctBy(a => a.StudentId).ToList();
-
-            var Classes = _context.DataListItems.Where(x => x.DataListId == _context.DataLists.FirstOrDefault(c => c.DataListName.ToLower() == "class").DataListId.ToString()).ToList();
-            var Section = _context.DataListItems.Where(x => x.DataListId == _context.DataLists.FirstOrDefault(c => c.DataListName.ToLower() == "Section").DataListId.ToString()).ToList();
-
-            studentlist.ForEach(fe =>
+            ViewBag.StudentNames = null;
+            ViewBag.Classes = null;
+            ViewBag.Section = null;
+            ViewBag.TeacherDetails = null;
+            if (CurrentBatch != null)
             {
+                var TcCount = _context.Tbl_StudentTcDetails.Where(x => x.BatchId == CurrentBatch.Batch_Id).ToList().Count();
+                ViewBag.TcCount = TcCount;
+               
+                var NewAdmission = _context.Students.Where(x => x.IsApplyforTC == false && x.CurrentYear == CurrentBatch.Batch_Id).ToList().Count();
+                ViewBag.NewAdmissionCount = NewAdmission;
+                var studentlist = (from a in _context.Students
+                                   join fp in _context.FeePlans on new { a = a.Class_Id, a.Medium } equals new { a = fp.ClassId, fp.Medium }
+                                   where a.IsApprove == 217
+                                   select a).DistinctBy(a => a.StudentId).ToList();
 
-                var className = Classes.Where(w => w.DataListItemId == fe.Class_Id)
-                .Select(s => s.DataListItemName).FirstOrDefault();
-                var SectionName = Section.Where(w => w.DataListItemId == fe.Section_Id)
-               .Select(s => s.DataListItemName).FirstOrDefault();
+                var Classes = _context.DataListItems.Where(x => x.DataListId == _context.DataLists.FirstOrDefault(c => c.DataListName.ToLower() == "class").DataListId.ToString()).ToList();
+                var Section = _context.DataListItems.Where(x => x.DataListId == _context.DataLists.FirstOrDefault(c => c.DataListName.ToLower() == "Section").DataListId.ToString()).ToList();
 
-                fe.Name = (fe.Name ?? string.Empty) + " "
-                              + (fe.Last_Name ?? string.Empty) + "-"
-                              + (className ?? string.Empty) + "-"
-                              + (SectionName ?? string.Empty);
-            });
-            ViewBag.StudentNames = studentlist;
-            ViewBag.Classes = Classes;
-            ViewBag.Section = Section;
-            ViewBag.TeacherDetails = _context.StafsDetails.Where(x => x.IsDeleted == false).OrderBy(x => x.Name).ToList();
+                studentlist.ForEach(fe =>
+                {
+
+                    var className = Classes.Where(w => w.DataListItemId == fe.Class_Id)
+                    .Select(s => s.DataListItemName).FirstOrDefault();
+                    var SectionName = Section.Where(w => w.DataListItemId == fe.Section_Id)
+                   .Select(s => s.DataListItemName).FirstOrDefault();
+
+                    fe.Name = (fe.Name ?? string.Empty) + " "
+                                  + (fe.Last_Name ?? string.Empty) + "-"
+                                  + (className ?? string.Empty) + "-"
+                                  + (SectionName ?? string.Empty);
+                });
+                ViewBag.StudentNames = studentlist;
+                ViewBag.Classes = Classes;
+                ViewBag.Section = Section;
+                ViewBag.TeacherDetails = _context.StafsDetails.Where(x => x.IsDeleted == false).OrderBy(x => x.Name).ToList();
+            }
+            else
+            { 
+            
+            }
             return View();
 
             //if (Session["rolename"].ToString() == "Student")

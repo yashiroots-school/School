@@ -32,7 +32,7 @@ async function fetchData(rollno, number) {
     const selectedValue = TermId;
     const splitValues = splitValue(selectedValue);
     const _Stid = parseInt(splitValues.id);
-    const _Name = "1";
+    const _Name = "2";
     console.log(splitValues)
     console.log(splitValues)
     console.log(_Stid)

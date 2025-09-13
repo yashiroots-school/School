@@ -1804,6 +1804,8 @@
     <Content Include="assets\images\arrow.png" />
     <Content Include="assets\images\gretting-img.png" />
     <Content Include="assets\images\grettings-pattern.png" />
+    <Content Include="assets\images\image23.jpeg" />
+    <Content Include="assets\images\image23.jpg" />
     <Content Include="assets\images\profile_img.jpg" />
     <Content Include="assets\images\staff.svg" />
     <Content Include="assets\images\student.svg" />
@@ -2663,6 +2665,7 @@
     <Content Include="Views\AdmissionFee\PrintTC2.cshtml" />
     <Content Include="Views\Student\ViewIdcard1.cshtml" />
     <Content Include="Views\Student\ViewIdcard2.cshtml" />
+    <Content Include="Views\Student\StudentProfile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
