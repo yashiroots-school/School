@@ -141,7 +141,8 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody id="teacherTableBody">
-                                                    @{
+                                                    @if (ViewBag.TeacherDetails!=null)
+                                                    {
                                                         foreach (var item in ViewBag.TeacherDetails as IEnumerable<SchoolManagement.Data.Models.StafsDetails>)
                                                         {
                                                             <tr>
@@ -235,18 +236,24 @@
                                         <div class="form_group">
                                             <select  id="Class" name="ClassName">
                                                 <option value="0">---Select---</option>
-                                                @foreach (var item in ViewBag.Classes as IEnumerable<Tbl_DataListItem>)
+                                                @if (ViewBag.Classes != null)
+                                                {
+                                                foreach (var item in ViewBag.Classes as IEnumerable<Tbl_DataListItem>)
                                                 {
                                                     <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                                }
                                                 }
                                             </select>
                                         </div>
                                         <div class="form_group">
                                             <select id="Section" name="SectionName">
                                                 <option value="0">---Select---</option>
-                                                @foreach (var item in ViewBag.Section as IEnumerable<Tbl_DataListItem>)
+                                                @if (ViewBag.Section != null)
                                                 {
-                                                    <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                                    foreach (var item in ViewBag.Section as IEnumerable<Tbl_DataListItem>)
+                                                    {
+                                                        <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                                    }
                                                 }
                                             </select>
                                         </div>
@@ -262,6 +269,7 @@
                                                 <th>Section</th>
                                                 @*<th>Rank</th>*@
                                                 <th>Attendance</th>
+                                                <th>Profile</th>
                                             </tr>
                                         </thead>
                                         <tbody id="studentbody">
@@ -323,7 +331,7 @@
                         html = '';
                         var cnt = 1;
                         html = '<table class="table_main"  id="StudentTable">';
-                        html = html + '<thead><tr><th>S.No</th><th>Name</th><th>Id</th><th>Class</th><th>Section</th><th>Attendance</th></tr></thead>';
+                        html = html + '<thead><tr><th>S.No</th><th>Name</th><th>Id</th><th>Class</th><th>Section</th><th>Attendance</th><th>Profile</th></tr></thead>';
                         html = html + '<tbody id="studentbody">';
                         for (var i = 0; i < data.length; i++) {
                             var Name = data[i].Name + data[i].Last_Name;
@@ -333,6 +341,7 @@
                             html += '<td>' + data[i].Class + '</td>';
                             html += '<td>' + data[i].Section + '</td>';
                             html += '<td>' + 0 + '</td>';
+                            html += '<td><a href="/Student/StudentProfile">View Profile</a></td>';
                             html += '</tr>';
 
                             cnt++;

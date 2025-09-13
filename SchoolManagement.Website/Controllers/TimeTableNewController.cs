@@ -148,16 +148,17 @@ namespace SchoolManagement.Website.Controllers
                    .Where(x => x.DataListId == classDataListId.ToString())
                    .ToList();
             ViewBag.ClassList = classList;
+            var nonteach = _context.DataListItems.Where(x => x.DataListItemName == "Non Teaching" || x.DataListItemName == "Non Teaching Staff" || x.DataListItemName == "Non-Teaching Staff").FirstOrDefault().DataListItemId;
             if (ClassId != null && ClassId != 0)
             {
                 // Load Staff
-                model.Staff = _context.StafsDetails.Select(s => new StaffNames
+                model.Staff = _context.StafsDetails.Where(x => x.StaffCategory != nonteach && (x.IsActive == true || x.IsActive == null)).Select(s => new StaffNames
                 {
                     StaffId = s.StafId,
                     StaffName = s.Name,
-                    IsActive=s.IsActive??true,
-                    StaffCategory= s.StaffCategory??0,
-                    
+                    IsActive = s.IsActive ?? true,
+                    StaffCategory = s.StaffCategory ?? 0,
+
                 }).ToList();
 
                 // Load all subjects

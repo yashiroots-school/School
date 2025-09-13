@@ -1548,7 +1548,8 @@ namespace SchoolManagement.Website.Controllers
             //List<TblFeeReceipts> allFeeREceipts = new List<TblFeeReceipts>();
             //int studentid = Convert.ToInt32(Session["StudentId"]);
             var studentdata = _context.StudentsRegistrations.Where(x => x.IsApprove != 192).ToList();
-            if (Session["rolename"].ToString() == "Student")
+
+            if (Session["rolename"] != null && Session["rolename"].ToString() == "Student")
             {
                 int studentid = Convert.ToInt32(Session["StudentId"]);
                 var AllFeeREceipts = _context.TblFeeReceipts.Where(x => x.StudentId == studentid && x.FeeHeadingIDs == "21").ToList();

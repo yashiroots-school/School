@@ -322,7 +322,9 @@ namespace SchoolManagement.Website.Controllers
                                 IsActive = true
                             };
                             var existingstudent = _context.Students.FirstOrDefault(e => e.ApplicationNumber == objstudentsRegistration.ApplicationNumber);
+                            _context.Entry(existingstudent).Property(x => x.CurrentYear).IsModified = false;
                             _context.Entry(existingstudent).CurrentValues.SetValues(objStudentStatusUpdate);
+
                             _context.SaveChanges();
                         }
                         else
@@ -896,7 +898,9 @@ namespace SchoolManagement.Website.Controllers
                         if (StudentDetails != null)
                         {
                             var existingstudent = _contextstudent.Students.FirstOrDefault(e => e.StudentId == studentid);
+                           
                             _contextstudent.Entry(existingstudent).CurrentValues.SetValues(objstudentupdate);
+                            _contextstudent.Entry(existingstudent).Property(x => x.CurrentYear).IsModified = false;
                             _contextstudent.SaveChanges();
                         }
 

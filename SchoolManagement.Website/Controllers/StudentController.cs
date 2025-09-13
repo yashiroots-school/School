@@ -28,6 +28,7 @@ using Org.BouncyCastle.Asn1.X509;
 using iTextSharp.tool.xml.css;
 using Microsoft.Ajax.Utilities;
 using DocumentFormat.OpenXml.Wordprocessing;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace SchoolManagement.Website.Controllers
 {
@@ -66,7 +67,7 @@ namespace SchoolManagement.Website.Controllers
         /// <returns></returns>
         public ActionResult AddStudent()
         {
-            if (Session["rolename"].ToString() != "Administrator")
+            if (Session["rolename"] == null || Session["rolename"].ToString() != "Administrator")
                 return RedirectToAction("Login", "Account");
 
             ViewBag.BloodGroup = _context.DataListItems.Where(e => e.DataListId == _context.DataLists.FirstOrDefault(x => x.DataListName.ToLower() == "bloodGroup").DataListId.ToString()).ToList();
@@ -3319,6 +3320,7 @@ namespace SchoolManagement.Website.Controllers
                     }
 
                     _context.Entry(student).CurrentValues.SetValues(studentViewModel.Student);
+                    _context.Entry(student).Property(x => x.CurrentYear).IsModified = false;
                     _context.SaveChanges();
 
                     //_context.Students.AddOrUpdate(studentViewModel.Student);
@@ -3801,6 +3803,12 @@ namespace SchoolManagement.Website.Controllers
                         LastStudiedSchoolName = studentViewModel.LaststudiedSchoolName,
 
                     };
+                    Tbl_Batches activeBatch = _context.Tbl_Batches.Where(x => x.IsActiveForAdmission == true).FirstOrDefault();
+                    if (activeBatch != null)
+                    {
+                        StudentsRegistration.Batch_Id = activeBatch.Batch_Id;
+                        StudentsRegistration.CurrentYear = activeBatch.Batch_Id;
+                    }
                     if (studentViewModel.ProfileAvatar != null)
                     {
                         if (studentViewModel.ProfileAvatar.ContentLength > 0)
@@ -4022,10 +4030,7 @@ namespace SchoolManagement.Website.Controllers
                     studentViewModel.StudentRegistration.IsApprove = Isapprove;
 
 
-                    Tbl_Batches activeBatch = _context.Tbl_Batches.Where(x => x.IsActiveForAdmission == true).FirstOrDefault();
-                    if (activeBatch != null)
-                        studentViewModel.StudentRegistration.Batch_Id = activeBatch.Batch_Id;
-
+                   
                     //profile image
                     if (uploadFilesViewModel.ProfileAvatar != null)
                     {
@@ -4049,7 +4054,12 @@ namespace SchoolManagement.Website.Controllers
                             studentViewModel.StudentRegistration.AdharFile = filename;
                         }
                     }
-
+                    Tbl_Batches activeBatch = _context.Tbl_Batches.Where(x => x.IsActiveForAdmission == true).FirstOrDefault();
+                    if (activeBatch != null)
+                    {
+                        studentViewModel.StudentRegistration.Batch_Id = activeBatch.Batch_Id;
+                        studentViewModel.StudentRegistration.CurrentYear = activeBatch.Batch_Id;
+                    }
                     _StudentsRegistration.Insert(studentViewModel.StudentRegistration);
                     _StudentsRegistration.Save();
 
@@ -4237,31 +4247,36 @@ namespace SchoolManagement.Website.Controllers
                     string year = Convert.ToDateTime(studentViewModel.StudentRegistration.Registration_Date).Year.ToString();
                     studentViewModel.StudentRegistration.AddedYear = year;
                     studentViewModel.StudentRegistration.IsApprove = Isapprove;
-
-
-
-                    //profile image
-                    if (uploadFilesViewModel.ProfileAvatar != null)
+                    Tbl_Batches activeBatch = _context.Tbl_Batches.Where(x => x.IsActiveForAdmission == true).FirstOrDefault();
+                    if (activeBatch != null)
                     {
-                        if (uploadFilesViewModel.ProfileAvatar.ContentLength > 0)
-                        {
-                            var filename = Path.GetFileName(uploadFilesViewModel.ProfileAvatar.FileName);
-                            var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentPhoto"), filename);
-                            uploadFilesViewModel.ProfileAvatar.SaveAs(path);
-                            studentViewModel.StudentRegistration.ProfileAvatar = filename;
-                        }
+                        studentViewModel.StudentRegistration.Batch_Id = activeBatch.Batch_Id;
+                        studentViewModel.StudentRegistration.CurrentYear = activeBatch.Batch_Id;
                     }
 
-                    //aadhar image
-                    if (uploadFilesViewModel.AdharFile != null)
+
+                    //profileimage
+                    if (uploadFilesViewModel.ProfileAvatar != null && uploadFilesViewModel.ProfileAvatar.ContentLength > 0)
                     {
-                        if (uploadFilesViewModel.AdharFile.ContentLength > 0)
-                        {
-                            var filename = Path.GetFileName(uploadFilesViewModel.AdharFile.FileName);
-                            var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), filename);
-                            uploadFilesViewModel.AdharFile.SaveAs(path);
-                            studentViewModel.StudentRegistration.AdharFile = filename;
-                        }
+                        var extension = Path.GetExtension(uploadFilesViewModel.ProfileAvatar.FileName);
+                        var fileName = "Profile_" + trackId + extension;
+                        var directory = Server.MapPath("~/WebsiteImages/StudentPhoto");
+                        Directory.CreateDirectory(directory);
+                        var path = Path.Combine(directory, fileName);
+                        uploadFilesViewModel.ProfileAvatar.SaveAs(path);
+                        studentViewModel.StudentRegistration.ProfileAvatar = fileName;
+                    }
+
+                    //aadharimage
+                    if (uploadFilesViewModel.AdharFile != null && uploadFilesViewModel.AdharFile.ContentLength > 0)
+                    {
+                        var extension = Path.GetExtension(uploadFilesViewModel.AdharFile.FileName);
+                        var fileName = "Aadhar_" + trackId + extension;
+                        var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                        Directory.CreateDirectory(directory);
+                        var path = Path.Combine(directory, fileName);
+                        uploadFilesViewModel.AdharFile.SaveAs(path);
+                        studentViewModel.StudentRegistration.AdharFile = fileName;
                     }
 
                     _StudentsRegistration.Insert(studentViewModel.StudentRegistration);
@@ -4314,45 +4329,49 @@ namespace SchoolManagement.Website.Controllers
 
                     //Additinal Info
                     {
-                        if (uploadFilesViewModel.BirthCertificateAvatar != null)
+                        //BirthCertificateAvatar
+                        if (uploadFilesViewModel.BirthCertificateAvatar != null && uploadFilesViewModel.BirthCertificateAvatar.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.BirthCertificateAvatar.ContentLength > 0)
-                            {
-                                var fileName = Path.GetFileName(uploadFilesViewModel.BirthCertificateAvatar.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), fileName);
-                                uploadFilesViewModel.BirthCertificateAvatar.SaveAs(path);
-                                studentViewModel.AdditionalInformation.BirthCertificateAvatar = fileName;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.BirthCertificateAvatar.FileName);
+                            var fileName = "BirthCert_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.BirthCertificateAvatar.SaveAs(path);
+                            studentViewModel.AdditionalInformation.BirthCertificateAvatar = fileName;
                         }
-                        if (uploadFilesViewModel.ThreePassportSizePhotographs != null)
+                        //ThreePassportSizePhotographs
+                        if (uploadFilesViewModel.ThreePassportSizePhotographs != null && uploadFilesViewModel.ThreePassportSizePhotographs.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.ThreePassportSizePhotographs.ContentLength > 0)
-                            {
-                                var fileName = Path.GetFileName(uploadFilesViewModel.ThreePassportSizePhotographs.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), fileName);
-                                uploadFilesViewModel.ThreePassportSizePhotographs.SaveAs(path);
-                                studentViewModel.AdditionalInformation.ThreePassportSizePhotographs = fileName;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.ThreePassportSizePhotographs.FileName);
+                            var fileName = "Photo3_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.ThreePassportSizePhotographs.SaveAs(path);
+                            studentViewModel.AdditionalInformation.ThreePassportSizePhotographs = fileName;
                         }
-                        if (uploadFilesViewModel.ProgressReport != null)
+                        //ProgressReport
+                        if (uploadFilesViewModel.ProgressReport != null && uploadFilesViewModel.ProgressReport.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.ProgressReport.ContentLength > 0)
-                            {
-                                var fileName = Path.GetFileName(uploadFilesViewModel.ProgressReport.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), fileName);
-                                uploadFilesViewModel.ProgressReport.SaveAs(path);
-                                studentViewModel.AdditionalInformation.ProgressReport = fileName;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.ProgressReport.FileName);
+                            var fileName = "Progress_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.ProgressReport.SaveAs(path);
+                            studentViewModel.AdditionalInformation.ProgressReport = fileName;
                         }
-                        if (uploadFilesViewModel.MigrationCertificate != null)
+                        //MigrationCertificate
+                        if (uploadFilesViewModel.MigrationCertificate != null && uploadFilesViewModel.MigrationCertificate.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.MigrationCertificate.ContentLength > 0)
-                            {
-                                var fileName = Path.GetFileName(uploadFilesViewModel.MigrationCertificate.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), fileName);
-                                uploadFilesViewModel.MigrationCertificate.SaveAs(path);
-                                studentViewModel.AdditionalInformation.MigrationCertificate = fileName;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.MigrationCertificate.FileName);
+                            var fileName = "Migration_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.MigrationCertificate.SaveAs(path);
+                            studentViewModel.AdditionalInformation.MigrationCertificate = fileName;
                         }
 
                         studentViewModel.AdditionalInformation.StudentRefId = Convert.ToInt32(studentViewModel.StudentRegistration.StudentRegisterID);
@@ -4364,38 +4383,38 @@ namespace SchoolManagement.Website.Controllers
 
                     //Past Schooling Record
                     {
-
-                        if (uploadFilesViewModel.TCAvatar != null)
+                        //TCCertificate
+                        if (uploadFilesViewModel.TCAvatar != null && uploadFilesViewModel.TCAvatar.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.TCAvatar.ContentLength > 0)
-                            {
-                                var fileName = Path.GetFileName(uploadFilesViewModel.TCAvatar.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), fileName);
-                                uploadFilesViewModel.TCAvatar.SaveAs(path);
-                                studentViewModel.PastSchoolingReport.TCAvatar = fileName;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.TCAvatar.FileName);
+                            var fileName = "TC_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.TCAvatar.SaveAs(path);
+                            studentViewModel.PastSchoolingReport.TCAvatar = fileName;
                         }
-
-                        if (uploadFilesViewModel.MarksCardAvatar != null)
+                        //MarksCard
+                        if (uploadFilesViewModel.MarksCardAvatar != null && uploadFilesViewModel.MarksCardAvatar.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.MarksCardAvatar.ContentLength > 0)
-                            {
-                                var fileName = Path.GetFileName(uploadFilesViewModel.MarksCardAvatar.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), fileName);
-                                uploadFilesViewModel.MarksCardAvatar.SaveAs(path);
-                                studentViewModel.PastSchoolingReport.MarksCardAvatar = fileName;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.MarksCardAvatar.FileName);
+                            var fileName = "MarksCard_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.MarksCardAvatar.SaveAs(path);
+                            studentViewModel.PastSchoolingReport.MarksCardAvatar = fileName;
                         }
-
-                        if (uploadFilesViewModel.CharacterConductCertificateAvatar != null)
+                        //CharactorCertificate
+                        if (uploadFilesViewModel.CharacterConductCertificateAvatar != null && uploadFilesViewModel.CharacterConductCertificateAvatar.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.CharacterConductCertificateAvatar.ContentLength > 0)
-                            {
-                                var fileName = Path.GetFileName(uploadFilesViewModel.CharacterConductCertificateAvatar.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), fileName);
-                                uploadFilesViewModel.CharacterConductCertificateAvatar.SaveAs(path);
-                                studentViewModel.PastSchoolingReport.CharacterConductCertificateAvatar = fileName;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.CharacterConductCertificateAvatar.FileName);
+                            var fileName = "Character_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.CharacterConductCertificateAvatar.SaveAs(path);
+                            studentViewModel.PastSchoolingReport.CharacterConductCertificateAvatar = fileName;
                         }
 
                         studentViewModel.PastSchoolingReport.StudentRefId = Convert.ToInt32(studentViewModel.StudentRegistration.StudentRegisterID);
@@ -4483,6 +4502,7 @@ namespace SchoolManagement.Website.Controllers
                         select c;
 
             var results = query.ToList();
+            var nonteach = _context.DataListItems.Where(x => x.DataListItemName == "Non Teaching" || x.DataListItemName == "Non Teaching Staff" || x.DataListItemName == "Non-Teaching Staff").FirstOrDefault().DataListItemId;
             if (Session["RoleName"] != null)
             {
                 string roleName = Session["RoleName"].ToString();
@@ -4490,13 +4510,15 @@ namespace SchoolManagement.Website.Controllers
                 if (roleName == "Staff")
                 {
                     long staffId = Int64.Parse(Session["StaffID"].ToString());
-                    var staff = _context.StafsDetails.Where(x => x.StafId == staffId).ToList();
+                    var staff = _context.StafsDetails.Where(x =>  x.StafId == staffId && x.StaffCategory != (nonteach) && (x.IsActive == true || x.IsActive == null)).ToList();
+                    //var staff = _context.StafsDetails.Where(x => x.StafId == staffId).ToList();
                     ViewBag.Staff = staff;
 
                 }
                 else
                 {
-                    var staff = _context.StafsDetails.ToList();
+                    var staff = _context.StafsDetails.Where(x => x.StaffCategory != (nonteach) && (x.IsActive == true || x.IsActive == null)).ToList();
+                    //var staff = _context.StafsDetails.ToList();
                     ViewBag.Staff = staff;
                 }
             }
@@ -4627,7 +4649,7 @@ namespace SchoolManagement.Website.Controllers
             var classId = _context.DataListItems.Where(x => x.DataListItemId == classid).Select(x => x.DataListItemId).FirstOrDefault();
             var sectionId = _context.DataListItems.Where(x => x.DataListItemId == sectionid).Select(x => x.DataListItemId).FirstOrDefault();
             //var studentlist = _context.StudentsRegistrations.Where(x => x.Class_Id == classid && x.Section_Id == sectionid).ToList();
-            var studentlist = _context.Students.Where(x => x.Class_Id == classId && x.Section_Id == sectionId && x.Batch_Id == batchid && x.IsApplyforTC == false).OrderBy(x => x.Name).ToList();
+            var studentlist = _context.Students.Where(x => x.Class_Id == classId && x.Section_Id == sectionId && x.Batch_Id == batchid && x.IsApplyforTC == false && x.IsApprove==217).OrderBy(x => x.Name).ToList();
 
             var stdInfo = new List<Tbl_TestRecords>();
             var list = _context.Students;
@@ -5756,34 +5778,38 @@ namespace SchoolManagement.Website.Controllers
             try
             {
                 var data = _context.StudentsRegistrations.FirstOrDefault(x => x.StudentRegisterID == studentViewModel.StudentRegistration.StudentRegisterID);
+                string trackId = DateTime.Now.ToString("yyyyddMMhhmmss");
                 //var Isapprove = _context.DataListItems.FirstOrDefault(x => x.DataListItemName == "APPROVED").DataListItemId;
                 if (!string.IsNullOrEmpty(studentViewModel.StudentRegistration.Name))
                 {
                     if (data != null)
                     {
-                        if (uploadFilesViewModel.ProfileAvatar != null)
+                        
+                        //ProfileAvatar
+                        if (uploadFilesViewModel.ProfileAvatar != null && uploadFilesViewModel.ProfileAvatar.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.ProfileAvatar.ContentLength > 0)
-                            {
-                                var filename = Path.GetFileName(uploadFilesViewModel.ProfileAvatar.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentPhoto/"), filename);
-                                uploadFilesViewModel.ProfileAvatar.SaveAs(path);
-                                studentViewModel.StudentRegistration.ProfileAvatar = filename;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.ProfileAvatar.FileName);
+                            var fileName = "Profile_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentPhoto");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.ProfileAvatar.SaveAs(path);
+                            studentViewModel.StudentRegistration.ProfileAvatar = fileName;
                         }
                         else
                         {
                             studentViewModel.StudentRegistration.ProfileAvatar = data.ProfileAvatar;
                         }
-                        if (uploadFilesViewModel.AdharFile != null)
+                        //AdharFile
+                        if (uploadFilesViewModel.AdharFile != null && uploadFilesViewModel.AdharFile.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.AdharFile.ContentLength > 0)
-                            {
-                                var fileName = Path.GetFileName(uploadFilesViewModel.AdharFile.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), fileName);
-                                uploadFilesViewModel.AdharFile.SaveAs(path);
-                                studentViewModel.StudentRegistration.AdharFile = fileName;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.AdharFile.FileName);
+                            var fileName = "Aadhar_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.AdharFile.SaveAs(path);
+                            studentViewModel.StudentRegistration.AdharFile = fileName;
                         }
                         else
                         {
@@ -5911,59 +5937,61 @@ namespace SchoolManagement.Website.Controllers
 
                     if (additionalinfo != null)
                     {
+                        //BirthCertificateAvatar
                         if (uploadFilesViewModel.BirthCertificateAvatar != null)
                         {
-                            if (uploadFilesViewModel.BirthCertificateAvatar.ContentLength > 0)
-                            {
-                                var fileName = Path.GetFileName(uploadFilesViewModel.BirthCertificateAvatar.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), fileName);
-                                uploadFilesViewModel.BirthCertificateAvatar.SaveAs(path);
-                                studentViewModel.AdditionalInformation.BirthCertificateAvatar = fileName;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.BirthCertificateAvatar.FileName);
+                            var fileName = "BirthCert_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.BirthCertificateAvatar.SaveAs(path);
+                            studentViewModel.AdditionalInformation.BirthCertificateAvatar = fileName;
                         }
                         else
                         {
                             studentViewModel.AdditionalInformation.BirthCertificateAvatar = additionalinfo.BirthCertificateAvatar;
                         }
-                        if (uploadFilesViewModel.ThreePassportSizePhotographs != null)
+                        //ThreePassportSizePhotographs
+                        if (uploadFilesViewModel.ThreePassportSizePhotographs != null && uploadFilesViewModel.ThreePassportSizePhotographs.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.ThreePassportSizePhotographs.ContentLength > 0)
-                            {
-                                var fileName = Path.GetFileName(uploadFilesViewModel.ThreePassportSizePhotographs.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), fileName);
-                                uploadFilesViewModel.ThreePassportSizePhotographs.SaveAs(path);
-                                studentViewModel.AdditionalInformation.ThreePassportSizePhotographs = fileName;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.ThreePassportSizePhotographs.FileName);
+                            var fileName = "Photo3_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.ThreePassportSizePhotographs.SaveAs(path);
+                            studentViewModel.AdditionalInformation.ThreePassportSizePhotographs = fileName;
                         }
                         else
                         {
                             studentViewModel.AdditionalInformation.ThreePassportSizePhotographs = additionalinfo.ThreePassportSizePhotographs;
                         }
-
-                        if (uploadFilesViewModel.ProgressReport != null)
+                        //ProgressReport
+                        if (uploadFilesViewModel.ProgressReport != null && uploadFilesViewModel.ProgressReport.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.ProgressReport.ContentLength > 0)
-                            {
-                                var fileName = Path.GetFileName(uploadFilesViewModel.ProgressReport.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), fileName);
-                                uploadFilesViewModel.ProgressReport.SaveAs(path);
-                                studentViewModel.AdditionalInformation.ProgressReport = fileName;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.ProgressReport.FileName);
+                            var fileName = "Progress_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.ProgressReport.SaveAs(path);
+                            studentViewModel.AdditionalInformation.ProgressReport = fileName;
                         }
                         else
                         {
                             studentViewModel.AdditionalInformation.ProgressReport = additionalinfo.ProgressReport;
                         }
-
-                        if (uploadFilesViewModel.MigrationCertificate != null)
+                        //MigrationCertificate
+                        if (uploadFilesViewModel.MigrationCertificate != null && uploadFilesViewModel.MigrationCertificate.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.MigrationCertificate.ContentLength > 0)
-                            {
-                                var fileName = Path.GetFileName(uploadFilesViewModel.MigrationCertificate.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), fileName);
-                                uploadFilesViewModel.MigrationCertificate.SaveAs(path);
-                                studentViewModel.AdditionalInformation.MigrationCertificate = fileName;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.MigrationCertificate.FileName);
+                            var fileName = "Migration_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.MigrationCertificate.SaveAs(path);
+                            studentViewModel.AdditionalInformation.MigrationCertificate = fileName;
                         }
                         else
                         {
@@ -5987,45 +6015,46 @@ namespace SchoolManagement.Website.Controllers
                     var pastschoolingrecord = _context.PastSchoolingReports.FirstOrDefault(x => x.ApplicationNumber == studentViewModel.Student.ApplicationNumber);
                     if (pastschoolingrecord != null)
                     {
-                        if (uploadFilesViewModel.TCAvatar != null)
+                        //TCAvatar
+                        if (uploadFilesViewModel.TCAvatar != null && uploadFilesViewModel.TCAvatar.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.TCAvatar.ContentLength > 0)
-                            {
-                                var fileName = Path.GetFileName(uploadFilesViewModel.TCAvatar.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), fileName);
-                                uploadFilesViewModel.TCAvatar.SaveAs(path);
-                                studentViewModel.PastSchoolingReport.TCAvatar = fileName;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.TCAvatar.FileName);
+                            var fileName = "TC_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.TCAvatar.SaveAs(path);
+                            studentViewModel.PastSchoolingReport.TCAvatar = fileName;
                         }
                         else
                         {
                             studentViewModel.PastSchoolingReport.TCAvatar = pastschoolingrecord.TCAvatar;
                         }
-
-                        if (uploadFilesViewModel.MarksCardAvatar != null)
+                        //MarksCardAvatar
+                        if (uploadFilesViewModel.MarksCardAvatar != null && uploadFilesViewModel.MarksCardAvatar.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.MarksCardAvatar.ContentLength > 0)
-                            {
-                                var fileName = Path.GetFileName(uploadFilesViewModel.MarksCardAvatar.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), fileName);
-                                uploadFilesViewModel.MarksCardAvatar.SaveAs(path);
-                                studentViewModel.PastSchoolingReport.MarksCardAvatar = fileName;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.MarksCardAvatar.FileName);
+                            var fileName = "MarksCard_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.MarksCardAvatar.SaveAs(path);
+                            studentViewModel.PastSchoolingReport.MarksCardAvatar = fileName;
                         }
                         else
                         {
                             studentViewModel.PastSchoolingReport.MarksCardAvatar = pastschoolingrecord.MarksCardAvatar;
                         }
-
-                        if (uploadFilesViewModel.CharacterConductCertificateAvatar != null)
+                        //CharacterConductCertificateAvatar
+                        if (uploadFilesViewModel.CharacterConductCertificateAvatar != null && uploadFilesViewModel.CharacterConductCertificateAvatar.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.CharacterConductCertificateAvatar.ContentLength > 0)
-                            {
-                                var fileName = Path.GetFileName(uploadFilesViewModel.CharacterConductCertificateAvatar.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), fileName);
-                                uploadFilesViewModel.CharacterConductCertificateAvatar.SaveAs(path);
-                                studentViewModel.PastSchoolingReport.CharacterConductCertificateAvatar = fileName;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.CharacterConductCertificateAvatar.FileName);
+                            var fileName = "Character_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.CharacterConductCertificateAvatar.SaveAs(path);
+                            studentViewModel.PastSchoolingReport.CharacterConductCertificateAvatar = fileName;
                         }
                         else
                         {
@@ -6086,6 +6115,7 @@ namespace SchoolManagement.Website.Controllers
 
             try
             {
+                string trackId = DateTime.Now.ToString("yyyyddMMhhmmss");
                 var data = _context.Students.FirstOrDefault(x => x.StudentId == studentViewModel.StudentRegistration.StudentRegisterID);
                 var StudentReg = _context.StudentsRegistrations.Where(x => x.ApplicationNumber == data.ApplicationNumber).FirstOrDefault();
                 //var Isapprove = _context.DataListItems.FirstOrDefault(x => x.DataListItemName == "APPROVED").DataListItemId;
@@ -6093,29 +6123,31 @@ namespace SchoolManagement.Website.Controllers
                 {
                     if (data != null)
                     {
-                        if (uploadFilesViewModel.ProfileAvatar != null)
+                        //ProfileAvatar
+                        if (uploadFilesViewModel.ProfileAvatar != null && uploadFilesViewModel.ProfileAvatar.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.ProfileAvatar.ContentLength > 0)
-                            {
-                                var filename = Path.GetFileName(uploadFilesViewModel.ProfileAvatar.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentPhoto/"), filename);
-                                uploadFilesViewModel.ProfileAvatar.SaveAs(path);
-                                studentViewModel.StudentRegistration.ProfileAvatar = filename;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.ProfileAvatar.FileName);
+                            var fileName = "Profile_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentPhoto");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.ProfileAvatar.SaveAs(path);
+                            studentViewModel.StudentRegistration.ProfileAvatar = fileName;
                         }
                         else
                         {
                             studentViewModel.StudentRegistration.ProfileAvatar = data.ProfileAvatar;
                         }
-                        if (uploadFilesViewModel.AdharFile != null)
+                        //AdharFile
+                        if (uploadFilesViewModel.AdharFile != null && uploadFilesViewModel.AdharFile.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.AdharFile.ContentLength > 0)
-                            {
-                                var fileName = Path.GetFileName(uploadFilesViewModel.AdharFile.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), fileName);
-                                uploadFilesViewModel.AdharFile.SaveAs(path);
-                                studentViewModel.StudentRegistration.AdharFile = fileName;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.AdharFile.FileName);
+                            var fileName = "Aadhar_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.AdharFile.SaveAs(path);
+                            studentViewModel.StudentRegistration.AdharFile = fileName;
                         }
                         else
                         {
@@ -6126,6 +6158,7 @@ namespace SchoolManagement.Website.Controllers
                         studentViewModel.StudentRegistration.IsApprove = data.IsApprove;
                         studentViewModel.StudentRegistration.UserId = data.UserId;
                         studentViewModel.StudentRegistration.IsApplyforTC = data.IsApplyforTC;
+                        studentViewModel.StudentRegistration.CurrentYear = data.CurrentYear;
                         //studentViewModel.StudentRegistration.AddedYear = data.AddedYear;
                         //studentViewModel.StudentRegistration.Registration_Date = data.Registration_Date;
                         //studentViewModel.StudentRegistration.IsEmailsent = data.IsEmailsent;
@@ -6144,6 +6177,7 @@ namespace SchoolManagement.Website.Controllers
                         StudentReg.PerEduNumber = studentViewModel.StudentRegistration.PerEduNumber;
                         StudentReg.FamilySSSMID = studentViewModel.StudentRegistration.FamilySSSMID;
                         StudentReg.Registration_Date = studentViewModel.StudentRegistration.Registration_Date;
+
                         StudentReg.Religion_Id = studentViewModel.StudentRegistration.Religion != null ? Int32.Parse(studentViewModel.StudentRegistration.Religion) : 176;
                         //StudentReg.PerEduNumber = studentViewModel.StudentRegistration.PerEduNumber;
                         StudentReg.ApaarId = studentViewModel.StudentRegistration.ApaarId;
@@ -6259,59 +6293,61 @@ namespace SchoolManagement.Website.Controllers
                     var additionalinfo = _context.AdditionalInformations.FirstOrDefault(x => x.ApplicationNumber == data.ApplicationNumber);
                     if (additionalinfo != null)
                     {
-                        if (uploadFilesViewModel.BirthCertificateAvatar != null)
+                        //BirthCertificateAvatar
+                        if (uploadFilesViewModel.BirthCertificateAvatar != null && uploadFilesViewModel.BirthCertificateAvatar.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.BirthCertificateAvatar.ContentLength > 0)
-                            {
-                                var fileName = Path.GetFileName(uploadFilesViewModel.BirthCertificateAvatar.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), fileName);
-                                uploadFilesViewModel.BirthCertificateAvatar.SaveAs(path);
-                                studentViewModel.AdditionalInformation.BirthCertificateAvatar = fileName;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.BirthCertificateAvatar.FileName);
+                            var fileName = "BirthCert_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.BirthCertificateAvatar.SaveAs(path);
+                            studentViewModel.AdditionalInformation.BirthCertificateAvatar = fileName;
                         }
                         else
                         {
                             studentViewModel.AdditionalInformation.BirthCertificateAvatar = additionalinfo.BirthCertificateAvatar;
                         }
-                        if (uploadFilesViewModel.ThreePassportSizePhotographs != null)
+                        //ThreePassportSizePhotographs
+                        if (uploadFilesViewModel.ThreePassportSizePhotographs != null && uploadFilesViewModel.ThreePassportSizePhotographs.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.ThreePassportSizePhotographs.ContentLength > 0)
-                            {
-                                var fileName = Path.GetFileName(uploadFilesViewModel.ThreePassportSizePhotographs.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), fileName);
-                                uploadFilesViewModel.ThreePassportSizePhotographs.SaveAs(path);
-                                studentViewModel.AdditionalInformation.ThreePassportSizePhotographs = fileName;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.ThreePassportSizePhotographs.FileName);
+                            var fileName = "Photo3_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.ThreePassportSizePhotographs.SaveAs(path);
+                            studentViewModel.AdditionalInformation.ThreePassportSizePhotographs = fileName;
                         }
                         else
                         {
                             studentViewModel.AdditionalInformation.ThreePassportSizePhotographs = additionalinfo.ThreePassportSizePhotographs;
                         }
-
-                        if (uploadFilesViewModel.ProgressReport != null)
+                        //ProgressReport
+                        if (uploadFilesViewModel.ProgressReport != null && uploadFilesViewModel.ProgressReport.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.ProgressReport.ContentLength > 0)
-                            {
-                                var fileName = Path.GetFileName(uploadFilesViewModel.ProgressReport.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), fileName);
-                                uploadFilesViewModel.ProgressReport.SaveAs(path);
-                                studentViewModel.AdditionalInformation.ProgressReport = fileName;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.ProgressReport.FileName);
+                            var fileName = "Progress_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.ProgressReport.SaveAs(path);
+                            studentViewModel.AdditionalInformation.ProgressReport = fileName;
                         }
                         else
                         {
                             studentViewModel.AdditionalInformation.ProgressReport = additionalinfo.ProgressReport;
                         }
-
-                        if (uploadFilesViewModel.MigrationCertificate != null)
+                        //MigrationCertificate
+                        if (uploadFilesViewModel.MigrationCertificate != null && uploadFilesViewModel.MigrationCertificate.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.MigrationCertificate.ContentLength > 0)
-                            {
-                                var fileName = Path.GetFileName(uploadFilesViewModel.MigrationCertificate.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), fileName);
-                                uploadFilesViewModel.MigrationCertificate.SaveAs(path);
-                                studentViewModel.AdditionalInformation.MigrationCertificate = fileName;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.MigrationCertificate.FileName);
+                            var fileName = "Migration_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.MigrationCertificate.SaveAs(path);
+                            studentViewModel.AdditionalInformation.MigrationCertificate = fileName;
                         }
                         else
                         {
@@ -6335,45 +6371,46 @@ namespace SchoolManagement.Website.Controllers
                     var pastschoolingrecord = _context.PastSchoolingReports.FirstOrDefault(x => x.ApplicationNumber == data.ApplicationNumber);
                     if (pastschoolingrecord != null)
                     {
-                        if (uploadFilesViewModel.TCAvatar != null)
+                        //TCAvatar
+                        if (uploadFilesViewModel.TCAvatar != null && uploadFilesViewModel.TCAvatar.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.TCAvatar.ContentLength > 0)
-                            {
-                                var fileName = Path.GetFileName(uploadFilesViewModel.TCAvatar.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), fileName);
-                                uploadFilesViewModel.TCAvatar.SaveAs(path);
-                                studentViewModel.PastSchoolingReport.TCAvatar = fileName;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.TCAvatar.FileName);
+                            var fileName = "TC_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.TCAvatar.SaveAs(path);
+                            studentViewModel.PastSchoolingReport.TCAvatar = fileName;
                         }
                         else
                         {
                             studentViewModel.PastSchoolingReport.TCAvatar = pastschoolingrecord.TCAvatar;
                         }
-
-                        if (uploadFilesViewModel.MarksCardAvatar != null)
+                        //MarksCardAvatar
+                        if (uploadFilesViewModel.MarksCardAvatar != null && uploadFilesViewModel.MarksCardAvatar.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.MarksCardAvatar.ContentLength > 0)
-                            {
-                                var fileName = Path.GetFileName(uploadFilesViewModel.MarksCardAvatar.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), fileName);
-                                uploadFilesViewModel.MarksCardAvatar.SaveAs(path);
-                                studentViewModel.PastSchoolingReport.MarksCardAvatar = fileName;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.MarksCardAvatar.FileName);
+                            var fileName = "MarksCard_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.MarksCardAvatar.SaveAs(path);
+                            studentViewModel.PastSchoolingReport.MarksCardAvatar = fileName;
                         }
                         else
                         {
                             studentViewModel.PastSchoolingReport.MarksCardAvatar = pastschoolingrecord.MarksCardAvatar;
                         }
-
-                        if (uploadFilesViewModel.CharacterConductCertificateAvatar != null)
+                        //CharacterConductCertificateAvatar
+                        if (uploadFilesViewModel.CharacterConductCertificateAvatar != null && uploadFilesViewModel.CharacterConductCertificateAvatar.ContentLength > 0)
                         {
-                            if (uploadFilesViewModel.CharacterConductCertificateAvatar.ContentLength > 0)
-                            {
-                                var fileName = Path.GetFileName(uploadFilesViewModel.CharacterConductCertificateAvatar.FileName);
-                                var path = Path.Combine(Server.MapPath("~/WebsiteImages/StudentAdhar"), fileName);
-                                uploadFilesViewModel.CharacterConductCertificateAvatar.SaveAs(path);
-                                studentViewModel.PastSchoolingReport.CharacterConductCertificateAvatar = fileName;
-                            }
+                            var extension = Path.GetExtension(uploadFilesViewModel.CharacterConductCertificateAvatar.FileName);
+                            var fileName = "Character_" + trackId + extension;
+                            var directory = Server.MapPath("~/WebsiteImages/StudentAdhar");
+                            Directory.CreateDirectory(directory);
+                            var path = Path.Combine(directory, fileName);
+                            uploadFilesViewModel.CharacterConductCertificateAvatar.SaveAs(path);
+                            studentViewModel.PastSchoolingReport.CharacterConductCertificateAvatar = fileName;
                         }
                         else
                         {
@@ -6492,12 +6529,6 @@ namespace SchoolManagement.Website.Controllers
                                            SiblingStudentname = sib.Studentname + " " + (clshd.ClassName ?? ""),  // Null-coalescing operator
                                            SibClassID = sib.Class_id ?? 0
                                        }).ToList();
-
-
-
-
-
-
             var groupStudentBySiblings = studentSiblingQuery.GroupBy(w => w.FamilyId).Select(s => new SiblingsVM
             {
 
@@ -7185,6 +7216,7 @@ namespace SchoolManagement.Website.Controllers
                     };
                     var existingobj = _context.Students.Where(e => e.ApplicationNumber == appNum).FirstOrDefault();
                     _context.Entry(existingobj).CurrentValues.SetValues(objStudentStatusUpdate);
+                    _context.Entry(existingobj).Property(x => x.CurrentYear).IsModified = false;
                     _context.SaveChanges();
                     //---
                 }
@@ -7711,7 +7743,10 @@ namespace SchoolManagement.Website.Controllers
 
         }
 
-
+        public ActionResult StudentProfile()
+        {
+            return View();
+        }
 
 
 

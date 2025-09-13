@@ -57,7 +57,7 @@ namespace SchoolManagement.Website.Controllers
                
             }
 
-            return View(li);
+            return RedirectToAction("Dashboard", "Dashboard"); //View(");
         }
         public static string ConvertToYyyyMmDd(string inputDate)
         {

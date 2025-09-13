@@ -95,5 +95,7 @@ namespace SchoolManagement.Data.Models
         public string Staff_CategoryName { get; set; }
         public bool? IsActive { get; set; }
         public int?  StaffCategory { get; set; }
+        [NotMapped]
+        public string StaffCategoryName { get; set; }
     }
 }
