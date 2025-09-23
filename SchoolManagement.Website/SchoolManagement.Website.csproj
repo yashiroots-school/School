@@ -1746,6 +1746,7 @@
     <Compile Include="Repository\Repository.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\Account_SummaryViewmodel.cs" />
+    <Compile Include="ViewModels\AdmitCardViewModel.cs" />
     <Compile Include="ViewModels\AllStudentDetailsViewModel.cs" />
     <Compile Include="ViewModels\ApplyNotApplyJobStudentList.cs" />
     <Compile Include="ViewModels\ApplyTCModel.cs" />
@@ -1756,6 +1757,7 @@
     <Compile Include="ViewModels\PerformanceReport.cs" />
     <Compile Include="ViewModels\PreviewFeeReceiptViewModel.cs" />
     <Compile Include="ViewModels\PrintReportCard.cs" />
+    <Compile Include="ViewModels\ProfileViewModel.cs" />
     <Compile Include="ViewModels\PromotionReportList.cs" />
     <Compile Include="ViewModels\SchoolLoginviewmodel.cs" />
     <Compile Include="ViewModels\SiblingVM.cs" />
@@ -2666,6 +2668,8 @@
     <Content Include="Views\Student\ViewIdcard1.cshtml" />
     <Content Include="Views\Student\ViewIdcard2.cshtml" />
     <Content Include="Views\Student\StudentProfile.cshtml" />
+    <Content Include="Views\Exam\PrintAdmitCard.cshtml" />
+    <Content Include="Views\Exam\AdmitsCard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -31,6 +31,7 @@ using Newtonsoft.Json.Linq;
 using SchoolManagement.Website.Models;
 using SchoolManagement.Website.Models.DataAccess;
 using SchoolManagement.Website.ViewModels;
+using DocumentFormat.OpenXml.Presentation;
 
 namespace SchoolManagement.Website.Controllers
 {
@@ -393,6 +394,7 @@ namespace SchoolManagement.Website.Controllers
                     SubjectID = item.SubjectID,
                     TermID = item.TermID,
                     MaximumMarks = item.MaximumMarks,
+                    MinimumMarks = item.MinimumMarks,
                     Subject = _context.Tbl_SubjectsSetup.Where(x => x.Subject_ID == item.SubjectID).Select(x => x.Subject_Name).FirstOrDefault(),
                     Term = _context.tbl_Term.Where(x => x.TermID == item.TermID).Select(x => x.TermName).FirstOrDefault()
                 };
@@ -461,6 +463,8 @@ namespace SchoolManagement.Website.Controllers
                     data.TermID = test.TermID;
                     data.SubjectID = test.SubjectID;
                     data.IsOptional = test.IsOptional;
+                    data.date = test.date;
+                    data.time = test.time;
                     _context.SaveChanges();
                 }
 
@@ -513,7 +517,6 @@ namespace SchoolManagement.Website.Controllers
                 ViewBag.ClassList = Classes;
                 var Section = _context.DataListItems.Where(e => e.DataListId == _context.DataLists.FirstOrDefault(x => x.DataListName.ToLower() == "section").DataListId.ToString()).ToList();
                 ViewBag.SectionList = Section;
-                var nonteach = _context.DataListItems.Where(x => x.DataListItemName == "Non Teaching" || x.DataListItemName == "Non Teaching Staff" || x.DataListItemName == "Non-Teaching Staff").FirstOrDefault().DataListItemId;
                 if (Session["RoleName"] != null)
                 {
                     string roleName = Session["RoleName"].ToString();
@@ -521,14 +524,13 @@ namespace SchoolManagement.Website.Controllers
                     if (roleName == "Staff")
                     {
                         long staffId = Int64.Parse(Session["StaffID"].ToString());
-                        
-                        var staff = _context.StafsDetails.Where(x => x.StafId == staffId && x.StaffCategory != nonteach && (x.IsActive==true || x.IsActive==null)).ToList();
+                        var staff = _context.StafsDetails.Where(x => x.StafId == staffId).ToList();
                         ViewBag.Staff = staff;
 
                     }
                     else
                     {
-                        var staff = _context.StafsDetails.Where(x => x.StaffCategory != nonteach && (x.IsActive == true || x.IsActive == null)).OrderBy(x => x.Name).ToList();
+                        var staff = _context.StafsDetails.OrderBy(x => x.Name).ToList();
                         ViewBag.Staff = staff;
                         var BatchList = _context.Tbl_Batches.Select(x => new Data.Models.BatchListDTO
                         {
@@ -665,7 +667,7 @@ namespace SchoolManagement.Website.Controllers
                 bool IsClassTeacher = _context.Subjects.Any(x => x.Class_Id == classId && x.Batch_Id == batchId && x.StaffId == staffId && x.Section_Id == sectionId && x.Class_Teacher == true);
                 if (IsClassTeacher)
                 {
-                    Tests = _context.tbl_Tests.Where(x => x.ClassID == classId && x.TermID == termId).OrderBy(x => x.SubjectID).ToList();
+                    Tests = _context.tbl_Tests.Where(x => x.ClassID == classId && x.TermID == termId).ToList();
                     foreach (var item in Tests)
                     {
                         var termName = _context.tbl_Term.Where(x => x.TermID == item.TermID).Select(x => x.TermName).FirstOrDefault();
@@ -686,13 +688,13 @@ namespace SchoolManagement.Website.Controllers
 
                     var tests = _context.tbl_Tests
                                         .Where(x => staffsubjectids.Contains((int)x.SubjectID) && x.TermID == termId && x.ClassID == classId)
-                                        .ToList().OrderBy(x=>x.SubjectID);
+                                        .ToList();
 
                     var subjects = _context.Subjects
                              .Where(x => x.StaffId == staffId && x.Class_Id == classId && x.Section_Id == sectionId).ToList();
                     Tests = subjects.Where(x => x.Batch_Id == batchId).SelectMany(subject => _context.tbl_Tests.Where(test => test.SubjectID == subject.Subject_ID
      && test.TermID == termId && test.ClassID == classId))
-                             .Distinct().OrderBy(x => x.SubjectID)
+                             .Distinct()
                              .ToList();
                     foreach (var item in Tests)
                     {
@@ -864,7 +866,6 @@ namespace SchoolManagement.Website.Controllers
             }
 
         }
-
         public JsonResult GetStudentByClassSection(int classId, int sectionId, int termId, int Batchid)
         {
             List<ListStudent> listStudents = new List<ListStudent>();
@@ -931,10 +932,72 @@ namespace SchoolManagement.Website.Controllers
             }
             catch (Exception ex)
             {
-
                 return Json(ex, JsonRequestBehavior.AllowGet);
             }
         }
+
+        public JsonResult GetAdmitStudentByClassSection(int classId, int sectionId, int termId, int batchId)
+        {
+            List<ListStudent> listStudents = new List<ListStudent>();
+            try
+            {
+                // Students table se direct filter
+                var studentlist = _context.Students
+                                    .Where(x => x.IsApplyforTC == false
+                                            && (classId == 0 || x.Class_Id == classId)
+                                            && (sectionId == 0 || x.Section_Id == sectionId)
+                                            && (batchId == 0 || x.Batch_Id == batchId))
+                                    .OrderBy(x => x.Name)
+                                    .ToList();
+
+                foreach (var item in studentlist)
+                {
+                    ListStudent listStudent = new ListStudent()
+                    {
+                        StudentId = item.StudentId,
+                        StudentName = item.Name,
+
+                        // Class Name
+                        ClassName = _context.DataListItems
+                                        .Where(x => x.DataListItemId == item.Class_Id)
+                                        .Select(x => x.DataListItemName)
+                                        .FirstOrDefault(),
+
+                        // Section Name
+                        SectionName = _context.DataListItems
+                                        .Where(x => x.DataListItemId == item.Section_Id)
+                                        .Select(x => x.DataListItemName)
+                                        .FirstOrDefault(),
+
+                        // Batch Name
+                        BatchName = _context.Tbl_Batches
+                                        .Where(x => x.Batch_Id == item.Batch_Id)
+                                        .Select(x => x.Batch_Name)
+                                        .FirstOrDefault(),
+
+                        // Hold check
+                        IsHold = _context.Tbl_HoldDetail
+                                        .Where(x => x.StudentId == item.StudentId
+                                                 && x.BatchId == batchId
+                                                 && x.TermId == termId
+                                                 && x.ClassId == classId)
+                                        .Select(x => x.IsHold)
+                                        .FirstOrDefault(),
+
+                        ObtainedMarks = 0
+                    };
+
+                    listStudents.Add(listStudent);
+                }
+
+                return Json(listStudents.OrderBy(x => x.StudentName), JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         [HttpPost]
         public ActionResult InsertUpdateObtainedMarks(List<StudentObtainedMarkModel> rowData, int staffId)
         {
@@ -1090,6 +1153,29 @@ namespace SchoolManagement.Website.Controllers
         }
         //Report Card
         public ActionResult ReportCard()
+        {
+            try
+            {
+                var Classes = _context.DataListItems.Where(e => e.DataListId == _context.DataLists.FirstOrDefault(x => x.DataListName.ToLower() == "Class").DataListId.ToString()).ToList();
+                ViewBag.ClassList = Classes;
+                var Section = _context.DataListItems.Where(e => e.DataListId == _context.DataLists.FirstOrDefault(x => x.DataListName.ToLower() == "section").DataListId.ToString()).ToList();
+                ViewBag.SectionList = Section;
+                var Terms = _context.tbl_Term.ToList();
+                ViewBag.Terms = Terms;
+
+                var batch = _context.Tbl_Batches.Distinct().ToList();
+                ViewBag.Batch = batch;
+
+                return View();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public ActionResult AdmitsCard()
         {
             try
             {
@@ -1357,82 +1443,7 @@ namespace SchoolManagement.Website.Controllers
             // Get PDF as byte array. Couls also use .Save() to save to disk
             return pdf;
         }
-        //protected byte[] ConvertHtmlToPdf(string html, string header = null, string footer = null, bool isPageNumberInFooter = false)
-        //{
-        //    // Create ABCpdf Doc object
-        //    var doc = new WebSupergoo.ABCpdf11.Doc();
-        //    if (header == null && footer == null)
-        //        doc.Rect.Inset(20, 10);
-        //    else
-        //        doc.Rect.String = "0 70 600 760"; /*padding from left, padding from bottom, width from left, height from bottom*/
-        //                                          // Add html to Doc   
-        //                                          //html = "<html><head></head><body></body></html>";
-        //    int theId = doc.AddImageHtml(html);
 
-        //    // Loop through document to create multi-page PDF
-        //    while (true)
-        //    {
-        //        if (!doc.Chainable(theId))
-        //            break;
-        //        doc.Page = doc.AddPage();
-        //        theId = doc.AddImageToChain(theId);
-        //    }
-        //    var count = doc.PageCount;
-
-        //    /*****************Footer area******************/
-        //    if (footer != null)
-        //    {
-        //        var newfooter = "";
-        //        doc.Rect.String = "40 20 580 50";
-        //        for (int i = 1; i <= count; i++)
-        //        {
-
-        //            doc.PageNumber = i;
-        //            if (isPageNumberInFooter)
-        //            {
-        //                newfooter = footer.Replace("PageNumber", "Page " + i.ToString() + " of " + count.ToString());
-        //                int id = doc.AddImageHtml(newfooter);
-
-        //                while (true)
-        //                {
-        //                    if (!doc.Chainable(id))
-        //                        break;
-        //                    id = doc.AddImageToChain(id);
-        //                }
-        //            }
-        //            else
-        //                doc.AddText(footer);
-        //        }
-        //    }
-        //    /*****************Footer area******************/
-
-
-        //    // Flatten the PDF
-        //    for (int i = 1; i <= doc.PageCount; i++)
-        //    {
-        //        doc.PageNumber = i;
-        //        doc.Flatten();
-        //    }
-
-        //    var pdf = doc.GetData();
-        //    doc.Clear();
-        //    // Get PDF as byte array. Couls also use .Save() to save to disk
-        //    return pdf;
-        //}
-
-        //public ActionResult PrintReportCard()
-        //{
-        //    try
-        //    {
-
-        //        return View();
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //        throw ex;
-        //    }
-        //}
         public ActionResult PrintReportCard(string id, int batchId)
         {
             try
@@ -1454,6 +1465,83 @@ namespace SchoolManagement.Website.Controllers
                 throw ex;
             }
         }
+
+
+        public ActionResult PrintAdmitCard(long id, int term)
+        {
+            var school = _context.TblCreateSchool.FirstOrDefault();
+            ViewBag.School_logo = school != null
+                ? ConvertImageToBase64(Server.MapPath("~/WebsiteImages/SchoolImage/" + Path.GetFileName(school.Upload_Image)))
+                : null;
+            ViewBag.SchoolNewName = school?.School_Name;
+            ViewBag.newAddress = school?.Address;
+
+            var model = new AdmitsCardViewModel();
+
+            string connString = System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            using (var conn = new SqlConnection(connString))
+            using (var cmd = new SqlCommand("dbo.GetAdmitCardDetails", conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@StudentId", id);
+                cmd.Parameters.AddWithValue("@termId", term);
+                conn.Open();
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    // 1st result: Student
+                    if (reader.Read())
+                    {
+                        model.Student = new StudentDto
+                        {
+                            StudentId = reader["StudentId"] != DBNull.Value ? Convert.ToInt32(reader["StudentId"]) : 0,
+                            ApplicationNumber = reader["ApplicationNumber"]?.ToString(),
+                            UIN = reader["UIN"]?.ToString(),
+                            Name = reader["Name"]?.ToString(),
+                            Class = reader["Class"]?.ToString(),
+                            BatchName = reader["BatchName"]?.ToString(),
+                            Section = reader["Section"]?.ToString(),
+                            Gender = reader["Gender"]?.ToString(),
+                            DOB = reader["DOB"]?.ToString(),
+                            RollNo = reader["RollNo"] != DBNull.Value ? Convert.ToInt64(reader["RollNo"]) : (long?)null,
+                            ScholarNo = reader["ScholarNo"] != DBNull.Value ? Convert.ToInt64(reader["ScholarNo"]) : (long?)null,
+                            ProfileAvatar = reader["ProfileAvatar"]?.ToString(),
+                            Mobile = reader["Mobile"]?.ToString(),
+                            City = reader["City"]?.ToString(),
+                            State = reader["State"]?.ToString(),
+                            RegNumber = reader["RegNumber"]?.ToString(),
+                            FatherName = reader["FatherName"]?.ToString(),
+                            MotherName = reader["MotherName"]?.ToString(),
+                            staf = reader["staf"]?.ToString(),
+                            TermName = reader["TermName"]?.ToString()
+                        };
+                    }
+
+                    // 2nd result: Tests
+                    if (reader.NextResult())
+                    {
+                        var tests = new List<TestDto>();
+                        while (reader.Read())
+                        {
+                            tests.Add(new TestDto
+                            {
+                                TestID = reader["TestID"] != DBNull.Value ? Convert.ToInt64(reader["TestID"]) : 0,
+                                TestName = reader["TestName"]?.ToString(),
+                                TestType = reader["TestType"]?.ToString(),
+                                MaximumMarks = reader["MaximumMarks"] != DBNull.Value ? Convert.ToInt32(reader["MaximumMarks"]) : 0,
+                                MinimumMarks = reader["MinimumMarks"] != DBNull.Value ? Convert.ToInt32(reader["MinimumMarks"]) : 0,
+                                ExamDate = reader["ExamDate"]?.ToString(),
+                                ExamTime = reader["ExamTime"]?.ToString()
+                            });
+                        }
+                        model.Tests = tests;
+                    }
+                }
+            }
+
+            return View(model);
+        }
+
         public ActionResult PrintReportCardCBSEBoard(string id, int batchId)
         {
             try
@@ -1481,8 +1569,8 @@ namespace SchoolManagement.Website.Controllers
             string base64Image = Convert.ToBase64String(imageArray);
             return base64Image;
         }
-        #region STMary
-        public JsonResult PrintReportCardData(int studentId, int termId, int batchId, string _Name = "1")
+
+        public JsonResult PrintReportCardData(int studentId, int termId, int batchId, string _Name = "1") //, int classId
         {
             try
             {
@@ -4161,2618 +4249,117 @@ namespace SchoolManagement.Website.Controllers
                 return Json(ex, JsonRequestBehavior.AllowGet);
             }
         }
-        #endregion StMary
-        #region Without minimummarks
-        //    public JsonResult PrintReportCardData(int studentId, int termId, int batchId, string _Name = "1") 
+        //public void CalculateOverallTotals(List<SubjectData> allSubjects, TotalResult result, int classId)
+        //{
+        //    bool isSeniorClass = classId == 414 || classId == 415 || classId == 416 || classId == 417 || classId == 614 || classId == 615;
+
+        //    decimal totalMarks;
+        //    decimal maxTotalMarks;
+
+        //    if (isSeniorClass)
         //    {
-        //        try
-        //        {
-        //            Batch_Id = batchId;
-        //            var stdInfo = new Tbl_TestRecords();
-        //            if (Batch_Id > 0)
-        //            {
-        //                stdInfo = _context.Tbl_TestRecord.Where(x => x.BatchId == Batch_Id && x.StudentID == studentId).FirstOrDefault();
-        //            }
-        //            var studentInfo = _context.Students.Where(x => x.StudentId == studentId).FirstOrDefault();
-        //            var studentRegister = _context.StudentsRegistrations.Where(x => x.ApplicationNumber == studentInfo.ApplicationNumber).FirstOrDefault();
-        //            var familyDetail = _context.FamilyDetails.Where(x => x.ApplicationNumber == studentInfo.ApplicationNumber).FirstOrDefault();
-        //            if (_Name == "2")
-        //            {
-        //                familyDetail = _context.FamilyDetails.Where(x => x.StudentRefId == studentId).FirstOrDefault();
-        //            }
-        //            var staffId = _context.Subjects.Where(x => x.Class_Id == stdInfo.ClassID && x.Batch_Id == Batch_Id && x.Section_Id == stdInfo.SectionID && x.Class_Teacher == true).Select(x => x.StaffId).FirstOrDefault();
-
-
-        //            List<Tbl_StudentAttendance> ActualAttendance = new List<Tbl_StudentAttendance>();
-        //            if (termId != 10)
-        //            {
-        //                var batch = _context.Tbl_Batches.Where(x => x.Batch_Id == Batch_Id).FirstOrDefault();
-        //                //  var batchItems = _context.DataListItems.Where(x => x.DataListId == "9" && x.DataListItemName== batch.Batch_Name).FirstOrDefault();
-        //                var attendanceDate = _context.TblTestAssignDate.Where(x => x.TestID == termId && x.BatchID == batch.Batch_Id && x.ClassID == stdInfo.ClassID).FirstOrDefault();
-        //                var StartDate = DateTime.Now; var ToDate = DateTime.Now;
-        //                if (attendanceDate == null)
-        //                {
-        //                    StartDate = DateTime.Now;
-        //                    ToDate = DateTime.Now;
-        //                }
-        //                else
-        //                {
-        //                    StartDate = Convert.ToDateTime(attendanceDate.StartDate);
-        //                    ToDate = Convert.ToDateTime(attendanceDate.ToDate);
-        //                }
-        //                ActualAttendance = _context.Tbl_StudentAttendance.Where(x => x.StudentRegisterID == stdInfo.StudentID &&
-        //            x.Class_Id == stdInfo.ClassID && x.Section_Id == stdInfo.SectionID).ToList().Where(x =>
-        //            DateTime.ParseExact(x.Created_Date, "dd/MM/yyyy", CultureInfo.InvariantCulture).Date >= StartDate.Date &&
-        //            DateTime.ParseExact(x.Created_Date, "dd/MM/yyyy", CultureInfo.InvariantCulture).Date <= ToDate.Date).ToList();
-
-        //            }
-        //            else
-        //            {
-        //                ActualAttendance = _context.Tbl_StudentAttendance.Where(x => x.StudentRegisterID == stdInfo.StudentID && x.Class_Id == stdInfo.ClassID && x.Section_Id == stdInfo.SectionID).ToList();
-
-        //            }
-
-        //            double attendedDays = 0;
-        //            double attendedHalfDays = 0;
-        //            foreach (var item in ActualAttendance)
-        //            {
-        //                if (item.Mark_FullDayAbsent == "True")
-        //                {
-        //                    attendedDays++;
-        //                }
-        //                if (item.Mark_HalfDayAbsent == "True")
-        //                {
-        //                    attendedHalfDays++;
-        //                }
-        //                if (item.Others == "True")
-        //                {
-        //                    attendedDays++;
-        //                }
-
-        //            }
-        //            //m double totalAttendedDays = attendedDays + (attendedHalfDays / 2);
-
-        //            int totalAttendedDays = Convert.ToInt32(attendedDays + (attendedHalfDays / 2));
-
-        //            StudentReportData studentReportData = new StudentReportData()
-        //            {
-        //                studentName = studentInfo.Name,
-        //                LastName = studentInfo.Last_Name,
-        //                fatherName = familyDetail.FatherName,
-        //                motherName = familyDetail.MotherName,
-        //                scholarNo = studentInfo.ScholarNo.ToString(),
-        //                rollNo = studentInfo.RollNo.ToString(),
-        //                className = _context.DataListItems.Where(x => x.DataListItemId == stdInfo.ClassID).Select(x => x.DataListItemName).FirstOrDefault(),
-        //                sectionName = _context.DataListItems.Where(x => x.DataListItemId == stdInfo.SectionID).Select(x => x.DataListItemName).FirstOrDefault(),
-        //                dateOfBirth = studentInfo.DOB,
-        //                academicYear = _context.Tbl_Batches.Where(x => x.Batch_Id == stdInfo.BatchId).Select(x => x.Batch_Name).FirstOrDefault(),
-        //                studentID = studentInfo.StudentId,
-        //                attandence = totalAttendedDays + "/" + ActualAttendance.Count(),
-        //                promotedClass = _context.DataListItems.Where(x => x.DataListItemId == stdInfo.ClassID + 1).Select(x => x.DataListItemName).FirstOrDefault(),
-        //                staffSignatureLink = _context.StafsDetails.Where(x => x.StafId == staffId).Select(x => x.StaffSignatureFile).FirstOrDefault(),
-        //                Remark = _context.tbl_Remark.Where(x => x.StudentId == stdInfo.StudentID && x.BatchId == Batch_Id && (x.TermId == termId || (termId == 10 && x.TermId == 4) || (termId == 7 && x.TermId == 8))).Select(x => x.Remark).FirstOrDefault(),
-        //                classID = stdInfo.ClassID,
-        //                Rank = _context.Tbl_TestRecord.Where(x => x.StudentID == stdInfo.StudentID && x.BatchId == Batch_Id && x.TermID == termId && x.ClassID == studentInfo.Class_Id).Select(x => x.RankInClass).FirstOrDefault().ToString()
-        //            };
-        //            var AllSubject = (from subj in _context.tbl_ClassSubject
-        //                              join test in _context.tbl_Tests
-        //                              on subj.SubjectId equals test.SubjectID
-        //                              where test.ClassID == stdInfo.ClassID && subj.ClassId == stdInfo.ClassID && (termId == 10 || test.TermID == termId) && test.IsOptional == false
-        //                              select subj).Distinct().ToList();
-
-
-        //            var electiveSubjectId = AllSubject.Where(x => x.IsElective == true).ToList();
-        //            if (electiveSubjectId.Count > 0)
-        //            {
-        //                var subjectsToRemove = new List<long>();
-        //                foreach (var item in electiveSubjectId)
-        //                {
-        //                    var isAssignedSubject = _context.tbl_Student_ElectiveRecord.Where(x => x.StudentId == stdInfo.StudentID && x.ElectiveSubjectId == item.SubjectId).FirstOrDefault();
-        //                    if (isAssignedSubject == null)
-        //                    {
-        //                        subjectsToRemove.Add(item.SubjectId);
-        //                    }
-
-        //                }
-        //                AllSubject.RemoveAll(subj => subjectsToRemove.Contains(subj.SubjectId));
-
-        //            }
-        //            var Tests = _context.tbl_Tests.ToList();
-
-
-        //            Tbl_TestRecords obtainedTheoryMarksT1 = null;
-        //            Tbl_TestRecords obtainedPracticalMarksT1 = null;
-        //            Tbl_TestRecords obtainedTheoryMarksT2 = null;
-        //            Tbl_TestRecords obtainedPracticalMarksT2 = null;
-        //            Tbl_TestRecords obtainedUT1Marks = null;
-        //            Tbl_TestRecords obtainedSelectionTheoryMarks = null;
-        //            Tbl_TestRecords obtainedSelectionPracticalMarks = null;
-        //            Tbl_TestRecords obtainedPromotionTheoryMarks = null;
-        //            Tbl_TestRecords obtainedPromotionPracticalMarks = null;
-
-        //            Tbl_TestRecords obtainedUT2Marks = null;
-        //            decimal theroyMaxMark = 1; decimal practicalMaxMark = 1; decimal theroyTotalMark = 0;
-        //            decimal practicalTotalMark = 0; decimal UT1MaxMark = 10; decimal UT2MaxMark = 1;
-        //            decimal Term1TheoryMaxMark = 0; decimal Term1PracticalMaxMark = 0; decimal Term2TheoryMaxMark = 0;
-        //            decimal Term2PracticalMaxMark = 0; decimal OptionalUT1MaxMark = 1; decimal OptionalUT2MaxMark = 1; decimal TotalObtainedMarks = 0;
-        //            decimal Tem1total = 0; decimal OptionalSelectioMaxMark = 0; decimal SelectionMaxMark = 1;
-        //            decimal OptionalPromotionaMaxMark = 0; decimal PromotionalMaxMark = 1;
-        //            //Add Pre-1 By Atul Kumar
-        //            Tbl_TestRecords obtainedTheoryMarksPre1 = null; Tbl_TestRecords obtainedPracticalMarksPre1 = null;
-        //            decimal Pre1TheoryMaxMark = 0; decimal Pre1PracticalMaxMark = 0;
-
-        //            Tbl_TestRecords obtainedTheoryMarksPromotion = null; Tbl_TestRecords obtainedPracticalMarksPromotion = null;
-        //            decimal SelectionTheoryMaxMark = 0; decimal SelectionPracticalMaxMark = 0;
-        //            Tbl_TestRecords obtainedTheoryMarksSelection = null; Tbl_TestRecords obtainedPracticalMarksSelection = null;
-        //            decimal PromotionTheoryMaxMark = 0; decimal PromotionPracticalMaxMark = 0;
-
-        //            //Add Pre-2 By Atul Kumar
-        //            Tbl_TestRecords obtainedTheoryMarksPre2 = null; Tbl_TestRecords obtainedPracticalMarksPre2 = null;
-        //            decimal Pre2TheoryMaxMark = 0; decimal Pre2PracticalMaxMark = 0;
-        //            //changes by Atul Kumar
-        //            var terms = new List<Tbl_Term>();
-        //            if (termId == 10)
-        //            {
-        //                terms = _context.tbl_Term.ToList();
-        //            }
-        //            else
-        //            {
-        //                terms = _context.tbl_Term.Where(x => x.TermID == termId).ToList();
-        //            }
-
-
-        //            var getBoardID = _context.TblCreateSchool.Select(x => x.BoardID).FirstOrDefault();
-        //            var grades = _context.gradingCriteria.Where(x => x.BoardID == getBoardID).ToList();
-        //            var count = 1;
-        //            List<SubjectData> subjectDatas = new List<SubjectData>();
-        //            foreach (var item in AllSubject)
-        //            {
-        //                SubjectData subjectData = new SubjectData();
-        //                foreach (var termItem in terms)
-        //                {
-        //                    var test = _context.tbl_Tests.Where(x => x.SubjectID == item.SubjectId && x.ClassID == stdInfo.ClassID && x.TermID == termItem.TermID).ToList();
-
-        //                    if (test.Count > 0)
-        //                    {
-        //                        foreach (var testItem in test)
-        //                        {
-        //                            if (termItem.TermID == 1)//UT1
-        //                            {
-        //                                var StuentUT1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                     join cog in _context.tbl_TestObtainedMark
-        //                                                     on cr.RecordID equals cog.RecordIDFK
-        //                                                     where cr.StudentID == studentId && cr.ClassID == stdInfo.ClassID && cr.SectionID == stdInfo.SectionID && cr.TermID == 1 && cog.TestID == testItem.TestID
-        //                                                     select new
-        //                                                     {
-        //                                                         TestID = cog.TestID,
-        //                                                         ObtainedMarks = cog.ObtainedMarks
-        //                                                     }).FirstOrDefault();
-        //                                //&& cr.BatchId == stdInfo.BatchId
-        //                                Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                {
-        //                                    ObtainedMarks = StuentUT1Mark?.ObtainedMarks ?? -1
-        //                                };
-        //                                OptionalUT1MaxMark = testItem.MaximumMarks;
-        //                                obtainedUT1Marks = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                UT1MaxMark = testItem.MaximumMarks;
-        //                                TotalObtainedMarks += (obtainedUT1Marks?.ObtainedMarks ?? -1) == -1 ? 0 : (obtainedUT1Marks?.ObtainedMarks ?? 0);
-        //                            }
-        //                            if (_Name == "2")
-        //                            {
-        //                                if (termItem.TermID == 3)//UT2
-        //                                {
-        //                                    var StuentUT1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                         join cog in _context.tbl_TestObtainedMark
-        //                                                         on cr.RecordID equals cog.RecordIDFK
-        //                                                         where cr.StudentID == studentId && cr.TermID == 3 && cog.TestID == testItem.TestID
-        //                                                         select new
-        //                                                         {
-        //                                                             TestID = cog.TestID,
-        //                                                             ObtainedMarks = cog.ObtainedMarks
-        //                                                         }).FirstOrDefault();
-        //                                    Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                    {
-        //                                        ObtainedMarks = StuentUT1Mark?.ObtainedMarks ?? -1
-        //                                    };
-        //                                    OptionalUT2MaxMark = testItem.MaximumMarks;
-
-        //                                    obtainedUT2Marks = tbl_TestRecords;//_context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                    UT2MaxMark = testItem.MaximumMarks;
-        //                                    TotalObtainedMarks += (obtainedUT2Marks?.ObtainedMarks ?? -1) == -1 ? 0 : (obtainedUT2Marks?.ObtainedMarks ?? 0);
-
-        //                                }
-        //                                if (termItem.TermID == 2)//Term1
-        //                                {
-
-        //                                    if (testItem.TestType == "Theory")
-        //                                    {
-        //                                        var StuentUT1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                             join cog in _context.tbl_TestObtainedMark
-        //                                                             on cr.RecordID equals cog.RecordIDFK
-        //                                                             where cr.StudentID == studentId && cr.TermID == 2 && cog.TestID == testItem.TestID
-        //                                                             select new
-        //                                                             {
-        //                                                                 TestID = cog.TestID,
-        //                                                                 ObtainedMarks = cog.ObtainedMarks
-        //                                                             }).FirstOrDefault();
-        //                                        Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                        {
-        //                                            ObtainedMarks = StuentUT1Mark?.ObtainedMarks ?? -1
-        //                                        };
-        //                                        obtainedTheoryMarksT1 = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                        Term1TheoryMaxMark = testItem.MaximumMarks;
-        //                                        theroyMaxMark = testItem.MaximumMarks;
-        //                                        TotalObtainedMarks += (obtainedTheoryMarksT1?.ObtainedMarks ?? -1) == -1 ? 0 : (obtainedTheoryMarksT1?.ObtainedMarks ?? 0);
-        //                                        //Tem1total+=(obtainedTheoryMarksT1?.ObtainedMarks ?? -1) == -1 ? 0 : (obtainedTheoryMarksT1?.ObtainedMarks ?? 0);
-
-        //                                    }
-        //                                    if (testItem.TestType == "Practical")
-        //                                    {
-        //                                        var StuentUT1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                             join cog in _context.tbl_TestObtainedMark
-        //                                                             on cr.RecordID equals cog.RecordIDFK
-        //                                                             where cr.StudentID == studentId && cr.TermID == 2 && cog.TestID == testItem.TestID
-        //                                                             select new
-        //                                                             {
-        //                                                                 TestID = cog.TestID,
-        //                                                                 ObtainedMarks = cog.ObtainedMarks
-        //                                                             }).FirstOrDefault();
-        //                                        Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                        {
-        //                                            ObtainedMarks = StuentUT1Mark?.ObtainedMarks ?? -1
-        //                                        };
-        //                                        obtainedPracticalMarksT1 = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                        Term1PracticalMaxMark = testItem.MaximumMarks;
-        //                                        practicalMaxMark = testItem.MaximumMarks;
-        //                                        TotalObtainedMarks += (obtainedPracticalMarksT1?.ObtainedMarks ?? -1) == -1 ? 0 : (obtainedPracticalMarksT1?.ObtainedMarks ?? 0);
-        //                                        /*                    Tem1total+= (obtainedPracticalMarksT1?.ObtainedMarks ?? -1) == -1 ? 0 : (obtainedPracticalMarksT1?.ObtainedMarks ?? 0);*/
-        //                                    }
-
-        //                                }
-        //                                if (termItem.TermID == 4)//Term2
-        //                                {
-        //                                    if (testItem.TestType == "Theory")
-        //                                    {
-        //                                        var StuentUT1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                             join cog in _context.tbl_TestObtainedMark
-        //                                                             on cr.RecordID equals cog.RecordIDFK
-        //                                                             where cr.StudentID == studentId && cr.TermID == 4 && cog.TestID == testItem.TestID
-        //                                                             select new
-        //                                                             {
-        //                                                                 TestID = cog.TestID,
-        //                                                                 ObtainedMarks = cog.ObtainedMarks
-        //                                                             }).FirstOrDefault();
-        //                                        Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                        {
-        //                                            ObtainedMarks = StuentUT1Mark?.ObtainedMarks ?? -1
-        //                                        };
-        //                                        obtainedTheoryMarksT2 = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                        Term2TheoryMaxMark = testItem.MaximumMarks;
-        //                                        theroyMaxMark = testItem.MaximumMarks;
-
-        //                                        TotalObtainedMarks += (obtainedTheoryMarksT2?.ObtainedMarks ?? -1) == -1 ? 0 : (obtainedTheoryMarksT2?.ObtainedMarks ?? 0);
-
-        //                                    }
-        //                                    if (testItem.TestType == "Practical")
-        //                                    {
-        //                                        var StuentUT1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                             join cog in _context.tbl_TestObtainedMark
-        //                                                             on cr.RecordID equals cog.RecordIDFK
-        //                                                             where cr.StudentID == studentId && cr.TermID == 4 && cog.TestID == testItem.TestID
-        //                                                             select new
-        //                                                             {
-        //                                                                 TestID = cog.TestID,
-        //                                                                 ObtainedMarks = cog.ObtainedMarks
-        //                                                             }).FirstOrDefault();
-        //                                        Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                        {
-        //                                            ObtainedMarks = StuentUT1Mark?.ObtainedMarks ?? -1
-        //                                        };
-        //                                        obtainedPracticalMarksT2 = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                        Term2PracticalMaxMark = testItem.MaximumMarks;
-        //                                        practicalMaxMark = testItem.MaximumMarks;
-        //                                        TotalObtainedMarks += (obtainedPracticalMarksT2?.ObtainedMarks ?? -1) == -1 ? 0 : (obtainedPracticalMarksT2?.ObtainedMarks ?? 0);
-
-
-        //                                    }
-        //                                }
-        //                            }
-        //                            else
-        //                            {
-        //                                if (termItem.TermID == 2)//UT2
-        //                                {
-        //                                    var StuentUT1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                         join cog in _context.tbl_TestObtainedMark
-        //                                                         on cr.RecordID equals cog.RecordIDFK
-        //                                                         where cr.StudentID == studentId && cr.TermID == 2 && cog.TestID == testItem.TestID
-        //                                                         select new
-        //                                                         {
-        //                                                             TestID = cog.TestID,
-        //                                                             ObtainedMarks = cog.ObtainedMarks
-        //                                                         }).FirstOrDefault();
-        //                                    Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                    {
-        //                                        ObtainedMarks = StuentUT1Mark?.ObtainedMarks ?? -1
-        //                                    };
-        //                                    OptionalUT2MaxMark = testItem.MaximumMarks;
-
-        //                                    obtainedUT2Marks = tbl_TestRecords;//_context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                    UT2MaxMark = testItem.MaximumMarks;
-        //                                    TotalObtainedMarks += (obtainedUT2Marks?.ObtainedMarks ?? -1) == -1 ? 0 : (obtainedUT2Marks?.ObtainedMarks ?? 0);
-
-        //                                }
-        //                                if (termItem.TermID == 3)//Term1
-        //                                {
-
-        //                                    if (testItem.TestType == "Theory")
-        //                                    {
-        //                                        var StuentUT1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                             join cog in _context.tbl_TestObtainedMark
-        //                                                             on cr.RecordID equals cog.RecordIDFK
-        //                                                             where cr.StudentID == studentId && cr.TermID == 3 && cog.TestID == testItem.TestID
-        //                                                             select new
-        //                                                             {
-        //                                                                 TestID = cog.TestID,
-        //                                                                 ObtainedMarks = cog.ObtainedMarks
-        //                                                             }).FirstOrDefault();
-        //                                        Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                        {
-        //                                            ObtainedMarks = StuentUT1Mark?.ObtainedMarks ?? -1
-        //                                        };
-        //                                        obtainedTheoryMarksT1 = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                        Term1TheoryMaxMark = testItem.MaximumMarks;
-        //                                        theroyMaxMark = testItem.MaximumMarks;
-        //                                        TotalObtainedMarks += (obtainedTheoryMarksT1?.ObtainedMarks ?? -1) == -1 ? 0 : (obtainedTheoryMarksT1?.ObtainedMarks ?? 0);
-        //                                        //Tem1total+=(obtainedTheoryMarksT1?.ObtainedMarks ?? -1) == -1 ? 0 : (obtainedTheoryMarksT1?.ObtainedMarks ?? 0);
-
-        //                                    }
-        //                                    if (testItem.TestType == "Practical")
-        //                                    {
-        //                                        var StuentUT1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                             join cog in _context.tbl_TestObtainedMark
-        //                                                             on cr.RecordID equals cog.RecordIDFK
-        //                                                             where cr.StudentID == studentId && cr.TermID == 3 && cog.TestID == testItem.TestID
-        //                                                             select new
-        //                                                             {
-        //                                                                 TestID = cog.TestID,
-        //                                                                 ObtainedMarks = cog.ObtainedMarks
-        //                                                             }).FirstOrDefault();
-        //                                        Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                        {
-        //                                            ObtainedMarks = StuentUT1Mark?.ObtainedMarks ?? -1
-        //                                        };
-        //                                        obtainedPracticalMarksT1 = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                        Term1PracticalMaxMark = testItem.MaximumMarks;
-        //                                        practicalMaxMark = testItem.MaximumMarks;
-        //                                        TotalObtainedMarks += (obtainedPracticalMarksT1?.ObtainedMarks ?? -1) == -1 ? 0 : (obtainedPracticalMarksT1?.ObtainedMarks ?? 0);
-        //                                        /*                    Tem1total+= (obtainedPracticalMarksT1?.ObtainedMarks ?? -1) == -1 ? 0 : (obtainedPracticalMarksT1?.ObtainedMarks ?? 0);*/
-        //                                    }
-
-        //                                }
-        //                                if (termItem.TermID == 4)//Term2
-        //                                {
-        //                                    if (testItem.TestType == "Theory")
-        //                                    {
-        //                                        var StuentUT1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                             join cog in _context.tbl_TestObtainedMark
-        //                                                             on cr.RecordID equals cog.RecordIDFK
-        //                                                             where cr.StudentID == studentId && cr.TermID == 4 && cog.TestID == testItem.TestID
-        //                                                             select new
-        //                                                             {
-        //                                                                 TestID = cog.TestID,
-        //                                                                 ObtainedMarks = cog.ObtainedMarks
-        //                                                             }).FirstOrDefault();
-        //                                        Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                        {
-        //                                            ObtainedMarks = StuentUT1Mark?.ObtainedMarks ?? -1
-        //                                        };
-        //                                        obtainedTheoryMarksT2 = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                        Term2TheoryMaxMark = testItem.MaximumMarks;
-        //                                        theroyMaxMark = testItem.MaximumMarks;
-
-        //                                        TotalObtainedMarks += (obtainedTheoryMarksT2?.ObtainedMarks ?? -1) == -1 ? 0 : (obtainedTheoryMarksT2?.ObtainedMarks ?? 0);
-
-        //                                    }
-        //                                    if (testItem.TestType == "Practical")
-        //                                    {
-        //                                        var StuentUT1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                             join cog in _context.tbl_TestObtainedMark
-        //                                                             on cr.RecordID equals cog.RecordIDFK
-        //                                                             where cr.StudentID == studentId && cr.TermID == 4 && cog.TestID == testItem.TestID
-        //                                                             select new
-        //                                                             {
-        //                                                                 TestID = cog.TestID,
-        //                                                                 ObtainedMarks = cog.ObtainedMarks
-        //                                                             }).FirstOrDefault();
-        //                                        Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                        {
-        //                                            ObtainedMarks = StuentUT1Mark?.ObtainedMarks ?? -1
-        //                                        };
-        //                                        obtainedPracticalMarksT2 = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                        Term2PracticalMaxMark = testItem.MaximumMarks;
-        //                                        practicalMaxMark = testItem.MaximumMarks;
-        //                                        TotalObtainedMarks += (obtainedPracticalMarksT2?.ObtainedMarks ?? -1) == -1 ? 0 : (obtainedPracticalMarksT2?.ObtainedMarks ?? 0);
-
-
-        //                                    }
-        //                                }
-
-        //                            }
-
-        //                            if (termItem.TermID == 6)//Preboard
-        //                            {
-        //                                if (testItem.TestType == "Theory")
-        //                                {
-        //                                    var StuentelectionMark = (from cr in _context.Tbl_TestRecord
-        //                                                              join cog in _context.tbl_TestObtainedMark
-        //                                                              on cr.RecordID equals cog.RecordIDFK
-        //                                                              where cr.StudentID == studentId && cr.ClassID == stdInfo.ClassID && cr.SectionID == stdInfo.SectionID && cr.TermID == 6 && cog.TestID == testItem.TestID
-        //                                                              select new
-        //                                                              {
-        //                                                                  TestID = cog.TestID,
-        //                                                                  ObtainedMarks = cog.ObtainedMarks
-        //                                                              }).FirstOrDefault();
-
-        //                                    Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                    {
-        //                                        ObtainedMarks = StuentelectionMark?.ObtainedMarks ?? -1
-        //                                    };
-        //                                    //OptionalSelectioMaxMark = testItem.MaximumMarks;
-        //                                    obtainedPromotionTheoryMarks = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                    PromotionTheoryMaxMark = testItem.MaximumMarks;
-        //                                    theroyMaxMark = testItem.MaximumMarks;
-        //                                    TotalObtainedMarks += (obtainedPromotionTheoryMarks?.ObtainedMarks ?? -1) == -1 ? 0 : (obtainedPromotionTheoryMarks?.ObtainedMarks ?? 0);
-        //                                }
-        //                                if (testItem.TestType == "Practical")
-        //                                {
-        //                                    var StuentelectionMark = (from cr in _context.Tbl_TestRecord
-        //                                                              join cog in _context.tbl_TestObtainedMark
-        //                                                              on cr.RecordID equals cog.RecordIDFK
-        //                                                              where cr.StudentID == studentId && cr.ClassID == stdInfo.ClassID && cr.SectionID == stdInfo.SectionID && cr.TermID == 6 && cog.TestID == testItem.TestID
-        //                                                              select new
-        //                                                              {
-        //                                                                  TestID = cog.TestID,
-        //                                                                  ObtainedMarks = cog.ObtainedMarks
-        //                                                              }).FirstOrDefault();
-
-        //                                    Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                    {
-        //                                        ObtainedMarks = StuentelectionMark?.ObtainedMarks ?? -1
-        //                                    };
-        //                                    //OptionalSelectioMaxMark = testItem.MaximumMarks;obtainedPromotionTheoryMarks
-        //                                    obtainedPromotionPracticalMarks = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                    PromotionPracticalMaxMark = testItem.MaximumMarks;
-        //                                    practicalMaxMark = testItem.MaximumMarks;
-        //                                    TotalObtainedMarks += (obtainedPromotionPracticalMarks?.ObtainedMarks ?? -1) == -1 ? 0 : (obtainedPromotionPracticalMarks?.ObtainedMarks ?? 0);
-        //                                }
-        //                            }
-        //                            if (termItem.TermID == 5)//Preboard
-        //                            {
-        //                                if (testItem.TestType == "Theory")
-        //                                {
-        //                                    var StuentelectionMark = (from cr in _context.Tbl_TestRecord
-        //                                                              join cog in _context.tbl_TestObtainedMark
-        //                                                              on cr.RecordID equals cog.RecordIDFK
-        //                                                              where cr.StudentID == studentId && cr.ClassID == stdInfo.ClassID && cr.SectionID == stdInfo.SectionID && cr.TermID == 5 && cog.TestID == testItem.TestID
-        //                                                              select new
-        //                                                              {
-        //                                                                  TestID = cog.TestID,
-        //                                                                  ObtainedMarks = cog.ObtainedMarks
-        //                                                              }).FirstOrDefault();
-
-        //                                    Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                    {
-        //                                        ObtainedMarks = StuentelectionMark?.ObtainedMarks ?? -1
-        //                                    };
-        //                                    //OptionalSelectioMaxMark = testItem.MaximumMarks;
-        //                                    obtainedSelectionTheoryMarks = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                    SelectionTheoryMaxMark = testItem.MaximumMarks;
-        //                                    TotalObtainedMarks += (obtainedSelectionTheoryMarks?.ObtainedMarks ?? -1) == -1 ? 0 : (obtainedSelectionTheoryMarks?.ObtainedMarks ?? 0);
-        //                                    theroyMaxMark = testItem.MaximumMarks;
-        //                                }
-        //                                if (testItem.TestType == "Practical")
-        //                                {
-        //                                    var StuentelectionMark = (from cr in _context.Tbl_TestRecord
-        //                                                              join cog in _context.tbl_TestObtainedMark
-        //                                                              on cr.RecordID equals cog.RecordIDFK
-        //                                                              where cr.StudentID == studentId && cr.ClassID == stdInfo.ClassID && cr.SectionID == stdInfo.SectionID && cr.TermID == 5 && cog.TestID == testItem.TestID
-        //                                                              select new
-        //                                                              {
-        //                                                                  TestID = cog.TestID,
-        //                                                                  ObtainedMarks = cog.ObtainedMarks
-        //                                                              }).FirstOrDefault();
-
-        //                                    Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                    {
-        //                                        ObtainedMarks = StuentelectionMark?.ObtainedMarks ?? -1
-        //                                    };
-        //                                    //OptionalSelectioMaxMark = testItem.MaximumMarks;
-        //                                    obtainedSelectionPracticalMarks = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                    SelectionMaxMark = testItem.MaximumMarks;
-        //                                    TotalObtainedMarks += (obtainedSelectionPracticalMarks?.ObtainedMarks ?? -1) == -1 ? 0 : (obtainedSelectionPracticalMarks?.ObtainedMarks ?? 0);
-        //                                    practicalMaxMark = testItem.MaximumMarks;
-        //                                }
-        //                            }
-        //                            if (termId != 10)
-        //                            {
-        //                                if (termItem.TermID == 7)//PreBoard1
-        //                                {
-        //                                    if (testItem.TestType == "Theory")
-        //                                    {
-        //                                        var StuentPre1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                              join cog in _context.tbl_TestObtainedMark
-        //                                                              on cr.RecordID equals cog.RecordIDFK
-        //                                                              where cr.StudentID == studentId && cr.TermID == 7 && cog.TestID == testItem.TestID
-        //                                                              select new
-        //                                                              {
-        //                                                                  TestID = cog.TestID,
-        //                                                                  ObtainedMarks = cog.ObtainedMarks
-        //                                                              }).FirstOrDefault();
-        //                                        Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                        {
-        //                                            ObtainedMarks = StuentPre1Mark?.ObtainedMarks ?? -1
-        //                                        };
-        //                                        obtainedTheoryMarksPre1 = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                        Pre1TheoryMaxMark = testItem.MaximumMarks;
-        //                                        theroyMaxMark = testItem.MaximumMarks;
-
-        //                                        TotalObtainedMarks += (obtainedTheoryMarksPre1?.ObtainedMarks ?? -1) == -1 ? 0 : (obtainedTheoryMarksPre1?.ObtainedMarks ?? 0);
-
-        //                                    }
-        //                                    if (testItem.TestType == "Practical")
-        //                                    {
-        //                                        var StuentPre1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                              join cog in _context.tbl_TestObtainedMark
-        //                                                              on cr.RecordID equals cog.RecordIDFK
-        //                                                              where cr.StudentID == studentId && cr.TermID == 7 && cog.TestID == testItem.TestID
-        //                                                              select new
-        //                                                              {
-        //                                                                  TestID = cog.TestID,
-        //                                                                  ObtainedMarks = cog.ObtainedMarks
-        //                                                              }).FirstOrDefault();
-        //                                        Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                        {
-        //                                            ObtainedMarks = StuentPre1Mark?.ObtainedMarks ?? -1
-        //                                        };
-        //                                        obtainedPracticalMarksPre1 = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                        Pre1PracticalMaxMark = testItem.MaximumMarks;
-        //                                        practicalMaxMark = testItem.MaximumMarks;
-        //                                        TotalObtainedMarks += (obtainedPracticalMarksPre1?.ObtainedMarks ?? -1) == -1 ? 0 : (obtainedPracticalMarksPre1?.ObtainedMarks ?? 0);
-
-
-        //                                    }
-        //                                }
-        //                                if (termItem.TermID == 8)//PreBoard2
-        //                                {
-        //                                    if (testItem.TestType == "Theory")
-        //                                    {
-        //                                        var StuentPre2Mark = (from cr in _context.Tbl_TestRecord
-        //                                                              join cog in _context.tbl_TestObtainedMark
-        //                                                              on cr.RecordID equals cog.RecordIDFK
-        //                                                              where cr.StudentID == studentId && cr.TermID == 8 && cog.TestID == testItem.TestID
-        //                                                              select new
-        //                                                              {
-        //                                                                  TestID = cog.TestID,
-        //                                                                  ObtainedMarks = cog.ObtainedMarks
-        //                                                              }).FirstOrDefault();
-        //                                        Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                        {
-        //                                            ObtainedMarks = StuentPre2Mark?.ObtainedMarks ?? -1
-        //                                        };
-        //                                        obtainedTheoryMarksPre2 = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                        Pre2TheoryMaxMark = testItem.MaximumMarks;
-        //                                        theroyMaxMark = testItem.MaximumMarks;
-
-        //                                        TotalObtainedMarks += (obtainedTheoryMarksPre2?.ObtainedMarks ?? -1) == -1 ? 0 : (obtainedTheoryMarksPre2?.ObtainedMarks ?? 0);
-
-        //                                    }
-        //                                    if (testItem.TestType == "Practical")
-        //                                    {
-        //                                        var StuentPre2Mark = (from cr in _context.Tbl_TestRecord
-        //                                                              join cog in _context.tbl_TestObtainedMark
-        //                                                              on cr.RecordID equals cog.RecordIDFK
-        //                                                              where cr.StudentID == studentId && cr.TermID == 8 && cog.TestID == testItem.TestID
-        //                                                              select new
-        //                                                              {
-        //                                                                  TestID = cog.TestID,
-        //                                                                  ObtainedMarks = cog.ObtainedMarks
-        //                                                              }).FirstOrDefault();
-        //                                        Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                        {
-        //                                            ObtainedMarks = StuentPre2Mark?.ObtainedMarks ?? -1
-        //                                        };
-        //                                        obtainedPracticalMarksPre2 = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                        Pre2PracticalMaxMark = testItem.MaximumMarks;
-        //                                        practicalMaxMark = testItem.MaximumMarks;
-        //                                        TotalObtainedMarks += (obtainedPracticalMarksPre2?.ObtainedMarks ?? -1) == -1 ? 0 : (obtainedPracticalMarksPre2?.ObtainedMarks ?? 0);
-
-
-        //                                    }
-        //                                }
-
-        //                            }
-
-        //                        }
-
-        //                        subjectData.Subject = _context.Tbl_SubjectsSetup.Where(x => x.Subject_ID == item.SubjectId).Select(x => x.Subject_Name).FirstOrDefault();
-
-        //                        subjectData.MarksUT1 = obtainedUT1Marks?.ObtainedMarks ?? -2;
-        //                        subjectData.MaxMarksUT1 = UT1MaxMark;
-
-        //                        subjectData.MarksUT1Grade = GetGradebyTermBatch(PercentageCal(obtainedUT1Marks?.ObtainedMarks ?? 0, OptionalUT1MaxMark), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-
-
-        //                        subjectData.MaxMarksUT1 = UT1MaxMark;
-
-        //                        subjectData.MarksUT1Grade = GetGradebyTermBatch(PercentageCal(obtainedUT1Marks?.ObtainedMarks ?? 0, OptionalUT1MaxMark), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-
-        //                        subjectData.TheoryMarks = obtainedTheoryMarksT1?.ObtainedMarks ?? -2;
-        //                        subjectData.PracticalMarks = obtainedPracticalMarksT1?.ObtainedMarks ?? -2;
-        //                        subjectData.MaxMarksTerm1Practical = Term1PracticalMaxMark;
-        //                        subjectData.MaxMarksTerm1Theory = Term1TheoryMaxMark;
-        //                        subjectData.MaxMarksTerm2Practical = Term2PracticalMaxMark;
-        //                        subjectData.MaxMarksTerm2Theory = Term2TheoryMaxMark;
-        //                        //m
-        //                        subjectData.TotalObtainedMarks = ((obtainedTheoryMarksT1?.ObtainedMarks ?? 0) == -1 ? 0 : (obtainedTheoryMarksT1?.ObtainedMarks ?? 0)) + ((obtainedPracticalMarksT1?.ObtainedMarks ?? 0) == -1 ? 0 : (obtainedPracticalMarksT1?.ObtainedMarks ?? 0));
-
-        //                        ////m
-        //                        //                            subjectData.TotalObtainedMarks = ((obtainedTheoryMarksT1?.ObtainedMarks ?? 0) == -1 ? 0 : (obtainedTheoryMarksT1?.ObtainedMarks ?? 0)) + ((obtainedPracticalMarksT1?.ObtainedMarks ?? 0) == -1 ? 0 : (obtainedPracticalMarksT1?.ObtainedMarks ?? 0))+
-        //                        //                                ((obtainedTheoryMarksT2?.ObtainedMarks ?? 0) == -1 ? 0 : (obtainedTheoryMarksT2?.ObtainedMarks ?? 0)) + ((obtainedPracticalMarksT2?.ObtainedMarks ?? 0) == -1 ? 0 : (obtainedPracticalMarksT2?.ObtainedMarks ?? 0));
-        //                        var divisor = (Term1PracticalMaxMark + Term1TheoryMaxMark) == 0 ? 1 : (Term1PracticalMaxMark + Term1TheoryMaxMark);
-        //                        subjectData.GradeUT1 = GetGradebyTermBatch(((((obtainedTheoryMarksT1?.ObtainedMarks ?? 0) + (obtainedPracticalMarksT1?.ObtainedMarks ?? 0)) / (divisor)) * 100), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-        //                        //subjectData.GradeSelection = GetGrade(((((obtainedSelectionMarks?.ObtainedMarks ?? 0) ) / (divisor)) * 100), Convert.ToInt32(stdInfo.ClassID));
-        //                        subjectData.MarksUT2 = obtainedUT2Marks?.ObtainedMarks ?? -2;
-        //                        subjectData.MaxMarksUT2 = UT2MaxMark;
-        //                        subjectData.MarksUT2Grade = GetGradebyTermBatch(PercentageCal(obtainedUT2Marks?.ObtainedMarks ?? -1, OptionalUT2MaxMark), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-        //                        subjectData.TotalMarks =
-        //                         ((obtainedUT1Marks?.ObtainedMarks ?? 0) == -1 ? 0 : (obtainedUT1Marks?.ObtainedMarks ?? 0)) +
-        //                         ((obtainedUT2Marks?.ObtainedMarks ?? 0) == -1 ? 0 : (obtainedUT2Marks?.ObtainedMarks ?? 0));
-
-        //                        //                        subjectData.TheoryMarksUT2 = obtainedTheoryMarksT2?.ObtainedMarks ?? -2;
-        //                        //                        subjectData.PracticalMarksUT2 = obtainedPracticalMarksT2?.ObtainedMarks ?? -2;
-        //                        //                        subjectData.TotalObtainedMarksUT2 =
-        //                        //((obtainedTheoryMarksT2?.ObtainedMarks ?? 0) == -1 ? 0 : (obtainedTheoryMarksT2?.ObtainedMarks ?? 0)) +
-        //                        //((obtainedPracticalMarksT2?.ObtainedMarks ?? 0) == -1 ? 0 : (obtainedPracticalMarksT2?.ObtainedMarks ?? 0));
-
-        //                        //megha comment
-
-        //                        subjectData.TheoryMarksUT2 = obtainedTheoryMarksT2?.ObtainedMarks ?? -2;
-        //                        subjectData.PracticalMarksUT2 = obtainedPracticalMarksT2?.ObtainedMarks ?? -2;
-        //                        subjectData.TotalObtainedMarksUT2 =
-        //((obtainedTheoryMarksT2?.ObtainedMarks ?? 0) == -1 ? 0 : (obtainedTheoryMarksT2?.ObtainedMarks ?? 0)) +
-        //((obtainedPracticalMarksT2?.ObtainedMarks ?? 0) == -1 ? 0 : (obtainedPracticalMarksT2?.ObtainedMarks ?? 0));
-        //                        var divisor1 = (Term2PracticalMaxMark + Term2TheoryMaxMark) == 0 ? 1 : (Term2PracticalMaxMark + Term2TheoryMaxMark);
-        //                        //subjectData.GradeUT2 = GetGrade((((obtainedTheoryMarksT2?.ObtainedMarks ?? 0) + (obtainedPracticalMarksT2?.ObtainedMarks ?? 0)) / (divisor1)) * 100);
-        //                        subjectData.GradeUT2 = GetGradebyTermBatch(((((obtainedTheoryMarksT2?.ObtainedMarks ?? 0) + (obtainedPracticalMarksT2?.ObtainedMarks ?? 0)) / (divisor1)) * 100), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-        //                        // end comment
-
-
-        //                        //subjectData.MarksSelection = obtainedSelectionMarks?.ObtainedMarks ?? -2;
-        //                        //subjectData.MaxMarksSelection = SelectionMaxMark;
-
-        //                        //var divisorSelection = (SelectionMaxMark) == 0 ? 1 : (SelectionMaxMark);
-        //                        //subjectData.GradeSelection = GetGrade(((((obtainedSelectionMarks?.ObtainedMarks ?? 0)) / (divisorSelection)) * 100), Convert.ToInt32(stdInfo.ClassID));
-
-        //                        subjectData.TotalMarksBothUTs = TotalObtainedMarks;
-        //                        subjectData.FinalGrade = GetGradebyTermBatch(((TotalObtainedMarks / 240) * 100), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-
-        //                        subjectData.TheoryMarksSelection = obtainedSelectionTheoryMarks?.ObtainedMarks ?? -2;
-        //                        subjectData.PracticalMarksSelection = obtainedSelectionPracticalMarks?.ObtainedMarks ?? -2;
-        //                        subjectData.MaxMarksSelectionPractical = SelectionPracticalMaxMark;
-        //                        subjectData.MaxMarksSelectionTheory = SelectionTheoryMaxMark;
-        //                        subjectData.TotalObtainedMarksSelection = ((obtainedSelectionTheoryMarks?.ObtainedMarks ?? 0) == -1 ? 0 : (obtainedSelectionTheoryMarks?.ObtainedMarks ?? 0)) + ((obtainedSelectionPracticalMarks?.ObtainedMarks ?? 0) == -1 ? 0 : (obtainedSelectionPracticalMarks?.ObtainedMarks ?? 0));
-
-        //                        var divisorSelection = (SelectionPracticalMaxMark + SelectionTheoryMaxMark) == 0 ? 1 : (SelectionPracticalMaxMark + SelectionTheoryMaxMark);
-        //                        subjectData.GradeSelection = GetGradebyTermBatch(((((obtainedSelectionTheoryMarks?.ObtainedMarks ?? 0) + (obtainedSelectionPracticalMarks?.ObtainedMarks ?? 0)) / (divisorSelection)) * 100), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-
-        //                        subjectData.TheoryMarksPromotion = obtainedPromotionTheoryMarks?.ObtainedMarks ?? -2;
-        //                        subjectData.PracticalMarksPromotion = obtainedPromotionPracticalMarks?.ObtainedMarks ?? -2;
-        //                        subjectData.MaxMarksPromotionPractical = PromotionPracticalMaxMark;
-        //                        subjectData.MaxMarksPromotionTheory = PromotionTheoryMaxMark;
-        //                        subjectData.TotalObtainedMarksPromotion = ((obtainedPromotionTheoryMarks?.ObtainedMarks ?? 0) == -1 ? 0 : (obtainedPromotionTheoryMarks?.ObtainedMarks ?? 0)) + ((obtainedPromotionPracticalMarks?.ObtainedMarks ?? 0) == -1 ? 0 : (obtainedPromotionPracticalMarks?.ObtainedMarks ?? 0));
-        //                        var divisorPromotion = (PromotionTheoryMaxMark + PromotionTheoryMaxMark) == 0 ? 1 : (PromotionPracticalMaxMark + PromotionTheoryMaxMark);
-        //                        subjectData.GradePromotion = GetGradebyTermBatch(((((obtainedPromotionTheoryMarks?.ObtainedMarks ?? 0) + (obtainedPromotionPracticalMarks?.ObtainedMarks ?? 0)) / (divisorPromotion)) * 100), Convert.ToInt32(stdInfo.ClassID), Convert.ToInt32(termId), batchId);
-
-
-        //                        //var subjects = _context.Tbl_SubjectsSetup.Where(x => x.Subject_ID.ToString() == "45").ToList();
-        //                        ///  foreach (var subid in subjects)
-        //                        // {
-
-
-
-
-
-
-
-        //                        //// }
-        //                        //subjectData.TotalMarksBothUTs = subjectData.TotalMarks;
-        //                        //subjectData.FinalGrade = GetGrade((subjectData.TotalMarks / 240) * 100);
-
-        //                        // Calculate Pre-1,Pre-2 Marks By Using Atul Kumar
-        //                        subjectData.TheoryMarksPre1 = obtainedTheoryMarksPre1?.ObtainedMarks ?? -2;
-        //                        subjectData.PracticalMarksPre1 = obtainedPracticalMarksPre1?.ObtainedMarks ?? -2;
-        //                        subjectData.MaxMarksPre1Practical = Pre1PracticalMaxMark;
-        //                        subjectData.MaxMarksPre1Theory = Pre1TheoryMaxMark;
-        //                        subjectData.TotalObtainedMarksPre1 = ((obtainedTheoryMarksPre1?.ObtainedMarks ?? 0) == -1 ? 0 : (obtainedTheoryMarksPre1?.ObtainedMarks ?? 0)) + ((obtainedPracticalMarksPre1?.ObtainedMarks ?? 0) == -1 ? 0 : (obtainedPracticalMarksPre1?.ObtainedMarks ?? 0));
-
-        //                        var divisorPre = (Pre1PracticalMaxMark + Pre1TheoryMaxMark) == 0 ? 1 : (Pre1PracticalMaxMark + Pre1TheoryMaxMark);
-        //                        subjectData.GradePre1 = GetGradebyTermBatch(((((obtainedTheoryMarksPre1?.ObtainedMarks ?? 0) + (obtainedPracticalMarksPre1?.ObtainedMarks ?? 0)) / (divisorPre)) * 100), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-
-        //                        subjectData.TheoryMarksPre2 = obtainedTheoryMarksPre2?.ObtainedMarks ?? -2;
-        //                        subjectData.PracticalMarksPre2 = obtainedPracticalMarksPre2?.ObtainedMarks ?? -2;
-        //                        subjectData.MaxMarksPre2Practical = Pre2PracticalMaxMark;
-        //                        subjectData.MaxMarksPre2Theory = Pre2TheoryMaxMark;
-        //                        subjectData.TotalObtainedMarksPre2 = ((obtainedTheoryMarksPre2?.ObtainedMarks ?? 0) == -1 ? 0 : (obtainedTheoryMarksPre2?.ObtainedMarks ?? 0)); /*megha((obtainedPracticalMarksPre2?.ObtainedMarks ?? 0) == -1 ? 0 : (obtainedPracticalMarksPre2?.ObtainedMarks ?? 0));*/
-
-        //                        var divisorPre2 = (Pre2PracticalMaxMark + Pre2TheoryMaxMark) == 0 ? 1 : (Pre2PracticalMaxMark + Pre2TheoryMaxMark);
-        //                        subjectData.GradePre2 = GetGradebyTermBatch(((((obtainedTheoryMarksPre2?.ObtainedMarks ?? 0) + (obtainedPracticalMarksPre2?.ObtainedMarks ?? 0)) / (divisorPre2)) * 100), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-
-
-        //                        if (stdInfo.ClassID.ToString() == "207" || stdInfo.ClassID.ToString() == "208" || stdInfo.ClassID.ToString() == "209")
-        //                        {
-        //                            // foreach ( var subid in item.SubjectId.ToString())
-        //                            // {
-        //                            var divisovia = _context.tbl_Tests.Where(x => x.SubjectID.ToString() == item.SubjectId.ToString() && x.ClassID == stdInfo.ClassID).ToList();
-
-
-        //                            var divisorfinalut1 = divisovia.Where(x => x.TermID.ToString() == "1").FirstOrDefault();
-        //                            var divisorfinalut2 = divisovia.Where(x => x.TermID.ToString() == "2").FirstOrDefault();
-        //                            var divisorfinalterm1theory = divisovia.Where(x => x.TermID.ToString() == "3" && x.TestType == "Theory").FirstOrDefault();
-        //                            var divisorfinalterm1pract = divisovia.Where(x => x.TermID.ToString() == "3" && x.TestType == "Practical").FirstOrDefault();
-        //                            var divisorfinalterm2theory = divisovia.Where(x => x.TermID.ToString() == "4" && x.TestType == "Theory").FirstOrDefault();
-        //                            var divisorfinalterm2pract = divisovia.Where(x => x.TermID.ToString() == "4" && x.TestType == "Practical").FirstOrDefault();
-
-        //                            decimal finaldivisorviva = 0;
-        //                            if (divisorfinalut1 != null)
-        //                            {
-        //                                if (divisorfinalut1.MaximumMarks != null)
-        //                                {
-        //                                    finaldivisorviva += Convert.ToDecimal(divisorfinalut1.MaximumMarks);
-        //                                }
-        //                            }
-        //                            if (divisorfinalut2 != null)
-        //                            {
-        //                                finaldivisorviva += Convert.ToDecimal(divisorfinalut2.MaximumMarks);
-        //                            }
-        //                            if (divisorfinalterm1theory != null)
-        //                            {
-        //                                if (divisorfinalterm1theory.MaximumMarks != null)
-        //                                {
-        //                                    finaldivisorviva += Convert.ToDecimal(divisorfinalterm1theory.MaximumMarks);
-        //                                }
-        //                            }
-        //                            if (divisorfinalterm1pract != null)
-        //                            {
-        //                                if (divisorfinalterm1pract.MaximumMarks != null)
-        //                                {
-        //                                    finaldivisorviva += Convert.ToDecimal(divisorfinalterm1pract.MaximumMarks);
-        //                                }
-        //                            }
-
-
-        //                            if (divisorfinalterm2theory != null)
-        //                            {
-        //                                if (divisorfinalterm2theory.MaximumMarks != null)
-        //                                {
-        //                                    finaldivisorviva += Convert.ToDecimal(divisorfinalterm2theory.MaximumMarks);
-        //                                }
-        //                            }
-        //                            if (divisorfinalterm2pract != null)
-        //                            {
-        //                                if (divisorfinalterm2pract.MaximumMarks != null)
-        //                                {
-        //                                    finaldivisorviva += Convert.ToDecimal(divisorfinalterm2pract.MaximumMarks);
-        //                                }
-        //                            }
-        //                            var per = (Convert.ToDecimal(TotalObtainedMarks / finaldivisorviva) * 100);
-        //                            decimal a = (Math.Round(Convert.ToDecimal(per), 1));
-        //                            //  subjectData.FinalGrade = GetGrade(Convert.ToInt32(TotalObtainedMarks / finaldivisorviva) * 100);
-        //                            subjectData.FinalGrade = GetGradebyTermBatch(Convert.ToDecimal(a), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-
-        //                            //subjectData.FinalGrade = GetGrade(Convert.ToInt32(TotalObtainedMarks / finaldivisorviva) * 100);
-
-
-        //                            //  }
-
-        //                        }
-
-
-        //                        if (item.SubjectId.ToString() == "45")
-        //                        {
-        //                            //  if (subid.Subject_ID.ToString() == "45")
-        //                            //  {
-        //                            var divisovia = _context.tbl_Tests.Where(x => x.SubjectID.ToString() == "45" && x.ClassID == stdInfo.ClassID).ToList();
-
-
-        //                            var divisorfinalut1 = divisovia.Where(x => x.TermID.ToString() == "1").FirstOrDefault();
-        //                            var divisorfinalut2 = divisovia.Where(x => x.TermID.ToString() == "2").FirstOrDefault();
-        //                            var divisorfinalterm1theory = divisovia.Where(x => x.TermID.ToString() == "3" && x.TestType == "Theory").FirstOrDefault();
-        //                            var divisorfinalterm1pract = divisovia.Where(x => x.TermID.ToString() == "3" && x.TestType == "Practical").FirstOrDefault();
-        //                            var divisorfinalterm2theory = divisovia.Where(x => x.TermID.ToString() == "4" && x.TestType == "Theory").FirstOrDefault();
-        //                            var divisorfinalterm2pract = divisovia.Where(x => x.TermID.ToString() == "4" && x.TestType == "Practical").FirstOrDefault();
-
-        //                            decimal finaldivisorviva = 0;
-        //                            if (divisorfinalut1 != null)
-        //                            {
-        //                                if (divisorfinalut1.MaximumMarks != null)
-        //                                {
-        //                                    finaldivisorviva += Convert.ToDecimal(divisorfinalut1.MaximumMarks);
-        //                                }
-        //                            }
-        //                            if (divisorfinalut2 != null)
-        //                            {
-        //                                finaldivisorviva += Convert.ToDecimal(divisorfinalut2.MaximumMarks);
-        //                            }
-        //                            if (divisorfinalterm1theory != null)
-        //                            {
-        //                                if (divisorfinalterm1theory.MaximumMarks != null)
-        //                                {
-        //                                    finaldivisorviva += Convert.ToDecimal(divisorfinalterm1theory.MaximumMarks);
-        //                                }
-        //                            }
-        //                            if (divisorfinalterm1pract != null)
-        //                            {
-        //                                if (divisorfinalterm1pract.MaximumMarks != null)
-        //                                {
-        //                                    finaldivisorviva += Convert.ToDecimal(divisorfinalterm1pract.MaximumMarks);
-        //                                }
-        //                            }
-
-
-        //                            if (divisorfinalterm2theory != null)
-        //                            {
-        //                                if (divisorfinalterm2theory.MaximumMarks != null)
-        //                                {
-        //                                    finaldivisorviva += Convert.ToDecimal(divisorfinalterm2theory.MaximumMarks);
-        //                                }
-        //                            }
-        //                            if (divisorfinalterm2pract != null)
-        //                            {
-        //                                if (divisorfinalterm2pract.MaximumMarks != null)
-        //                                {
-        //                                    finaldivisorviva += Convert.ToDecimal(divisorfinalterm2pract.MaximumMarks);
-        //                                }
-        //                            }
-
-
-        //                            subjectData.FinalGrade = GetGradebyTermBatch((Convert.ToInt32(TotalObtainedMarks / finaldivisorviva) * 100), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-
-        //                        }
-
-        //                        // }
-        //                        //megha
-
-
-        //                        if (item.SubjectId.ToString() == "20")
-
-        //                        {
-        //                            var divisovias = _context.tbl_Tests.Where(x => x.SubjectID.ToString() == "20" && x.ClassID == stdInfo.ClassID).ToList();
-        //                            var divisorfinalut1 = divisovias.Where(x => x.TermID.ToString() == "1").FirstOrDefault();
-        //                            var divisorfinalut2 = divisovias.Where(x => x.TermID.ToString() == "2").FirstOrDefault();
-        //                            var divisorfinalterm1theory = divisovias.Where(x => x.TermID.ToString() == "3" && x.TestType == "Theory").FirstOrDefault();
-        //                            var divisorfinalterm1pract = divisovias.Where(x => x.TermID.ToString() == "3" && x.TestType == "Practical").FirstOrDefault();
-        //                            var divisorfinalterm2theory = divisovias.Where(x => x.TermID.ToString() == "4" && x.TestType == "Theory").FirstOrDefault();
-        //                            var divisorfinalterm2pract = divisovias.Where(x => x.TermID.ToString() == "4" && x.TestType == "Practical").FirstOrDefault();
-
-        //                            decimal finaldivisorvivas = 0;
-        //                            if (divisorfinalut1 != null)
-        //                            {
-        //                                if (divisorfinalut1.MaximumMarks != null)
-        //                                {
-        //                                    finaldivisorvivas += Convert.ToDecimal(divisorfinalut1.MaximumMarks);
-        //                                }
-        //                            }
-        //                            if (divisorfinalut2 != null)
-        //                            {
-        //                                finaldivisorvivas += Convert.ToDecimal(divisorfinalut2.MaximumMarks);
-        //                            }
-        //                            if (divisorfinalterm1theory != null)
-        //                            {
-        //                                if (divisorfinalterm1theory.MaximumMarks != null)
-        //                                {
-        //                                    finaldivisorvivas += Convert.ToDecimal(divisorfinalterm1theory.MaximumMarks);
-        //                                }
-        //                            }
-
-        //                            if (divisorfinalterm1pract != null)
-        //                            {
-        //                                if (divisorfinalterm1pract.MaximumMarks != null)
-        //                                {
-        //                                    finaldivisorvivas += Convert.ToDecimal(divisorfinalterm1pract.MaximumMarks);
-        //                                }
-        //                            }
-
-
-
-        //                            if (divisorfinalterm2theory != null)
-        //                            {
-        //                                if (divisorfinalterm2theory.MaximumMarks != null)
-        //                                {
-        //                                    finaldivisorvivas += Convert.ToDecimal(divisorfinalterm2theory.MaximumMarks);
-        //                                }
-        //                            }
-
-
-        //                            if (divisorfinalterm2pract != null)
-        //                            {
-        //                                if (divisorfinalterm2pract.MaximumMarks != null)
-        //                                {
-        //                                    finaldivisorvivas += Convert.ToDecimal(divisorfinalterm2pract.MaximumMarks);
-        //                                }
-        //                            }
-
-        //                            var per = (Convert.ToDecimal(TotalObtainedMarks / finaldivisorvivas) * 100);
-        //                            decimal a = (Math.Round(Convert.ToDecimal(per), 1));
-        //                            //  subjectData.FinalGrade = GetGrade(Convert.ToInt32(TotalObtainedMarks / finaldivisorviva) * 100);
-        //                            subjectData.FinalGrade = GetGradebyTermBatch(Convert.ToDecimal(a), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-
-
-        //                        }
-
-
-
-        //                    }
-        //                    //megha
-        //                    else
-        //                    {
-
-        //                        subjectData.Subject = _context.Tbl_SubjectsSetup.Where(x => x.Subject_ID == item.SubjectId).Select(x => x.Subject_Name).FirstOrDefault(); ;
-        //                        subjectData.MarksUT1 = subjectData.MarksUT1 == -1 ? -1 : subjectData.MarksUT1;
-        //                        subjectData.MaxMarksUT1 = UT1MaxMark;
-        //                        //subjectData.MarksSelection = subjectData.MarksSelection == -1 ? -1 : subjectData.MarksSelection;
-        //                        //subjectData.MaxMarksSelection = SelectionMaxMark;
-        //                        subjectData.MarksUT2 = subjectData.MarksUT2 == -1 ? -1 : subjectData.MarksUT2;
-        //                        subjectData.MaxMarksUT2 = UT2MaxMark;
-        //                        subjectData.MarksUT1Grade = subjectData.MarksUT1Grade == "D" ? "D" : subjectData.MarksUT1Grade;
-        //                        subjectData.MarksUT2Grade = subjectData.MarksUT2Grade == "D" ? "D" : subjectData.MarksUT2Grade;
-        //                        subjectData.TotalMarks = subjectData.TotalMarks == -1 ? -1 : subjectData.TotalMarks;
-        //                        subjectData.TheoryMarks = subjectData.TheoryMarks == -1 ? -1 : subjectData.TheoryMarks;
-        //                        subjectData.PracticalMarks = subjectData.PracticalMarks == -1 ? -1 : subjectData.PracticalMarks;
-        //                        subjectData.TotalObtainedMarks = subjectData.TotalObtainedMarks == -1 ? -1 : subjectData.TotalObtainedMarks;
-        //                        subjectData.GradeUT1 = subjectData.GradeUT1 == "D" ? "D" : subjectData.GradeUT1;
-        //                        subjectData.TheoryMarksUT2 = subjectData.TheoryMarksUT2 == -1 ? -1 : subjectData.TheoryMarksUT2;
-        //                        subjectData.PracticalMarksUT2 = subjectData.PracticalMarksUT2 == -1 ? -1 : subjectData.PracticalMarksUT2;
-        //                        subjectData.TotalObtainedMarksUT2 = subjectData.TotalObtainedMarksUT2 == -1 ? -1 : subjectData.TotalObtainedMarksUT2;
-        //                        subjectData.GradeUT2 = subjectData.GradeUT2 == "D" ? "D" : subjectData.GradeUT2;
-        //                        subjectData.TotalMarksBothUTs = subjectData.TotalMarksBothUTs == -1 ? -1 : subjectData.TotalMarksBothUTs;
-        //                        subjectData.FinalGrade = subjectData.FinalGrade == "D" ? "D" : subjectData.FinalGrade;
-        //                        //Pre1,2 Add By Atul Kumar
-        //                        subjectData.TheoryMarksPre1 = subjectData.TheoryMarksPre1 == -1 ? -1 : subjectData.TheoryMarksPre1;
-        //                        subjectData.PracticalMarksPre1 = subjectData.PracticalMarksPre1 == -1 ? -1 : subjectData.PracticalMarksPre1;
-        //                        subjectData.GradePre1 = subjectData.GradePre1 == "D" ? "D" : subjectData.GradePre1;
-        //                        subjectData.TheoryMarksPre2 = subjectData.TheoryMarksPre2 == -1 ? -1 : subjectData.TheoryMarksPre2;
-        //                        subjectData.PracticalMarksPre2 = subjectData.PracticalMarksPre2 == -1 ? -1 : subjectData.PracticalMarksPre2;
-        //                        subjectData.TheoryMarksSelection = subjectData.TheoryMarksSelection == -1 ? -1 : subjectData.TheoryMarksSelection;
-        //                        subjectData.PracticalMarksSelection = subjectData.PracticalMarksSelection == -1 ? -1 : subjectData.PracticalMarksSelection;
-        //                        subjectData.GradeSelection = subjectData.GradeSelection == "D" ? "D" : subjectData.GradeSelection;
-
-        //                        subjectData.TheoryMarksPromotion = subjectData.TheoryMarksPromotion == -1 ? -1 : subjectData.TheoryMarksPromotion;
-        //                        subjectData.PracticalMarksPromotion = subjectData.PracticalMarksPromotion == -1 ? -1 : subjectData.PracticalMarksPromotion;
-        //                        subjectData.GradePromotion = subjectData.GradeSelection == "D" ? "D" : subjectData.GradeSelection;
-        //                        //subjectData.GradeUT2 = subjectData.GradePre2 == "D" ? "D" : subjectData.GradePre2;
-
-        //                    }
-        //                }
-
-        //                TotalObtainedMarks = 0; subjectDatas.Add(subjectData); obtainedTheoryMarksT1 = null;
-        //                obtainedPracticalMarksT1 = null; obtainedTheoryMarksT2 = null; obtainedPracticalMarksT2 = null;
-        //                obtainedUT1Marks = null; obtainedUT2Marks = null; theroyMaxMark = 1;
-        //                practicalMaxMark = 1; theroyTotalMark = 0; practicalTotalMark = 0;
-        //                UT1MaxMark = 1; UT2MaxMark = 1; Term1TheoryMaxMark = 0;
-        //                Term1PracticalMaxMark = 0; Term2TheoryMaxMark = 0; Term2PracticalMaxMark = 0;
-        //                OptionalUT1MaxMark = 1; OptionalUT2MaxMark = 1;
-        //                obtainedTheoryMarksPre1 = null; obtainedPracticalMarksPre1 = null; obtainedTheoryMarksPre2 = null;
-        //                obtainedPracticalMarksPre2 = null; Pre1TheoryMaxMark = 0; Pre1PracticalMaxMark = 0;
-        //                Pre2TheoryMaxMark = 0; Pre2PracticalMaxMark = 0; obtainedTheoryMarksPromotion = null;
-        //                obtainedPracticalMarksPromotion = null; PromotionTheoryMaxMark = 0; PromotionPracticalMaxMark = 0;
-        //                obtainedTheoryMarksSelection = null;
-        //                obtainedPracticalMarksSelection = null; SelectionTheoryMaxMark = 0; SelectionPracticalMaxMark = 0;
-        //            }
-
-        //            //for optional subject
-        //            Tbl_TestRecords NewobtainedTheoryMarksT1 = null;
-        //            Tbl_TestRecords NewobtainedPracticalMarksT1 = null;
-        //            Tbl_TestRecords NewobtainedTheoryMarksT2 = null;
-        //            Tbl_TestRecords NewobtainedPracticalMarksT2 = null;
-        //            Tbl_TestRecords NewobtainedUT1Marks = null;
-        //            //Tbl_TestRecords NewobtainedSelectionMarks = null;
-        //            Tbl_TestRecords NewobtainedUT2Marks = null;
-
-        //            Tbl_TestRecords NewobtainedTheoryMarksPre1 = null;
-        //            Tbl_TestRecords NewobtainedPracticalMarksPre1 = null;
-        //            Tbl_TestRecords NewobtainedTheoryMarksPre2 = null;
-        //            Tbl_TestRecords NewobtainedPracticalMarksPre2 = null;
-        //            Tbl_TestRecords NewobtainedTheoryMarksSelection = null;
-        //            Tbl_TestRecords NewobtainedPracticalMarksSelection = null;
-        //            Tbl_TestRecords NewobtainedTheoryMarksPromotion = null;
-        //            Tbl_TestRecords NewobtainedPracticalMarksPromotion = null;
-
-
-        //            decimal NewtheroyMaxMark = 1;
-        //            decimal NewpracticalMaxMark = 1;
-        //            decimal NewtheroyTotalMark = 0;
-        //            decimal NewpracticalTotalMark = 0;
-        //            decimal NewUT1MaxMark = 1;
-        //            //decimal NewSelectionMaxMark = 1;
-        //            decimal NewUT2MaxMark = 1;
-        //            decimal NewTerm1TheoryMaxMark = 1;
-        //            decimal NewTerm1PracticalMaxMark = 1;
-        //            decimal NewTerm2TheoryMaxMark = 1;
-        //            decimal NewTerm2PracticalMaxMark = 1;
-        //            decimal NewOptionalUT1MaxMark = 1;
-        //            decimal NewOptionalUT2MaxMark = 1;
-        //            decimal NewOptionalSelectionMaxMark = 1;
-        //            decimal NewTotalObtainedMarks = 0;
-
-        //            decimal NewPre1TheoryMaxMark = 1;
-        //            decimal NewPre1PracticalMaxMark = 1;
-
-        //            decimal NewSelectionTheoryMaxMark = 1;
-        //            decimal NewSelectionPracticalMaxMark = 1;
-        //            decimal NewPromotionTheoryMaxMark = 1;
-        //            decimal NewPromotionPracticalMaxMark = 1;
-        //            decimal NewPre2TheoryMaxMark = 1;
-        //            decimal NewPre2PracticalMaxMark = 1;
-
-        //            var AllOptionalSubject = (from subj in _context.tbl_ClassSubject
-        //                                      join test in _context.tbl_Tests
-        //                                      on subj.SubjectId equals test.SubjectID
-        //                                      where test.ClassID == stdInfo.ClassID && subj.ClassId == stdInfo.ClassID && (termId == 10 || test.TermID == termId) && test.IsOptional == true
-        //                                      select subj).Distinct().ToList();
-
-        //            List<OptionalSubjectData> optionalsubjectDatas = new List<OptionalSubjectData>();
-        //            foreach (var item in AllOptionalSubject)
-        //            {
-        //                OptionalSubjectData subjectData = new OptionalSubjectData();
-        //                foreach (var termItem in terms)
-        //                {
-
-        //                    var test = _context.tbl_Tests.Where(x => x.SubjectID == item.SubjectId && x.ClassID == stdInfo.ClassID && x.TermID == termItem.TermID).ToList();
-
-        //                    if (test.Count > 0)
-        //                    {
-        //                        foreach (var testItem in test)
-        //                        {
-        //                            if (termItem.TermID == 1)//UT1
-        //                            {
-        //                                var StuentUT1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                     join cog in _context.tbl_TestObtainedMark
-        //                                                     on cr.RecordID equals cog.RecordIDFK
-        //                                                     where cr.StudentID == studentId && cr.TermID == 1 && cog.TestID == testItem.TestID
-        //                                                     select new
-        //                                                     {
-        //                                                         TestID = cog.TestID,
-        //                                                         ObtainedMarks = cog.ObtainedMarks
-        //                                                     }).FirstOrDefault();
-        //                                Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                {
-        //                                    ObtainedMarks = StuentUT1Mark?.ObtainedMarks ?? 0
-        //                                };
-
-        //                                NewobtainedUT1Marks = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                NewUT1MaxMark = testItem.MaximumMarks;
-        //                                TotalObtainedMarks += NewobtainedUT1Marks?.ObtainedMarks ?? 0;
-        //                            }
-
-        //                            if (_Name == "2")
-        //                            {
-        //                                if (termItem.TermID == 3)//UT2
-        //                                {
-        //                                    var StuentUT1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                         join cog in _context.tbl_TestObtainedMark
-        //                                                         on cr.RecordID equals cog.RecordIDFK
-        //                                                         where cr.StudentID == studentId && cr.TermID == 3 && cog.TestID == testItem.TestID
-        //                                                         select new
-        //                                                         {
-        //                                                             TestID = cog.TestID,
-        //                                                             ObtainedMarks = cog.ObtainedMarks
-        //                                                         }).FirstOrDefault();
-        //                                    Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                    {
-        //                                        ObtainedMarks = StuentUT1Mark?.ObtainedMarks ?? 0
-        //                                    };
-        //                                    NewobtainedUT2Marks = tbl_TestRecords;//_context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                    NewUT2MaxMark = testItem.MaximumMarks;
-        //                                    TotalObtainedMarks += NewobtainedUT2Marks?.ObtainedMarks ?? 0;
-
-        //                                }
-        //                                if (termItem.TermID == 2)//Term1
-        //                                {
-        //                                    if (testItem.TestType == "Theory")
-        //                                    {
-        //                                        var StuentUT1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                             join cog in _context.tbl_TestObtainedMark
-        //                                                             on cr.RecordID equals cog.RecordIDFK
-        //                                                             where cr.StudentID == studentId && cr.TermID == 2 && cog.TestID == testItem.TestID
-        //                                                             select new
-        //                                                             {
-        //                                                                 TestID = cog.TestID,
-        //                                                                 ObtainedMarks = cog.ObtainedMarks
-        //                                                             }).FirstOrDefault();
-        //                                        Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                        {
-        //                                            ObtainedMarks = StuentUT1Mark?.ObtainedMarks ?? 0
-        //                                        };
-        //                                        NewobtainedTheoryMarksT1 = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                        NewtheroyMaxMark = testItem.MaximumMarks;
-        //                                        NewTerm1TheoryMaxMark = testItem.MaximumMarks;
-        //                                        TotalObtainedMarks += NewobtainedTheoryMarksT1?.ObtainedMarks ?? 0;
-
-        //                                    }
-        //                                    if (testItem.TestType == "Practical")
-        //                                    {
-        //                                        var StuentUT1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                             join cog in _context.tbl_TestObtainedMark
-        //                                                             on cr.RecordID equals cog.RecordIDFK
-        //                                                             where cr.StudentID == studentId && cr.TermID == 2 && cog.TestID == testItem.TestID
-        //                                                             select new
-        //                                                             {
-        //                                                                 TestID = cog.TestID,
-        //                                                                 ObtainedMarks = cog.ObtainedMarks
-        //                                                             }).FirstOrDefault();
-        //                                        Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                        {
-        //                                            ObtainedMarks = StuentUT1Mark?.ObtainedMarks ?? 0
-        //                                        };
-        //                                        NewobtainedPracticalMarksT1 = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                        practicalMaxMark = testItem.MaximumMarks;
-        //                                        NewTerm1PracticalMaxMark = testItem.MaximumMarks;
-        //                                        TotalObtainedMarks += NewobtainedPracticalMarksT1?.ObtainedMarks ?? 0;
-        //                                    }
-
-        //                                }
-        //                            }
-        //                            else
-        //                            {
-        //                                if (termItem.TermID == 2)//UT2
-        //                                {
-        //                                    var StuentUT1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                         join cog in _context.tbl_TestObtainedMark
-        //                                                         on cr.RecordID equals cog.RecordIDFK
-        //                                                         where cr.StudentID == studentId && cr.TermID == 2 && cog.TestID == testItem.TestID
-        //                                                         select new
-        //                                                         {
-        //                                                             TestID = cog.TestID,
-        //                                                             ObtainedMarks = cog.ObtainedMarks
-        //                                                         }).FirstOrDefault();
-        //                                    Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                    {
-        //                                        ObtainedMarks = StuentUT1Mark?.ObtainedMarks ?? 0
-        //                                    };
-        //                                    NewobtainedUT2Marks = tbl_TestRecords;//_context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                    NewUT2MaxMark = testItem.MaximumMarks;
-        //                                    TotalObtainedMarks += NewobtainedUT2Marks?.ObtainedMarks ?? 0;
-
-        //                                }
-        //                                if (termItem.TermID == 3)//Term1
-        //                                {
-        //                                    if (testItem.TestType == "Theory")
-        //                                    {
-        //                                        var StuentUT1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                             join cog in _context.tbl_TestObtainedMark
-        //                                                             on cr.RecordID equals cog.RecordIDFK
-        //                                                             where cr.StudentID == studentId && cr.TermID == 3 && cog.TestID == testItem.TestID
-        //                                                             select new
-        //                                                             {
-        //                                                                 TestID = cog.TestID,
-        //                                                                 ObtainedMarks = cog.ObtainedMarks
-        //                                                             }).FirstOrDefault();
-        //                                        Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                        {
-        //                                            ObtainedMarks = StuentUT1Mark?.ObtainedMarks ?? 0
-        //                                        };
-        //                                        NewobtainedTheoryMarksT1 = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                        NewtheroyMaxMark = testItem.MaximumMarks;
-        //                                        NewTerm1TheoryMaxMark = testItem.MaximumMarks;
-        //                                        TotalObtainedMarks += NewobtainedTheoryMarksT1?.ObtainedMarks ?? 0;
-
-        //                                    }
-        //                                    if (testItem.TestType == "Practical")
-        //                                    {
-        //                                        var StuentUT1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                             join cog in _context.tbl_TestObtainedMark
-        //                                                             on cr.RecordID equals cog.RecordIDFK
-        //                                                             where cr.StudentID == studentId && cr.TermID == 3 && cog.TestID == testItem.TestID
-        //                                                             select new
-        //                                                             {
-        //                                                                 TestID = cog.TestID,
-        //                                                                 ObtainedMarks = cog.ObtainedMarks
-        //                                                             }).FirstOrDefault();
-        //                                        Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                        {
-        //                                            ObtainedMarks = StuentUT1Mark?.ObtainedMarks ?? 0
-        //                                        };
-        //                                        NewobtainedPracticalMarksT1 = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                        practicalMaxMark = testItem.MaximumMarks;
-        //                                        NewTerm1PracticalMaxMark = testItem.MaximumMarks;
-        //                                        TotalObtainedMarks += NewobtainedPracticalMarksT1?.ObtainedMarks ?? 0;
-        //                                    }
-
-        //                                }
-
-        //                            }
-        //                            if (termItem.TermID == 4)//Term2
-        //                            {
-        //                                if (testItem.TestType == "Theory")
-        //                                {
-        //                                    var StuentUT1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                         join cog in _context.tbl_TestObtainedMark
-        //                                                         on cr.RecordID equals cog.RecordIDFK
-        //                                                         where cr.StudentID == studentId && cr.TermID == 4 && cog.TestID == testItem.TestID
-        //                                                         select new
-        //                                                         {
-        //                                                             TestID = cog.TestID,
-        //                                                             ObtainedMarks = cog.ObtainedMarks
-        //                                                         }).FirstOrDefault();
-        //                                    Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                    {
-        //                                        ObtainedMarks = StuentUT1Mark?.ObtainedMarks ?? 0
-        //                                    };
-        //                                    NewobtainedTheoryMarksT2 = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                    NewtheroyMaxMark = testItem.MaximumMarks;
-        //                                    NewTerm2TheoryMaxMark = testItem.MaximumMarks;
-        //                                    TotalObtainedMarks += NewobtainedTheoryMarksT2?.ObtainedMarks ?? 0;
-
-        //                                }
-        //                                if (testItem.TestType == "Practical")
-        //                                {
-        //                                    var StuentUT1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                         join cog in _context.tbl_TestObtainedMark
-        //                                                         on cr.RecordID equals cog.RecordIDFK
-        //                                                         where cr.StudentID == studentId && cr.TermID == 4 && cog.TestID == testItem.TestID
-        //                                                         select new
-        //                                                         {
-        //                                                             TestID = cog.TestID,
-        //                                                             ObtainedMarks = cog.ObtainedMarks
-        //                                                         }).FirstOrDefault();
-        //                                    Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                    {
-        //                                        ObtainedMarks = StuentUT1Mark?.ObtainedMarks ?? 0
-        //                                    };
-        //                                    NewobtainedPracticalMarksT2 = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                    practicalMaxMark = testItem.MaximumMarks;
-        //                                    NewTerm2PracticalMaxMark = testItem.MaximumMarks;
-        //                                    TotalObtainedMarks += NewobtainedPracticalMarksT2?.ObtainedMarks ?? 0;
-
-        //                                }
-        //                            }
-        //                            if (termItem.TermID == 5)
-        //                            {
-        //                                if (testItem.TestType == "Theory")
-        //                                {
-        //                                    var StuentSelectionMark = (from cr in _context.Tbl_TestRecord
-        //                                                               join cog in _context.tbl_TestObtainedMark
-        //                                                               on cr.RecordID equals cog.RecordIDFK
-        //                                                               where cr.StudentID == studentId && cr.TermID == 5 && cog.TestID == testItem.TestID
-        //                                                               select new
-        //                                                               {
-        //                                                                   TestID = cog.TestID,
-        //                                                                   ObtainedMarks = cog.ObtainedMarks
-        //                                                               }).FirstOrDefault();
-        //                                    Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                    {
-        //                                        ObtainedMarks = StuentSelectionMark?.ObtainedMarks ?? 0
-        //                                    };
-        //                                    NewobtainedTheoryMarksSelection = tbl_TestRecords;//_context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                    NewtheroyMaxMark = testItem.MaximumMarks;
-        //                                    NewSelectionTheoryMaxMark = testItem.MaximumMarks;
-        //                                    TotalObtainedMarks += NewobtainedTheoryMarksSelection?.ObtainedMarks ?? 0;
-        //                                }
-        //                                if (testItem.TestType == "Practical")
-        //                                {
-        //                                    var StuentSelectionMark = (from cr in _context.Tbl_TestRecord
-        //                                                               join cog in _context.tbl_TestObtainedMark
-        //                                                               on cr.RecordID equals cog.RecordIDFK
-        //                                                               where cr.StudentID == studentId && cr.TermID == 6 && cog.TestID == testItem.TestID
-        //                                                               select new
-        //                                                               {
-        //                                                                   TestID = cog.TestID,
-        //                                                                   ObtainedMarks = cog.ObtainedMarks
-        //                                                               }).FirstOrDefault();
-        //                                    Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                    {
-        //                                        ObtainedMarks = StuentSelectionMark?.ObtainedMarks ?? 0
-        //                                    };
-        //                                    NewobtainedPracticalMarksSelection = tbl_TestRecords;//_context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                    practicalMaxMark = testItem.MaximumMarks;
-        //                                    NewSelectionPracticalMaxMark = testItem.MaximumMarks;
-        //                                    TotalObtainedMarks += NewobtainedPracticalMarksSelection?.ObtainedMarks ?? 0;
-        //                                }
-        //                            }
-        //                            if (termItem.TermID == 6)
-        //                            {
-        //                                if (testItem.TestType == "Theory")
-        //                                {
-        //                                    var StuentSelectionMark = (from cr in _context.Tbl_TestRecord
-        //                                                               join cog in _context.tbl_TestObtainedMark
-        //                                                               on cr.RecordID equals cog.RecordIDFK
-        //                                                               where cr.StudentID == studentId && cr.TermID == 6 && cog.TestID == testItem.TestID
-        //                                                               select new
-        //                                                               {
-        //                                                                   TestID = cog.TestID,
-        //                                                                   ObtainedMarks = cog.ObtainedMarks
-        //                                                               }).FirstOrDefault();
-        //                                    Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                    {
-        //                                        ObtainedMarks = StuentSelectionMark?.ObtainedMarks ?? 0
-        //                                    };
-        //                                    NewobtainedTheoryMarksPromotion = tbl_TestRecords;//_context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                    NewtheroyMaxMark = testItem.MaximumMarks;
-        //                                    NewPromotionTheoryMaxMark = testItem.MaximumMarks;
-        //                                    TotalObtainedMarks += NewobtainedTheoryMarksPromotion?.ObtainedMarks ?? 0;
-        //                                }
-        //                                if (testItem.TestType == "Practical")
-        //                                {
-        //                                    var StuentSelectionMark = (from cr in _context.Tbl_TestRecord
-        //                                                               join cog in _context.tbl_TestObtainedMark
-        //                                                               on cr.RecordID equals cog.RecordIDFK
-        //                                                               where cr.StudentID == studentId && cr.TermID == 6 && cog.TestID == testItem.TestID
-        //                                                               select new
-        //                                                               {
-        //                                                                   TestID = cog.TestID,
-        //                                                                   ObtainedMarks = cog.ObtainedMarks
-        //                                                               }).FirstOrDefault();
-        //                                    Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                    {
-        //                                        ObtainedMarks = StuentSelectionMark?.ObtainedMarks ?? 0
-        //                                    };
-        //                                    NewobtainedPracticalMarksPromotion = tbl_TestRecords;//_context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                    practicalMaxMark = testItem.MaximumMarks;
-        //                                    NewPromotionPracticalMaxMark = testItem.MaximumMarks;
-        //                                    TotalObtainedMarks += NewobtainedPracticalMarksPromotion?.ObtainedMarks ?? 0;
-        //                                }
-        //                            }
-        //                            // Pre-1,2 Add By Atul kumar
-        //                            if (termId != 10)
-        //                            {
-        //                                if (termItem.TermID == 7)//Pre1
-        //                                {
-        //                                    if (testItem.TestType == "Theory")
-        //                                    {
-        //                                        var StuentPre1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                              join cog in _context.tbl_TestObtainedMark
-        //                                                              on cr.RecordID equals cog.RecordIDFK
-        //                                                              where cr.StudentID == studentId && cr.TermID == 7 && cog.TestID == testItem.TestID
-        //                                                              select new
-        //                                                              {
-        //                                                                  TestID = cog.TestID,
-        //                                                                  ObtainedMarks = cog.ObtainedMarks
-        //                                                              }).FirstOrDefault();
-        //                                        Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                        {
-        //                                            ObtainedMarks = StuentPre1Mark?.ObtainedMarks ?? 0
-        //                                        };
-        //                                        NewobtainedTheoryMarksPre1 = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                        NewtheroyMaxMark = testItem.MaximumMarks;
-        //                                        NewPre1TheoryMaxMark = testItem.MaximumMarks;
-        //                                        TotalObtainedMarks += NewobtainedTheoryMarksPre1?.ObtainedMarks ?? 0;
-
-        //                                    }
-        //                                    if (testItem.TestType == "Practical")
-        //                                    {
-        //                                        var StuentPre1Mark = (from cr in _context.Tbl_TestRecord
-        //                                                              join cog in _context.tbl_TestObtainedMark
-        //                                                              on cr.RecordID equals cog.RecordIDFK
-        //                                                              where cr.StudentID == studentId && cr.TermID == 7 && cog.TestID == testItem.TestID
-        //                                                              select new
-        //                                                              {
-        //                                                                  TestID = cog.TestID,
-        //                                                                  ObtainedMarks = cog.ObtainedMarks
-        //                                                              }).FirstOrDefault();
-        //                                        Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                        {
-        //                                            ObtainedMarks = StuentPre1Mark?.ObtainedMarks ?? 0
-        //                                        };
-        //                                        NewobtainedPracticalMarksPre1 = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                        practicalMaxMark = testItem.MaximumMarks;
-        //                                        NewPre1PracticalMaxMark = testItem.MaximumMarks;
-        //                                        TotalObtainedMarks += NewobtainedPracticalMarksPre1?.ObtainedMarks ?? 0;
-        //                                    }
-
-        //                                }
-        //                                if (termItem.TermID == 8)//Pre8
-        //                                {
-        //                                    if (testItem.TestType == "Theory")
-        //                                    {
-        //                                        var StuentPre2Mark = (from cr in _context.Tbl_TestRecord
-        //                                                              join cog in _context.tbl_TestObtainedMark
-        //                                                              on cr.RecordID equals cog.RecordIDFK
-        //                                                              where cr.StudentID == studentId && cr.TermID == 8 && cog.TestID == testItem.TestID
-        //                                                              select new
-        //                                                              {
-        //                                                                  TestID = cog.TestID,
-        //                                                                  ObtainedMarks = cog.ObtainedMarks
-        //                                                              }).FirstOrDefault();
-        //                                        Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                        {
-        //                                            ObtainedMarks = StuentPre2Mark?.ObtainedMarks ?? 0
-        //                                        };
-        //                                        NewobtainedTheoryMarksPre2 = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                        NewtheroyMaxMark = testItem.MaximumMarks;
-        //                                        NewPre2TheoryMaxMark = testItem.MaximumMarks;
-        //                                        TotalObtainedMarks += NewobtainedTheoryMarksPre2?.ObtainedMarks ?? 0;
-
-        //                                    }
-        //                                    if (testItem.TestType == "Practical")
-        //                                    {
-        //                                        var StuentPre2Mark = (from cr in _context.Tbl_TestRecord
-        //                                                              join cog in _context.tbl_TestObtainedMark
-        //                                                              on cr.RecordID equals cog.RecordIDFK
-        //                                                              where cr.StudentID == studentId && cr.TermID == 8 && cog.TestID == testItem.TestID
-        //                                                              select new
-        //                                                              {
-        //                                                                  TestID = cog.TestID,
-        //                                                                  ObtainedMarks = cog.ObtainedMarks
-        //                                                              }).FirstOrDefault();
-        //                                        Tbl_TestRecords tbl_TestRecords = new Tbl_TestRecords()
-        //                                        {
-        //                                            ObtainedMarks = StuentPre2Mark?.ObtainedMarks ?? 0
-        //                                        };
-        //                                        NewobtainedPracticalMarksPre2 = tbl_TestRecords;// _context.Tbl_TestRecord.Where(x => x.TestID == testItem.TestID && x.StudentID == studentId).FirstOrDefault();
-        //                                        practicalMaxMark = testItem.MaximumMarks;
-        //                                        NewPre2PracticalMaxMark = testItem.MaximumMarks;
-        //                                        TotalObtainedMarks += NewobtainedPracticalMarksPre2?.ObtainedMarks ?? 0;
-        //                                    }
-
-        //                                }
-
-        //                            }
-
-        //                        }
-
-
-        //                        subjectData.Subject = _context.Tbl_SubjectsSetup.Where(x => x.Subject_ID == item.SubjectId).Select(x => x.Subject_Name).FirstOrDefault();
-        //                        subjectData.MarksUT1 = NewobtainedUT1Marks?.ObtainedMarks ?? -2;
-        //                        subjectData.MaxMarksUT1 = NewUT1MaxMark;
-        //                        subjectData.MarksUT1Grade = GetOptionMarkGrade(NewobtainedUT1Marks?.ObtainedMarks ?? -2);
-        //                        subjectData.TheoryMarks = NewobtainedTheoryMarksT1?.ObtainedMarks ?? -2;
-        //                        subjectData.PracticalMarks = NewobtainedPracticalMarksT1?.ObtainedMarks ?? -2;
-        //                        subjectData.TotalObtainedMarks =
-        //((NewobtainedTheoryMarksT1?.ObtainedMarks ?? -1) == -1 ? 0 : (NewobtainedTheoryMarksT1?.ObtainedMarks ?? -1)) +
-        //((NewobtainedPracticalMarksT1?.ObtainedMarks ?? -1) == -1 ? 0 : (NewobtainedPracticalMarksT1?.ObtainedMarks ?? -1));
-
-        //                        subjectData.GradeUT1 = GetOptionMarkGrade((NewobtainedTheoryMarksT1?.ObtainedMarks ?? 0) + (NewobtainedPracticalMarksT1?.ObtainedMarks ?? 0));
-        //                        subjectData.MarksUT2 = NewobtainedUT2Marks?.ObtainedMarks ?? -2;
-        //                        subjectData.MaxMarksUT2 = NewUT2MaxMark;
-        //                        subjectData.MarksUT2Grade = GetOptionMarkGrade(NewobtainedUT2Marks?.ObtainedMarks ?? -2);
-        //                        subjectData.TotalMarks =
-        //  ((NewobtainedUT1Marks?.ObtainedMarks ?? -1) == -1 ? 0 : (NewobtainedUT1Marks?.ObtainedMarks ?? -1)) +
-        //  ((NewobtainedUT2Marks?.ObtainedMarks ?? -1) == -1 ? 0 : (NewobtainedUT2Marks?.ObtainedMarks ?? -1));
-
-        //                        subjectData.TheoryMarksUT2 = NewobtainedTheoryMarksT2?.ObtainedMarks ?? -2;
-        //                        subjectData.PracticalMarksUT2 = NewobtainedPracticalMarksT2?.ObtainedMarks ?? -2;
-        //                        subjectData.TotalObtainedMarksUT2 =
-        //  ((NewobtainedTheoryMarksT2?.ObtainedMarks ?? -1) == -1 ? 0 : (NewobtainedTheoryMarksT2?.ObtainedMarks ?? -1)) +
-        //  ((NewobtainedPracticalMarksT2?.ObtainedMarks ?? -1) == -1 ? 0 : (NewobtainedPracticalMarksT2?.ObtainedMarks ?? -1));
-
-        //                        subjectData.GradeUT2 = GetOptionMarkGrade((NewobtainedTheoryMarksT2?.ObtainedMarks ?? 0) + (NewobtainedPracticalMarksT2?.ObtainedMarks ?? 0));
-
-
-        //                        if (termId != 10)
-        //                        {
-        //                            //Pre-1,2 Add By Atul Kumar
-        //                            subjectData.TheoryMarksPre1 = NewobtainedTheoryMarksPre1?.ObtainedMarks ?? -2;
-        //                            subjectData.PracticalMarksPre1 = NewobtainedPracticalMarksPre1?.ObtainedMarks ?? -2;
-        //                            subjectData.TotalObtainedMarksPre1 =
-        //      ((NewobtainedTheoryMarksPre1?.ObtainedMarks ?? -1) == -1 ? 0 : (NewobtainedTheoryMarksPre1?.ObtainedMarks ?? -1)) +
-        //      ((NewobtainedPracticalMarksPre1?.ObtainedMarks ?? -1) == -1 ? 0 : (NewobtainedPracticalMarksPre1?.ObtainedMarks ?? -1));
-
-        //                            subjectData.GradePre1 = GetOptionMarkGrade((NewobtainedTheoryMarksPre1?.ObtainedMarks ?? 0) + (NewobtainedPracticalMarksPre1?.ObtainedMarks ?? 0));
-
-        //                            subjectData.TheoryMarksPre2 = NewobtainedTheoryMarksPre2?.ObtainedMarks ?? -2;
-        //                            subjectData.PracticalMarksPre2 = NewobtainedPracticalMarksPre2?.ObtainedMarks ?? -2;
-        //                            subjectData.TotalObtainedMarksPre2 =
-        //      ((NewobtainedTheoryMarksPre2?.ObtainedMarks ?? -1) == -1 ? 0 : (NewobtainedTheoryMarksPre2?.ObtainedMarks ?? -1)) +
-        //      ((NewobtainedPracticalMarksPre2?.ObtainedMarks ?? -1) == -1 ? 0 : (NewobtainedPracticalMarksPre2?.ObtainedMarks ?? -1));
-
-        //                            subjectData.GradePre2 = GetOptionMarkGrade((NewobtainedTheoryMarksPre2?.ObtainedMarks ?? 0) + (NewobtainedPracticalMarksPre2?.ObtainedMarks ?? 0));
-
-
-        //                            subjectData.TheoryMarksSelection = NewobtainedTheoryMarksSelection?.ObtainedMarks ?? -2;
-        //                            subjectData.PracticalMarksSelection = NewobtainedPracticalMarksSelection?.ObtainedMarks ?? -2;
-        //                            subjectData.TotalObtainedMarkSelection =
-        //      ((NewobtainedTheoryMarksSelection?.ObtainedMarks ?? -1) == -1 ? 0 : (NewobtainedTheoryMarksSelection?.ObtainedMarks ?? -1)) +
-        //      ((NewobtainedPracticalMarksSelection?.ObtainedMarks ?? -1) == -1 ? 0 : (NewobtainedPracticalMarksSelection?.ObtainedMarks ?? -1));
-
-        //                            subjectData.GradeSelection = GetOptionMarkGrade((NewobtainedTheoryMarksSelection?.ObtainedMarks ?? 0) + (NewobtainedPracticalMarksSelection?.ObtainedMarks ?? 0));
-
-        //                            subjectData.TheoryMarksPromotion = NewobtainedTheoryMarksPromotion?.ObtainedMarks ?? -2;
-        //                            subjectData.PracticalMarksPromotion = NewobtainedPracticalMarksPromotion?.ObtainedMarks ?? -2;
-        //                            subjectData.TotalObtainedMarkPromotion =
-        //      ((NewobtainedTheoryMarksPromotion?.ObtainedMarks ?? -1) == -1 ? 0 : (NewobtainedTheoryMarksPromotion?.ObtainedMarks ?? -1)) +
-        //      ((NewobtainedPracticalMarksPromotion?.ObtainedMarks ?? -1) == -1 ? 0 : (NewobtainedPracticalMarksPromotion?.ObtainedMarks ?? -1));
-
-        //                            subjectData.GradePromotion = GetOptionMarkGrade((NewobtainedTheoryMarksPromotion?.ObtainedMarks ?? 0) + (NewobtainedPracticalMarksPromotion?.ObtainedMarks ?? 0));
-
-
-
-
-
-
-        //                        }
-
-        //                    }
-        //                    else
-        //                    {
-
-        //                        subjectData.Subject = _context.Tbl_SubjectsSetup.Where(x => x.Subject_ID == item.SubjectId).Select(x => x.Subject_Name).FirstOrDefault();
-        //                        subjectData.MarksUT1 = subjectData.MarksUT1 == -1 ? -1 : subjectData.MarksUT1;
-        //                        subjectData.MaxMarksUT1 = subjectData.MaxMarksUT1 == -1 ? -1 : subjectData.MaxMarksUT1;
-        //                        subjectData.MarksUT2 = subjectData.MarksUT2 == -1 ? -1 : subjectData.MarksUT2;
-        //                        subjectData.MaxMarksUT2 = subjectData.MaxMarksUT2 == -1 ? -1 : subjectData.MaxMarksUT2;
-        //                        subjectData.MarksUT1Grade = subjectData.MarksUT1Grade == "D" ? "D" : subjectData.MarksUT1Grade;
-        //                        subjectData.MarksUT2Grade = subjectData.MarksUT2Grade == "D" ? "D" : subjectData.MarksUT2Grade;
-        //                        subjectData.TotalMarks = subjectData.TotalMarks == -1 ? -1 : subjectData.TotalMarks;
-        //                        subjectData.TheoryMarks = subjectData.TheoryMarks == -1 ? -1 : subjectData.TheoryMarks;
-        //                        subjectData.PracticalMarks = subjectData.PracticalMarks == -1 ? -1 : subjectData.PracticalMarks;
-        //                        subjectData.TotalObtainedMarks = subjectData.TotalObtainedMarks == -1 ? -1 : subjectData.TotalObtainedMarks;
-        //                        subjectData.GradeUT1 = subjectData.GradeUT1 == "D" ? "D" : subjectData.GradeUT1;
-        //                        subjectData.TheoryMarksUT2 = subjectData.TheoryMarksUT2 == -1 ? -1 : subjectData.TheoryMarksUT2;
-        //                        subjectData.PracticalMarksUT2 = subjectData.PracticalMarksUT2 == -1 ? -1 : subjectData.PracticalMarksUT2;
-        //                        subjectData.TotalObtainedMarksUT2 = subjectData.TotalObtainedMarksUT2 == -1 ? -1 : subjectData.TotalObtainedMarksUT2;
-        //                        subjectData.GradeUT2 = subjectData.GradeUT2 == "D" ? "D" : subjectData.GradeUT2;
-
-        //                        if (termId != 10)
-        //                        {
-        //                            //Pre-1,2 Add By Atul Kumar
-        //                            subjectData.TheoryMarksPre1 = subjectData.TheoryMarksPre1 == -1 ? -1 : subjectData.TheoryMarksPre1;
-        //                            subjectData.PracticalMarksPre1 = subjectData.PracticalMarksPre1 == -1 ? -1 : subjectData.PracticalMarksPre1;
-        //                            subjectData.TotalObtainedMarksPre1 = subjectData.TotalObtainedMarksPre1 == -1 ? -1 : subjectData.TotalObtainedMarksPre1;
-        //                            subjectData.GradePre1 = subjectData.GradePre1 == "D" ? "D" : subjectData.GradePre1;
-
-        //                            subjectData.TheoryMarksPre2 = subjectData.TheoryMarksPre2 == -1 ? -1 : subjectData.TheoryMarksPre2;
-        //                            subjectData.PracticalMarksPre2 = subjectData.PracticalMarksPre2 == -1 ? -1 : subjectData.PracticalMarksPre2;
-        //                            subjectData.TotalObtainedMarksPre2 = subjectData.TotalObtainedMarksPre2 == -1 ? -1 : subjectData.TotalObtainedMarksPre2;
-        //                            subjectData.GradePre2 = subjectData.GradePre2 == "D" ? "D" : subjectData.GradePre2;
-
-        //                            subjectData.TheoryMarksSelection = subjectData.TheoryMarksSelection == -1 ? -1 : subjectData.TheoryMarksSelection;
-        //                            subjectData.PracticalMarksSelection = subjectData.PracticalMarksSelection == -1 ? -1 : subjectData.PracticalMarksSelection;
-        //                            subjectData.TotalObtainedMarkSelection = subjectData.TotalObtainedMarkSelection == -1 ? -1 : subjectData.TotalObtainedMarkSelection;
-        //                            subjectData.GradeSelection = subjectData.GradeSelection == "D" ? "D" : subjectData.GradeSelection;
-
-        //                            subjectData.TheoryMarksPromotion = subjectData.TheoryMarksPromotion == -1 ? -1 : subjectData.TheoryMarksPromotion;
-        //                            subjectData.PracticalMarksPromotion = subjectData.PracticalMarksPromotion == -1 ? -1 : subjectData.PracticalMarksPromotion;
-        //                            subjectData.TotalObtainedMarkPromotion = subjectData.TotalObtainedMarkPromotion == -1 ? -1 : subjectData.TotalObtainedMarkPromotion;
-        //                            subjectData.GradePromotion = subjectData.GradePromotion == "D" ? "D" : subjectData.GradePromotion;
-
-        //                        }
-
-        //                    }
-
-
-        //                }
-        //                TotalObtainedMarks = 0;
-        //                optionalsubjectDatas.Add(subjectData);
-        //                NewobtainedTheoryMarksT1 = null;
-        //                NewobtainedPracticalMarksT1 = null;
-        //                NewobtainedTheoryMarksT2 = null;
-        //                NewobtainedPracticalMarksT2 = null;
-        //                NewobtainedUT1Marks = null;
-        //                NewobtainedUT2Marks = null;
-        //                NewobtainedTheoryMarksPre1 = null;
-        //                //NewobtainedSelectionMarks = null;
-        //                NewobtainedPracticalMarksPre1 = null;
-        //                NewobtainedTheoryMarksPre2 = null;
-        //                NewobtainedPracticalMarksPre2 = null;
-
-        //                NewobtainedTheoryMarksSelection = null;
-        //                NewobtainedPracticalMarksSelection = null;
-        //                NewobtainedTheoryMarksPromotion = null;
-        //                NewobtainedPracticalMarksPromotion = null;
-        //            }
-        //            decimal UT1Total = 0; decimal UT1MaxTotal = 0; decimal UT2Total = 0; decimal UT2MaxTotal = 0;
-        //            decimal Term1TheoryMaxTotal = 0; decimal Term1PracticalMaxTotal = 0; decimal Term2TheoryMaxTotal = 0;
-        //            decimal Term2PracticalMaxTotal = 0; decimal UTAllTotal = 0; decimal TheoryTotalT1 = 0;
-        //            decimal PracticalTotalT1 = 0; decimal T1AllTotal = 0; decimal TheoryTotalT2 = 0;
-        //            decimal PracticalTotalT2 = 0; decimal T2AllTotal = 0; decimal OverallAllTotal = 0;
-
-        //            decimal Pre1TheoryMaxTotal = 0; decimal Pre1PracticalMaxTotal = 0; decimal Pre2TheoryMaxTotal = 0;
-        //            decimal Pre2PracticalMaxTotal = 0; decimal PreAllTotal = 0;
-        //            decimal SelectionTheoryMaxTotal = 0; decimal SelectionPracticalMaxTotal = 0; decimal SelectioAllTotal = 0;
-        //            decimal PromotionTheoryMaxTotal = 0; decimal PromotionPracticalMaxTotal = 0; decimal PromotioAllTotal = 0;
-        //            decimal PromotionTheoryTotal = 0; decimal PromotionPracticalTotal = 0; decimal SelectionTheoryTotal = 0; decimal SelectionPracticalTotal = 0;
-
-        //            foreach (var item in subjectDatas)
-        //            {
-
-        //                UT1Total += (item.MarksUT1 == -1 || item.MarksUT1 == -2) ? 0 : item.MarksUT1;
-        //                UT1MaxTotal += (item.MaxMarksUT1 == -1 || item.MaxMarksUT1 == -2 /*|| item.Subject == "English Language   " || item.Subject == "English Dictation  " || item.Subject == "English Writing" || item.Subject == "Hindi Lang " || item.Subject == "Hindi Dictation " || item.Subject == "Hindi Writing" || item.Subject == "Math Written"*/) ? 0 : item.MaxMarksUT1;
-        //                UT2MaxTotal += (item.MaxMarksUT2 == -1 || item.MaxMarksUT2 == -2) ? 0 : item.MaxMarksUT2;
-        //                Term1TheoryMaxTotal += (item.MaxMarksTerm1Theory == -1 || item.MaxMarksTerm1Theory == -2) ? 0 : item.MaxMarksTerm1Theory;
-        //                Term1PracticalMaxTotal += (item.MaxMarksTerm1Practical == -1 || item.MaxMarksTerm1Practical == -2) ? 0 : item.MaxMarksTerm1Practical;
-        //                Term2TheoryMaxTotal += (item.MaxMarksTerm2Theory == -1 || item.MaxMarksTerm2Theory == -2) ? 0 : item.MaxMarksTerm2Theory;
-        //                Term2PracticalMaxTotal += (item.MaxMarksTerm2Practical == -1 || item.MaxMarksTerm2Practical == -2) ? 0 : item.MaxMarksTerm2Practical;
-        //                UT2Total += (item.MarksUT2 == -1 || item.MarksUT2 == -2) ? 0 : item.MarksUT2;
-        //                UTAllTotal += (item.TotalMarks == -1 || item.TotalMarks == -2) ? 0 : item.TotalMarks;
-        //                TheoryTotalT1 += (item.TheoryMarks == -1 || item.TheoryMarks == -2) ? 0 : item.TheoryMarks;
-        //                PracticalTotalT1 += (item.PracticalMarks == -1 || item.PracticalMarks == -2) ? 0 : item.PracticalMarks;
-        //                T1AllTotal += (item.TotalObtainedMarks == -1 || item.TotalObtainedMarks == -2) ? 0 : item.TotalObtainedMarks;
-        //                TheoryTotalT2 += (item.TheoryMarksUT2 == -1 || item.TheoryMarksUT2 == -2) ? 0 : item.TheoryMarksUT2;
-        //                PracticalTotalT2 += (item.PracticalMarksUT2 == -1 || item.PracticalMarksUT2 == -2) ? 0 : item.PracticalMarksUT2;
-        //                T2AllTotal += (item.TotalObtainedMarksUT2 == -1 || item.TotalObtainedMarksUT2 == -2) ? 0 : item.TotalObtainedMarksUT2;
-        //                OverallAllTotal += (item.TotalMarksBothUTs == -1 || item.TotalMarksBothUTs == -2) ? 0 : item.TotalMarksBothUTs;
-
-
-        //                if (termId != 10)
-        //                {
-        //                    Pre1TheoryMaxTotal += (item.MaxMarksPre1Theory == -1 || item.MaxMarksPre1Theory == -2) ? 0 : item.MaxMarksPre1Theory;
-        //                    Pre1PracticalMaxTotal += (item.PracticalMarksPre1 == -1 || item.PracticalMarksPre1 == -2) ? 0 : item.PracticalMarksPre1;
-        //                    Pre1AllTotal += (item.TotalObtainedMarksPre1 == -1 || item.TotalObtainedMarksPre1 == -2) ? 0 : item.TotalObtainedMarksPre1;
-
-
-        //                    Pre2TheoryMaxTotal += (item.MaxMarksPre2Theory == -1 || item.MaxMarksPre2Theory == -2) ? 0 : item.MaxMarksPre2Theory;
-        //                    Pre2PracticalMaxTotal += (item.MaxMarksPre2Practical == -1 || item.MaxMarksPre2Practical == -2) ? 0 : item.MaxMarksPre2Practical;
-        //                    Pre2AllTotal += (item.TotalObtainedMarksPre2 == -1 || item.TotalObtainedMarksPre2 == -2) ? 0 : item.TotalObtainedMarksPre2;
-
-        //                    SelectionTheoryTotal += (item.TheoryMarksSelection == -1 || item.TheoryMarksSelection == -2) ? 0 : item.TheoryMarksSelection;
-        //                    PromotionPracticalTotal += (item.PracticalMarksSelection == -1 || item.PracticalMarksSelection == -2) ? 0 : item.PracticalMarksSelection;
-        //                    SelectionTheoryMaxTotal += (item.MaxMarksSelectionTheory == -1 || item.MaxMarksSelectionTheory == -2) ? 0 : item.MaxMarksSelectionTheory;
-        //                    SelectionPracticalMaxTotal += (item.PracticalMarksSelection == -1 || item.PracticalMarksSelection == -2) ? 0 : item.PracticalMarksSelection;
-        //                    SelectionAllTotal += (item.TotalObtainedMarksSelection == -1 || item.TotalObtainedMarksSelection == -2) ? 0 : item.TotalObtainedMarksSelection;
-
-        //                    PromotionTheoryTotal += (item.TheoryMarksPromotion == -1 || item.TheoryMarksPromotion == -2) ? 0 : item.TheoryMarksPromotion;
-        //                    PromotionPracticalTotal += (item.PracticalMarksPromotion == -1 || item.PracticalMarksPromotion == -2) ? 0 : item.PracticalMarksPromotion;
-        //                    PromotionTheoryMaxTotal += (item.MaxMarksPromotionTheory == -1 || item.MaxMarksPromotionTheory == -2) ? 0 : item.MaxMarksPromotionTheory;
-        //                    PromotionPracticalMaxTotal += (item.MaxMarksPromotionPractical == -1 || item.MaxMarksPromotionPractical == -2) ? 0 : item.MaxMarksPromotionPractical;
-        //                    PromotionAllTotal += (item.TotalObtainedMarksPromotion == -1 || item.TotalObtainedMarksPromotion == -2) ? 0 : item.TotalObtainedMarksPromotion;
-
-        //                    //PromotionAllTotal += (item.TotalMarks == -1 || item.TotalMarks == -2) ? 0 : item.TotalMarks;
-
-        //                }
-        //                //2  
-        //            }
-        //            var divisor01 = (Term1TheoryMaxTotal + Term1PracticalMaxTotal) == 0 ? 1 : (Term1TheoryMaxTotal + Term1PracticalMaxTotal);
-        //            var divisor02 = (Term2TheoryMaxTotal + Term2PracticalMaxTotal) == 0 ? 1 : (Term2TheoryMaxTotal + Term2PracticalMaxTotal);
-
-        //            var divisorPre01 = (Pre1TheoryMaxTotal + Pre1PracticalMaxTotal) == 0 ? 1 : (Pre1TheoryMaxTotal + Pre1PracticalMaxTotal);
-        //            var divisorPre02 = (Pre2TheoryMaxTotal + Pre2PracticalMaxTotal) == 0 ? 1 : (Pre2TheoryMaxTotal + Pre2PracticalMaxTotal);
-        //            var divisor0Selection = (SelectionTheoryMaxTotal + SelectionPracticalMaxTotal) == 0 ? 1 : (SelectionTheoryMaxTotal + SelectionPracticalMaxTotal);
-        //            var divisor0Promotion = (PromotionTheoryMaxTotal + PromotionPracticalMaxTotal) == 0 ? 1 : (PromotionTheoryMaxTotal + PromotionPracticalMaxTotal);
-        //            var T1Gradee = GetGradebyTermBatch(PercentageCal(T1AllTotal, divisor01), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-        //            TotalResult totalResult = new TotalResult()
-        //            {
-        //                UT1Total = UT1Total,
-        //                UT1MaxTotal = UT1MaxTotal,
-        //                UT2Total = UT2Total,
-        //                UT2MaxTotal = UT2MaxTotal,
-        //                UT1TotalGrade = GetGradebyTermBatch(PercentageCal(UT1Total, UT1MaxTotal), Convert.ToInt32(stdInfo.ClassID), termId, batchId),
-        //                UT2TotalGrade = GetGradebyTermBatch(PercentageCal(UT2Total, UT2MaxTotal), Convert.ToInt32(stdInfo.ClassID), termId, batchId),
-        //                UTAllTotal = UTAllTotal,
-        //                TheoryTotalT1 = TheoryTotalT1,
-        //                PracticalTotalT1 = PracticalTotalT1,
-        //                T1AllTotal = T1AllTotal,
-        //                T1Grade = GetGradebyTermBatch(PercentageCal(T1AllTotal, divisor01), Convert.ToInt32(stdInfo.ClassID), termId, batchId),
-        //                TheoryTotalT2 = TheoryTotalT2,
-        //                PracticalTotalT2 = PracticalTotalT2,
-        //                T2AllTotal = T2AllTotal,
-        //                T2Grade = GetGradebyTermBatch(PercentageCal(T2AllTotal, divisor02), Convert.ToInt32(stdInfo.ClassID), termId, batchId),
-        //                OverallAllTotal = OverallAllTotal,
-        //                OverallGrade = GetGradebyTermBatch(PercentageCal(OverallAllTotal, (UT1MaxTotal + UT2MaxTotal + Term1TheoryMaxTotal + Term1PracticalMaxTotal + Term2TheoryMaxTotal + Term2PracticalMaxTotal + Pre1TheoryMaxTotal + Pre1PracticalMaxTotal + Pre2TheoryMaxTotal + Pre2PracticalMaxTotal)), Convert.ToInt32(stdInfo.ClassID), termId, batchId),
-
-        //                Term1TheoryMaxTotal = Term1TheoryMaxTotal,
-        //                //SelectionMaxTotal = SelectionMaxTotal,
-        //                Term1PracticalMaxTotal = Term1PracticalMaxTotal,
-        //                Term2TheoryMaxTotal = Term2TheoryMaxTotal,
-        //                Term2PracticalMaxTotal = Term2PracticalMaxTotal
-
-
-        //            };
-
-        //            var totals =
-        //                  (UT1MaxTotal + UT2MaxTotal + Term1TheoryMaxTotal + Term1PracticalMaxTotal + Term2TheoryMaxTotal + Term2PracticalMaxTotal + Pre1TheoryMaxTotal + Pre1PracticalMaxTotal + Pre2TheoryMaxTotal + Pre2PracticalMaxTotal + SelectionTheoryMaxTotal + SelectionPracticalMaxTotal + PromotionTheoryMaxTotal + PromotionPracticalMaxTotal);
-        //            //totalResult.  OverallGrade = GetGrade(PercentageCal(OverallAllTotal, (UT1MaxTotal + UT2MaxTotal + Term1TheoryMaxTotal + Term1PracticalMaxTotal + Term2TheoryMaxTotal + Term2PracticalMaxTotal + Pre1TheoryMaxTotal + Pre1PracticalMaxTotal + Pre2TheoryMaxTotal + Pre2PracticalMaxTotal)), Convert.ToInt32(studentInfo.Class_Id));
-
-
-        //            TotalResultpercentage totalResultpercentage = new TotalResultpercentage()
-        //            {
-        //                UT1Total = PercentageCal(UT1Total, UT1MaxTotal),
-        //                UT1TotalGrade = GetGradebyTermBatch(PercentageCal(UT1Total, UT1MaxTotal), Convert.ToInt32(stdInfo.ClassID), termId, batchId),
-
-        //                UT2Total = PercentageCal(UT2Total, UT2MaxTotal),
-        //                UT2TotalGrade = GetGradebyTermBatch(PercentageCal(UT2Total, UT2MaxTotal), Convert.ToInt32(stdInfo.ClassID), termId, batchId),
-        //                UTAllTotal = PercentageCal(UTAllTotal, UT1MaxTotal + UT2MaxTotal),
-        //                TheoryTotalT1 = PercentageCal(TheoryTotalT1, Term1TheoryMaxTotal),
-        //                PracticalTotalT1 = PercentageCal(PracticalTotalT1, Term1PracticalMaxTotal == 0 ? 1 : Term1PracticalMaxTotal),
-        //                T1AllTotal = PercentageCal(T1AllTotal, divisor01),
-        //                T1Grade = GetGradebyTermBatch(PercentageCal(T1AllTotal, divisor01), Convert.ToInt32(stdInfo.ClassID), termId, batchId),
-        //                TheoryTotalT2 = PercentageCal(TheoryTotalT2, Term2TheoryMaxTotal),
-        //                PracticalTotalT2 = PercentageCal(PracticalTotalT2, Term2PracticalMaxTotal == 0 ? 1 : Term2PracticalMaxTotal),
-        //                T2AllTotal = PercentageCal(T2AllTotal, divisor02),
-        //                T2Grade = GetGradebyTermBatch(PercentageCal(T2AllTotal, divisor02), Convert.ToInt32(stdInfo.ClassID), termId, batchId),
-        //                OverallAllTotal = Math.Round(PercentageCal(OverallAllTotal, (UT1MaxTotal + UT2MaxTotal + Term1TheoryMaxTotal + Term1PracticalMaxTotal + Term2TheoryMaxTotal + Term2PracticalMaxTotal)), 1),
-        //                OverallGrade = GetGradebyTermBatch(PercentageCal(OverallAllTotal, (UT1MaxTotal + UT2MaxTotal + Term1TheoryMaxTotal + Term1PracticalMaxTotal + Term2TheoryMaxTotal + Term2PracticalMaxTotal + Pre1TheoryMaxTotal + Pre1PracticalMaxTotal + Pre2TheoryMaxTotal + Pre2PracticalMaxTotal + SelectionPracticalMaxTotal + SelectionTheoryMaxTotal + PromotionPracticalMaxTotal + PromotionTheoryMaxTotal)), Convert.ToInt32(stdInfo.ClassID), termId, batchId)
-
-
-        //            };
-        //            var persoverall = PercentageCal(Convert.ToDecimal(totalResult.OverallAllTotal), Convert.ToDecimal(totals));
-        //            var perst = Math.Round(Convert.ToDecimal(persoverall), 1);
-        //            totalResult.OverallGrade = GetGradebyTermBatch(Convert.ToDecimal(perst), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-        //            var pers = Math.Round(Convert.ToDecimal(totalResultpercentage.OverallAllTotal), 1);
-        //            totalResultpercentage.OverallGrade = GetGradebyTermBatch(Convert.ToDecimal(pers), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-
-        //            if (stdInfo.ClassID.ToString() == "205")
-        //            {
-        //                var overallpers = PercentageCal(totalResult.OverallAllTotal, 2630);
-        //                var perstoverall = Math.Round(Convert.ToDecimal(overallpers), 1);
-        //                // totalResult.OverallAllTotal = 2;
-        //                totalResult.OverallGrade = GetGradebyTermBatch(Convert.ToDecimal(perstoverall), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-        //                var per = Math.Round(Convert.ToDecimal(totalResultpercentage.OverallAllTotal), 1);
-        //                totalResultpercentage.OverallGrade = GetGradebyTermBatch(Convert.ToDecimal(per), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-        //            }
-
-
-        //            if (stdInfo.ClassID.ToString() == "208")//kg
-        //            {
-
-        //                // totalResult.OverallAllTotal = 2;
-        //                totalResult.OverallGrade = GetGradebyTermBatch(PercentageCal(totalResult.OverallAllTotal, 880), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-        //                var per = ((totalResultpercentage.OverallAllTotal));
-        //                totalResultpercentage.OverallGrade = GetGradebyTermBatch(Convert.ToDecimal(per), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-        //            }
-
-        //            if (stdInfo.ClassID.ToString() == "209")
-        //            {
-        //                totalResult.OverallGrade = GetGradebyTermBatch(PercentageCal(totalResult.OverallAllTotal, 980), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-        //                var per = ((totalResultpercentage.OverallAllTotal));
-        //                totalResultpercentage.OverallGrade = GetGradebyTermBatch(Convert.ToDecimal(per), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-        //            }
-
-
-
-        //            if (stdInfo.ClassID.ToString() == "207")
-        //            {
-
-        //                // totalResult.OverallAllTotal = 2;
-        //                totalResult.OverallGrade = GetGradebyTermBatch(PercentageCal(totalResult.OverallAllTotal, 680), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-        //                var per = ((totalResultpercentage.OverallAllTotal));
-        //                totalResultpercentage.OverallGrade = GetGradebyTermBatch(Convert.ToDecimal(per), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-        //            }
-
-        //            //if (totalResultpercentage.OverallGrade == "0 " || totalResultpercentage.OverallGrade == null)
-        //            //{
-        //            //    totalResultpercentage.OverallGrade = "D";
-        //            //}
-        //            var validGrade = false;
-        //            if (termId != 10)
-        //            {
-        //                totalResult.Pre1Grade = GetGradebyTermBatch(PercentageCal(Pre1AllTotal, divisorPre01), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-        //                totalResult.Pre1AllTotal = Pre1AllTotal;
-        //                totalResult.Pre2AllTotal = Pre2AllTotal;
-        //                totalResult.Pre2Grade = GetGradebyTermBatch(PercentageCal(Pre2AllTotal, divisorPre02), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-        //                totalResult.Pre1TheoryMaxTotal = Pre1AllTotal;
-        //                totalResult.Pre1PracticalMaxTotal = Pre1PracticalMaxTotal;
-        //                totalResult.Pre2TheoryMaxTotal = Pre2AllTotal;
-        //                totalResult.Pre2PracticalMaxTotal = Pre2PracticalMaxTotal;
-
-
-        //                totalResult.SelectionGrade = GetGradebyTermBatch(PercentageCal(SelectionAllTotal, divisor0Selection), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-        //                totalResult.SelectionAllTotal = SelectionAllTotal;
-        //                totalResult.SelectionTheoryMaxTotal = SelectionAllTotal;
-        //                totalResult.SelectionPracticalMaxTotal = SelectionPracticalMaxTotal;
-
-
-        //                totalResult.PromotionGrade = GetGradebyTermBatch(PercentageCal(PromotionAllTotal, divisor0Promotion), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-        //                totalResult.PromotionAllTotal = PromotionAllTotal;
-        //                totalResult.PromotionTheoryMaxTotal = PromotionTheoryTotal;
-        //                totalResult.PromotionPracticalMaxTotal = PromotionPracticalTotal;
-        //                //totalResult.SelectionGrade = GetGrade(PercentageCal(SelectionAllTotal, divisor0Selection), Convert.ToInt32(stdInfo.ClassID));
-        //                //totalResult.SelectionAlltotal = SelectionAllTotal;
-
-        //                totalResultpercentage.TheoryTotalPre1 = PercentageCal(Pre1AllTotal, Pre1TheoryMaxTotal);
-        //                totalResultpercentage.PracticalTotalPre1 = PercentageCal(Pre1PracticalMaxMark, Pre1PracticalMaxTotal == 0 ? 1 : Pre1PracticalMaxTotal);
-        //                totalResultpercentage.Pre1AllTotal = PercentageCal(Pre1AllTotal, divisorPre01);
-        //                totalResultpercentage.Pre1Grade = GetGradebyTermBatch(PercentageCal(Pre1AllTotal, divisorPre01), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-
-        //                totalResultpercentage.TheoryTotalPre2 = PercentageCal(Pre2AllTotal, Pre2TheoryMaxTotal);
-        //                totalResultpercentage.PracticalTotalPre2 = PercentageCal(Pre2PracticalMaxMark, Pre2PracticalMaxTotal == 0 ? 1 : Pre2PracticalMaxTotal);
-        //                totalResultpercentage.Pre2AllTotal = PercentageCal(Pre2AllTotal, divisorPre01);
-        //                totalResultpercentage.Pre2Grade = GetGradebyTermBatch(PercentageCal(Pre2AllTotal, divisorPre01), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-
-        //                totalResultpercentage.TheoryTotalSelection = PercentageCal(SelectionTheoryTotal, SelectionTheoryMaxTotal);
-        //                totalResultpercentage.PracticalTotalSelection = PercentageCal(SelectionPracticalTotal, SelectionPracticalMaxTotal == 0 ? 1 : SelectionPracticalMaxTotal);
-        //                totalResultpercentage.SelectionAllTotal = PercentageCal(SelectionAllTotal, divisor0Selection);
-        //                totalResultpercentage.SelectionGrade = GetGradebyTermBatch(PercentageCal(SelectionAllTotal, divisor0Selection), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-
-        //                totalResultpercentage.TheoryTotalPromotion = PercentageCal(PromotionTheoryTotal, PromotionTheoryMaxTotal);
-        //                totalResultpercentage.PracticalTotalPromotion = PercentageCal(PromotionPracticalTotal, PromotionPracticalMaxTotal == 0 ? 1 : PromotionPracticalMaxTotal);
-        //                totalResultpercentage.PromotionAllTotal = PercentageCal(PromotionAllTotal, divisor0Promotion);
-        //                totalResultpercentage.PromotionGrade = GetGradebyTermBatch(PercentageCal(PromotionAllTotal, divisor0Promotion), Convert.ToInt32(stdInfo.ClassID), termId, batchId);
-
-        //                if (termId == 7)
-        //                {
-        //                    validGrade = subjectDatas.Any(x => x.TotalObtainedMarksPre1 <= 32);
-        //                }
-        //                else if (termId == 8)
-        //                {
-        //                    validGrade = subjectDatas.Any(x => x.TotalObtainedMarksPre2 <= 32);
-        //                }
-        //                else
-        //                {
-        //                    validGrade = subjectDatas.Any(x => x.TotalObtainedMarks <= 32);
-        //                }
-        //            }
-
-        //            if (termId == 7 || termId == 8 || termId == 10)
-        //            {
-        //                if (validGrade)
-        //                {
-        //                    totalResult.T1Grade = "";
-        //                    totalResult.T2Grade = "";
-        //                    totalResult.UT1TotalGrade = "";
-        //                    totalResult.UT2TotalGrade = "";
-        //                    totalResult.Pre1Grade = "";
-        //                    totalResult.Pre2Grade = "";
-        //                    totalResult.OverallGrade = "";
-        //                    totalResultpercentage.T1Grade = "";
-        //                    totalResultpercentage.T2Grade = "";
-        //                    totalResultpercentage.UT1TotalGrade = "";
-        //                    totalResultpercentage.UT2TotalGrade = "";
-        //                    totalResultpercentage.Pre1Grade = "";
-        //                    totalResultpercentage.Pre2Grade = "";
-        //                    totalResultpercentage.OverallGrade = "";
-
-        //                }
-        //                else
-        //                {
-        //                    totalResult.T1Grade = totalResult.T1Grade == "D" ? "" : totalResult.T1Grade;
-        //                    totalResult.T2Grade = totalResult.T2Grade == "D" ? "" : totalResult.T2Grade;
-        //                    totalResult.UT1TotalGrade = totalResult.UT1TotalGrade == "D" ? "" : totalResult.UT1TotalGrade;
-        //                    totalResult.UT2TotalGrade = totalResult.UT2TotalGrade == "D" ? "" : totalResult.UT2TotalGrade;
-        //                    totalResultpercentage.T1Grade = totalResultpercentage.T1Grade == "D" ? "" : totalResultpercentage.T1Grade;
-        //                    totalResultpercentage.T2Grade = totalResultpercentage.T2Grade == "D" ? "" : totalResultpercentage.T2Grade;
-        //                    totalResultpercentage.UT1TotalGrade = totalResultpercentage.UT1TotalGrade == "D" ? "" : totalResultpercentage.UT1TotalGrade;
-        //                    totalResultpercentage.UT2TotalGrade = totalResultpercentage.UT2TotalGrade == "D" ? "" : totalResultpercentage.UT2TotalGrade;
-
-        //                    ////m
-        //                    //totalResultpercentage.fin = totalResultpercentage.OverallGrade == "0" ? "D" : totalResultpercentage.OverallGrade;
-        //                    totalResultpercentage.OverallGrade = totalResultpercentage.OverallGrade == "" ? "D" : totalResultpercentage.OverallGrade;
-        //                    //m end
-
-        //                    totalResult.Pre1Grade = totalResult.Pre1Grade == "D" ? "" : totalResult.Pre1Grade;
-        //                    totalResult.Pre2Grade = totalResult.Pre2Grade == "D" ? "" : totalResult.Pre2Grade;
-        //                    totalResultpercentage.Pre1Grade = totalResultpercentage.Pre1Grade == "D" ? "" : totalResultpercentage.Pre1Grade;
-        //                    totalResultpercentage.Pre2Grade = totalResultpercentage.Pre2Grade == "D" ? "" : totalResultpercentage.Pre2Grade;
-        //                    totalResult.SelectionGrade = totalResult.SelectionGrade == "D" ? "" : totalResult.SelectionGrade;
-        //                    totalResultpercentage.SelectionGrade = totalResultpercentage.SelectionGrade == "D" ? "" : totalResultpercentage.SelectionGrade;
-        //                    totalResult.PromotionGrade = totalResult.PromotionGrade == "D" ? "" : totalResult.PromotionGrade;
-        //                    totalResultpercentage.PromotionGrade = totalResultpercentage.PromotionGrade == "D" ? "" : totalResultpercentage.PromotionGrade;
-        //                }
-        //            }
-        //            else
-        //            {
-
-        //                //if (!validGrade)
-        //                //{
-        //                //    totalResult.T1Grade = "";
-        //                //    totalResult.T2Grade = "";
-        //                //    totalResult.UT1TotalGrade = "";
-        //                //    totalResult.UT2TotalGrade = "";
-        //                //    totalResult.Pre1Grade = "";
-        //                //    totalResult.Pre2Grade = "";
-        //                //    totalResult.OverallGrade = "";
-        //                //    totalResultpercentage.T1Grade = "";
-        //                //    totalResultpercentage.T2Grade = "";
-        //                //    totalResultpercentage.UT1TotalGrade = "";
-        //                //    totalResultpercentage.UT2TotalGrade = "";
-        //                //    totalResultpercentage.Pre1Grade = "";
-        //                //    totalResultpercentage.Pre2Grade = "";
-        //                //    totalResultpercentage.OverallGrade = "";
-
-        //                //}
-        //                //else
-        //                //{
-        //                //    totalResult.T1Grade = totalResult.T1Grade == "D" ? "" : totalResult.T1Grade;
-        //                //    totalResult.T2Grade = totalResult.T2Grade == "D" ? "" : totalResult.T2Grade;
-        //                //    totalResult.UT1TotalGrade = totalResult.UT1TotalGrade == "D" ? "" : totalResult.UT1TotalGrade;
-        //                //    totalResult.UT2TotalGrade = totalResult.UT2TotalGrade == "D" ? "" : totalResult.UT2TotalGrade;
-        //                //    totalResultpercentage.T1Grade = totalResultpercentage.T1Grade == "D" ? "" : totalResultpercentage.T1Grade;
-        //                //    totalResultpercentage.T2Grade = totalResultpercentage.T2Grade == "D" ? "" : totalResultpercentage.T2Grade;
-        //                //    totalResultpercentage.UT1TotalGrade = totalResultpercentage.UT1TotalGrade == "D" ? "" : totalResultpercentage.UT1TotalGrade;
-        //                //    totalResultpercentage.UT2TotalGrade = totalResultpercentage.UT2TotalGrade == "D" ? "" : totalResultpercentage.UT2TotalGrade;
-
-        //                //    totalResult.Pre1Grade = totalResult.Pre1Grade == "D" ? "" : totalResult.Pre1Grade;
-        //                //    totalResult.Pre2Grade = totalResult.Pre2Grade == "D" ? "" : totalResult.Pre2Grade;
-        //                //    totalResultpercentage.Pre1Grade = totalResultpercentage.Pre1Grade == "D" ? "" : totalResultpercentage.Pre1Grade;
-        //                //    totalResultpercentage.Pre2Grade = totalResultpercentage.Pre2Grade == "D" ? "" : totalResultpercentage.Pre2Grade;
-        //                //}
-        //            }
-
-
-        //            //Step 1 Working
-        //            foreach (var subjectData in subjectDatas)
-        //            {
-        //                // Check if any of the properties MarksUT1, MarksUT2, TotalMarks, TheoryMarks, PracticalMarks, 
-        //                // TotalObtainedMarks, TheoryMarksUT2, PracticalMarksUT2, or TotalMarksBothUTs is equal to 0
-        //                if (subjectData.MarksUT1 == 0 && subjectData.MarksUT2 == 0 && subjectData.TotalMarks == 0 &&
-        //                    subjectData.TheoryMarks == 0 && subjectData.PracticalMarks == 0 && subjectData.TotalObtainedMarks == 0 &&
-        //                    subjectData.TheoryMarksUT2 == 0 && subjectData.PracticalMarksUT2 == 0 && subjectData.TotalMarksBothUTs == 0 &&
-        //                    subjectData.TheoryMarksPre1 == 0 && subjectData.PracticalMarksPre1 == 0 && subjectData.TheoryMarksPre2 == 0 &&
-        //                    subjectData.PracticalMarksPre2 == 0 && subjectData.TotalObtainedMarksPre1 == 0 && subjectData.TotalObtainedMarksPre2 == 0 &&
-        //                    subjectData.TheoryMarksSelection == 0 && subjectData.PracticalMarksSelection == 0 && subjectData.TheoryMarksPromotion == 0 && subjectData.PracticalMarksPromotion == 0)
-        //                {
-        //                    // Set the GradeUT1, GradeUT2, and FinalGrade properties to "AB" (Absent)
-        //                    subjectData.GradeUT1 = "D";
-        //                    subjectData.GradeUT2 = "D";
-        //                    subjectData.FinalGrade = "D";
-        //                    subjectData.GradePre1 = "D";
-        //                    subjectData.GradePre2 = "D";
-        //                    //m
-        //                    // subjectData.FinalGrade = "D";
-
-        //                }
-        //            }
-
-
-        //            // Check if any of the properties UT1Total, UT2Total, UTAllTotal, TheoryTotalT1, PracticalTotalT1,
-        //            // T1AllTotal, TheoryTotalT2, PracticalTotalT2, T2AllTotal, or OverallAllTotal is equal to 0
-        //            if (totalResult.UT1Total == 0 && totalResult.UT2Total == 0 && totalResult.UTAllTotal == 0 &&
-        //                totalResult.TheoryTotalT1 == 0 && totalResult.PracticalTotalT1 == 0 && totalResult.T1AllTotal == 0 &&
-        //                totalResult.TheoryTotalT2 == 0 && totalResult.PracticalTotalT2 == 0 && totalResult.T2AllTotal == 0 &&
-        //                totalResult.OverallAllTotal == 0)
-        //            {
-        //                // Set the T1Grade, T2Grade, and OverallGrade properties to "AB" (Absent)
-        //                totalResult.T1Grade = "D";
-        //                totalResult.T2Grade = "D";
-        //                totalResult.OverallGrade = "D";
-
-        //            }
-
-        //            if (termId == 7)
-        //            {
-        //                if (totalResult.Pre1TheoryMaxTotal == 0 && totalResult.Pre1AllTotal == 0)
-        //                {
-        //                    totalResult.Pre1Grade = "D";
-        //                }
-        //            }
-        //            if (termId == 7)
-        //            {
-        //                if (totalResult.Pre2TheoryMaxTotal == 0 && totalResult.Pre2AllTotal == 0)
-        //                {
-        //                    totalResult.Pre2Grade = "D";
-        //                }
-        //            }
-        //            List<CoscholasticAreaData> coscholasticAreaDatas = new List<CoscholasticAreaData>();
-
-        //            var classCoscholastic = _context.tbl_CoScholasticClass.Where(x => x.ClassID == stdInfo.ClassID).Select(x => x.CoscholasticID).ToList();
-        //            var CoscholasticMatchingRecords = _context.tbl_CoScholastic
-        //            .Where(record => classCoscholastic.Contains(record.Id))
-        //            .ToList();
-
-
-        //            var resultTermUT1 = (from cr in _context.tbl_CoScholastic_Result
-        //                                 join cog in _context.tbl_CoScholasticObtainedGrade
-        //                                 on cr.Id equals cog.ObtainedCoScholasticID
-        //                                 join c in _context.tbl_CoScholastic
-        //                                 on cog.CoscholasticID equals c.Id
-        //                                 where cr.StudentID == studentId && cr.TermID == 1 && cog.BatchId == Batch_Id
-        //                                 select new
-        //                                 {
-        //                                     CoscholasticID = c.Id,
-        //                                     Title = c.Title,
-        //                                     ObtainedGrade = cog.ObtainedGrade
-        //                                 }).ToList();
-        //            var resultTermUT_1 = (from c in CoscholasticMatchingRecords
-        //                                  join cr in _context.tbl_CoScholastic_Result
-        //                                  on c.Id equals cr.CoScholasticID into crGroup
-        //                                  from cr in crGroup.DefaultIfEmpty()
-        //                                  join cog in _context.tbl_CoScholasticObtainedGrade
-        //                                  on cr?.Id equals cog.ObtainedCoScholasticID into cogGroup
-        //                                  from cog in cogGroup.DefaultIfEmpty()
-        //                                  where cr == null || cog == null || (cr.StudentID == studentId && cr.TermID == 1 && cog.BatchId == Batch_Id)
-        //                                  select new
-        //                                  {
-        //                                      CoscholasticID = c.Id,
-        //                                      Title = c.Title,
-        //                                      ObtainedGrade = cog?.ObtainedGrade // Use ?. to access ObtainedGrade safely
-        //                                  }).ToList();
-
-
-        //            var resultTermUT2 = (from cr in _context.tbl_CoScholastic_Result
-        //                                 join cog in _context.tbl_CoScholasticObtainedGrade
-        //                                 on cr.Id equals cog.ObtainedCoScholasticID
-        //                                 join c in _context.tbl_CoScholastic
-        //                                 on cog.CoscholasticID equals c.Id
-        //                                 where cr.StudentID == studentId && cr.TermID == 2 && cog.BatchId == Batch_Id
-        //                                 select new
-        //                                 {
-        //                                     CoscholasticID = c.Id,
-        //                                     Title = c.Title,
-        //                                     ObtainedGrade = cog.ObtainedGrade
-        //                                 }).ToList();
-        //            var resultTermUT_2 = (from c in CoscholasticMatchingRecords
-        //                                  join cr in _context.tbl_CoScholastic_Result
-        //                                  on c.Id equals cr.CoScholasticID into crGroup
-        //                                  from cr in crGroup.DefaultIfEmpty()
-        //                                  join cog in _context.tbl_CoScholasticObtainedGrade
-        //                                  on cr?.Id equals cog.ObtainedCoScholasticID into cogGroup
-        //                                  from cog in cogGroup.DefaultIfEmpty()
-        //                                  where cr == null || cog == null || (cr.StudentID == studentId && cr.TermID == 2 && cog.BatchId == Batch_Id)
-        //                                  select new
-        //                                  {
-        //                                      CoscholasticID = c.Id,
-        //                                      Title = c.Title,
-        //                                      ObtainedGrade = cog?.ObtainedGrade // Use ?. to access ObtainedGrade safely
-        //                                  }).ToList();
-
-
-        //            var resultTerm0 = (from cr in _context.tbl_CoScholastic_Result
-        //                               join cog in _context.tbl_CoScholasticObtainedGrade
-        //                               on cr.Id equals cog.ObtainedCoScholasticID
-        //                               join c in _context.tbl_CoScholastic
-        //                               on cog.CoscholasticID equals c.Id
-        //                               where cr.StudentID == studentId && cr.TermID == 3 && cog.BatchId == Batch_Id
-        //                               select new
-        //                               {
-        //                                   CoscholasticID = c.Id,
-        //                                   Title = c.Title,
-        //                                   ObtainedGrade = cog.ObtainedGrade
-        //                               }).ToList();
-        //            var resultTerm1 = (from c in CoscholasticMatchingRecords
-        //                               join cr in _context.tbl_CoScholastic_Result
-        //                               on c.Id equals cr.CoScholasticID into crGroup
-        //                               from cr in crGroup.DefaultIfEmpty()
-        //                               join cog in _context.tbl_CoScholasticObtainedGrade
-        //                               on cr?.Id equals cog.ObtainedCoScholasticID into cogGroup
-        //                               from cog in cogGroup.DefaultIfEmpty()
-        //                               where cr == null || cog == null || (cr.StudentID == studentId && cr.TermID == 3 && cog.BatchId == Batch_Id)
-        //                               select new
-        //                               {
-        //                                   CoscholasticID = c.Id,
-        //                                   Title = c.Title,
-        //                                   ObtainedGrade = cog?.ObtainedGrade // Use ?. to access ObtainedGrade safely
-        //                               }).ToList();
-
-        //            var resultTerm3 = (from cr in _context.tbl_CoScholastic_Result
-        //                               join cog in _context.tbl_CoScholasticObtainedGrade
-        //                               on cr.Id equals cog.ObtainedCoScholasticID
-        //                               join c in _context.tbl_CoScholastic
-        //                               on cog.CoscholasticID equals c.Id
-        //                               where cr.StudentID == studentId && cr.TermID == 4 && cog.BatchId == Batch_Id
-        //                               select new
-        //                               {
-        //                                   CoscholasticID = c.Id,
-        //                                   Title = c.Title,
-        //                                   ObtainedGrade = cog.ObtainedGrade
-        //                               }).ToList();
-        //            var resultTerm2 = (from c in CoscholasticMatchingRecords
-        //                               join cr in _context.tbl_CoScholastic_Result
-        //                               on c.Id equals cr.CoScholasticID into crGroup
-        //                               from cr in crGroup.DefaultIfEmpty()
-        //                               join cog in _context.tbl_CoScholasticObtainedGrade
-        //                               on cr?.Id equals cog.ObtainedCoScholasticID into cogGroup
-        //                               from cog in cogGroup.DefaultIfEmpty()
-        //                               where cr == null || cog == null || (cr.StudentID == studentId && cr.TermID == 4 && cog.BatchId == Batch_Id)
-        //                               select new
-        //                               {
-        //                                   CoscholasticID = c.Id,
-        //                                   Title = c.Title,
-        //                                   ObtainedGrade = cog?.ObtainedGrade // Use ?. to access ObtainedGrade safely
-        //                               }).ToList();
-        //            var resultTerm9 = (from cr in _context.tbl_CoScholastic_Result
-        //                               join cog in _context.tbl_CoScholasticObtainedGrade
-        //                               on cr.Id equals cog.ObtainedCoScholasticID
-        //                               join c in _context.tbl_CoScholastic
-        //                               on cog.CoscholasticID equals c.Id
-        //                               where cr.StudentID == studentId && cr.TermID == 3 && cog.BatchId == Batch_Id
-        //                               select new
-        //                               {
-        //                                   CoscholasticID = c.Id,
-        //                                   Title = c.Title,
-        //                                   ObtainedGrade = cog.ObtainedGrade
-        //                               }).ToList();
-
-        //            if (_Name == "2")
-        //            {
-        //                resultTermUT2 = (from cr in _context.tbl_CoScholastic_Result
-        //                                 join cog in _context.tbl_CoScholasticObtainedGrade
-        //                                 on cr.Id equals cog.ObtainedCoScholasticID
-        //                                 join c in _context.tbl_CoScholastic
-        //                                 on cog.CoscholasticID equals c.Id
-        //                                 where cr.StudentID == studentId && cr.TermID == 3 && cog.BatchId == Batch_Id
-        //                                 select new
-        //                                 {
-        //                                     CoscholasticID = c.Id,
-        //                                     Title = c.Title,
-        //                                     ObtainedGrade = cog.ObtainedGrade
-        //                                 }).ToList();
-        //                resultTermUT_2 = (from c in CoscholasticMatchingRecords
-        //                                  join cr in _context.tbl_CoScholastic_Result
-        //                                  on c.Id equals cr.CoScholasticID into crGroup
-        //                                  from cr in crGroup.DefaultIfEmpty()
-        //                                  join cog in _context.tbl_CoScholasticObtainedGrade
-        //                                  on cr?.Id equals cog.ObtainedCoScholasticID into cogGroup
-        //                                  from cog in cogGroup.DefaultIfEmpty()
-        //                                  where cr == null || cog == null || (cr.StudentID == studentId && cr.TermID == 3 && cog.BatchId == Batch_Id)
-        //                                  select new
-        //                                  {
-        //                                      CoscholasticID = c.Id,
-        //                                      Title = c.Title,
-        //                                      ObtainedGrade = cog?.ObtainedGrade // Use ?. to access ObtainedGrade safely
-        //                                  }).ToList();
-
-
-        //                resultTerm0 = (from cr in _context.tbl_CoScholastic_Result
-        //                               join cog in _context.tbl_CoScholasticObtainedGrade
-        //                               on cr.Id equals cog.ObtainedCoScholasticID
-        //                               join c in _context.tbl_CoScholastic
-        //                               on cog.CoscholasticID equals c.Id
-        //                               where cr.StudentID == studentId && cr.TermID == 2 && cog.BatchId == Batch_Id
-        //                               select new
-        //                               {
-        //                                   CoscholasticID = c.Id,
-        //                                   Title = c.Title,
-        //                                   ObtainedGrade = cog.ObtainedGrade
-        //                               }).ToList();
-        //                resultTerm1 = (from c in CoscholasticMatchingRecords
-        //                               join cr in _context.tbl_CoScholastic_Result
-        //                               on c.Id equals cr.CoScholasticID into crGroup
-        //                               from cr in crGroup.DefaultIfEmpty()
-        //                               join cog in _context.tbl_CoScholasticObtainedGrade
-        //                               on cr?.Id equals cog.ObtainedCoScholasticID into cogGroup
-        //                               from cog in cogGroup.DefaultIfEmpty()
-        //                               where cr == null || cog == null || (cr.StudentID == studentId && cr.TermID == 2 && cog.BatchId == Batch_Id)
-        //                               select new
-        //                               {
-        //                                   CoscholasticID = c.Id,
-        //                                   Title = c.Title,
-        //                                   ObtainedGrade = cog?.ObtainedGrade // Use ?. to access ObtainedGrade safely
-        //                               }).ToList();
-        //                resultTerm9 = (from cr in _context.tbl_CoScholastic_Result
-        //                               join cog in _context.tbl_CoScholasticObtainedGrade
-        //                               on cr.Id equals cog.ObtainedCoScholasticID
-        //                               join c in _context.tbl_CoScholastic
-        //                               on cog.CoscholasticID equals c.Id
-        //                               where cr.StudentID == studentId && cr.TermID == 2 && cog.BatchId == Batch_Id
-        //                               select new
-        //                               {
-        //                                   CoscholasticID = c.Id,
-        //                                   Title = c.Title,
-        //                                   ObtainedGrade = cog.ObtainedGrade
-        //                               }).ToList();
-        //            }
-
-        //            List<CoscholasticResultModel> coscholasticResultModelsList1 = new List<CoscholasticResultModel>();
-        //            foreach (var item in CoscholasticMatchingRecords)
-        //            {
-        //                if (resultTerm9.Any(x => x.CoscholasticID == item.Id))
-        //                {
-        //                    coscholasticResultModelsList1.Add(new CoscholasticResultModel
-        //                    {
-        //                        CoscholasticID = item.Id,
-        //                        Title = item.Title,
-        //                        ObtainedGrade = resultTerm9.Where(x => x.CoscholasticID == item.Id).Select(x => x.ObtainedGrade).FirstOrDefault()
-        //                    });
-        //                }
-        //                else
-        //                {
-        //                    coscholasticResultModelsList1.Add(new CoscholasticResultModel
-        //                    {
-        //                        CoscholasticID = item.Id,
-        //                        Title = item.Title,
-        //                        ObtainedGrade = null
-        //                    });
-        //                }
-        //            }
-
-
-        //            List<CoscholasticResultModel> coscholasticResultModelsListUT1 = new List<CoscholasticResultModel>();
-        //            foreach (var item in CoscholasticMatchingRecords)
-        //            {
-        //                if (resultTermUT1.Any(x => x.CoscholasticID == item.Id))
-        //                {
-        //                    coscholasticResultModelsListUT1.Add(new CoscholasticResultModel
-        //                    {
-        //                        CoscholasticID = item.Id,
-        //                        Title = item.Title,
-        //                        ObtainedGrade = resultTermUT1.Where(x => x.CoscholasticID == item.Id).Select(x => x.ObtainedGrade).FirstOrDefault()
-        //                    });
-        //                }
-        //                else
-        //                {
-        //                    coscholasticResultModelsListUT1.Add(new CoscholasticResultModel
-        //                    {
-        //                        CoscholasticID = item.Id,
-        //                        Title = item.Title,
-        //                        ObtainedGrade = null
-        //                    });
-        //                }
-        //            }
-
-        //            List<CoscholasticResultModel> coscholasticResultModelsListUT2 = new List<CoscholasticResultModel>();
-        //            //foreach (var item in CoscholasticMatchingRecords)
-        //            //{
-        //            //    if (resultTermUT_1.Any(x => x.CoscholasticID == item.Id))
-        //            //    {
-        //            //        coscholasticResultModelsListUT2.Add(new CoscholasticResultModel
-        //            //        {
-        //            //            CoscholasticID = item.Id,
-        //            //            Title = item.Title,
-        //            //            ObtainedGrade = resultTermUT_1.Where(x => x.CoscholasticID == item.Id).Select(x => x.ObtainedGrade).FirstOrDefault()
-        //            //        });
-        //            //    }
-        //            //    else
-        //            //    {
-        //            //        coscholasticResultModelsListUT2.Add(new CoscholasticResultModel
-        //            //        {
-        //            //            CoscholasticID = item.Id,
-        //            //            Title = item.Title,
-        //            //            ObtainedGrade = null
-        //            //        });
-        //            //    }
-        //            //}
-        //            foreach (var item in CoscholasticMatchingRecords)
-        //            {
-        //                if (resultTermUT2.Any(x => x.CoscholasticID == item.Id))
-        //                {
-        //                    coscholasticResultModelsListUT2.Add(new CoscholasticResultModel
-        //                    {
-        //                        CoscholasticID = item.Id,
-        //                        Title = item.Title,
-        //                        ObtainedGrade = resultTermUT2.Where(x => x.CoscholasticID == item.Id).Select(x => x.ObtainedGrade).FirstOrDefault()
-        //                    });
-        //                }
-        //                else
-        //                {
-        //                    coscholasticResultModelsListUT2.Add(new CoscholasticResultModel
-        //                    {
-        //                        CoscholasticID = item.Id,
-        //                        Title = item.Title,
-        //                        ObtainedGrade = null
-        //                    });
-        //                }
-        //            }
-
-
-        //            var resultTerm10 = (from cr in _context.tbl_CoScholastic_Result
-        //                                join cog in _context.tbl_CoScholasticObtainedGrade
-        //                                on cr.Id equals cog.ObtainedCoScholasticID
-        //                                join c in _context.tbl_CoScholastic
-        //                                on cog.CoscholasticID equals c.Id
-        //                                where cr.StudentID == studentId && cr.TermID == 4
-        //                                select new
-        //                                {
-        //                                    CoscholasticID = c.Id,
-        //                                    Title = c.Title,
-        //                                    ObtainedGrade = cog.ObtainedGrade
-        //                                }).ToList();
-        //            List<CoscholasticResultModel> coscholasticResultModelsList2 = new List<CoscholasticResultModel>();
-        //            foreach (var item in CoscholasticMatchingRecords)
-        //            {
-        //                if (resultTerm10.Any(x => x.CoscholasticID == item.Id))
-        //                {
-        //                    coscholasticResultModelsList2.Add(new CoscholasticResultModel
-        //                    {
-        //                        CoscholasticID = item.Id,
-        //                        Title = item.Title,
-        //                        ObtainedGrade = resultTerm10.Where(x => x.CoscholasticID == item.Id).Select(x => x.ObtainedGrade).FirstOrDefault()
-        //                    });
-        //                }
-        //                else
-        //                {
-        //                    coscholasticResultModelsList2.Add(new CoscholasticResultModel
-        //                    {
-        //                        CoscholasticID = item.Id,
-        //                        Title = item.Title,
-        //                        ObtainedGrade = null
-        //                    });
-        //                }
-        //            }
-
-        //            List<CoscholasticResultModel> coscholasticResultModelsList3 = new List<CoscholasticResultModel>();
-        //            List<CoscholasticResultModel> coscholasticResultModelsList4 = new List<CoscholasticResultModel>();
-        //            List<CoscholasticResultModel> coscholasticResultModelsList5 = new List<CoscholasticResultModel>();
-        //            List<CoscholasticResultModel> coscholasticResultModelsList6 = new List<CoscholasticResultModel>();
-        //            if (termId != 10)
-        //            {
-        //                var resultPre1 = (from cr in _context.tbl_CoScholastic_Result
-        //                                  join cog in _context.tbl_CoScholasticObtainedGrade
-        //                                  on cr.Id equals cog.ObtainedCoScholasticID
-        //                                  join c in _context.tbl_CoScholastic
-        //                                  on cog.CoscholasticID equals c.Id
-        //                                  where cr.StudentID == studentId && cr.TermID == 7
-        //                                  select new
-        //                                  {
-        //                                      CoscholasticID = c.Id,
-        //                                      Title = c.Title,
-        //                                      ObtainedGrade = cog.ObtainedGrade
-        //                                  }).ToList();
-
-
-        //                foreach (var item in CoscholasticMatchingRecords)
-        //                {
-        //                    if (resultPre1.Any(x => x.CoscholasticID == item.Id))
-        //                    {
-        //                        coscholasticResultModelsList3.Add(new CoscholasticResultModel
-        //                        {
-        //                            CoscholasticID = item.Id,
-        //                            Title = item.Title,
-        //                            ObtainedGrade = resultPre1.Where(x => x.CoscholasticID == item.Id).Select(x => x.ObtainedGrade).FirstOrDefault()
-        //                        });
-        //                    }
-        //                    else
-        //                    {
-        //                        coscholasticResultModelsList3.Add(new CoscholasticResultModel
-        //                        {
-        //                            CoscholasticID = item.Id,
-        //                            Title = item.Title,
-        //                            ObtainedGrade = null
-        //                        });
-        //                    }
-        //                }
-        //                var resultPre2 = (from cr in _context.tbl_CoScholastic_Result
-        //                                  join cog in _context.tbl_CoScholasticObtainedGrade
-        //                                  on cr.Id equals cog.ObtainedCoScholasticID
-        //                                  join c in _context.tbl_CoScholastic
-        //                                  on cog.CoscholasticID equals c.Id
-        //                                  where cr.StudentID == studentId && cr.TermID == 8
-        //                                  select new
-        //                                  {
-        //                                      CoscholasticID = c.Id,
-        //                                      Title = c.Title,
-        //                                      ObtainedGrade = cog.ObtainedGrade
-        //                                  }).ToList();
-
-
-        //                foreach (var item in CoscholasticMatchingRecords)
-        //                {
-        //                    if (resultPre2.Any(x => x.CoscholasticID == item.Id))
-        //                    {
-        //                        coscholasticResultModelsList4.Add(new CoscholasticResultModel
-        //                        {
-        //                            CoscholasticID = item.Id,
-        //                            Title = item.Title,
-        //                            ObtainedGrade = resultPre2.Where(x => x.CoscholasticID == item.Id).Select(x => x.ObtainedGrade).FirstOrDefault()
-        //                        });
-        //                    }
-        //                    else
-        //                    {
-        //                        coscholasticResultModelsList4.Add(new CoscholasticResultModel
-        //                        {
-        //                            CoscholasticID = item.Id,
-        //                            Title = item.Title,
-        //                            ObtainedGrade = null
-        //                        });
-        //                    }
-        //                }
-        //                var resultpromotion = (from cr in _context.tbl_CoScholastic_Result
-        //                                       join cog in _context.tbl_CoScholasticObtainedGrade
-        //                                       on cr.Id equals cog.ObtainedCoScholasticID
-        //                                       join c in _context.tbl_CoScholastic
-        //                                       on cog.CoscholasticID equals c.Id
-        //                                       where cr.StudentID == studentId && cr.TermID == 6
-        //                                       select new
-        //                                       {
-        //                                           CoscholasticID = c.Id,
-        //                                           Title = c.Title,
-        //                                           ObtainedGrade = cog.ObtainedGrade
-        //                                       }).ToList();
-
-
-        //                foreach (var item in CoscholasticMatchingRecords)
-        //                {
-        //                    if (resultpromotion.Any(x => x.CoscholasticID == item.Id))
-        //                    {
-        //                        coscholasticResultModelsList6.Add(new CoscholasticResultModel
-        //                        {
-        //                            CoscholasticID = item.Id,
-        //                            Title = item.Title,
-        //                            ObtainedGrade = resultpromotion.Where(x => x.CoscholasticID == item.Id).Select(x => x.ObtainedGrade).FirstOrDefault()
-        //                        });
-        //                    }
-        //                    else
-        //                    {
-        //                        coscholasticResultModelsList5.Add(new CoscholasticResultModel
-        //                        {
-        //                            CoscholasticID = item.Id,
-        //                            Title = item.Title,
-        //                            ObtainedGrade = null
-        //                        });
-        //                    }
-        //                }
-
-        //                var resultSelection = (from cr in _context.tbl_CoScholastic_Result
-        //                                       join cog in _context.tbl_CoScholasticObtainedGrade
-        //                                       on cr.Id equals cog.ObtainedCoScholasticID
-        //                                       join c in _context.tbl_CoScholastic
-        //                                       on cog.CoscholasticID equals c.Id
-        //                                       where cr.StudentID == studentId && cr.TermID == 5
-        //                                       select new
-        //                                       {
-        //                                           CoscholasticID = c.Id,
-        //                                           Title = c.Title,
-        //                                           ObtainedGrade = cog.ObtainedGrade
-        //                                       }).ToList();
-        //                foreach (var item in CoscholasticMatchingRecords)
-        //                {
-        //                    if (resultSelection.Any(x => x.CoscholasticID == item.Id))
-        //                    {
-        //                        coscholasticResultModelsList5.Add(new CoscholasticResultModel
-        //                        {
-        //                            CoscholasticID = item.Id,
-        //                            Title = item.Title,
-        //                            ObtainedGrade = resultSelection.Where(x => x.CoscholasticID == item.Id).Select(x => x.ObtainedGrade).FirstOrDefault()
-        //                        });
-        //                    }
-        //                    else
-        //                    {
-        //                        coscholasticResultModelsList5.Add(new CoscholasticResultModel
-        //                        {
-        //                            CoscholasticID = item.Id,
-        //                            Title = item.Title,
-        //                            ObtainedGrade = null
-        //                        });
-        //                    }
-        //                }
-        //            }
-
-        //            //if (termId != 10)
-        //            //{
-
-        //            //}
-        //            var combinedResult1 = (from coscholasticId in classCoscholastic
-        //                                   join term1 in coscholasticResultModelsList1
-        //                                   on coscholasticId equals term1.CoscholasticID into term1Group
-        //                                   join term2 in coscholasticResultModelsList2
-        //                                   on coscholasticId equals term2.CoscholasticID into term2Group
-        //                                   join Pre1 in coscholasticResultModelsList3
-        //                                  on coscholasticId equals Pre1.CoscholasticID into Pre1Group
-        //                                   join Pre2 in coscholasticResultModelsList4
-        //                                  on coscholasticId equals Pre2.CoscholasticID into Pre2Group
-        //                                   join UT1 in coscholasticResultModelsListUT1
-        //                                   on coscholasticId equals UT1.CoscholasticID into UT1Group
-        //                                   join UT2 in coscholasticResultModelsListUT2
-        //                                  on coscholasticId equals UT2.CoscholasticID into UT2Group
-        //                                   join Selection in coscholasticResultModelsList5
-        //                                   on coscholasticId equals Selection.CoscholasticID into selectionGroup
-        //                                   join Promotion in coscholasticResultModelsList6
-        //                                   on coscholasticId equals Promotion.CoscholasticID into PrmotionGroup
-        //                                   from UT1 in UT1Group.DefaultIfEmpty()
-        //                                   from UT2 in UT2Group.DefaultIfEmpty()
-        //                                   from term1 in term1Group.DefaultIfEmpty()
-        //                                   from term2 in term2Group.DefaultIfEmpty()
-        //                                   from Pre1 in Pre1Group.DefaultIfEmpty()
-        //                                   from Selection in selectionGroup.DefaultIfEmpty()
-        //                                   from Promotion in PrmotionGroup.DefaultIfEmpty()
-        //                                   from Pre2 in Pre2Group.DefaultIfEmpty()
-        //                                   select new
-        //                                   {
-        //                                       Title = UT1?.Title ?? UT2?.Title ?? term1?.Title ?? term2?.Title ?? Pre1?.Title ?? Pre2?.Title ?? Selection.Title ?? Promotion.Title,
-        //                                       GradeTerm1 = term1?.ObtainedGrade,
-        //                                       GradeTerm2 = term2?.ObtainedGrade,
-        //                                       GradePre1 = Pre1?.ObtainedGrade,
-        //                                       GradeSelection = Selection?.ObtainedGrade,
-        //                                       GradePromotion = Promotion?.ObtainedGrade,
-        //                                       GradePre2 = Pre2?.ObtainedGrade,
-        //                                       GradeUT1 = UT1?.ObtainedGrade,
-        //                                       GradeUT2 = UT2?.ObtainedGrade
-        //                                   }).ToList();
-
-        //            var combinedResult = (from coscholasticId in classCoscholastic
-        //                                  join ut1 in resultTermUT_1
-        //                                 on coscholasticId equals ut1.CoscholasticID into ut1Group
-        //                                  from ut1 in ut1Group.DefaultIfEmpty()
-        //                                  join ut2 in resultTermUT_2
-        //                                 on coscholasticId equals ut2.CoscholasticID into ut2Group
-        //                                  from ut2 in ut2Group.DefaultIfEmpty()
-        //                                  join term1 in resultTerm1
-        //                                  on coscholasticId equals term1.CoscholasticID into term1Group
-        //                                  from term1 in term1Group.DefaultIfEmpty()
-        //                                  join term2 in resultTerm2
-        //                                  on coscholasticId equals term2.CoscholasticID into term2Group
-        //                                  from term2 in term2Group.DefaultIfEmpty()
-        //                                  select new
-        //                                  {
-        //                                      Title = term1?.Title ?? term2?.Title,
-        //                                      GradeTerm1 = term1?.ObtainedGrade,
-        //                                      GradeTerm2 = term2?.ObtainedGrade
-        //                                  }).ToList();
-
-
-        //            // Group the combined result based on CoscholasticID count
-        //            // Group the combined result based on CoscholasticID count
-        //            var groupedResult = combinedResult1.GroupBy(item => item.Title)
-        //                                              .Select(group => new
-        //                                              {
-        //                                                  Title = group.Key,
-        //                                                  GradeTerm1 = group.FirstOrDefault(item => item.GradeTerm1 != null)?.GradeTerm1,
-        //                                                  GradeTerm2 = group.FirstOrDefault(item => item.GradeTerm2 != null)?.GradeTerm2,
-        //                                                  GradePre1 = group.FirstOrDefault(item => item.GradePre1 != null)?.GradePre1,
-        //                                                  GradePre2 = group.FirstOrDefault(item => item.GradePre2 != null)?.GradePre2,
-        //                                                  GradeUT1 = group.FirstOrDefault(item => item.GradeUT1 != null)?.GradeUT1,
-        //                                                  GradeUT2 = group.FirstOrDefault(item => item.GradeUT2 != null)?.GradeUT2,
-        //                                                  GradeSelection = group.FirstOrDefault(item => item.GradeSelection != null)?.GradeSelection,
-        //                                                  GradePromotion = group.FirstOrDefault(item => item.GradePromotion != null)?.GradePromotion
-        //                                              })
-        //                                              .ToList();
-
-
-        //            foreach (var item in groupedResult)
-        //            {
-        //                CoscholasticAreaData coscholasticAreaData = new CoscholasticAreaData()
-        //                {
-        //                    Name = item.Title,
-        //                    GradeTerm1 = item.GradeTerm1 ?? "-",
-        //                    GradeTerm2 = item.GradeTerm2 ?? "-",
-        //                    GradePre1 = item.GradePre1 ?? "-",
-        //                    GradeSelection = item.GradeSelection ?? "-",
-        //                    GradePromotion = item.GradePromotion ?? "-",
-        //                    GradePre2 = item.GradePre2 ?? "-",
-        //                    GradeUT1 = item.GradeUT1 ?? "-",
-        //                    GradeUT2 = item.GradeUT2 ?? "-"
-        //                };
-        //                coscholasticAreaDatas.Add(coscholasticAreaData);
-        //            }
-        //            var gradinglist = _context.gradingCriteria.Where(x => x.TermID == termId && x.BatchID == Batch_Id && x.ClassID == stdInfo.ClassID).ToList();
-        //            if (termId == 10)
-        //            {
-        //                gradinglist = _context.gradingCriteria.Where(x => x.TermID == 4 && x.BatchID == Batch_Id && x.ClassID == stdInfo.ClassID).ToList();
-        //            }
-
-        //            studentReportData.gradingCriteria = gradinglist;
-
-        //            studentReportData.coscholasticAreaDatas = coscholasticAreaDatas;
-        //            studentReportData.totalResult = totalResult;
-        //            studentReportData.totalResultPercentage = totalResultpercentage;
-        //            studentReportData.subjectDatas = subjectDatas;
-        //            studentReportData.optionalSubjectDatas = optionalsubjectDatas;
-        //            studentReportData.totalResult.T1Grade = studentReportData.totalResult.T1Grade;
-        //            studentReportData.totalResultPercentage.T1Grade = studentReportData.totalResultPercentage.T1Grade;
-        //            string termName = _context.tbl_Term.Where(x => x.TermID == termId).Select(t => t.TermName).FirstOrDefault();
-        //            int DgradeCountUT1 = subjectDatas.Count(x => x.MarksUT1Grade == "D");
-        //            int DgradeCountUT2 = subjectDatas.Count(x => x.MarksUT2Grade == "D");
-        //            int DgradeCountTerm1 = subjectDatas.Count(x => x.GradeUT1 == "D");
-        //            int DgradeCountTerm2 = subjectDatas.Count(x => x.GradeUT2 == "D");
-        //            int DgradeCountPre1 = subjectDatas.Count(x => x.GradePre1 == "D");
-        //            int DgradeCountSelection = subjectDatas.Count(x => x.GradeSelection == "D");
-        //            int DgradeCountPromotion = subjectDatas.Count(x => x.GradePromotion == "D");
-        //            int DgradeCountPre2 = subjectDatas.Count(x => x.GradePre2 == "D");
-        //            int DgradeCountFinal = subjectDatas.Count(x => x.FinalGrade == "D");
-        //            string result;
-        //            switch (termId)
-        //            {
-        //                case 1:
-        //                    result = DgradeCountUT1 > 0 ? "" : "Pass";
-        //                    break;
-        //                case 2:
-        //                    result = DgradeCountUT2 > 0 ? "" : "Pass";
-        //                    break;
-        //                case 3:
-        //                    result = DgradeCountTerm1 > 0 ? "" : "Pass";
-        //                    break;
-        //                case 4:
-        //                    result = DgradeCountTerm2 > 0 ? "" : "Pass";
-        //                    break;
-        //                case 6:
-        //                    result = DgradeCountPromotion > 0 ? "" : "Pass";
-        //                    break;
-        //                case 5:
-        //                    result = DgradeCountSelection > 0 ? "" : "Pass";
-        //                    break;
-        //                case 7:
-        //                    result = DgradeCountPre1 > 0 ? "" : "Pass";
-        //                    break;
-        //                case 8:
-        //                    result = DgradeCountPre2 > 0 ? "" : "Pass";
-        //                    break;
-        //                case 10:
-        //                    result = DgradeCountFinal > 0 ? "" : "Pass";
-        //                    break;
-        //                default:
-        //                    result = "Invalid grade";
-        //                    break;
-        //            }
-
-
-
-        //            studentReportData.Result = result;
-        //            return Json(studentReportData, JsonRequestBehavior.AllowGet);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            return Json(ex, JsonRequestBehavior.AllowGet);
-        //        }
+        //        var subjectToExclude = allSubjects.OrderBy(s => s.TotalObtainedMarks).FirstOrDefault();
+
+        //        totalMarks = allSubjects
+        //            .Where(s => s != subjectToExclude)
+        //            .Sum(s => s.TotalObtainedMarks);
+
+        //        maxTotalMarks = allSubjects
+        //            .Where(s => s != subjectToExclude)
+        //            .Sum(s => s.MaxMarksTerm1Theory + s.MaxMarksTerm1Practical); // Add more if needed
         //    }
-        #endregion
+        //    else
+        //    {
+        //        totalMarks = allSubjects.Sum(s => s.TotalObtainedMarks);
+        //        maxTotalMarks = allSubjects.Sum(s => s.MaxMarksTerm1Theory + s.MaxMarksTerm1Practical);
+        //    }
+
+        //    decimal percentage = (maxTotalMarks == 0 ? 0 : totalMarks / maxTotalMarks * 100);
+        //    string finalGrade = GetGrade(percentage, classId);
+
+        //    // Now set into your TotalResult object
+        //    result.OverallAllTotal = totalMarks;
+        //    result.OverallGrade = finalGrade;
+        //}
+        //private void CalculateTotalResultPercentageValues(List<SubjectData> subjectDatas,TotalResultpercentage totalResultpercentage, int classId,int termId,int batchId)
+        //{
+        //    // Class XI & XII IDs
+        //    var seniorClassIds = new List<int> { 414, 415, 416, 417, 614, 615 };
+
+        //    // Skip subject with lowest marks for XI & XII
+        //    var subjectsToInclude = seniorClassIds.Contains(classId)
+        //        ? subjectDatas.OrderBy(s => s.TotalObtainedMarks).Skip(1).ToList()
+        //        : subjectDatas;
+
+        //    // UNIT TEST TOTALS
+        //    decimal UT1Total = subjectsToInclude.Sum(s => s.MarksUT1);
+        //    decimal UT2Total = subjectsToInclude.Sum(s => s.MarksUT2);
+        //    decimal UTAllTotal = UT1Total + UT2Total;
+
+        //    decimal UT1MaxTotal = subjectsToInclude.Sum(s => s.MaxMarksUT1);
+        //    decimal UT2MaxTotal = subjectsToInclude.Sum(s => s.MaxMarksUT2);
+
+        //    // TERM 1 THEORY + PRACTICAL
+        //    decimal Term1TheoryTotal = subjectsToInclude.Sum(s => s.TheoryMarks);
+        //    decimal Term1PracticalTotal = subjectsToInclude.Sum(s => s.PracticalMarks);
+        //    decimal Term1TheoryMaxTotal = subjectsToInclude.Sum(s => s.MaxMarksTerm1Theory);
+        //    decimal Term1PracticalMaxTotal = subjectsToInclude.Sum(s => s.MaxMarksTerm1Practical);
+
+        //    // TERM 1 Overall (used in final %)
+        //    decimal Term1ObtainedTotal = subjectsToInclude.Sum(s => s.TotalObtainedMarks);
+        //    decimal Term1MaxTotal = Term1TheoryMaxTotal + Term1PracticalMaxTotal;
+
+        //    // TERM 2 Max totals (Obtained values are ignored for now, per your original logic)
+        //    decimal Term2TheoryMaxTotal = subjectsToInclude.Sum(s => s.MaxMarksTerm2Theory);
+        //    decimal Term2PracticalMaxTotal = subjectsToInclude.Sum(s => s.MaxMarksTerm2Practical);
+
+        //    // OVERALL MAX & OBTAINED
+        //    decimal OverallObtained = UT1Total + UT2Total + Term1ObtainedTotal;
+        //    decimal OverallMax = UT1MaxTotal + UT2MaxTotal + Term1MaxTotal + Term2TheoryMaxTotal + Term2PracticalMaxTotal;
+
+        //    // Additional exam max values from the model
+        //    decimal Pre1TheoryMaxTotal = totalResultpercentage.TheoryTotalPre1;
+        //    decimal Pre1PracticalMaxTotal = totalResultpercentage.PracticalTotalPre1;
+        //    decimal Pre2TheoryMaxTotal = totalResultpercentage.TheoryTotalPre2;
+        //    decimal Pre2PracticalMaxTotal = totalResultpercentage.PracticalTotalPre2;
+        //    decimal SelectionTheoryMaxTotal = totalResultpercentage.TheoryTotalSelection;
+        //    decimal SelectionPracticalMaxTotal = totalResultpercentage.PracticalTotalSelection;
+        //    decimal PromotionTheoryMaxTotal = totalResultpercentage.TheoryTotalPromotion;
+        //    decimal PromotionPracticalMaxTotal = totalResultpercentage.PracticalTotalPromotion;
+
+        //    // Helper: % Calculation
+        //    decimal PercentageCal(decimal obtained, decimal max) => max == 0 ? 0 : Math.Round((obtained / max) * 100, 1);
+
+        //    // ASSIGN PERCENTAGES & GRADES
+        //    totalResultpercentage.UT1Total = PercentageCal2(UT1Total, UT1MaxTotal);
+        //    totalResultpercentage.UT1TotalGrade = GetGradebyTermBatch(totalResultpercentage.UT1Total, classId,termId,batchId);
+
+        //    totalResultpercentage.UT2Total = PercentageCal2(UT2Total, UT2MaxTotal);
+        //    totalResultpercentage.UT2TotalGrade = GetGradebyTermBatch(totalResultpercentage.UT2Total, classId,termId,batchId);
+
+        //    totalResultpercentage.UTAllTotal = PercentageCal2(UTAllTotal, UT1MaxTotal + UT2MaxTotal);
+
+        //    totalResultpercentage.TheoryTotalT1 = PercentageCal2(Term1TheoryTotal, Term1TheoryMaxTotal);
+        //    totalResultpercentage.PracticalTotalT1 = PercentageCal2(Term1PracticalTotal, Term1PracticalMaxTotal == 0 ? 1 : Term1PracticalMaxTotal);
+
+        //    totalResultpercentage.T1AllTotal = PercentageCal2(Term1ObtainedTotal, Term1MaxTotal);
+        //    totalResultpercentage.T1Grade = GetGradebyTermBatch(totalResultpercentage.T1AllTotal, classId, termId, batchId);
+
+        //    // Final Overall %
+        //    totalResultpercentage.OverallAllTotal = PercentageCal2(OverallObtained, OverallMax);
+
+        //    // Overall grade including pre/selection/promotion max totals
+        //    decimal extendedOverallMax = OverallMax
+        //        + Pre1TheoryMaxTotal + Pre1PracticalMaxTotal
+        //        + Pre2TheoryMaxTotal + Pre2PracticalMaxTotal
+        //        + SelectionTheoryMaxTotal + SelectionPracticalMaxTotal
+        //        + PromotionTheoryMaxTotal + PromotionPracticalMaxTotal;
+
+        //    totalResultpercentage.OverallGrade = GetGradebyTermBatch(
+        //        PercentageCal(OverallObtained, extendedOverallMax),
+        //        classId,termId,batchId
+        //    );
+        //}
         private void CalculateTotalResultPercentageValues(List<SubjectData> subjectDatas, TotalResultpercentage totalResultpercentage, int classId, int termId, int batchId)
         {
             var seniorClassIds = new List<int> { 414, 415, 416, 417, 614, 615 };
@@ -6872,7 +4459,128 @@ namespace SchoolManagement.Website.Controllers
             );
         }
 
+        //private void CalculateOverallTotals(List<SubjectData> subjectDatas, TotalResult totalResult, int classId, int termId, int batchId)
+        //{
+        //    // Class IDs for XI & XII
+        //    var seniorClassIds = new List<int> { 414, 415, 416, 417, 614, 615 };
 
+        //    // Subject IDs that should always be included
+        //    var nonExcludableSubjectIds = new List<int> { 43, 44, 45, 54, 94 };
+
+        //    // Separate non-excludable and excludable subjects
+        //    var nonExcludableSubjects = subjectDatas
+        //        .Where(s => nonExcludableSubjectIds.Contains(s.SubjectId))
+        //        .ToList();
+
+        //    var excludableSubjects = subjectDatas
+        //        .Where(s => !nonExcludableSubjectIds.Contains(s.SubjectId))
+        //        .ToList();
+
+        //    // If class is XI or XII, exclude the subject with the lowest total marks (but only from excludable)
+        //    if (seniorClassIds.Contains(classId) && excludableSubjects.Any())
+        //    {
+        //        var subjectToExclude = excludableSubjects
+        //            .OrderBy(s => s.TotalObtainedMarks)
+        //            .First();
+
+        //        excludableSubjects.Remove(subjectToExclude);
+        //    }
+
+        //    // Combine subjects to include
+        //    var subjectsToInclude = nonExcludableSubjects.Concat(excludableSubjects).ToList();
+
+        //    // Calculate totals
+        //    totalResult.TheoryTotalT1 = subjectsToInclude.Sum(s => s.TheoryMarks);
+        //    totalResult.PracticalTotalT1 = Math.Max(0, subjectsToInclude.Sum(s => s.PracticalMarks));
+        //    totalResult.Term1TheoryMaxTotal = subjectsToInclude.Sum(s => s.MaxMarksTerm1Theory + s.MaxMarksTerm1Practical);
+
+        //    // Calculate percentage safely
+        //    decimal percentage = (totalResult.Term1TheoryMaxTotal == 0)
+        //        ? 0
+        //        : (totalResult.TheoryTotalT1 / totalResult.Term1TheoryMaxTotal) * 100;
+
+        //    totalResult.OverallAllTotal = totalResult.TheoryTotalT1;
+        //    totalResult.OverallGrade = GetGradebyTermBatch(percentage, classId, termId, batchId);
+        //}
+
+        //private void CalculateOverallTotals(List<SubjectData> subjectDatas, TotalResult totalResult, int classId, int termId, int batchId)
+        //{
+        //    var seniorClassIds = new List<int> { 414, 415, 416, 417, 614, 615 };
+        //    var nonExcludableSubjectIds = new List<int> { 43, 44, 45, 54, 94 };
+
+        //    var nonExcludableSubjects = subjectDatas
+        //        .Where(s => nonExcludableSubjectIds.Contains(s.SubjectId))
+        //        .ToList();
+
+        //    var excludableSubjects = subjectDatas
+        //        .Where(s => !nonExcludableSubjectIds.Contains(s.SubjectId))
+        //        .ToList();
+
+        //    if (seniorClassIds.Contains(classId) && excludableSubjects.Any())
+        //    {
+        //        var subjectToExclude = excludableSubjects
+        //            .OrderBy(s => Math.Max(0, s.TotalObtainedMarks)) // Ensure lowest non-negative is considered
+        //            .First();
+
+        //        excludableSubjects.Remove(subjectToExclude);
+        //    }
+
+        //    var subjectsToInclude = nonExcludableSubjects.Concat(excludableSubjects).ToList();
+
+        //    // Replace -1 or -2 with 0 during sum
+        //    totalResult.TheoryTotalT1 = subjectsToInclude.Sum(s =>
+        //        (s.TheoryMarks == -1 || s.TheoryMarks == -2) ? 0 : s.TheoryMarks);
+        //    totalResult.UT1Total = subjectsToInclude.Sum(s =>
+        //       (s.MarksUT1 == -1 || s.MarksUT1 == -2) ? 0 : s.MarksUT1);
+        //    totalResult.UT2Total = subjectsToInclude.Sum(s =>
+        //      (s.MarksUT2 == -1 || s.MarksUT2 == -2) ? 0 : s.MarksUT2);
+
+        //    totalResult.PracticalTotalT1 = Math.Max(0, subjectsToInclude.Sum(s =>
+        //        (s.PracticalMarks == -1 || s.PracticalMarks == -2) ? 0 : s.PracticalMarks));
+
+        //    totalResult.Term1TheoryMaxTotal = subjectsToInclude.Sum(s =>
+        //        s.MaxMarksTerm1Theory + s.MaxMarksTerm1Practical);
+        //    totalResult.UT1MaxTotal = subjectsToInclude.Sum(s => s.MaxMarksUT1);
+
+        //    decimal percentage = (totalResult.Term1TheoryMaxTotal == 0)
+        //        ? 0
+        //        : (totalResult.TheoryTotalT1 / totalResult.Term1TheoryMaxTotal) * 100;
+
+        //    totalResult.OverallAllTotal = totalResult.TheoryTotalT1;
+        //    totalResult.OverallGrade = GetGradebyTermBatch(percentage, classId, termId, batchId);
+        //}
+
+
+        //private void CalculateOverallTotals(List<SubjectData> subjectDatas, TotalResult totalResult, int classId,int termId, int batchId)
+        //{
+        //    // List of Class XI and XII IDs
+        //    var seniorClassIds = new List<int> { 414, 415, 416, 417, 614, 615 };
+
+        //    // Exclude subject with lowest total marks ONLY for Class XI & XII
+        //    List<SubjectData> subjectsToInclude;
+
+        //    if (seniorClassIds.Contains(classId))
+        //    {
+        //        var subjectToExclude = subjectDatas.OrderBy(s => s.TotalObtainedMarks).FirstOrDefault();
+        //        subjectsToInclude = subjectDatas.Where(s => s != subjectToExclude).ToList();
+        //    }
+        //    else
+        //    {
+        //        subjectsToInclude = subjectDatas;
+        //    }
+
+        //    // Total obtained and max marks
+        //    totalResult.TheoryTotalT1 = subjectsToInclude.Sum(s => s.TheoryMarks);
+        //    totalResult.PracticalTotalT1 = subjectsToInclude.Sum(s => s.PracticalMarks);
+        //    totalResult.Term1TheoryMaxTotal = subjectsToInclude.Sum(s => s.MaxMarksTerm1Theory + s.MaxMarksTerm1Practical);
+        //    // Final percentage
+        //    decimal percentage = (totalResult.Term1TheoryMaxTotal == 0)
+        //        ? 0
+        //        : (totalResult.TheoryTotalT1 / totalResult.Term1TheoryMaxTotal) * 100;
+
+        //    totalResult.OverallAllTotal = totalResult.TheoryTotalT1;
+        //    totalResult.OverallGrade = GetGradebyTermBatch(percentage, classId,termId,batchId);
+        //}
 
         private void CalculateOverallTotals(List<SubjectData> subjectDatas, TotalResult totalResult, int classId, int termId, int batchId)
         {
@@ -6979,7 +4687,6 @@ namespace SchoolManagement.Website.Controllers
                 classId, termId, batchId
             );
         }
-       
         public JsonResult PrintReportCardDataForCBSEResult(int studentId, int termId, int batchId) //, int classId
         {
             try
@@ -9806,13 +7513,13 @@ namespace SchoolManagement.Website.Controllers
                     if (roleName == "Staff")
                     {
                         long staffId = Int64.Parse(Session["StaffID"].ToString());
-                        var staff = _context.StafsDetails.Where(x => x.StafId == staffId&&(x.IsActive==true ||x.IsActive==null)).ToList();
+                        var staff = _context.StafsDetails.Where(x => x.StafId == staffId).ToList();
                         ViewBag.Staff = staff;
 
                     }
                     else
                     {
-                        var staff = _context.StafsDetails.Where(x => x.IsActive == true || x.IsActive == null).OrderBy(x => x.Name).ToList();
+                        var staff = _context.StafsDetails.OrderBy(x => x.Name).ToList();
                         ViewBag.Staff = staff;
                         var BatchList = _context.Tbl_Batches.Select(x => new Data.Models.BatchListDTO
                         {
@@ -10503,9 +8210,14 @@ namespace SchoolManagement.Website.Controllers
             public string TestName { get; set; }
             public string TestType { get; set; }
             public decimal MaximumMarks { get; set; }
+
+            public decimal MinimumMarks { get; set; }
             public long TermID { get; set; }
             public string Term { get; set; }
             public long BoardID { get; set; }
+
+            public string date { get; set; }
+            public string time { get; set; }
         }
         //custom module for show student
         public class ListStudent
@@ -10683,6 +8395,7 @@ namespace SchoolManagement.Website.Controllers
             public List<CoscholasticAreaData> coscholasticAreaDatas { get; set; }
             public List<OptionalSubjectData> optionalSubjectDatas { get; set; }
             public List<GradingCriteria> gradingCriteria { get; set; }
+
         }
 
 

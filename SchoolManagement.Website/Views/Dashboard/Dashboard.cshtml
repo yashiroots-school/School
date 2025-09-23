@@ -340,8 +340,10 @@
                             html += '<td>' + data[i].StudentId + '</td>';
                             html += '<td>' + data[i].Class + '</td>';
                             html += '<td>' + data[i].Section + '</td>';
-                            html += '<td>' + 0 + '</td>';
-                            html += '<td><a href="/Student/StudentProfile">View Profile</a></td>';
+                            html += '<td>' + data[i].Attendance + '</td>';
+                            //  html += '<td><a href="/Student/StudentProfile?applicationNo=""">View Profile</a></td>';
+                            html += "<td><a href='/Student/StudentProfile?applicationNo=" + data[i].ApplicationNumber + "'>View Profile</a></td>";
+
                             html += '</tr>';
 
                             cnt++;

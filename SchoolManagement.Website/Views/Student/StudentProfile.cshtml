@@ -1,4 +1,5 @@
-﻿@{
+﻿@model SchoolManagement.Website.ViewModels.StudnetsDetailsView
+@{
     ViewBag.Title = "StudentProfile";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -252,16 +253,18 @@
         }
     }
 </style>
+@if (Model != null)
+{
 <div class="right_col" role="main">
     <div class="row">
         <div class="hello">
             <div class="profile-header">
                 <div class="profile-pic">
 
-                    <img src="~/assets/images/image23.jpg" alt="student photo" />
+                    <img src="@Model.ProfilePicture" alt="student photo" />
                 </div>
-                <h1>BETELBIRTH M MARAK</h1>
-                <p>Class-X • Section YELLOW</p>
+                <h1>@Model.Name</h1>
+                <p>@Model.Class • Section @Model.Section</p>
             </div>
 
             <div class="tabs">
@@ -280,19 +283,19 @@
                             <h3>Personal Information</h3>
                             <div class="info-item">
                                 <span class="info-label">Full Name:</span>
-                                <span class="info-value">BETELBIRTH M MARAK</span>
+                                <span class="info-value">@Model.Name</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Date of Birth:</span>
-                                <span class="info-value">15 March 2018</span>
+                                <span class="info-value">@Model.DOB</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Gender:</span>
-                                <span class="info-value">Male</span>
+                                <span class="info-value">@Model.Gender.ToUpper()</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Blood Group:</span>
-                                <span class="info-value">B+</span>
+                                <span class="info-value">@Model.BloodGroup</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Nationality:</span>
@@ -304,19 +307,19 @@
                             <h3>Contact Information</h3>
                             <div class="info-item">
                                 <span class="info-label">Address:</span>
-                                <span class="info-value">123 Main Street, New Delhi</span>
+                                <span class="info-value">@Model.FResidentialAddress</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Phone:</span>
-                                <span class="info-value">+91 98765 43210</span>
+                                <span class="info-value">@Model.FMobile</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Email:</span>
-                                <span class="info-value">aarav.sharma@example.com</span>
+                                <span class="info-value">@Model.ParentEmail</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Emergency Contact:</span>
-                                <span class="info-value">Mrs. Sharma (+91 91234 56789)</span>
+                                <span class="info-value">@Model.FatherName (@Model.FMobile)</span>
                             </div>
                         </div>
 
@@ -324,23 +327,23 @@
                             <h3>Academic Information</h3>
                             <div class="info-item">
                                 <span class="info-label">Student ID:</span>
-                                <span class="info-value">STU-2023-045</span>
+                                <span class="info-value">@Model.StudentID</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Class:</span>
-                                <span class="info-value">KG-II</span>
+                                <span class="info-value">@Model.Class</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Section:</span>
-                                <span class="info-value">YELLOW</span>
+                                <span class="info-value">@Model.Section</span>
                             </div>
-                            <div class="info-item">
+                            @*<div class="info-item">
                                 <span class="info-label">Roll Number:</span>
-                                <span class="info-value">12</span>
-                            </div>
+                                <span class="info-value">@Mo</span>
+                            </div>*@
                             <div class="info-item">
                                 <span class="info-label">Academic Year:</span>
-                                <span class="info-value">2023-2024</span>
+                                <span class="info-value">@Model.BatchId</span>
                             </div>
                         </div>
 
@@ -348,19 +351,19 @@
                             <h3>Family Information</h3>
                             <div class="info-item">
                                 <span class="info-label">Father's Name:</span>
-                                <span class="info-value">Rajesh Sharma</span>
+                                <span class="info-value">@Model.FatherName</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Occupation:</span>
-                                <span class="info-value">Business</span>
+                                <span class="info-value">@Model.FOccupation</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Mother's Name:</span>
-                                <span class="info-value">Priya Sharma</span>
+                                <span class="info-value">@Model.MotherName</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Occupation:</span>
-                                <span class="info-value">Teacher</span>
+                                <span class="info-value">@Model.MOccupation</span>
                             </div>
                         </div>
                     </div>
@@ -369,186 +372,93 @@
                 <!-- Academic Info Tab -->
                 <div class="tab-section" id="academic-details">
                     <h2 class="section-title">Academic Information</h2>
-
                     <div class="filter-options">
-                        <div class="filter-option active">All</div>
-                        <div class="filter-option">2020</div>
-                        <div class="filter-option">2021</div>
-                        <div class="filter-option">2022</div>
-                        <div class="filter-option">2023</div>
+                        <div class="filter-option active"  data-batchid="0">All</div>
+                        @foreach (var batch in ViewBag.Batches)
+                        {
+                            <div class="filter-option" data-batchid="@batch.Batch_Id">@batch.Batch_Name</div>
+                        }
                     </div>
+                    @*<div class="filter-options">
+            <div class="filter-option active">All</div>
+            <div class="filter-option">2020</div>
+            <div class="filter-option">2021</div>
+            <div class="filter-option">2022</div>
+            <div class="filter-option">2023</div>
+        </div>*@
 
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Batch</th>
-                                <th>Class</th>
-                                <th>Section</th>
-                                <th>Days</th>
-                                <th>%</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>2020</td>
-                                <td>Nursery</td>
-                                <td>RED</td>
-                                <td>177</td>
-                                <td class="attendance-percent">88.50%</td>
-                            </tr>
-                            <tr>
-                                <td>2021</td>
-                                <td>KG-I</td>
-                                <td>BLUE</td>
-                                <td>182</td>
-                                <td class="attendance-percent">91.00%</td>
-                            </tr>
-                            <tr>
-                                <td>2022</td>
-                                <td>KG-II</td>
-                                <td>YELLOW</td>
-                                <td>165</td>
-                                <td class="attendance-percent">82.50%</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <table id="attendanceTable">
+                    <thead>
+                        <tr>
+                            <th>Batch</th>
+                            <th>Class</th>
+                            <th>Section</th>
+                            <th>Days</th>
+                            <th>%</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic rows will go here -->
+                    </tbody>
+                </table>
 
                     <h3 style="margin-top: 30px; color: #2563eb;">Performance Overview</h3>
-                    <div class="info-grid" style="margin-top: 15px;">
-                        <div class="info-card">
-                            <h3>Term I Results</h3>
-                            <div class="info-item">
-                                <span class="info-label">Mathematics:</span>
-                                <span class="info-value">A+</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">English:</span>
-                                <span class="info-value">A</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Hindi:</span>
-                                <span class="info-value">A</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">GK:</span>
-                                <span class="info-value">A+</span>
-                            </div>
-                        </div>
+                    <div style="margin-top: 15px;">
+                        <table id="reportCard">
+                            <thead>
+                                <tr>
+                                    <th>Batch </th>
+                                    <th>Class </th>
+                                    <th>Section</th>
+                                    <th>Term</th>
+                                    <th>Total Obtain Marks</th>
 
-                        <div class="info-card">
-                            <h3>Term II Results</h3>
-                            <div class="info-item">
-                                <span class="info-label">Mathematics:</span>
-                                <span class="info-value">A+</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">English:</span>
-                                <span class="info-value">A+</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Hindi:</span>
-                                <span class="info-value">A</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">GK:</span>
-                                <span class="info-value">A</span>
-                            </div>
-                        </div>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        <table id="coscholastic">
+                            <thead>
+                                <tr>
+                                    <th>Batch </th>
+                                    <th>Class </th>
+                                    <th>Section</th>
+                                    <th>Term</th>
+                                    <th>Coscholastic Grades</th>
+                                    <th>Average Grade</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                              
+
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
                 <!-- Accounts Tab -->
                 <div class="tab-section" id="accounts-details">
                     <h2 class="section-title">Accounts</h2>
-
-                    <div class="info-grid">
-                        <div class="info-card">
-                            <h3>Fee Details</h3>
-                            <div class="info-item">
-                                <span class="info-label">Total Fees:</span>
-                                <span class="info-value">₹45,000/year</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Paid Fees:</span>
-                                <span class="info-value">₹40,500</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Pending Fees:</span>
-                                <span class="info-value">₹4,500</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Due Date:</span>
-                                <span class="info-value">15 Dec 2023</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Last Payment:</span>
-                                <span class="info-value">15 Aug 2023</span>
-                            </div>
-                        </div>
-
-                        <div class="info-card">
-                            <h3>Bank Details</h3>
-                            <div class="info-item">
-                                <span class="info-label">APAAR ID:</span>
-                                <span class="info-value">APAAR123456</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Bank Account:</span>
-                                <span class="info-value">123456789012</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Bank Name:</span>
-                                <span class="info-value">State Bank of India</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Account Holder:</span>
-                                <span class="info-value">BETELBIRTH M MARAK</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">IFSC Code:</span>
-                                <span class="info-value">SBIN0001234</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h3 style="margin-top: 30px; color: #2563eb;">Transaction History</h3>
-                    <table style="margin-top: 15px;">
+                    <table id="feeDetails">
                         <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Description</th>
-                                <th>Amount</th>
-                                <th>Status</th>
+                                <th>Paid Amount</th>
+                                <th>Due Amount</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>15 Aug 2023</td>
-                                <td>Term I Fees</td>
-                                <td>₹22,500</td>
-                                <td>Paid</td>
-                            </tr>
-                            <tr>
-                                <td>15 Apr 2023</td>
-                                <td>Admission Fees</td>
-                                <td>₹18,000</td>
-                                <td>Paid</td>
-                            </tr>
-                            <tr>
-                                <td>15 Dec 2023</td>
-                                <td>Term II Fees</td>
-                                <td>₹22,500</td>
-                                <td>Pending</td>
-                            </tr>
+                            <!-- Dynamic rows will be inserted here -->
                         </tbody>
                     </table>
+
                 </div>
             </div>
         </div>
 
     </div>
 </div>
-
+}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Tab switching functionality
@@ -585,4 +495,100 @@
             });
         });
     });
+</script>
+<script>
+    
+        $(document).ready(function() {
+            $('.filter-option').click(function () {
+                debugger
+                $('.filter-option').removeClass('active');
+                $(this).addClass('active');
+                var id = '@Model.StudentID';
+                var batchId = $(this).data('batchid');
+
+                $.ajax({
+                    url: '@Url.Action("StudentProfileBatchWise", "Student")',
+                    type: 'GET',
+                    data: { batchId: batchId, studentId: id },
+                    success: function(response) {
+                        console.log(response);
+                        var tbody = $('#attendanceTable tbody');
+                        tbody.empty(); // Clear existing rows
+
+                        if (response.AttendanceSummaries && response.AttendanceSummaries.length > 0) {
+                            response.AttendanceSummaries.forEach(function (att) {
+                                var row = '<tr>' +
+                                    '<td>' + att.BatchName + '</td>' +
+                                    '<td>' + att.ClassName + '</td>' +
+                                    '<td>' + att.Section + '</td>' +
+                                    '<td>' + att.TotalDays + '</td>' +
+                                    '<td class="attendance-percent">' + parseFloat(att.AttendancePercentage).toFixed(2) + '%</td>' +
+                                    '</tr>';
+                                tbody.append(row);
+                            });
+                        } else {
+                            tbody.append('<tr><td colspan="5">No data found for this batch.</td></tr>');
+                        }
+                        // 2️ Populate Test Percentages Table
+                        var testTbody = $('#reportCard tbody');
+                        testTbody.empty();
+
+                        if (response.TestPercentages && response.TestPercentages.length > 0) {
+                            response.TestPercentages.forEach(function (test) {
+                                var row = '<tr>' +
+                                    '<td>' + test.BatchName + '</td>' +
+                                    '<td>' + test.ClassName + '</td>' +
+                                    '<td>' + test.Section + '</td>' +
+                                    '<td>' + test.TermName + '</td>' +
+                                    '<td>' + test.TotalObtainedMarks + '</td>' +
+                                    '</tr>';
+                                testTbody.append(row);
+                            });
+                        } else {
+                            testTbody.append('<tr><td colspan="5">No test records found for this batch.</td></tr>');
+                        }
+                        // 3️⃣ Co-Scholastic Table
+                        var coscholasticTbody = $('#coscholastic tbody');
+                        coscholasticTbody.empty();
+
+                        if (response.CoScholasticResults && response.CoScholasticResults.length > 0) {
+                            response.CoScholasticResults.forEach(function (cos) {
+                                // Optional: Calculate average grade if needed (you can implement a mapping from A/B/C to numbers)
+                                var avgGrade = cos.CoscholasticGrades; // For now just display the string
+
+                                var row = '<tr>' +
+                                    '<td>' + cos.Batch_Name + '</td>' +
+                                    '<td>' + cos.ClassName + '</td>' +
+                                    '<td>' + cos.SectionName + '</td>' +
+                                    '<td>' + cos.TermName + '</td>' +
+                                    '<td>' + cos.CoscholasticGrades + '</td>' +
+                                    '<td>' + avgGrade + '</td>' +
+                                    '</tr>';
+                                coscholasticTbody.append(row);
+                            });
+                        } else {
+                            coscholasticTbody.append('<tr><td colspan="6">No co-scholastic records found for this batch.</td></tr>');
+                        }
+                        // 4️⃣ Fee Details Table
+                        var feeTbody = $('#feeDetails tbody');
+                        feeTbody.empty();
+
+                        if (response.FeeDetails && response.FeeDetails.length > 0) {
+                            response.FeeDetails.forEach(function (fee) {
+                                var row = '<tr>' +
+                                    '<td>' + fee.PaidAmount + '</td>' +
+                                    '<td>' + fee.DueAmount + '</td>' +
+                                    '</tr>';
+                                feeTbody.append(row);
+                            });
+                        } else {
+                            feeTbody.append('<tr><td colspan="2">No fee records found for this batch.</td></tr>');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            });
+        });
 </script>

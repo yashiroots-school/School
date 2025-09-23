@@ -7780,16 +7780,237 @@ namespace SchoolManagement.Website.Controllers
 
         }
 
-        public ActionResult StudentProfile()
+        public List<StudnetsDetailsView> StudentProfileData(long BatchId, int classId, int SectionId, long StudentId = 0)
         {
-            return View();
+            try
+            {
+                // Execute stored procedure with parameters
+                var result = _context.Database.SqlQuery<StudnetsDetailsView>(
+                    "EXEC usp_StudnetsGridinMobileApp @ClassId, @SectionId, @BatchId, @StudentId",
+                    new SqlParameter("@ClassId", classId),
+                    new SqlParameter("@SectionId", SectionId),
+                    new SqlParameter("@BatchId", BatchId),
+                    new SqlParameter("@StudentId", StudentId)
+                ).ToList();
+
+                // Return the result to view
+              return result;
+            }
+            catch (Exception ex)
+            {
+                // Log error or pass to ViewBag
+                ViewBag.Error = ex.Message;
+                return new List<StudnetsDetailsView>();
+            }
+        }
+
+        public ActionResult StudentProfile(string applicationNo)
+        {
+            StudnetsDetailsView studnetsDetailsView = new StudnetsDetailsView();
+            try
+            {
+                // Step 1: Get student record (sync)
+                var student = _context.Students
+                    .Where(x => x.ApplicationNumber == applicationNo)
+                    .Select(x => new
+                    {
+                        x.StudentId,
+                        x.Batch_Id,
+                        x.Class_Id,
+                        x.Section_Id
+                    })
+                    .FirstOrDefault();
+
+                // Step 2: Check if student exists
+                if (student == null)
+                {
+                    ViewBag.ErrorMessage = "Student not found.";
+                    return View("Error"); // Show Error.cshtml
+                }
+
+                // Step 3: Call GetStusdnetDetails (sync)
+                var studentDetails = StudentProfileData(
+                    BatchId: student.Batch_Id,
+                    classId: student.Class_Id,
+                    SectionId: student.Section_Id,
+                    StudentId: student.StudentId
+                );
+                studnetsDetailsView = studentDetails.FirstOrDefault();
+                var Batches = _context.Tbl_Batches.ToList();
+                ViewBag.Batches = Batches;
+                // Pass data to the view
+                return View("StudentProfile", studnetsDetailsView);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                return View("Error");
+            }
+        }
+
+        public JsonResult StudentProfileBatchWise(long studentId, int batchId)
+        {
+            try
+            {
+                var profile = new StudentProfileSummaryBatchWise();
+
+                // Use Database.Connection in EF6
+                var conn = _context.Database.Connection;
+                if (conn.State != ConnectionState.Open)
+                    conn.Open();
+
+                using (var command = conn.CreateCommand())
+                {
+                    command.CommandText = "USP_GetStudentReportBatchWise";
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    // Parameters
+                    var paramBatchId = command.CreateParameter();
+                    paramBatchId.ParameterName = "@BatchId";
+                    paramBatchId.Value = batchId;
+                    command.Parameters.Add(paramBatchId);
+
+                    var paramStudentId = command.CreateParameter();
+                    paramStudentId.ParameterName = "@StudentId";
+                    paramStudentId.Value = studentId;
+                    command.Parameters.Add(paramStudentId);
+
+                    var reader = command.ExecuteReader();
+
+                    // 1st result set - Attendance Summary
+                    var attendanceList = new List<StudentAttendanceSummary>();
+                    while (reader.Read())
+                    {
+                        attendanceList.Add(new StudentAttendanceSummary
+                        {
+                            BatchName = reader["BatchName"]?.ToString() ?? "",
+                            ClassName = reader["ClassName"]?.ToString() ?? "",
+                            Section = reader["Section"]?.ToString() ?? "",
+                            TotalDays = reader["TotalDays"] != DBNull.Value ? Convert.ToInt32(reader["TotalDays"]) : 0,
+                            AttendancePercentage = reader["AttendancePercentage"] != DBNull.Value ? Convert.ToDecimal(reader["AttendancePercentage"]) : 0,
+                            StudentRegisterId = studentId
+                        });
+                    }
+
+                    // 2nd result set - Scholastic Marks
+                    reader.NextResult();
+                    var testPercentageList = new List<StudentTestPercentage>();
+                    while (reader.Read())
+                    {
+                        testPercentageList.Add(new StudentTestPercentage
+                        {
+                            StudentId = studentId,
+                            //BatchId = reader["BatchId"] != DBNull.Value ? Convert.ToInt64(reader["BatchId"]) : 0,
+                            BatchName = reader["BatchName"]?.ToString() ?? "",
+                            ClassName = reader["ClassName"]?.ToString() ?? "",
+                            Section = reader["Section"]?.ToString() ?? "",
+                            TermId = reader["TermID"] != DBNull.Value ? Convert.ToInt32(reader["TermID"]) : 0,
+                            TermName = reader["TermName"]?.ToString() ?? "",
+                            TotalObtainedMarks = reader["TotalObtainedMarks"] != DBNull.Value ? Convert.ToDecimal(reader["TotalObtainedMarks"]) : 0
+                        });
+                    }
+
+                    // 3rd result set - Co-Scholastic
+                    reader.NextResult();
+                    var coScholasticList = new List<CoScholasticResult>();
+                    while (reader.Read())
+                    {
+                        coScholasticList.Add(new CoScholasticResult
+                        {
+                            StudentID = studentId,
+                            //BatchId = reader["BatchId"] != DBNull.Value ? Convert.ToInt64(reader["BatchId"]) : 0,
+                            Batch_Name = reader["Batch_Name"]?.ToString() ?? "",
+                            //TermID = reader["TermID"] != DBNull.Value ? Convert.ToInt32(reader["TermID"]) : 0,
+                            TermName = reader["TermName"]?.ToString() ?? "",
+                            ClassName = reader["ClassName"]?.ToString() ?? "",
+                            SectionName = reader["SectionName"]?.ToString() ?? "",
+                            CoscholasticGrades = reader["CoscholasticGrades"]?.ToString() ?? ""
+                        });
+                    }
+
+                    // 4th result set - Fee Details
+                    reader.NextResult();
+                    var feeDetails = new List<StudentFeeDetails>();
+                    while (reader.Read())
+                    {
+                        feeDetails.Add(new StudentFeeDetails
+                        {
+                            PaidAmount = reader["PaidAmount"] != DBNull.Value ? Convert.ToDecimal(reader["PaidAmount"]) : 0,
+                            DueAmount = reader["DueAmount"] != DBNull.Value ? Convert.ToDecimal(reader["DueAmount"]) : 0
+                        });
+                    }
+
+                    // Combine into profile
+                    profile.AttendanceSummaries = attendanceList;
+                    profile.TestPercentages = testPercentageList;
+                    profile.CoScholasticResults = coScholasticList;
+                    profile.FeeDetails = feeDetails;
+
+                    reader.Close();
+                }
+
+                conn.Close();
+                return Json(profile, JsonRequestBehavior.AllowGet);
+                //return View(profile); // Pass to your view
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ex.Message;
+                return Json("Fail", JsonRequestBehavior.AllowGet);
+                //  return View(new StudentProfileSummaryBatchWise());
+            }
         }
 
 
+        public string Attendance(int BatchId, int ClassId, long StudentID, int? SectionId = 0)
+        {
+            List<Tbl_StudentAttendance> ActualAttendance = new List<Tbl_StudentAttendance>();
 
-        //updated code 
+            var batch = _context.Tbl_Batches.Where(x => x.Batch_Id == BatchId).FirstOrDefault();
+            //  var batchItems = _context.DataListItems.Where(x => x.DataListId == "9" && x.DataListItemName== batch.Batch_Name).FirstOrDefault();
+            var attendanceDate = _context.TblTestAssignDate.Where(x => x.BatchID == BatchId && x.ClassID == ClassId).FirstOrDefault();
+            var StartDate = DateTime.Now; var ToDate = DateTime.Now;
+            if (attendanceDate == null)
+            {
+                StartDate = DateTime.Now;
+                ToDate = DateTime.Now;
+            }
+            else
+            {
+                StartDate = Convert.ToDateTime(attendanceDate.StartDate);
+                ToDate = Convert.ToDateTime(attendanceDate.ToDate);
+            }
+            ActualAttendance = _context.Tbl_StudentAttendance.Where(x => x.StudentRegisterID == StudentID && x.Class_Id == ClassId && x.Section_Id == SectionId).ToList().Where(x =>
+        DateTime.ParseExact(x.Created_Date, "dd/MM/yyyy", CultureInfo.InvariantCulture).Date >= StartDate.Date &&
+        DateTime.ParseExact(x.Created_Date, "dd/MM/yyyy", CultureInfo.InvariantCulture).Date <= ToDate.Date).ToList();
+            ActualAttendance = _context.Tbl_StudentAttendance.Where(x => x.StudentRegisterID == StudentID && x.Class_Id == ClassId && x.Section_Id == SectionId && x.BatchId == BatchId).ToList();
 
 
+
+            double attendedDays = 0;
+            double attendedHalfDays = 0;
+            foreach (var item in ActualAttendance)
+            {
+                if (item.Mark_FullDayAbsent == "True")
+                {
+                    attendedDays++;
+                }
+                if (item.Mark_HalfDayAbsent == "True")
+                {
+                    attendedHalfDays++;
+                }
+                if (item.Others == "True")
+                {
+                    attendedDays++;
+                }
+
+            }
+            //m double totalAttendedDays = attendedDays + (attendedHalfDays / 2);
+
+            int totalAttendedDays = Convert.ToInt32(attendedDays + (attendedHalfDays / 2));
+            string Attendance = totalAttendedDays + "/" + ActualAttendance.Count();
+            return Attendance;
+        }
 
 
     }

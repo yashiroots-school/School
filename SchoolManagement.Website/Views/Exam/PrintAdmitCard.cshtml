@@ -1,0 +1,362 @@
+﻿@model SchoolManagement.Website.ViewModels.AdmitsCardViewModel
+
+@{
+    ViewBag.Title = "PrintAdmitCard";
+    Layout = null;
+}
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+    * {
+        margin: 0px;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #f0f5ff;
+        padding: 20px;
+    }
+
+    .admit-card {
+        width: 210mm;
+        min-height: 297mm;
+        background: white;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        padding: 12mm;
+        position: relative;
+        border: 1px solid #ccc;
+        margin-top: 500px;
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #1a3c6c;
+        padding-bottom: 10px;
+    }
+
+    .logo-container {
+        width: 80px;
+        height: 80px;
+        border: 2px solid #1a3c6c;
+        border-radius: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 15px;
+        background: #f0f7ff;
+    }
+
+    .logo-placeholder {
+        color: #1a3c6c;
+        font-size: 12px;
+        text-align: center;
+        padding: 5px;
+    }
+
+    .school-info {
+        flex: 1;
+        text-align: center;
+    }
+
+    .school-name {
+        font-size: 20px;
+        font-weight: 700;
+        text-transform: uppercase;
+        line-height: 1.2;
+        color: #1a3c6c;
+    }
+
+    .school-address {
+        font-size: 13px;
+        margin-top: 3px;
+    }
+
+    .school-contact {
+        font-size: 14px;
+        margin-top: 3px;
+        font-weight: 500;
+        color: #1a3c6c;
+    }
+
+    .admit-card-title {
+        text-align: center;
+        font-size: 20px;
+        font-weight: 500;
+        margin: 15px 0;
+        color: #1a3c6c;
+    }
+
+    .student-details-container {
+        display: flex;
+        margin-bottom: 15px;
+    }
+
+    .student-info {
+        flex: 3;
+        border-collapse: collapse;
+    }
+
+        .student-info td {
+            padding: 6px 10px;
+            vertical-align: top;
+        }
+
+        .student-info tr td:first-child {
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+    .student-photo {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    .photo-placeholder {
+        width: 100px;
+        height: 120px;
+        border: none;
+        background-color: #f9f9f9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+
+    .photo-text {
+        font-size: 12px;
+        color: #555;
+        text-align: center;
+    }
+
+    .exam-schedule {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+        font-size: 14px;
+    }
+
+        .exam-schedule th, .exam-schedule td {
+            border: 1px solid #000;
+            padding: 8px 5px;
+            text-align: center;
+        }
+
+        .exam-schedule th {
+            background-color: #7da3da;
+            color: white;
+            font-weight: 600;
+        }
+
+        .exam-schedule tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+    .instructions {
+        margin-top: 20px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+
+        .instructions h3 {
+            text-decoration: underline;
+            margin-bottom: 8px;
+            font-size: 15px;
+            color: #1a3c6c;
+        }
+
+        .instructions ol {
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 5px;
+            text-align: justify;
+        }
+
+    .signatures {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+        padding: 0 30px;
+    }
+
+    .signature-box {
+        text-align: center;
+        width: 200px;
+        padding-top: 5px;
+        font-weight: 500;
+    }
+
+    .footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 12px;
+        border-top: 1px solid #000;
+        padding-top: 5px;
+        color: #1a3c6c;
+    }
+
+    .watermark {
+        position: absolute;
+        opacity: 0.1;
+        font-size: 120px;
+        transform: rotate(-45deg);
+        top: 40%;
+        left: 15%;
+        z-index: -1;
+        color: #2b61ad;
+        font-weight: bold;
+        pointer-events: none;
+    }
+
+    @@media print {
+        body {
+            background: white;
+            padding: 0;
+        }
+
+        .admit-card {
+            box-shadow: none;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            margin-top: 80px;
+        }
+
+        .watermark {
+            opacity: 0.05;
+        }
+        button {
+            display: none;
+        }
+    }
+</style>
+
+    <button onclick="window.print()"
+            style="padding:8px 16px; background:#1a3c6c; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+        🖨️ Print Admit Card
+    </button>
+
+
+<div class="admit-card">
+    <div class="watermark">@ViewBag.SchoolNewName</div>
+
+    <div class="header">
+        <div class="logo-container">
+            <div class="logo-placeholder">
+                @if (ViewBag.School_logo != null)
+                {
+                    <img src="data:image/png;base64,@ViewBag.School_logo" style="max-height:100px; max-width: 80px;" />
+                }
+                else
+                {
+                    <span>SCHOOL LOGO</span>
+                }
+            </div>
+        </div>
+        <div class="school-info">
+            <div class="school-name">@ViewBag.SchoolNewName</div>
+            <div class="school-address">@ViewBag.newAddress</div>
+            <div class="school-contact">@* contact if available *@</div>
+        </div>
+    </div>
+
+    <div class="admit-card-title">ADMIT CARD<br />FOR @Model.Student.TermName (@Model.Student.BatchName)</div>
+
+    <div class="student-details-container">
+        <table class="student-info">
+            <tr>
+                <td>Scholar No</td>
+                <td>: @Model.Student.ScholarNo </td>
+                <td style="width: 0%;"></td>
+                <td>Roll No.</td>
+                <td>: @Model.Student.RollNo</td>
+            </tr>
+            <tr>
+                <td>Student's Name</td>
+                <td>: @Model.Student.Name</td>
+                <td style="width: 0%;"></td>
+                <td>DOB.</td>
+                <td>: @Model.Student.DOB</td>
+            </tr>
+            <tr>
+                <td>Father's Name</td>
+                <td>: @Model.Student.FatherName</td>
+                <td style="width: 0%;"></td>
+                <td>Mother's Name</td>
+                <td>: @Model.Student.MotherName</td>
+            </tr>
+            <tr>
+                <td>Class </td>
+                <td>: @Model.Student.Class </td>
+                <td style="width: 0%;"></td>
+                <td>Section </td>
+                <td>:  @Model.Student.Section</td>
+
+            </tr>
+        </table>
+
+    </div>
+
+    <table class="exam-schedule">
+        <thead>
+            <tr>
+                <th>Subject</th>
+                <th>Type</th>
+                @*<th>Max Marks</th>
+                    <th>Min Marks</th>*@
+                <th>Date</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var test in Model.Tests)
+            {
+                <tr>
+                    <td>@test.TestName</td>
+                    <td>@test.TestType</td>
+                    @*<td>@test.MaximumMarks</td>
+                        <td>@test.MinimumMarks</td>*@
+                    <td>@test.ExamDate</td>
+                    <td>@test.ExamTime</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="instructions">
+        <h3>Instructions for the students</h3>
+        <ol>
+            <li>All the students must be present in the school premises before 7.30 am.</li>
+            <li>Clear all your dues before the examinations begin.</li>
+            <li>The written exam begins at 7.45 am till 08.30 am.</li>
+            <li>No Student will be allowed to go home after the exam. Classes will continue as usual</li>
+            <li>Late corners will not be allowed to write the exam.</li>
+        </ol>
+    </div>
+
+    <div class="signatures">
+        <div class="signature-box"><img src="~/Content/Images/@Model.Student.staf" id="teachersignature" style="width:115px; height:60px;" alt="" /><br />Class Teacher's Signature</div>
+        <div class="signature-box"><img src="~/Content/Images/principle.png" style="width:115px; height:60px;" alt="" /><br />Principal's Signature</div>
+    </div>
+
+    <div class="footer">
+        @ViewBag.SchoolNewName Admit Card
+    </div>
+</div>

@@ -20,5 +20,10 @@ namespace SchoolManagement.Website.Models
         public long TermID { get; set; }
         public long BoardID { get; set; }
         public bool? IsOptional { get; set; }
+
+        public string date { get; set; }
+
+
+        public string time { get; set; }
     }
 }

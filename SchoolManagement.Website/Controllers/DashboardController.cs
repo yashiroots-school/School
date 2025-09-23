@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using Microsoft.Ajax.Utilities;
@@ -139,45 +140,101 @@ namespace SchoolManagement.Website.Controllers
             //}
 
         }
-        public JsonResult GetStudentDetails(string Class,string Section)
+        public JsonResult GetStudentDetails(string Class, string Section)
         {
+            // Format the current date as a string to match the database's Created_Date format (dd/MM/yyyy).
+            string today = DateTime.Now.ToString("dd/MM/yyyy");
 
-            //var studentsQuery = _context.Students
-            //                .GroupJoin(_context.Tbl_StudentAttendance,
-            //                           student => student.StudentId,
-            //                           attendance => attendance.StudentRegisterID,
-            //                           (student, attendanceGroup) => new { student, attendanceGroup })
-            //                .Where(x => x.student.IsActive)  // Ensure the student is active
-            //                .AsQueryable();
-            var studentsQuery=_context.Students.ToList().Where(x=>x.IsActive==true);
+            // Get the current active batch
+            var currentBatch = _context.Tbl_Batches
+                .FirstOrDefault(x => x.IsActiveForPayments && x.IsActiveForAdmission);
 
-            if (!string.IsNullOrEmpty(Class)&& Class!="0")
+            if (currentBatch == null)
             {
-                studentsQuery = studentsQuery.Where(x => x.Class_Id==Convert.ToInt32(Class));
+                return Json("Fail", JsonRequestBehavior.AllowGet);
             }
 
-            // Apply filtering by Section if provided
+            // LINQ query to join Students, Class, Section, and today's Attendance
+            var studentsQuery = from s in _context.Students
+
+                                    // Left Join Class details
+                                join cls in _context.DataListItems
+                                    on s.Class_Id equals cls.DataListItemId
+                                    into clsJoin
+                                from cls in clsJoin.DefaultIfEmpty()
+
+                                    // Left Join Section details
+                                join sec in _context.DataListItems
+                                    on s.Section_Id equals sec.DataListItemId
+                                    into secJoin
+                                from sec in secJoin.DefaultIfEmpty()
+
+                                    // Left Join Student Attendance for today only.
+                                    // FIX for CS1941: Explicitly cast the join keys (assuming they should be int)
+                                    // to ensure type consistency in the composite key.
+                                join sa in _context.Tbl_StudentAttendance
+                                    .Where(a => a.Created_Date == today)
+                                    on new { StudentId = (int)s.StudentId, BatchId = (int)s.Batch_Id }
+                                    equals new { StudentId = (int)sa.StudentRegisterID, BatchId = (int)sa.BatchId }
+                                    into saJoin
+                                from sa in saJoin.DefaultIfEmpty()
+
+                                where s.IsApplyforTC == false
+                                    && s.IsApprove == 217
+                                    && s.Batch_Id == currentBatch.Batch_Id
+                                select new
+                                {
+                                    s.StudentId,
+                                    s.Name,
+                                    s.Last_Name,
+                                    s.ApplicationNumber,
+                                    s.Class_Id,
+                                    s.Section_Id,
+                                    s.Batch_Id,
+                                    Class = cls != null ? cls.DataListItemName : "",
+                                    Section = sec != null ? sec.DataListItemName : "",
+                                    // Determine attendance status based on the joined record
+                                    Attendance = sa != null
+                                        ? sa.Mark_FullDayAbsent == "true" ? "Present"
+                                        : sa.Mark_HalfDayAbsent == "True" ? "Half-Day"
+                                        : sa.Others == "True" ? "Other"
+                                        : "Absent" // Default for a present record that isn't explicitly marked
+                                        : "-" // Default if no attendance record exists for today
+                                };
+
+            // Apply Class filter if provided
+            if (!string.IsNullOrEmpty(Class) && Class != "0")
+            {
+                if (int.TryParse(Class, out int classId))
+                {
+                    studentsQuery = studentsQuery.Where(x => x.Class_Id == classId);
+                }
+            }
+
+            // Apply Section filter if provided
             if (!string.IsNullOrEmpty(Section) && Section != "0")
             {
-                studentsQuery = studentsQuery.Where(x => x.Section_Id == Convert.ToInt32(Section));
+                if (int.TryParse(Section, out int sectionId))
+                {
+                    studentsQuery = studentsQuery.Where(x => x.Section_Id == sectionId);
+                }
             }
-            var students = studentsQuery
-                 .AsEnumerable()  // Make sure we load the data in memory before projecting
-                 .Select(x => new
-                 {
-                    x.StudentId,
-                     x.Name,
-                     Last_Name = x.Last_Name,
-                     Class = x.Class,  // Assuming class name is in 'Name' field
-                     Section = x.Section??"",
-                     //City = x.attendanceGroup.Count().ToString() ?? "0" // Null check for profile avatar
-                 })
-                 .ToList();
-            if (students.Count > 0)
+
+            // Execute the query and materialize the results into a List.
+            var students = studentsQuery.ToList();
+
+            // FIX for CS0019: If 'students.Count' (property) is still failing as a 'method group', 
+            // we use the 'students.Count()' (method) extension instead.
+            if (students.Count() > 0)
+            {
                 return Json(students, JsonRequestBehavior.AllowGet);
+            }
 
             return Json("Fail", JsonRequestBehavior.AllowGet);
         }
+
+
+      
 
     }
 }
