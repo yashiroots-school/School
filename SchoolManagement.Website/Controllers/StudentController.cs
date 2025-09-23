@@ -29,6 +29,7 @@ using iTextSharp.tool.xml.css;
 using Microsoft.Ajax.Utilities;
 using DocumentFormat.OpenXml.Wordprocessing;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
+using System.Text.RegularExpressions;
 
 namespace SchoolManagement.Website.Controllers
 {
@@ -4256,14 +4257,32 @@ namespace SchoolManagement.Website.Controllers
 
 
                     //profileimage
-                    if (uploadFilesViewModel.ProfileAvatar != null && uploadFilesViewModel.ProfileAvatar.ContentLength > 0)
+                    //if (uploadFilesViewModel.ProfileAvatar != null && uploadFilesViewModel.ProfileAvatar.ContentLength > 0)
+                    //{
+                    //    var extension = Path.GetExtension(uploadFilesViewModel.ProfileAvatar.FileName);
+                    //    var fileName = "Profile_" + trackId + extension;
+                    //    var directory = Server.MapPath("~/WebsiteImages/StudentPhoto");
+                    //    Directory.CreateDirectory(directory);
+                    //    var path = Path.Combine(directory, fileName);
+                    //    uploadFilesViewModel.ProfileAvatar.SaveAs(path);
+                    //    studentViewModel.StudentRegistration.ProfileAvatar = fileName;
+                    //}
+                    if (!string.IsNullOrEmpty(uploadFilesViewModel.CroppedProfileAvatar))
                     {
-                        var extension = Path.GetExtension(uploadFilesViewModel.ProfileAvatar.FileName);
+                        // Base64 string ko decode karo
+                        var base64Data = Regex.Match(uploadFilesViewModel.CroppedProfileAvatar, @"data:image/(?<type>.+?),(?<data>.+)").Groups["data"].Value;
+                        byte[] bytes = Convert.FromBase64String(base64Data);
+
+                        var extension = ".png"; // cropped image PNG me save kar rahe hain
                         var fileName = "Profile_" + trackId + extension;
                         var directory = Server.MapPath("~/WebsiteImages/StudentPhoto");
-                        Directory.CreateDirectory(directory);
+                        Directory.CreateDirectory(directory); // folder exist nahi toh create ho jaaye
                         var path = Path.Combine(directory, fileName);
-                        uploadFilesViewModel.ProfileAvatar.SaveAs(path);
+
+                        // bytes ko file me write karo
+                        System.IO.File.WriteAllBytes(path, bytes);
+
+                        // file name save karo view model me
                         studentViewModel.StudentRegistration.ProfileAvatar = fileName;
                     }
 
@@ -6124,14 +6143,32 @@ namespace SchoolManagement.Website.Controllers
                     if (data != null)
                     {
                         //ProfileAvatar
-                        if (uploadFilesViewModel.ProfileAvatar != null && uploadFilesViewModel.ProfileAvatar.ContentLength > 0)
+                        //if (uploadFilesViewModel.ProfileAvatar != null && uploadFilesViewModel.ProfileAvatar.ContentLength > 0)
+                        //{
+                        //    var extension = Path.GetExtension(uploadFilesViewModel.ProfileAvatar.FileName);
+                        //    var fileName = "Profile_" + trackId + extension;
+                        //    var directory = Server.MapPath("~/WebsiteImages/StudentPhoto");
+                        //    Directory.CreateDirectory(directory);
+                        //    var path = Path.Combine(directory, fileName);
+                        //    uploadFilesViewModel.ProfileAvatar.SaveAs(path);
+                        //    studentViewModel.StudentRegistration.ProfileAvatar = fileName;
+                        //}
+                        if (!string.IsNullOrEmpty(uploadFilesViewModel.CroppedProfileAvatar))
                         {
-                            var extension = Path.GetExtension(uploadFilesViewModel.ProfileAvatar.FileName);
+                            // Base64 string ko decode karo
+                            var base64Data = Regex.Match(uploadFilesViewModel.CroppedProfileAvatar, @"data:image/(?<type>.+?),(?<data>.+)").Groups["data"].Value;
+                            byte[] bytes = Convert.FromBase64String(base64Data);
+
+                            var extension = ".png"; // cropped image PNG me save kar rahe hain
                             var fileName = "Profile_" + trackId + extension;
                             var directory = Server.MapPath("~/WebsiteImages/StudentPhoto");
-                            Directory.CreateDirectory(directory);
+                            Directory.CreateDirectory(directory); // folder exist nahi toh create ho jaaye
                             var path = Path.Combine(directory, fileName);
-                            uploadFilesViewModel.ProfileAvatar.SaveAs(path);
+
+                            // bytes ko file me write karo
+                            System.IO.File.WriteAllBytes(path, bytes);
+
+                            // file name save karo view model me
                             studentViewModel.StudentRegistration.ProfileAvatar = fileName;
                         }
                         else

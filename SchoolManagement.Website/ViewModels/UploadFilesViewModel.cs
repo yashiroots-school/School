@@ -22,6 +22,8 @@ namespace SchoolManagement.Website.ViewModels
         public HttpPostedFileBase MotherAdhar { get; set; }
         public HttpPostedFileBase BankBook { get; set; }
         public HttpPostedFileBase Ssmid { get; set; }
- 
+        public string CroppedProfileAvatar { get; set; }
+
+
     }
 }

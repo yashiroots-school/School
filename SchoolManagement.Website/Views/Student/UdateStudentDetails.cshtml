@@ -172,13 +172,17 @@
                                     <div class="form-group">
                                         <label>Medium  : </label>
                                         @Html.DropDownList("StudentRegistration.Medium", new SelectList(ViewBag.Medium, "DataListItemName", "DataListItemName"), "select", new { @id = "Medium", @class = "form-control" })
-                                        
+
                                     </div>
                                     <div class="form-group">
                                         <label>Profile Avatar</label>
                                         @*<img src="~/WebsiteImages/images/user.png" alt="Affix recent passport size <br/> photograph of student." style="width:100%;margin-bottom:10px;" class="img-thumbnail" />*@
                                         <input type="file" id="File" name="ProfileAvatar" style="margin-bottom:20px;" accept=".jpg,.png" />
                                         <label type="text" id="FileLbl" name="ProfileAvatar"></label>
+                                        <img id="preview" style="max-width: 300px; display:none;">
+                                        <button id="cropBtn">Crop</button>
+                                        <canvas id="canvas" style="display:none;"></canvas>
+                                        <input type="hidden" id="CroppedProfileAvatar" name="CroppedProfileAvatar" />
                                     </div>
 
 
@@ -195,13 +199,13 @@
                                         <label>Caste  : </label>
                                         @*@Html.DropDownList("StudentRegistration.Caste", new SelectList(ViewBag.Caste, "DataListItemName", "DataListItemName"), "select", new { @id = "Caste", @class = "form-control" })*@
                                         @*@Html.DropDownList("Student.Caste", ViewBag.Caste as SelectList, "Select", new { @class = "form-control" })*@
-                                    <select class="form-control" id="Cast_Id" name="StudentRegistration.Caste">
-                                        <option value="0">---select Cast---</option>
-                                        @foreach (var item in ViewBag.Caste as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
-                                        {
-                                            <option value="@item.DataListItemId">@item.DataListItemName</option>
-                                        }
-                                    </select>
+                                        <select class="form-control" id="Cast_Id" name="StudentRegistration.Caste">
+                                            <option value="0">---select Cast---</option>
+                                            @foreach (var item in ViewBag.Caste as IEnumerable<SchoolManagement.Data.Models.Tbl_DataListItem>)
+                                            {
+                                                <option value="@item.DataListItemId">@item.DataListItemName</option>
+                                            }
+                                        </select>
                                         <input type="text" id="Caste" name="StudentRegistration.Caste" style="display:none" />
                                     </div>
 
@@ -542,7 +546,7 @@
                             <div class="col-sm-12" style="border-bottom: 1px solid #E6E9ED;">
                                 <!-- col-sm-12 started -->
                                 <h4 class="std_head well-sm">Address</h4>
-                               
+
                                 <div class="col-sm-6">
                                     <!-- col-sm-6 started -->
                                     <h4>Residential</h4>
@@ -692,7 +696,7 @@
                                         <input type="text" name="StudentRegistration.FamilySSSMID" id="FamilySSSMID" class="form-control">
                                     </div>
 
-                                    
+
 
                                     <div class="form-group">
                                         <label>Bank Account :</label>
@@ -822,7 +826,47 @@
     <script src="~/Scripts/RegistrationJs/StudentRegistration.js"></script>
     <script src="~/Scripts/RegistrationJs/RegMethods.js"></script>
     <script src="~/Scripts/DevelopmentJS/leftMenuBinderJS.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
+    <script>
+        let cropper;
+        const fileInput = document.getElementById('File');
+        const preview = document.getElementById('preview');
+        const hiddenInput = document.getElementById('CroppedProfileAvatar');
 
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                preview.src = event.target.result;
+                preview.style.display = 'block';
+
+                if (cropper) cropper.destroy();
+                cropper = new Cropper(preview, {
+                    aspectRatio: 1,  // square crop
+                    viewMode: 1,
+                    autoCropArea: 1
+                });
+            };
+            reader.readAsDataURL(file);
+        });
+
+        document.getElementById('cropBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!cropper) return;
+
+            const canvas = cropper.getCroppedCanvas({
+                width: 300,
+                height: 300
+            });
+
+            preview.src = canvas.toDataURL('image/png'); // optional preview
+            hiddenInput.value = canvas.toDataURL('image/png'); // send to backend
+        });
+
+    </script>
     <script>
         $("#TransportFacility").on('click', function () {
             var id = $(this).val();
