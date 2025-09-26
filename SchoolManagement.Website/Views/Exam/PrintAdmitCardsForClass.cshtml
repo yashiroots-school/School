@@ -1,0 +1,273 @@
+﻿@model List<SchoolManagement.Website.ViewModels.AdmitsCardViewModel>
+
+@{
+    Layout = null;
+}
+
+<style>
+@@page {
+    size: A4 portrait;
+    margin: 10mm;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.page {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* full page height */
+    page-break-after: always;
+}
+
+.admit-card {
+    box-sizing: border-box;
+    background: white;
+    padding: 8px;
+    border: 1px solid #ccc;
+    margin-bottom: 2%; /* small gap between two cards */
+    max-height: 49%; /* max height per student */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    page-break-inside: avoid;
+    font-size: 12px; /* adjusted font size */
+}
+
+.admit-card .content {
+    overflow: auto; /* scroll inside if content too big */
+}
+
+/*.header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}*/
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 5px;
+        text-align: center;
+        position: relative;
+    }
+
+    .logo-container {
+        position: absolute;
+        left: 0; /* logo left me fix */
+        top: 0;
+    }
+
+        .logo-container img {
+            max-height: 60px;
+            max-width: 60px;
+        }
+
+    .school-info {
+        flex: 1;
+        text-align: center;
+    }
+
+    .school-name {
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .school-address {
+        font-size: 12px;
+        margin-top: 2px;
+    }
+
+    .admit-card-title {
+        font-size: 14px;
+        font-weight: bold;
+        text-align: center;
+        margin: 5px 0;
+        text-transform: uppercase;
+    }
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2px;
+    font-size: 10px; /* table font smaller */
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 3px;
+    text-align: left;
+}
+
+.instructions {
+    margin-top: 2px;
+    font-size: 8px; /* smaller instructions */
+}
+    .student-details {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11px;
+        margin-bottom: 5px;
+    }
+
+        .student-details td {
+            border: none !important;
+            padding: 2px 5px;
+        }
+.signatures {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2px;
+}
+
+.signature-box {
+    text-align: center;
+    font-size: 10px;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 5px;
+    font-weight: bold;
+    font-size: 10px;
+}
+
+@@media print {
+    button { display: none; }
+}
+</style>
+
+<button onclick="window.print()">🖨️ Print Admit Cards</button>
+
+@for (int i = 0; i < Model.Count; i += 2)
+{
+    <div class="page">
+
+        <!-- First student -->
+        <div class="admit-card">
+            <div class="content">
+                @{
+                    var item = Model[i];
+                }
+                <div class="header">
+                    <div class="logo-container">
+                        @if (ViewBag.School_logo != null)
+                        {
+                            <img src="data:image/png;base64,@ViewBag.School_logo" />
+                        }
+                    </div>
+                    <div class="school-info">
+                        <div class="school-name">@ViewBag.SchoolNewName</div>
+                        <div class="school-address">@ViewBag.newAddress</div>
+                    </div>
+                </div>
+                <div class="admit-card-title center">ADMIT CARD<br />FOR @item.Student.TermName (@item.Student.BatchName)</div>
+                <table class="student-details">
+                    <tr><td>Scholar No</td><td>: @item.Student.ScholarNo</td><td>Roll No</td><td>: @item.Student.RollNo</td></tr>
+                    <tr><td>Name</td><td>: @item.Student.Name</td><td>DOB</td><td>: @item.Student.DOB</td></tr>
+                    <tr><td>Father's Name</td><td>: @item.Student.FatherName</td><td>Mother's Name</td><td>: @item.Student.MotherName</td></tr>
+                    <tr><td>Class</td><td>: @item.Student.Class</td><td>Section</td><td>: @item.Student.Section</td></tr>
+                </table>
+
+
+                <table>
+                    <thead>
+                        <tr><th>Subject</th><th>Type</th><th>Date</th><th>Time</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var test in item.Tests)
+                        {
+                            <tr>
+                                <td>@test.TestName</td>
+                                <td>@test.TestType</td>
+                                <td>@test.ExamDate</td>
+                                <td>@test.ExamTime</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="instructions">
+                    <P><b>Instructions for the students</b></P>
+                    <ol>
+                        <li>All the students must be present in the school premises before 7.30 am.</li>
+                        <li>Clear all your dues before the examinations begin.</li>
+                        <li>The written exam begins at 7.45 am till 08.30 am.</li>
+                        <li>No Student will be allowed to go home after the exam. Classes will continue as usual</li>
+                        <li>Late corners will not be allowed to write the exam.</li>
+                    </ol>
+                </div>
+                <div class="signatures">
+                    <div class="signature-box"><img src="~/WebsiteImages/StaffSignature/@item.Student.staf" id="teachersignature" style="width:115px; height:40px;" alt="" /><br />Class Teacher's Signature</div>
+                    <div class="signature-box"><img src="~/Content/Images/principle.png" style="width:115px; height:40px;" alt="" /><br />Principal's Signature</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Second student -->
+        @if (i + 1 < Model.Count)
+        {
+            <div class="admit-card">
+                <div class="content">
+                    @{
+                        var item2 = Model[i + 1];
+                    }
+                    <div class="header">
+                        <div class="logo-container">
+                            @if (ViewBag.School_logo != null)
+                            {
+                                <img src="data:image/png;base64,@ViewBag.School_logo" />
+                            }
+                        </div>
+                        <div class="school-info">
+                            <div class="school-name">@ViewBag.SchoolNewName</div>
+                            <div class="school-address">@ViewBag.newAddress</div>
+                        </div>
+                    </div>
+                    <div class="admit-card-title center">ADMIT CARD<br />FOR @item2.Student.TermName (@item2.Student.BatchName)</div>
+                    <table class="student-details">
+                        <tr><td>Scholar No</td><td>: @item2.Student.ScholarNo</td><td>Roll No</td><td>: @item2.Student.RollNo</td></tr>
+                        <tr><td>Name</td><td>: @item2.Student.Name</td><td>DOB</td><td>: @item2.Student.DOB</td></tr>
+                        <tr><td>Father's Name</td><td>: @item2.Student.FatherName</td><td>Mother's Name</td><td>: @item2.Student.MotherName</td></tr>
+                        <tr><td>Class</td><td>: @item2.Student.Class</td><td>Section</td><td>: @item2.Student.Section</td></tr>
+                    </table>
+
+
+                    <table>
+                        <thead>
+                            <tr><th>Subject</th><th>Type</th><th>Date</th><th>Time</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var test in item2.Tests)
+                            {
+                                <tr>
+                                    <td>@test.TestName</td>
+                                    <td>@test.TestType</td>
+                                    <td>@test.ExamDate</td>
+                                    <td>@test.ExamTime</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div class="instructions">
+                        <P><b>Instructions for the students</b></P>
+                        <ol>
+                            <li>All the students must be present in the school premises before 7.30 am.</li>
+                            <li>Clear all your dues before the examinations begin.</li>
+                            <li>The written exam begins at 7.45 am till 08.30 am.</li>
+                            <li>No Student will be allowed to go home after the exam. Classes will continue as usual</li>
+                            <li>Late corners will not be allowed to write the exam.</li>
+                        </ol>
+                    </div>
+                    <div class="signatures">
+                        <div class="signature-box"><img src="~/WebsiteImages/StaffSignature/@item.Student.staf" id="teachersignature" style="width:115px; height:40px;" alt="" /><br />Class Teacher's Signature</div>
+                        <div class="signature-box"><img src="~/Content/Images/principle.png" style="width:115px; height:40px;" alt="" /><br />Principal's Signature</div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

@@ -2670,6 +2670,7 @@
     <Content Include="Views\Student\StudentProfile.cshtml" />
     <Content Include="Views\Exam\PrintAdmitCard.cshtml" />
     <Content Include="Views\Exam\AdmitsCard.cshtml" />
+    <Content Include="Views\Exam\PrintAdmitCardsForClass.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

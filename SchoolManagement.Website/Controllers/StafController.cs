@@ -66,20 +66,35 @@ namespace SchoolManagement.Website.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddStaf(StafsDetails staffdetails, HttpPostedFileBase File, HttpPostedFileBase RelievingLetter, HttpPostedFileBase PerformanceLetter, HttpPostedFileBase AdharFile, HttpPostedFileBase PanFile,HttpPostedFileBase StaffSignatureFile) //
+       // public ActionResult AddStaf(StafsDetails staffdetails, HttpPostedFileBase CroppedProfileAvatar, HttpPostedFileBase RelievingLetter, HttpPostedFileBase PerformanceLetter, HttpPostedFileBase AdharFile, HttpPostedFileBase PanFile,HttpPostedFileBase CroppedSign) //
+        public ActionResult AddStaf(StafsDetails staffdetails, HttpPostedFileBase File, HttpPostedFileBase RelievingLetter, HttpPostedFileBase PerformanceLetter, HttpPostedFileBase AdharFile, HttpPostedFileBase PanFile, string CroppedProfileAvatar, string CroppedSign) //
         {
            var url = Request.UrlReferrer.AbsoluteUri;
             string trackId = DateTime.Now.ToString("yyyyddMMhhmmss");
             try
             {
-                if (File != null && File.ContentLength > 0)
+                //if (CroppedProfileAvatar != null && CroppedProfileAvatar.ContentLength > 0)
+                //{
+                //    var extension = Path.GetExtension(CroppedProfileAvatar.FileName);
+                //    var fileName = "Profile_" + trackId + extension;
+                //    var directory = Server.MapPath("~/WebsiteImages/MemberImage");
+                //    if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+                //    var path = Path.Combine(directory, fileName);
+                //    CroppedProfileAvatar.SaveAs(path);
+                //    staffdetails.File = fileName;
+                //}
+                if (!string.IsNullOrEmpty(CroppedProfileAvatar))
                 {
-                    var extension = Path.GetExtension(File.FileName);
-                    var fileName = "Profile_" + trackId + extension;
+                    var base64 = CroppedProfileAvatar.Split(',')[1]; // remove "data:image/png;base64,"
+                    var bytes = Convert.FromBase64String(base64);
+
+                    var fileName = "Profile_" + trackId + ".png";
                     var directory = Server.MapPath("~/WebsiteImages/MemberImage");
                     if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+
                     var path = Path.Combine(directory, fileName);
-                    File.SaveAs(path);
+                    System.IO.File.WriteAllBytes(path, bytes);
+
                     staffdetails.File = fileName;
                 }
 
@@ -116,26 +131,50 @@ namespace SchoolManagement.Website.Controllers
                     AdharFile.SaveAs(path);
                     staffdetails.AdharFile = fileName;
                 }
-
-                if (StaffSignatureFile != null && StaffSignatureFile.ContentLength > 0)
+                if (PanFile != null && PanFile.ContentLength > 0)
                 {
-                    var extension = Path.GetExtension(StaffSignatureFile.FileName);
-                    var fileName = "Signature_" + trackId + extension;
-                    var directory = Server.MapPath("~/WebsiteImages/Staffsignature");
+                    var extension = Path.GetExtension(PanFile.FileName);
+                    var fileName = "Pan_" + trackId + extension;
+                    var directory = Server.MapPath("~/WebsiteImages/StaffPanDoc");
                     if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
                     var path = Path.Combine(directory, fileName);
-                    StaffSignatureFile.SaveAs(path);
-                    staffdetails.StaffSignatureFile = fileName;
+                    AdharFile.SaveAs(path);
+                    staffdetails.PanFile = fileName;
                 }
-                if (StaffSignatureFile != null)
+
+                //if (CroppedSign != null && CroppedSign.ContentLength > 0)
+                //{
+                //    var extension = Path.GetExtension(CroppedSign.FileName);
+                //    var fileName = "Signature_" + trackId + extension;
+                //    var directory = Server.MapPath("~/WebsiteImages/Staffsignature");
+                //    if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+                //    var path = Path.Combine(directory, fileName);
+                //    CroppedSign.SaveAs(path);
+                //    staffdetails.StaffSignatureFile = fileName;
+                //}
+                //if (CroppedSign != null)
+                //{
+                //    if (CroppedSign.ContentLength > 0)
+                //    {
+                //        var fileName = Path.GetFileName(CroppedSign.FileName);
+                //        var path = Path.Combine(Server.MapPath("~/WebsiteImages/Staffsignature"), fileName);
+                //        CroppedSign.SaveAs(path);
+                //        staffdetails.StaffSignatureFile = fileName;
+                //    }
+                //}
+                if (!string.IsNullOrEmpty(CroppedSign))
                 {
-                    if (StaffSignatureFile.ContentLength > 0)
-                    {
-                        var fileName = Path.GetFileName(StaffSignatureFile.FileName);
-                        var path = Path.Combine(Server.MapPath("~/WebsiteImages/Staffsignature"), fileName);
-                        StaffSignatureFile.SaveAs(path);
-                        staffdetails.StaffSignatureFile = fileName;
-                    }
+                    var base64 = CroppedSign.Split(',')[1];
+                    var bytes = Convert.FromBase64String(base64);
+
+                    var fileName = "Signature_" + trackId + ".png";
+                    var directory = Server.MapPath("~/WebsiteImages/Staffsignature");
+                    if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+
+                    var path = Path.Combine(directory, fileName);
+                    System.IO.File.WriteAllBytes(path, bytes);
+
+                    staffdetails.StaffSignatureFile = fileName;
                 }
                 //staffdetails.UserId = _context.StafsDetails.FirstOrDefault(x => x.UserId == currentUser.UserId.ToString()); //Session["UserId"].ToString();
                 db.StafsDetails.Add(staffdetails);
@@ -270,97 +309,125 @@ namespace SchoolManagement.Website.Controllers
         }
 
         [HttpPost]
-        public ActionResult EditStaffDetail(StafsDetails staffdetails, HttpPostedFileBase File, HttpPostedFileBase RelievingLetter, HttpPostedFileBase PerformanceLetter, HttpPostedFileBase AdharFile, HttpPostedFileBase PanFile, HttpPostedFileBase StaffSignatureFile)
+        public ActionResult EditStaffDetail(StafsDetails staffdetails, HttpPostedFileBase File, HttpPostedFileBase RelievingLetter, HttpPostedFileBase PerformanceLetter, HttpPostedFileBase AdharFile, HttpPostedFileBase PanFile, HttpPostedFileBase StaffSignatureFile, string CroppedProfileAvatar, string CroppedSign)
         {
             if (staffdetails.StafId>0)
             {
-         
+                string trackId = DateTime.Now.ToString("yyyyddMMhhmmss");
                 var existingobj = db.StafsDetails.FirstOrDefault(e => e.StafId == staffdetails.StafId);
                 if (existingobj != null)
                 {
-                    if (File != null)
+                    //if (File != null)
+                    //{
+                    //    if (File.ContentLength > 0)
+                    //    {
+                    //        var fileName = Path.GetFileName(File.FileName);
+                    //        var path = Path.Combine(Server.MapPath("~/WebsiteImages/MemberImage"), fileName);
+                    //        File.SaveAs(path);
+                    //        staffdetails.File = fileName;
+                    //    }
+                    //}
+                    if (!string.IsNullOrEmpty(CroppedProfileAvatar))
                     {
-                        if (File.ContentLength > 0)
-                        {
-                            var fileName = Path.GetFileName(File.FileName);
-                            var path = Path.Combine(Server.MapPath("~/WebsiteImages/MemberImage"), fileName);
-                            File.SaveAs(path);
-                            staffdetails.File = fileName;
-                        }
+                        var base64 = CroppedProfileAvatar.Split(',')[1]; // remove "data:image/png;base64,"
+                        var bytes = Convert.FromBase64String(base64);
+
+                        var fileName = "Profile_" + trackId + ".png";
+                        var directory = Server.MapPath("~/WebsiteImages/MemberImage");
+                        if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+
+                        var path = Path.Combine(directory, fileName);
+                        System.IO.File.WriteAllBytes(path, bytes);
+
+                        staffdetails.File = fileName;
                     }
                     else
                     {
                         staffdetails.File = existingobj.File;
                     }
 
-                    if (RelievingLetter != null)
+                    if (RelievingLetter != null && RelievingLetter.ContentLength > 0)
                     {
-                        if (RelievingLetter.ContentLength > 0)
-                        {
-                            var fileName = Path.GetFileName(RelievingLetter.FileName);
-                            var path = Path.Combine(Server.MapPath("~/WebsiteImages/RelevingLetter"), fileName);
-                            RelievingLetter.SaveAs(path);
-                            staffdetails.RelievingLetter = fileName;
-                        }
+                        var extension = Path.GetExtension(RelievingLetter.FileName);
+                        var fileName = "Relieving_" + trackId + extension;
+                        var directory = Server.MapPath("~/WebsiteImages/RelevingLetter");
+                        if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+                        var path = Path.Combine(directory, fileName);
+                        RelievingLetter.SaveAs(path);
+                        staffdetails.RelievingLetter = fileName;
                     }
                     else
                     {
                         staffdetails.RelievingLetter = existingobj.RelievingLetter;
                     }
 
-                    if (PerformanceLetter != null)
+                    if (PerformanceLetter != null && PerformanceLetter.ContentLength > 0)
                     {
-                        if (PerformanceLetter.ContentLength > 0)
-                        {
-                            var fileName = Path.GetFileName(PerformanceLetter.FileName);
-                            var path = Path.Combine(Server.MapPath("~/WebsiteImages/PerforLetter"), fileName);
-                            PerformanceLetter.SaveAs(path);
-                            staffdetails.PerformanceLetter = fileName;
-                        }
+                        var extension = Path.GetExtension(PerformanceLetter.FileName);
+                        var fileName = "Performance_" + trackId + extension;
+                        var directory = Server.MapPath("~/WebsiteImages/PerforLetter");
+                        if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+                        var path = Path.Combine(directory, fileName);
+                        PerformanceLetter.SaveAs(path);
+                        staffdetails.PerformanceLetter = fileName;
                     }
                     else
                     {
                         staffdetails.PerformanceLetter = existingobj.PerformanceLetter;
                     }
-                    if (AdharFile != null)
+                    if (AdharFile != null && AdharFile.ContentLength > 0)
                     {
-                        if (AdharFile.ContentLength > 0)
-                        {
-                            var fileName = Path.GetFileName(AdharFile.FileName);
-                            var path = Path.Combine(Server.MapPath("~/WebsiteImages/StaffAdhar"), fileName);
-                            AdharFile.SaveAs(path);
-                            staffdetails.AdharFile = fileName;
-                        }
+                        var extension = Path.GetExtension(AdharFile.FileName);
+                        var fileName = "Aadhar_" + trackId + extension;
+                        var directory = Server.MapPath("~/WebsiteImages/StaffAdhar");
+                        if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+                        var path = Path.Combine(directory, fileName);
+                        AdharFile.SaveAs(path);
+                        staffdetails.AdharFile = fileName;
                     }
                     else
                     {
                         staffdetails.AdharFile = existingobj.AdharFile;
                     }
 
-                    if (PanFile != null)
+                    if (PanFile != null && PanFile.ContentLength > 0)
                     {
-                        if (PanFile.ContentLength > 0)
-                        {
-                            var fileName = Path.GetFileName(PanFile.FileName);
-                            var path = Path.Combine(Server.MapPath("~/WebsiteImages/StaffPanDoc"), fileName);
-                            PanFile.SaveAs(path);
-                            staffdetails.PanFile = fileName;
-                        }
+                        var extension = Path.GetExtension(PanFile.FileName);
+                        var fileName = "Pan_" + trackId + extension;
+                        var directory = Server.MapPath("~/WebsiteImages/StaffPanDoc");
+                        if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+                        var path = Path.Combine(directory, fileName);
+                        AdharFile.SaveAs(path);
+                        staffdetails.PanFile = fileName;
                     }
                     else
                     {
                         staffdetails.PanFile = existingobj.PanFile;
                     }
 
-                    if (StaffSignatureFile != null)
+                    //if (StaffSignatureFile != null)
+                    //{
+                    //    if (StaffSignatureFile.ContentLength > 0)
+                    //    {
+                    //        var fileName = Path.GetFileName(StaffSignatureFile.FileName);
+                    //        var path = Path.Combine(Server.MapPath("~/WebsiteImages/Staffsignature"), fileName);
+                    //        StaffSignatureFile.SaveAs(path);
+                    //        staffdetails.StaffSignatureFile = fileName;
+                    //    }
+                    //}
+                    if (!string.IsNullOrEmpty(CroppedSign))
                     {
-                        if (StaffSignatureFile.ContentLength > 0)
-                        {
-                            var fileName = Path.GetFileName(StaffSignatureFile.FileName);
-                            var path = Path.Combine(Server.MapPath("~/WebsiteImages/Staffsignature"), fileName);
-                            StaffSignatureFile.SaveAs(path);
-                            staffdetails.StaffSignatureFile = fileName;
-                        }
+                        var base64 = CroppedSign.Split(',')[1];
+                        var bytes = Convert.FromBase64String(base64);
+
+                        var fileName = "Signature_" + trackId + ".png";
+                        var directory = Server.MapPath("~/WebsiteImages/Staffsignature");
+                        if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+
+                        var path = Path.Combine(directory, fileName);
+                        System.IO.File.WriteAllBytes(path, bytes);
+
+                        staffdetails.StaffSignatureFile = fileName;
                     }
                     else
                     {

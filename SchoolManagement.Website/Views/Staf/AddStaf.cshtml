@@ -101,11 +101,19 @@
                                             <label>Upload Image</label>
                                             <input type="file" id="File" name="File" />
                                             <label type="text" id="Filedocs" name="Filedocs"></label>
+                                            <img id="preview" style="max-width: 300px; display:none;">
+                                            <button id="cropBtn">Crop</button>
+                                            <canvas id="canvas" style="display:none;"></canvas>
+                                            <input type="hidden" id="CroppedProfileAvatar" name="CroppedProfileAvatar" />
                                         </div>
                                         <div class="form-group">
                                             <label>Upload Staff Signature</label>
                                             <input type="file" id="StaffSignatureFile" name="StaffSignatureFile" />
                                             <label type="text" id="StaffSignaturedocs" name="StaffSignaturedocs"></label>
+                                            <img id="previewsign" style="max-width: 300px; display:none;">
+                                            <button id="cropBtn2">Crop</button>
+                                            <canvas id="canvas" style="display:none;"></canvas>
+                                            <input type="hidden" id="CroppedSign" name="CroppedSign" />
                                         </div>
                                         <div class="form-group">
                                             <label>Religion  : </label>
@@ -197,7 +205,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                         </div>
 
                         <div class="tab-pane fade" id="add2">
@@ -238,7 +246,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                         </div>
 
                         <div id="add3" class="tab-pane fade">
@@ -259,7 +267,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label>Designation</label>
-                                            <input type="text" id="Employee_Designation" name="Employee_Designation" class="form-control"/>
+                                            <input type="text" id="Employee_Designation" name="Employee_Designation" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
@@ -280,7 +288,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                         </div>
 
                         <div class="tab-pane fade" id="add4">
@@ -383,5 +391,86 @@
 
 @section scripts{
     <script src="~/Scripts/DevelopmentJS/AddStaffDetails.js"></script>
-  
+
+
+<link href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
+<script>
+    let cropper;
+    const fileInput = document.getElementById('File');
+    const preview = document.getElementById('preview');
+    const hiddenInput = document.getElementById('CroppedProfileAvatar');
+    //const fileInput = document.getElementById('StaffSignatureFile');
+    //const preview = document.getElementById('previewsign');
+    //const hiddenInput = document.getElementById('CroppedSign');
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (event) {
+            preview.src = event.target.result;
+            preview.style.display = 'block';
+
+            if (cropper) cropper.destroy();
+            cropper = new Cropper(preview, {
+                aspectRatio: 1,  // square crop
+                viewMode: 1,
+                autoCropArea: 1
+            });
+        };
+        reader.readAsDataURL(file);
+    });
+
+    document.getElementById('cropBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!cropper) return;
+
+        const canvas = cropper.getCroppedCanvas({
+            width: 300,
+            height: 300
+        });
+
+        preview.src = canvas.toDataURL('image/png'); // optional preview
+        hiddenInput.value = canvas.toDataURL('image/png'); // send to backend
+    });
+    //sign
+    // Signature ke liye
+    let signCropper;
+    const fileInputSign = document.getElementById('StaffSignatureFile');
+    const previewSign = document.getElementById('previewsign');
+    const hiddenInputSign = document.getElementById('CroppedSign');
+
+    fileInputSign.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (event) {
+            previewSign.src = event.target.result;
+            previewSign.style.display = 'block';
+
+            if (signCropper) signCropper.destroy();
+            signCropper = new Cropper(previewSign, {
+                aspectRatio: NaN, //3, // sign ke liye rectangular crop better hota hai
+                viewMode: 1,
+                autoCropArea: 1
+            });
+        };
+        reader.readAsDataURL(file);
+    });
+
+    document.getElementById('cropBtn2').addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!signCropper) return;
+
+        const canvas = signCropper.getCroppedCanvas({
+            width: 400,
+            height: 150
+        });
+
+        previewSign.src = canvas.toDataURL('image/png');
+        hiddenInputSign.value = canvas.toDataURL('image/png');
+    });
+</script>
 }

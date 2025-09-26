@@ -187,6 +187,7 @@
 
                                 <div class="col-sm-4 d-flex justify-content-between align-items-center" style="top: 21px;">
                                     <button type="button" class="btn btn-success" id="BtnShowAdmitStudent">Show</button>
+                                    <button type="button" class="btn btn-success" id="PrintAll">Print All</button>
                                 </div>
                             </div>
 
@@ -308,13 +309,7 @@
                         var serialNo = 1;
 
                         $.each(result, function (key, item) {
-                            var holdBtn;
-                            if (item.IsHold == false) {
-                                holdBtn = '<button class="btn btn-primary" onclick="showCustomAlert(' + item.StudentId + ', ' + termId + ', ' + batchid + ', ' + classid + ',1)">Hold</button>';
-                            } else {
-                                holdBtn = '<button class="btn btn-primary" onclick="showCustomAlert(' + item.StudentId + ', ' + termId + ', ' + batchid + ', ' + classid + ',0)">Publish</button>';
-                            }
-
+                           
                             var printBtn = '<button class="btn btn-success" onclick="PrintAdmit(' + item.StudentId + ', ' + termId + ')">Admit Card</button>';
 
                             data.push([
@@ -338,7 +333,38 @@
                 });
             }
         });
+        $('#PrintAll').click(function () {
+            // Collect any parameters if needed, for example class, section, batch
+            var classId = $('#ClassID').val();       // Replace with your actual selector
+            var sectionId = $('#SectionId').val();   // Replace with your actual selector
+            var batchId = $('#BatchID').val();       // Replace with your actual selector
+            var termId = $('#TermID').val();         // Replace with your actual selector
+
+            $.ajax({
+                url: '/Exam/PrintAdmitCardsForClass', // Replace with your controller/action
+                type: 'GET', // Or 'POST' if your action accepts POST
+                data: {
+                    classId: classId,
+                    sectionId: sectionId,
+                    batchId: batchId,
+                    termId: termId
+                },
+                success: function (response) {
+                    // If your action returns a partial view or HTML content:
+                    var printWindow = window.open('', '_blank');
+                    printWindow.document.write(response);
+                    printWindow.document.close();
+                    printWindow.focus();
+                    printWindow.print();
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error printing admit cards: ' + error);
+                    alert('Failed to print admit cards.');
+                }
+            });
+        });
     });
+   
 
 
 </script>

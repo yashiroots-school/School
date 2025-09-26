@@ -1541,6 +1541,91 @@ namespace SchoolManagement.Website.Controllers
 
             return View(model);
         }
+        public ActionResult PrintAdmitCardsForClass(int classId, int sectionId, int batchId, int termId)
+        {
+            var school = _context.TblCreateSchool.FirstOrDefault();
+            ViewBag.School_logo = school != null
+                ? ConvertImageToBase64(Server.MapPath("~/WebsiteImages/SchoolImage/" + Path.GetFileName(school.Upload_Image)))
+                : null;
+            ViewBag.SchoolNewName = school?.School_Name;
+            ViewBag.newAddress = school?.Address;
+
+            var model = new List<AdmitsCardViewModel>();
+
+            string connString = System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            using (var conn = new SqlConnection(connString))
+            using (var cmd = new SqlCommand("GetAdmitCardByClassSection", conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@ClassId", classId);
+                cmd.Parameters.AddWithValue("@SectionId", sectionId);
+                cmd.Parameters.AddWithValue("@BatchId", batchId);
+                cmd.Parameters.AddWithValue("@TermId", termId);
+
+                conn.Open();
+                using (var reader = cmd.ExecuteReader())
+                {
+                    // 1) Students
+                    while (reader.Read())
+                    {
+                        var studentModel = new AdmitsCardViewModel
+                        {
+                            Student = new StudentDto
+                            {
+                                StudentId = reader["StudentId"] != DBNull.Value ? Convert.ToInt32(reader["StudentId"]) : 0,
+                                ApplicationNumber = reader["ApplicationNumber"]?.ToString(),
+                                UIN = reader["UIN"]?.ToString(),
+                                Name = reader["Name"]?.ToString(),
+                                Class = reader["Class"]?.ToString(),
+                                BatchName = reader["BatchName"]?.ToString(),
+                                Section = reader["Section"]?.ToString(),
+                                Gender = reader["Gender"]?.ToString(),
+                                DOB = reader["DOB"]?.ToString(),
+                                RollNo = reader["RollNo"] != DBNull.Value ? Convert.ToInt64(reader["RollNo"]) : (long?)null,
+                                ScholarNo = reader["ScholarNo"] != DBNull.Value ? Convert.ToInt64(reader["ScholarNo"]) : (long?)null,
+                                FatherName = reader["FatherName"]?.ToString(),
+                                MotherName = reader["MotherName"]?.ToString(),
+                                Mobile = reader["Mobile"]?.ToString(),
+                                City = reader["City"]?.ToString(),
+                                State = reader["State"]?.ToString(),
+                                staf = reader["staf"]?.ToString(),
+                                TermName = reader["TermName"]?.ToString()
+                            }
+                        };
+
+                        model.Add(studentModel);
+                    }
+
+                    // 2) Move to next result for tests
+                    if (reader.NextResult())
+                    {
+                        var tests = new List<TestDto>();
+                        while (reader.Read())
+                        {
+                            tests.Add(new TestDto
+                            {
+                                TestID = reader["TestID"] != DBNull.Value ? Convert.ToInt64(reader["TestID"]) : 0,
+                                TestName = reader["TestName"]?.ToString(),
+                                TestType = reader["TestType"]?.ToString(),
+                                MaximumMarks = reader["MaximumMarks"] != DBNull.Value ? Convert.ToInt32(reader["MaximumMarks"]) : 0,
+                                MinimumMarks = reader["MinimumMarks"] != DBNull.Value ? Convert.ToInt32(reader["MinimumMarks"]) : 0,
+                                ExamDate = reader["ExamDate"]?.ToString(),
+                                ExamTime = reader["ExamTime"]?.ToString()
+                            });
+                        }
+
+                        // Assign the same test list to all students
+                        foreach (var student in model)
+                        {
+                            student.Tests = tests;
+                        }
+                    }
+                }
+            }
+
+            return View(model); // Use a view that loops over all students for printing
+        }
+
 
         public ActionResult PrintReportCardCBSEBoard(string id, int batchId)
         {
