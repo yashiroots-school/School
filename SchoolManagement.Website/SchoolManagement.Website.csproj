@@ -2678,6 +2678,7 @@
     <Content Include="Views\Exam\PrintAdmitCardsForClass.cshtml" />
     <Content Include="Views\Dashboard\AddCalendarEvent.cshtml" />
     <Content Include="Views\Dashboard\AddNotice.cshtml" />
+    <Content Include="Views\Exam\ExamTimeTable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

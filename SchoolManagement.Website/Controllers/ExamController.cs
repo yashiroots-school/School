@@ -32,6 +32,7 @@ using SchoolManagement.Website.Models;
 using SchoolManagement.Website.Models.DataAccess;
 using SchoolManagement.Website.ViewModels;
 using DocumentFormat.OpenXml.Presentation;
+using System.Configuration;
 
 namespace SchoolManagement.Website.Controllers
 {
@@ -11171,6 +11172,30 @@ namespace SchoolManagement.Website.Controllers
                 .Select(g => g.Grade)
                 .FirstOrDefault();
             return grade ?? "D";
+        }
+        public ActionResult ExamTimeTable(int? BatchId=null, int? TermId=null)
+        {
+            
+            ViewBag.Batch = _context.Tbl_Batches.ToList();
+            ViewBag.Term = _context.tbl_Term.ToList();
+            DataTable dt = new DataTable();
+            if (BatchId != null && TermId != null)
+            {
+                using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString()))
+                using (var cmd = new SqlCommand("GetExamTImeTable", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@TermId", (object)TermId ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@BatchId", (object)BatchId ?? DBNull.Value);
+                    conn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        dt.Load(reader);
+                    }
+                }
+            }
+            ViewBag.DataTable = dt;
+            return View();
         }
     }
 }

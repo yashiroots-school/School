@@ -1,0 +1,151 @@
+﻿@using System.Data
+@using System.Linq
+@{
+    ViewBag.Title = "WeeklyTimeTable";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/DropDownSelect2/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    thead th,
+    tbody td {
+        white-space: nowrap;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    thead th,
+    tbody td {
+        padding: 8px;
+        border: 1px solid #ddd;
+    }
+
+        thead th:first-child,
+        tbody td:first-child {
+            position: sticky;
+            left: 0;
+            background-color: #fff;
+            z-index: 2;
+        }
+
+    thead th {
+        position: sticky;
+        top: 0;
+        background-color: #fff;
+        z-index: 3;
+    }
+
+        thead th:first-child {
+            z-index: 4;
+        }
+
+    .fixTableHead {
+        overflow: auto;
+        max-height: 600px;
+    }
+</style>
+
+@{
+    var dt = ViewBag.DataTable as DataTable;
+
+    // Get distinct dates safely
+    var dates = dt.AsEnumerable()
+                  .Where((DataRow r) => r["ExamDate"] != DBNull.Value && !string.IsNullOrEmpty(r["ExamDate"].ToString()))
+                  .Select((DataRow r) => DateTime.ParseExact(r["ExamDate"].ToString().Trim(), "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture))
+                  .Distinct()
+                  .OrderBy(d => d)
+                  .ToList();
+
+    // Get distinct class names safely
+    var classes = dt.AsEnumerable()
+                    .Where((DataRow r) => r["ClassName"] != DBNull.Value && !string.IsNullOrEmpty(r["ClassName"].ToString()))
+                    .Select((DataRow r) => r["ClassName"].ToString())
+                    .Distinct()
+                    .OrderBy(c => c)
+                    .ToList();
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <h2>Exam Time Table</h2>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="tab-content tab_sis">
+                <div class="tab-pane fade in active" id="add">
+                    @using (Html.BeginForm("ExamTimeTable", "Exam", FormMethod.Post))
+                    {
+                        <div class="row">
+                            <div class="col-md-3 col-sm-3 col-xs-4">
+                                @Html.DropDownList("BatchId", new SelectList(ViewBag.Batch, "Batch_Id", "Batch_Name"), "Select Batch", new { @class = "form-control select2", @required = "required" })
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-4">
+                                @Html.DropDownList("TermId", new SelectList(ViewBag.Term, "TermID", "TermName"), "Select Term", new { @class = "form-control select2", @required = "required" })
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <input type="submit" value="Show" class="btn btn-info" />
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="row">
+                    <div class="table-responsive fixTableHead">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    @foreach (var cls in classes)
+                                    {
+                                        <th>@cls</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var date in dates)
+                                {
+                                    <tr>
+                                        <td>@date.ToString("dd/MM/yyyy")</td>
+                                        @foreach (var cls in classes)
+                                        {
+                                            var exams = dt.AsEnumerable()
+                                                          .Where((DataRow r) =>
+                                                              r["ClassName"] != DBNull.Value &&
+                                                              r["ExamDate"] != DBNull.Value &&
+                                                              r["ClassName"].ToString() == cls &&
+                                                              DateTime.ParseExact(r["ExamDate"].ToString().Trim(), "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture) == date
+                                                          )
+                                                          .ToList();
+
+                                            <td>
+                                                @if (exams.Any())
+                                                {
+                                                    foreach (DataRow exam in exams)
+                                                    {
+                                                        <div>
+                                                            <strong>@exam["Subject_Name"].ToString()</strong><br />
+                                                            @exam["TestName"].ToString()<br />
+                                                            @exam["TestType"].ToString()<br />
+                                                            @exam["ExamTime"].ToString()
+                                                        </div>
+                                                        <hr />
+                                                    }
+                                                }
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Content/DropDownSelect2/dist/js/select2.min.js"></script>
+<script>
+    $('.select2').select2();
+</script>
