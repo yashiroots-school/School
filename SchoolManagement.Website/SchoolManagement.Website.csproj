@@ -1702,6 +1702,7 @@
     <Compile Include="Models\Tbl_BasicpayMaster.cs" />
     <Compile Include="Models\Tbl_Batches.cs" />
     <Compile Include="Models\Tbl_BloodGroup.cs" />
+    <Compile Include="Models\tbl_CalendarEvents.cs" />
     <Compile Include="Models\Tbl_Caste.cs" />
     <Compile Include="Models\Tbl_Category.cs" />
     <Compile Include="Models\Tbl_Class.cs" />
@@ -1715,6 +1716,7 @@
     <Compile Include="Models\Tbl_DataListItems.cs" />
     <Compile Include="Models\Tbl_EPFStatement.cs" />
     <Compile Include="Models\Tbl_ExamTypes.cs" />
+    <Compile Include="Models\tbl_Notice.cs" />
     <Compile Include="Models\Tbl_Portions.cs" />
     <Compile Include="Models\Tbl_Religion.cs" />
     <Compile Include="Models\Tbl_Remark.cs" />
@@ -1754,6 +1756,7 @@
     <Compile Include="ViewModels\DueFeeModel.cs" />
     <Compile Include="ViewModels\FeePlanViewModel.cs" />
     <Compile Include="ViewModels\FeeReceiptViewModel.cs" />
+    <Compile Include="ViewModels\NoticeViewModel.cs" />
     <Compile Include="ViewModels\PerformanceReport.cs" />
     <Compile Include="ViewModels\PreviewFeeReceiptViewModel.cs" />
     <Compile Include="ViewModels\PrintReportCard.cs" />
@@ -1765,6 +1768,7 @@
     <Compile Include="ViewModels\SMSEMAILTEMPLETEVIEW.cs" />
     <Compile Include="ViewModels\StaffAttendancedetailsviewmode.cs" />
     <Compile Include="ViewModels\StaffAttendenceViewmodel.cs" />
+    <Compile Include="ViewModels\StaffBirthdayViewModel.cs" />
     <Compile Include="ViewModels\StaffDetailsVM.cs" />
     <Compile Include="ViewModels\StaffViewModel.cs" />
     <Compile Include="ViewModels\StudentAdmissionViewModel.cs" />
@@ -1772,6 +1776,7 @@
     <Compile Include="ViewModels\StudentDetailsVM.cs" />
     <Compile Include="ViewModels\StudentDetailViewModel.cs" />
     <Compile Include="ViewModels\PrintStudentTcDetailsViewModel.cs" />
+    <Compile Include="ViewModels\StudentsBirthdayViewModel.cs" />
     <Compile Include="ViewModels\StudentTcDetailsViewModel.cs" />
     <Compile Include="ViewModels\StudentDetailVM.cs" />
     <Compile Include="ViewModels\StudentFeeInputModel.cs" />
@@ -2671,6 +2676,8 @@
     <Content Include="Views\Exam\PrintAdmitCard.cshtml" />
     <Content Include="Views\Exam\AdmitsCard.cshtml" />
     <Content Include="Views\Exam\PrintAdmitCardsForClass.cshtml" />
+    <Content Include="Views\Dashboard\AddCalendarEvent.cshtml" />
+    <Content Include="Views\Dashboard\AddNotice.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

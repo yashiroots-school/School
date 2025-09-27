@@ -497,8 +497,10 @@
     });
 </script>
 <script>
-    
-        $(document).ready(function() {
+
+    $(document).ready(function () {
+        if (@Model != null)
+        {
             $('.filter-option').click(function () {
                 debugger
                 $('.filter-option').removeClass('active');
@@ -510,7 +512,7 @@
                     url: '@Url.Action("StudentProfileBatchWise", "Student")',
                     type: 'GET',
                     data: { batchId: batchId, studentId: id },
-                    success: function(response) {
+                    success: function (response) {
                         console.log(response);
                         var tbody = $('#attendanceTable tbody');
                         tbody.empty(); // Clear existing rows
@@ -526,7 +528,8 @@
                                     '</tr>';
                                 tbody.append(row);
                             });
-                        } else {
+                        }
+                        else {
                             tbody.append('<tr><td colspan="5">No data found for this batch.</td></tr>');
                         }
                         // 2️ Populate Test Percentages Table
@@ -585,10 +588,11 @@
                             feeTbody.append('<tr><td colspan="2">No fee records found for this batch.</td></tr>');
                         }
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         console.error(error);
                     }
                 });
             });
+        }
         });
 </script>

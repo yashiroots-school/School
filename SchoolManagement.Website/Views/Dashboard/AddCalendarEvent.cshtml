@@ -1,0 +1,85 @@
+﻿@model IEnumerable<SchoolManagement.Website.Models.tbl_CalendarEvents>
+
+@{
+    ViewBag.Title = "Add Calendar Event";
+}
+
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="content_main">
+            <div class="row row_grid">
+                <div class="col-md-12">
+                    <div class="col-md-10">
+                        <div class="row row_grid">
+                            <h2>Add Calendar Events</h2>
+
+                            <!-- Form -->
+                            @using (Html.BeginForm("AddCalendarEvent", "Dashboard", FormMethod.Post, new { @class = "form-horizontal" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <div class="form-group">
+                                    <label class="control-label col-md-2">Event Name</label>
+                                    <div class="col-md-4">
+                                        @Html.TextBoxFor(m => m.FirstOrDefault().EventName, new { @class = "form-control", placeholder = "Enter Event Name" })
+                                        @Html.ValidationMessage("EventName")
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-2">Event Date</label>
+                                    <div class="col-md-4">
+                                        <input type="date" name="EventDate" class="form-control" required />
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-2">Event Time</label>
+                                    <div class="col-md-4">
+                                        <input type="time" name="EventTime" class="form-control" required />
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-md-offset-2 col-md-10">
+                                        <button type="submit" class="btn btn-success">Save Event</button>
+                                    </div>
+                                </div>
+                            }
+
+                            <hr />
+
+                            <!-- List -->
+                            <h3>All Events</h3>
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Event Name</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@item.ID</td>
+                                            <td>@item.EventName</td>
+                                            <td>@item.EventDate.ToString("dd-MM-yyyy")</td>
+                                            <td>@item.EventTime</td>
+                                            <td>
+                                                @Html.ActionLink("Delete", "DeleteEvent", new { id = item.ID }, new { @class = "btn btn-danger", onclick = "return confirm('Are you sure to delete this event?');" })
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

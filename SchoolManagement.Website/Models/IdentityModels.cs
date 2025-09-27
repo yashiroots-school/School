@@ -74,7 +74,7 @@ namespace SchoolManagement.Website.Models
         public DbSet<TblStudentFeeSaved> TblStudentFeeSaved { get; set; }
 
         public DbSet<tbl_StudentDetail> tbl_StudentDetails { get; set; }
-        //public DbSet<StafsDetails> StafsDetails { get; set; }
+        public DbSet<tbl_Notice> tbl_Notice { get; set; }
         public DbSet<tbl_SummerInternship> tbl_SummerInternships { get; set; }
         public DbSet<tbl_Declaration> tbl_Declarations { get; set; }
         public DbSet<tbl_WorkExperience> tbl_WorkExperiences { get; set; }
@@ -193,6 +193,6 @@ namespace SchoolManagement.Website.Models
         public DbSet<ReportCardSetting> reportCardSetting { get; set; }
         public DbSet<TblTestAssignDate> TblTestAssignDate { get; set; }
         public DbSet<Tbl_HoldDetail> Tbl_HoldDetail { get; set; }
-
+        public DbSet<tbl_CalendarEvents> tbl_CalendarEvents { get; set; }
     }
 }

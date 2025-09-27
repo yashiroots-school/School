@@ -1,0 +1,126 @@
+﻿@model IEnumerable<SchoolManagement.Website.Models.tbl_Notice>
+
+<div class="right_col" role="main">
+    <div class="row">
+        <div class="content_main">
+            <div class="col-md-12">
+                <h2>Add Calendar Event</h2>
+
+                <!-- Form -->
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label>Event Name</label>
+                        <input type="text" id="NoticeName" class="form-control" placeholder="Enter Event Name" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Event Date</label>
+                        <input type="date" id="NoticeDate" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <button class="btn btn-success" id="btnSaveNotice">Save Event</button>
+                    </div>
+                </div>
+
+                <hr />
+
+                <h3>All Events</h3>
+                <table class="table table-bordered table-striped" id="noticeTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Event Name</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr id="row_@item.ID">
+                                <td>@item.ID</td>
+                                <td>@item.NoticeName</td>
+                                <td>@item.NoticeDate.ToString("dd-MM-yyyy")</td>
+                                <td>@item.CurrentDate.ToString("hh:mm tt")</td>
+                                <td>
+                                    <button class="btn btn-danger btnDelete" data-id="@item.ID">Delete</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function () {
+    // Save notice
+    $("#btnSaveNotice").click(function (e) {
+        e.preventDefault();
+
+        var NoticeName = $("#NoticeName").val();
+        var NoticeDate = $("#NoticeDate").val();
+
+        if (!NoticeName || !NoticeDate) {
+            alert("Please fill all fields");
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("AddNotice", "Dashboard")',
+            type: 'POST',
+            data: { NoticeName: NoticeName, NoticeDate: NoticeDate },
+            success: function (res) {
+                if (res.success) {
+                    var row = `<tr id="row_${res.notice.ID}">
+                        <td>${res.notice.ID}</td>
+                        <td>${res.notice.NoticeName}</td>
+                        <td>${res.notice.NoticeDate}</td>
+                        <td>${res.notice.NoticeTime}</td>
+                        <td><button class="btn btn-danger btnDelete" data-id="${res.notice.ID}">Delete</button></td>
+                    </tr>`;
+                    $("#noticeTable tbody").prepend(row);
+
+                    // Clear input
+                    $("#NoticeName").val('');
+                    $("#NoticeDate").val('');
+                } else {
+                    alert(res.message);
+                }
+            },
+            error: function (err) {
+                console.log(err);
+                alert("Error saving event");
+            }
+        });
+    });
+
+    // Delete notice
+    $(document).on("click", ".btnDelete", function () {
+        if (!confirm("Are you sure to delete this event?")) return;
+
+        var id = $(this).data("id");
+
+        $.ajax({
+            url: '@Url.Action("DeleteNotice", "Dashboard")',
+            type: 'POST',
+            data: { id: id },
+            success: function (res) {
+                if (res.success) {
+                    $("#row_" + id).remove();
+                } else {
+                    alert(res.message);
+                }
+            },
+            error: function (err) {
+                console.log(err);
+                alert("Error deleting event");
+            }
+        });
+    });
+});
+</script>

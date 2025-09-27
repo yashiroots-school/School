@@ -9,7 +9,7 @@ namespace SchoolManagement.Website.ViewModels
     {
         public long SerialNumber { get; set; } = 0;
         public int StudentID { get; set; } = 0;
-        public string ScholarNo { get; set; } = string.Empty;
+        public long ScholarNo { get; set; } =0;
         public string Name { get; set; } = string.Empty;
         public string Last_Name { get; set; } = string.Empty;
         public string School { get; set; } = string.Empty;
