@@ -6,9 +6,11 @@
 }
 <link href="~/Content/DropDownSelect2/dist/css/select2.min.css" rel="stylesheet" />
 <style>
-    thead th,
-    tbody td {
-        white-space: nowrap;
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: 20px;
     }
 
     table {
@@ -21,48 +23,97 @@
     tbody td {
         padding: 8px;
         border: 1px solid #ddd;
+        text-align: left;
+        vertical-align: top;
+        word-wrap: break-word;
     }
-
-        thead th:first-child,
-        tbody td:first-child {
-            position: sticky;
-            left: 0;
-            background-color: #fff;
-            z-index: 2;
-        }
 
     thead th {
         position: sticky;
         top: 0;
-        background-color: #fff;
+        background-color: #f8f9fa;
         z-index: 3;
     }
 
-        thead th:first-child {
-            z-index: 4;
+    thead th:first-child,
+    tbody td:first-child {
+        position: sticky;
+        left: 0;
+        background-color: #f8f9fa;
+        z-index: 4;
+    }
+
+    .exam-card {
+        background: #f1f1f1;
+        padding: 5px;
+        margin-bottom: 5px;
+        border-radius: 4px;
+    }
+
+    .exam-card strong {
+        display: block;
+        font-size: 14px;
+    }
+
+    .exam-card div {
+        font-size: 13px;
+    }
+
+    /* PRINT STYLES */
+    @@media print {
+        @@page {
+            size: A4 landscape;
+         
+            margin-top:0;
         }
 
-    .fixTableHead {
-        overflow: auto;
-        max-height: 600px;
+        body * {
+            visibility: hidden;
+        }
+
+        #printableArea, #printableArea * {
+            visibility: visible;
+        }
+
+        #printableArea {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+
+        .table-responsive {
+            overflow: visible !important;
+        }
+
+        .btn, .select2, .select2-container {
+            display: none !important;
+        }
+
+        table {
+            table-layout: auto !important;
+            font-size: 12px;
+        }
+    }
+
+    .btn-print {
+        margin-bottom: 10px;
     }
 </style>
 
 @{
     var dt = ViewBag.DataTable as DataTable;
 
-    // Get distinct dates safely
     var dates = dt.AsEnumerable()
-                  .Where((DataRow r) => r["ExamDate"] != DBNull.Value && !string.IsNullOrEmpty(r["ExamDate"].ToString()))
-                  .Select((DataRow r) => DateTime.ParseExact(r["ExamDate"].ToString().Trim(), "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture))
+                  .Where(r => r["ExamDate"] != DBNull.Value && !string.IsNullOrEmpty(r["ExamDate"].ToString()))
+                  .Select(r => DateTime.ParseExact(r["ExamDate"].ToString().Trim(), "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture))
                   .Distinct()
                   .OrderBy(d => d)
                   .ToList();
 
-    // Get distinct class names safely
     var classes = dt.AsEnumerable()
-                    .Where((DataRow r) => r["ClassName"] != DBNull.Value && !string.IsNullOrEmpty(r["ClassName"].ToString()))
-                    .Select((DataRow r) => r["ClassName"].ToString())
+                    .Where(r => r["ClassName"] != DBNull.Value && !string.IsNullOrEmpty(r["ClassName"].ToString()))
+                    .Select(r => r["ClassName"].ToString())
                     .Distinct()
                     .OrderBy(c => c)
                     .ToList();
@@ -77,21 +128,24 @@
                     @using (Html.BeginForm("ExamTimeTable", "Exam", FormMethod.Post))
                     {
                         <div class="row">
-                            <div class="col-md-3 col-sm-3 col-xs-4">
+                            <div class="col-md-3 col-sm-3 col-xs-12">
                                 @Html.DropDownList("BatchId", new SelectList(ViewBag.Batch, "Batch_Id", "Batch_Name"), "Select Batch", new { @class = "form-control select2", @required = "required" })
                             </div>
-                            <div class="col-md-3 col-sm-3 col-xs-4">
+                            <div class="col-md-3 col-sm-3 col-xs-12">
                                 @Html.DropDownList("TermId", new SelectList(ViewBag.Term, "TermID", "TermName"), "Select Term", new { @class = "form-control select2", @required = "required" })
                             </div>
-                            <div class="col-md-2 col-sm-2 col-xs-2">
+                            <div class="col-md-2 col-sm-2 col-xs-12">
                                 <input type="submit" value="Show" class="btn btn-info" />
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-12">
+                                <button type="button" class="btn btn-success btn-print" onclick="printTable()">Print</button>
                             </div>
                         </div>
                     }
                 </div>
 
-                <div class="row">
-                    <div class="table-responsive fixTableHead">
+                <div class="row" id="printableArea">
+                    <div class="table-responsive">
                         <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
@@ -110,7 +164,7 @@
                                         @foreach (var cls in classes)
                                         {
                                             var exams = dt.AsEnumerable()
-                                                          .Where((DataRow r) =>
+                                                          .Where(r =>
                                                               r["ClassName"] != DBNull.Value &&
                                                               r["ExamDate"] != DBNull.Value &&
                                                               r["ClassName"].ToString() == cls &&
@@ -123,13 +177,12 @@
                                                 {
                                                     foreach (DataRow exam in exams)
                                                     {
-                                                        <div>
-                                                            <strong>@exam["Subject_Name"].ToString()</strong><br />
-                                                            @exam["TestName"].ToString()<br />
-                                                            @exam["TestType"].ToString()<br />
-                                                            @exam["ExamTime"].ToString()
+                                                        <div class="exam-card">
+                                                            <strong>@exam["Subject_Name"].ToString()</strong>
+                                                           
+                                                         
+                                                            <div>@exam["ExamTime"].ToString()</div>
                                                         </div>
-                                                        <hr />
                                                     }
                                                 }
                                             </td>
@@ -140,6 +193,7 @@
                         </table>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -148,4 +202,7 @@
 <script src="~/Content/DropDownSelect2/dist/js/select2.min.js"></script>
 <script>
     $('.select2').select2();
+    function printTable() {
+        window.print();
+    }
 </script>

@@ -242,8 +242,6 @@ namespace SchoolManagement.Website.Controllers
 
             return View();
         }
-
-
         private DashboardCountsViewModel GetDashboardCounts(int batchId)
         {
             return new DashboardCountsViewModel
@@ -254,7 +252,6 @@ namespace SchoolManagement.Website.Controllers
                 NewAdmissionCount = _context.Students.Count(x => x.IsApplyforTC == false && x.CurrentYear == batchId)
             };
         }
-
         private List<NoticeViewModel> GetNotices()
         {
             // Fetch data first
@@ -274,8 +271,6 @@ namespace SchoolManagement.Website.Controllers
 
             return notices;
         }
-
-
         private (List<Tbl_DataListItem> Classes, List<Tbl_DataListItem> Sections) GetClassesAndSections(int batchId, int? staffId = null)
         {
             // Fetch DataList IDs from DataLists table
@@ -317,26 +312,17 @@ namespace SchoolManagement.Website.Controllers
 
             return (classes, sections);
         }
-
-
-
-
         #endregion
-
-
         public ActionResult AddCalendarEvent()
         {
             var events = _context.tbl_CalendarEvents.ToList();
             return View(events);
         }
-
         public ActionResult AddNotice()
         {
             var notices = _context.tbl_Notice.OrderByDescending(x => x.ID).ToList();
             return View(notices);
         }
-
-
         // POST: AddNotice via AJAX
         [HttpPost]
         public JsonResult AddNotice(string NoticeName, DateTime NoticeDate)
@@ -364,8 +350,6 @@ namespace SchoolManagement.Website.Controllers
 
             return Json(new { success = true, notice = newNotice });
         }
-
-
         // POST: Delete notice via AJAX
         [HttpPost]
         public JsonResult DeleteNotice(int id)
@@ -379,8 +363,6 @@ namespace SchoolManagement.Website.Controllers
             }
             return Json(new { success = false, message = "Record not found" });
         }
-
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AddCalendarEvent(tbl_CalendarEvents model)
@@ -395,7 +377,6 @@ namespace SchoolManagement.Website.Controllers
             var events = _context.tbl_CalendarEvents.ToList();
             return View(events);
         }
-
         public ActionResult DeleteEvent(int id)
         {
             var data = _context.tbl_CalendarEvents.Find(id);
